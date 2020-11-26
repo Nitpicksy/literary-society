@@ -1,0 +1,42 @@
+server:
+  port:
+    8762
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${REGISTRY_HOST:localhost}:${REGISTRY_PORT:8761}/eureka/
+      healthcheck-enabled: true
+  instance:
+    lease-expiration-duration-in-seconds: 2
+    lease-renewal-interval-in-seconds: 4
+
+zuul:
+  host:
+    connect-timeout-millis: 5000000
+    socket-timeout-millis: 5000000
+  prefix: /api
+  ignored-services: '*'
+
+ribbon:
+  eureka:
+    enabled: true
+  ReadTimeout: 60000
+  ConnectTimeout: 6000
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 132000
+
+test:
+  value: zdravo
+
+#ne diraj
+#  spring.cloud.bus.enabled=true
+#  management.endpoints.web.exposure.include=bus-refresh, refresh
