@@ -1,0 +1,15 @@
+version: "3.4"
+
+services:
+  rabbitmq-broker:
+    image: rabbitmq:management-alpine
+    container_name: rabbitmq-broker
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - literary-network
+
+networks:
+  literary-network:
+    driver: bridge
