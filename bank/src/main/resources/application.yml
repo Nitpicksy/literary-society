@@ -1,0 +1,17 @@
+server:
+  port: 8074
+
+spring:
+  application:
+    name: ${SPRINGBOOT_APP_NAME:bank}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${REGISTRY_HOST:localhost}:${REGISTRY_PORT:8761}/eureka/
+      healthcheck:
+        enabled: true
+    fetchRegistry: true
+  instance:
+    lease-expiration-duration-in-seconds: 10
+    lease-renewal-interval-in-seconds: 5

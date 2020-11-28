@@ -13,6 +13,10 @@ eureka:
     lease-renewal-interval-in-seconds: 10
 
 zuul:
+#  routes:
+#    paypal-service:
+#      path: /paypal/**
+#      url: http://localhost:8077
   host:
     connect-timeout-millis: 5000000
     socket-timeout-millis: 5000000
