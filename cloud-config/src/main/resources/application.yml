@@ -1,0 +1,34 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: ${SPRINGBOOT_APP_NAME:cloud-config}
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/Nitpicksy/cloud-configuration.git
+          clone-on-start: true
+          search-paths: /{application}
+    bus:
+      enabled: true
+  rabbitmq:
+    host: ${RMQ_HOST:localhost}
+    port: ${RMQ_PORT:5672}
+    username: ${RMQ_USERNAME:guest}
+    password: ${RMQ_PASSWORD:guest}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-peer1:8761/eureka,http://eureka-peer2:8760/eureka
+      healthcheck:
+        enabled: true
+    fetchRegistry: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

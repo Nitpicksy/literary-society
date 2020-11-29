@@ -1,0 +1,14 @@
+server:
+  port: 8074
+
+spring:
+  application:
+    name: ${SPRINGBOOT_APP_NAME:bank}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-peer1:8761/eureka,http://eureka-peer2:8760/eureka
+      healthcheck:
+        enabled: true
+    fetchRegistry: true
