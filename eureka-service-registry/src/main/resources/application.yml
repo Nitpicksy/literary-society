@@ -1,22 +1,37 @@
+peers:
+  port1: 8761
+  port2: 8760
+
+---
 server:
-  port: 8761
-
+  port: ${peers.port1}
 spring:
-  application:
-    name: ${SPRINGBOOT_APP_NAME:eureka-service-registry}
-
+  config:
+    activate:
+      on-profile: peer1
 eureka:
+  instance:
+    hostname: eureka-peer1
+    appname: eureka-cluster
   client:
+    serviceUrl:
+      defaultZone: http://eureka-peer2:${peers.port2}/eureka
     register-with-eureka: false
     fetch-registry: false
-  server:
-    enable-self-preservation: false
-    wait-time-in-ms-when-sync-empty: 0
-    eviction-interval-timer-in-ms: 1000
 
-logging:
-  level:
-    com:
-      netflix:
-        eureka: OFF
-        discovery: OFF
+---
+server:
+  port: ${peers.port2}
+spring:
+  config:
+    activate:
+      on-profile: peer2
+eureka:
+  instance:
+    hostname: eureka-peer2
+    appname: eureka-cluster
+  client:
+    serviceUrl:
+      defaultZone: http://eureka-peer1:${peers.port1}/eureka
+    register-with-eureka: false
+    fetch-registry: false

@@ -1,9 +1,9 @@
 server:
-  port: 8077
+  port: 8076
 
 spring:
   application:
-    name: ${SPRINGBOOT_APP_NAME:paypal-service}
+    name: ${SPRINGBOOT_APP_NAME:bitcoin-service}
 
 eureka:
   client:

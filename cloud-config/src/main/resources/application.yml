@@ -22,13 +22,10 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://${REGISTRY_HOST:localhost}:${REGISTRY_PORT:8761}/eureka/
+      defaultZone: http://eureka-peer1:8761/eureka,http://eureka-peer2:8760/eureka
       healthcheck:
         enabled: true
     fetchRegistry: true
-  instance:
-    lease-renewal-interval-in-seconds: 5
-    lease-expiration-duration-in-seconds: 10
 
 management:
   endpoints:
