@@ -28,9 +28,9 @@ zuul:
     bitcoin-service:
       path: /bitcoin-service/**
       url: http://localhost:8300
-#  host:
-#    connect-timeout-millis: 5000000
-#    socket-timeout-millis: 5000000
+  host:
+    connect-timeout-millis: 5000000
+    socket-timeout-millis: 5000000
 #  prefix: /api
 #  ignored-services: '*'
 
