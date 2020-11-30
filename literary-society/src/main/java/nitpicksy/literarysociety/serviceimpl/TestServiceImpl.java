@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.serviceimpl;
 
+import nitpicksy.literarysociety.client.PaymentGatewayClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,15 +14,10 @@ import java.util.Arrays;
 @Service
 public class TestServiceImpl {
 
-    private RestTemplate restTemplate;
+    private PaymentGatewayClient paymentGatewayClient;
 
     public String healthCheck() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
-
-        String response = restTemplate.exchange("http://payment-gateway/pg-test/health",
-                HttpMethod.GET, httpEntity, String.class).getBody();
+        String response = paymentGatewayClient.healthCheck();
 
         StringBuilder sb = new StringBuilder("Literary Society is up and running!");
         sb.append(System.lineSeparator());
@@ -31,7 +27,7 @@ public class TestServiceImpl {
     }
 
     @Autowired
-    public TestServiceImpl(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public TestServiceImpl(PaymentGatewayClient paymentGatewayClient) {
+        this.paymentGatewayClient = paymentGatewayClient;
     }
 }

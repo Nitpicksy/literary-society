@@ -1,6 +1,6 @@
 peers:
   port1: 8761
-  port2: 8760
+  port2: 8762
 
 ---
 server:

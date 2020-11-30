@@ -1,24 +1,38 @@
 server:
-  port: 8762
+  port: 8080
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://eureka-peer1:8761/eureka,http://eureka-peer2:8760/eureka
+      defaultZone: http://eureka-peer1:8761/eureka,http://eureka-peer2:8762/eureka
       healthcheck-enabled: true
 
 zuul:
-#  routes:
-#    paypal-service:
-#      path: /paypal/**
-#      url: http://localhost:8077
-  host:
-    connect-timeout-millis: 5000000
-    socket-timeout-millis: 5000000
-  prefix: /api
-  ignored-services: '*'
+  routes:
+    payment-gateway:
+      path: /payment-gateway/**
+    literary-society:
+      path: /literary-society/**
+      url: http://localhost:8090
+    bank:
+      path: /bank/**
+      url: http://localhost:8100
+    pcc:
+      path: /pcc/**
+      url: http://localhost:8101
+    paypal-service:
+      path: /paypal-service/**
+      url: http://localhost:8200
+    bitcoin-service:
+      path: /bitcoin-service/**
+      url: http://localhost:8300
+#  host:
+#    connect-timeout-millis: 5000000
+#    socket-timeout-millis: 5000000
+#  prefix: /api
+#  ignored-services: '*'
 
 ribbon:
   eureka:

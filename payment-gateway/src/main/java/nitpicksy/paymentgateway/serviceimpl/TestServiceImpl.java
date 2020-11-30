@@ -1,5 +1,6 @@
 package nitpicksy.paymentgateway.serviceimpl;
 
+import nitpicksy.paymentgateway.client.PayPalClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -14,18 +15,13 @@ import java.util.Arrays;
 @Service
 public class TestServiceImpl {
 
-    private RestTemplate restTemplate;
+    private PayPalClient payPalClient;
 
     @Value("${eureka.instance.instance-id}")
     private String instanceId;
 
     public String healthCheck() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
-
-        String response = restTemplate.exchange("http://localhost:8077/paypal-test/health",
-                HttpMethod.GET, httpEntity, String.class).getBody();
+        String response = payPalClient.healthCheck();
 
         StringBuilder sb = new StringBuilder("Payment Gateway ID=");
         sb.append(instanceId);
@@ -37,8 +33,8 @@ public class TestServiceImpl {
     }
 
     @Autowired
-    public TestServiceImpl(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public TestServiceImpl(PayPalClient payPalClient) {
+        this.payPalClient = payPalClient;
     }
 
 }
