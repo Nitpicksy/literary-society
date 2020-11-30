@@ -1,5 +1,5 @@
 server:
-  port: 8077
+  port: 8200
 
 spring:
   application:
@@ -8,7 +8,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-peer1:8761/eureka,http://eureka-peer2:8760/eureka
+      defaultZone: http://eureka-peer1:8761/eureka,http://eureka-peer2:8762/eureka
       healthcheck:
         enabled: true
     fetchRegistry: true
