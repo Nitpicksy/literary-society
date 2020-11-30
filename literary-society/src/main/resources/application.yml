@@ -1,5 +1,5 @@
 server:
-  port: 8102
+  port: 8090
 
 spring:
   application:
@@ -14,13 +14,13 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: false
 
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-peer1:8761/eureka,http://eureka-peer2:8760/eureka
+      defaultZone: http://eureka-peer1:8761/eureka,http://eureka-peer2:8762/eureka
       healthcheck:
         enabled: true
     fetchRegistry: true
