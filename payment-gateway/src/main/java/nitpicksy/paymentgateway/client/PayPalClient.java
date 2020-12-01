@@ -4,10 +4,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name = "paypal-service")
+@FeignClient(name = "zuul")
 public interface PayPalClient {
 
-    @RequestMapping(method = RequestMethod.GET, path = "/paypal-test/health")
+    @RequestMapping(method = RequestMethod.GET, path = "paypal-service/paypal-test/health")
     String healthCheck();
 
 }

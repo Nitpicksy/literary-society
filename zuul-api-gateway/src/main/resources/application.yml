@@ -22,9 +22,9 @@ zuul:
     pcc:
       path: /pcc/**
       url: http://localhost:8101
-    paypal-service:
-      path: /paypal-service/**
-      url: http://localhost:8200
+#    paypal-service:
+#      path: /paypal-service/**
+#      url: http://localhost:8200
     bitcoin-service:
       path: /bitcoin-service/**
       url: http://localhost:8300
@@ -32,7 +32,7 @@ zuul:
     connect-timeout-millis: 5000000
     socket-timeout-millis: 5000000
 #  prefix: /api
-#  ignored-services: '*'
+  ignored-services: '*'
 
 ribbon:
   eureka:
