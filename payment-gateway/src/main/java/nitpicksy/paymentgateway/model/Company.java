@@ -27,10 +27,7 @@ public class Company {
     private String URI;
 
     @Column(unique = true, nullable = false)
-    private String username;
-
-    @Column(nullable = false)
-    private String password;
+    private String commonName;
 
     @Column(name = "success_url", nullable = false)
     private String successURL;

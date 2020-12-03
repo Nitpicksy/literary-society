@@ -23,6 +23,9 @@ public class PaymentMethod {
     @Column(nullable = false)
     private String name;
 
+    @Column(unique = true, nullable = false)
+    private String commonName;
+
     @Column(nullable = false)
     private String URI;
 
