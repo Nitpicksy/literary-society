@@ -4,6 +4,18 @@ server:
 spring:
   application:
     name: ${SPRINGBOOT_APP_NAME:payment-gateway}
+  datasource:
+    username: ${DATABASE_USERNAME:nitpicksy_user}
+    password: ${DATABASE_PASSWORD:Nitpicksy-2020}
+    url: jdbc:mysql://${DATABASE_DOMAIN:localhost}:${DATABASE_PORT:3306}/${DATABASE_SCHEMA:payment_gateway}?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
 
 eureka:
   client:
