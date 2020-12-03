@@ -35,4 +35,8 @@ public class Membership {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(referencedColumnName = "id")
     private MembershipTransaction transaction;
+
+    @PrimaryKeyJoinColumn
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Merchant merchant;
 }

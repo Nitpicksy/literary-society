@@ -29,6 +29,9 @@ public class Book {
     private Writer writer;
 
     @Column(nullable = false)
+    private String writerName;
+
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
@@ -50,5 +53,10 @@ public class Book {
     @PrimaryKeyJoinColumn
     @ManyToOne(fetch = FetchType.EAGER)
     private User lecturer;
+
+    @PrimaryKeyJoinColumn
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Image image;
+
 
 }
