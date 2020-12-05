@@ -16,7 +16,17 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: false
-
+  mail:
+    host: smtp.gmail.com
+    username: teamvjn@gmail.com
+    password: team29VJN
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 eureka:
   client:
     service-url:
@@ -24,3 +34,14 @@ eureka:
       healthcheck:
         enabled: true
     fetchRegistry: true
+
+TOKEN_UTILS_APP_NAME: literary-society
+TOKEN_UTILS_SECRET: Nitpicsky
+# 15 min
+TOKEN_UTILS_EXPIRES_IN: 10800000
+# 14 days
+TOKEN_UTILS_REFRESH_TOKEN_EXPIRES_IN: 1209600000
+TOKEN_UTILS_AUTH_HEADER: Authorization
+# Localhost
+LOCALHOST_URL: http://localhost:4300/
+
