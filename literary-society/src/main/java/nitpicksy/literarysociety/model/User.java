@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nitpicksy.literarysociety.enumeration.UserStatus;
-
 import javax.persistence.*;
 
 @Entity
@@ -16,7 +15,7 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User implements org.camunda.bpm.engine.identity.User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,4 +50,14 @@ public class User {
 
     @Column
     private boolean enabled;
+
+    @Override
+    public String getId() {
+        return username;
+    }
+
+    @Override
+    public void setId(String s) {
+        this.username = s;
+    }
 }

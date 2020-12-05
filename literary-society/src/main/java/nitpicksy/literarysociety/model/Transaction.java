@@ -50,6 +50,7 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.EAGER)
     private Merchant merchant;
 
-    @OneToOne(mappedBy = "transaction", fetch = FetchType.EAGER)
+    @PrimaryKeyJoinColumn
+    @OneToOne(fetch = FetchType.EAGER)
     private Membership membership;
 }
