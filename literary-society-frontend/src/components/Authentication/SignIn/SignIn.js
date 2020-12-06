@@ -10,27 +10,26 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { useStyles } from './SignInStyles';
 import Input from '../../../UI/Input/Input';
-import {checkValidity} from '../../../shared/utility';
+import { checkValidity } from '../../../shared/utility';
 
 const SignIn = (props) => {
-
     const classes = useStyles();
 
     const [controls, setControls] = useState({
         username: {
             elementType: 'input',
             elementConfig: {
-                type: 'text',
                 label: 'Username'
             },
             value: '',
             validation: {
-                required: true
+                required: true,
+                isUsername: true,
             },
-            valid: false,
+            valid: true,
             touched: false,
-            errorMessage:'Username is required', 
-            error: false
+            error: false,
+            errorMessage: '',
         },
         password: {
             elementType: 'input',
@@ -41,40 +40,77 @@ const SignIn = (props) => {
             value: '',
             validation: {
                 required: true,
-                minLength: 10,
-                isPassword:true
+                isPassword: true
             },
-            valid: false,
+            valid: true,
             touched: false,
-            errorMessage:"Password is required",
-            error:false
-        }
+            error: false,
+            errorMessage: '',
+        },
+        // textarea: {
+        //     elementType: 'textarea',
+        //     elementConfig: {
+        //         label: 'Comment',
+        //         rows: 4,
+        //     },
+        //     value: '',
+        //     validation: {
+        //         required: true,
+        //     },
+        //     valid: false,
+        //     touched: false,
+        //     error: false,
+        //     errorMessage: '',
+        // },
+        // select: {
+        //     elementType: 'select',
+        //     elementConfig: {
+        //         label: 'Products',
+        //         options: [
+        //             {
+        //                 value: "mleko",
+        //                 displayValue: "Mleko"
+        //             },
+        //             {
+        //                 value: "jogurt",
+        //                 displayValue: "Jogurt"
+        //             }
+        //         ],
+        //     },
+        //     value: '',
+        //     validation: {
+        //         required: true,
+        //         isUsername: true,
+        //     },
+        //     valid: false,
+        //     touched: false,
+        //     error: false,
+        //     errorMessage: '',
+        // },
     })
 
     const inputChangedHandler = (event, controlName) => {
-        const validData = checkValidity(event.target.value, controls[controlName].validation, controls[controlName].elementConfig.label);
-        let error = !validData.isValid;
-        console.log(error)
+        const validationData = checkValidity(event.target.value, controls[controlName].validation, controls[controlName].elementConfig.label);
 
-        console.log(validData.errorMessage)
         const updatedControls = {
             ...controls,
             [controlName]: {
                 ...controls[controlName],
                 value: event.target.value,
-                valid: validData.isValid,
+                valid: validationData.isValid,
                 touched: true,
-                error:error
+                error: !validationData.isValid,
+                errorMessage: validationData.errorMessage,
             }
         };
-        console.log(validData.errorMessage)
+
         setControls(updatedControls);
     }
 
     const submitHander = (event) => {
+        event.preventDefault();
         console.log("Log in");
-        console.log(controls);
-        
+        console.log(controls.username.value, controls.password.value);
     }
 
     const formElementsArray = [];
@@ -94,8 +130,8 @@ const SignIn = (props) => {
             invalid={!formElement.config.valid}
             shouldValidate={formElement.config.validation}
             touched={formElement.config.touched}
-            errorMessage = {formElement.config.errorMessage}
-            error = {formElement.config.error}
+            error={formElement.config.error}
+            errorMessage={formElement.config.errorMessage}
             changed={(event) => inputChangedHandler(event, formElement.id)} />
     ));
 
@@ -115,8 +151,9 @@ const SignIn = (props) => {
                 <Typography component="h1" variant="h4">Sign in</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
-                    {/* <Typography id="errorText" variant="body2" className={classes.errorText}>hshs</Typography> */}
-                    <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained">Sign In</Button>
+                    {/* <Typography id="errorText" variant="body2" className={classes.errorText}></Typography> */}
+                    <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
+                        onClick={submitHander}>Sign In</Button>
                     <Grid container>
                         <Grid item xs>
                             <Link href="#" variant="body2">Forgot password?</Link>
