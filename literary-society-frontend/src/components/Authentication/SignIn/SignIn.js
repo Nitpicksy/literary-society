@@ -9,8 +9,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { useStyles } from './SignInStyles';
-import Input from '../../../UI/Input/Input';
-import { checkValidity } from '../../../shared/utility';
+import Form from '../../../UI/Form/Form';
 import { connect } from 'react-redux';
 
 const SignIn = (props) => {
@@ -27,8 +26,6 @@ const SignIn = (props) => {
                 required: true,
                 isUsername: true,
             },
-            valid: true,
-            touched: false,
             error: false,
             errorMessage: '',
         },
@@ -43,58 +40,52 @@ const SignIn = (props) => {
                 required: true,
                 isPassword: true
             },
-            valid: true,
-            touched: false,
             error: false,
             errorMessage: '',
-        }
+        },
+        // textarea: {
+        //     elementType: 'textarea',
+        //     elementConfig: {
+        //         label: 'Comment',
+        //         rows: 4,
+        //     },
+        //     value: '',
+        //     validation: {
+        //         required: true,
+        //     },
+        //     error: false,
+        //     errorMessage: '',
+        // },
+        // select: {
+        //     elementType: 'select',
+        //     elementConfig: {
+        //         label: 'Products',
+        //         options: [
+        //             {
+        //                 value: "mleko",
+        //                 displayValue: "Mleko"
+        //             },
+        //             {
+        //                 value: "jogurt",
+        //                 displayValue: "Jogurt"
+        //             }
+        //         ],
+        //     },
+        //     value: '',
+        //     validation: {
+        //         required: true,
+        //         isUsername: true,
+        //     },
+        //     error: false,
+        //     errorMessage: '',
+        // },
     })
 
-    const inputChangedHandler = (event, controlName) => {
-        const validationData = checkValidity(event.target.value, controls[controlName].validation, controls[controlName].elementConfig.label);
-
-        const updatedControls = {
-            ...controls,
-            [controlName]: {
-                ...controls[controlName],
-                value: event.target.value,
-                valid: validationData.isValid,
-                touched: true,
-                error: !validationData.isValid,
-                errorMessage: validationData.errorMessage,
-            }
-        };
-
-        setControls(updatedControls);
-    }
-
+    
     const submitHander = (event) => {
         event.preventDefault();
         props.onSignIn(controls.username.value, controls.password.value);
     }
-
-    const formElementsArray = [];
-    for (let key in controls) {
-        formElementsArray.push({
-            id: key,
-            config: controls[key]
-        });
-    }
-
-    var form = formElementsArray.map(formElement => (
-        <Input
-            key={formElement.id}
-            elementType={formElement.config.elementType}
-            elementConfig={formElement.config.elementConfig}
-            value={formElement.config.value}
-            invalid={!formElement.config.valid}
-            shouldValidate={formElement.config.validation}
-            touched={formElement.config.touched}
-            error={formElement.config.error}
-            errorMessage={formElement.config.errorMessage}
-            changed={(event) => inputChangedHandler(event, formElement.id)} />
-    ));
-
 
     // let authredirect = null;
     // if (props.isAuthenticated) {
@@ -110,7 +101,7 @@ const SignIn = (props) => {
                 </Avatar>
                 <Typography component="h1" variant="h4">Sign in</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
-                    {form}
+                    <Form controls={controls} setControls={setControls} />
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
                         onClick={submitHander}>Sign In</Button>
                     <Grid container>
