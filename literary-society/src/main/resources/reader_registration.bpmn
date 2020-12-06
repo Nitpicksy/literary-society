@@ -46,6 +46,7 @@
           <camunda:formField id="email" label="Email" type="string">
             <camunda:validation>
               <camunda:constraint name="required" />
+              <camunda:constraint name="email" />
             </camunda:validation>
           </camunda:formField>
           <camunda:formField id="isBetaReader" label="Beta-Reader" type="boolean" />
