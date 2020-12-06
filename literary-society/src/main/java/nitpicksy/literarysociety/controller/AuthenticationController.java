@@ -41,7 +41,7 @@ public class AuthenticationController {
 
     private IPAddressProvider ipAddressProvider;
 
-    @PostMapping(value = "/login",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/sign-in",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserTokenState> login(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest) {
         try {
             UserTokenState userTokenState = authenticationService.login(authenticationRequest);

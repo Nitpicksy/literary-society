@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-
+import * as actions from './SignInExport';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -11,6 +11,7 @@ import Container from '@material-ui/core/Container';
 import { useStyles } from './SignInStyles';
 import Input from '../../../UI/Input/Input';
 import { checkValidity } from '../../../shared/utility';
+import { connect } from 'react-redux';
 
 const SignIn = (props) => {
     const classes = useStyles();
@@ -46,47 +47,7 @@ const SignIn = (props) => {
             touched: false,
             error: false,
             errorMessage: '',
-        },
-        // textarea: {
-        //     elementType: 'textarea',
-        //     elementConfig: {
-        //         label: 'Comment',
-        //         rows: 4,
-        //     },
-        //     value: '',
-        //     validation: {
-        //         required: true,
-        //     },
-        //     valid: false,
-        //     touched: false,
-        //     error: false,
-        //     errorMessage: '',
-        // },
-        // select: {
-        //     elementType: 'select',
-        //     elementConfig: {
-        //         label: 'Products',
-        //         options: [
-        //             {
-        //                 value: "mleko",
-        //                 displayValue: "Mleko"
-        //             },
-        //             {
-        //                 value: "jogurt",
-        //                 displayValue: "Jogurt"
-        //             }
-        //         ],
-        //     },
-        //     value: '',
-        //     validation: {
-        //         required: true,
-        //         isUsername: true,
-        //     },
-        //     valid: false,
-        //     touched: false,
-        //     error: false,
-        //     errorMessage: '',
-        // },
+        }
     })
 
     const inputChangedHandler = (event, controlName) => {
@@ -109,8 +70,7 @@ const SignIn = (props) => {
 
     const submitHander = (event) => {
         event.preventDefault();
-        console.log("Log in");
-        console.log(controls.username.value, controls.password.value);
+        props.onSignIn(controls.username.value, controls.password.value);
     }
 
     const formElementsArray = [];
@@ -151,7 +111,6 @@ const SignIn = (props) => {
                 <Typography component="h1" variant="h4">Sign in</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
-                    {/* <Typography id="errorText" variant="body2" className={classes.errorText}></Typography> */}
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
                         onClick={submitHander}>Sign In</Button>
                     <Grid container>
@@ -168,4 +127,10 @@ const SignIn = (props) => {
     );
 };
 
-export default SignIn;
+const mapDispatchToProps = dispatch => {
+    return {
+        onSignIn: (email, password) => dispatch(actions.signIn(email, password))
+    }
+};
+
+export default connect(null, mapDispatchToProps)(SignIn);
