@@ -9,7 +9,6 @@ import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -25,8 +24,7 @@ import java.util.Objects;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements UserDetails {
-
+public class User implements org.camunda.bpm.engine.identity.User, UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -133,5 +131,16 @@ public class User implements UserDetails {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+
+    }
+
+    @Override
+    public String getId() {
+        return username;
+    }
+
+    @Override
+    public void setId(String s) {
+        this.username = s;
     }
 }
