@@ -76,6 +76,19 @@ public class User implements UserDetails {
         return authorities;
     }
 
+    public User(String firstName, String lastName, String city, String country, String email,
+                String username, String password, Role role, UserStatus status) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.city = city;
+        this.country = country;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.status = status;
+    }
+
     @Override
     public String getUsername() {
         return username;

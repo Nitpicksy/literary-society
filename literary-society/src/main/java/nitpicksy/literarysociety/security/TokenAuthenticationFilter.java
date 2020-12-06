@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.security;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,6 +20,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private UserDetailsService userDetailsService;
 
+    @Autowired
     public TokenAuthenticationFilter(TokenUtils tokenHelper, UserDetailsService userDetailsService) {
         this.tokenUtils = tokenHelper;
         this.userDetailsService = userDetailsService;
@@ -28,27 +30,26 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        String username;
-        String authToken = tokenUtils.getToken(request);
+        if(tokenUtils != null){
+            String username;
+            String authToken = tokenUtils.getToken(request);
+            if (authToken != null) {
+                username = tokenUtils.getUsernameFromToken(authToken);
 
-        if (authToken != null) {
-            username = tokenUtils.getUsernameFromToken(authToken);
-
-            if (username != null) {
-                UserDetails userDetails;
-                try {
-                    userDetails = userDetailsService.loadUserByUsername(username);
-                    if (tokenUtils.validateToken(authToken, userDetails)) {
-                        TokenBasedAuthentication authentication = new TokenBasedAuthentication(userDetails);
-                        authentication.setToken(authToken);
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                if (username != null) {
+                    UserDetails userDetails;
+                    try {
+                        userDetails = userDetailsService.loadUserByUsername(username);
+                        if (tokenUtils.validateToken(authToken, userDetails)) {
+                            TokenBasedAuthentication authentication = new TokenBasedAuthentication(userDetails);
+                            authentication.setToken(authToken);
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                        }
+                    } catch (UsernameNotFoundException e) {
                     }
-                } catch (UsernameNotFoundException e) {
                 }
             }
         }
-
-        // prosledi request dalje u sledeci filter
         chain.doFilter(request, response);
     }
 

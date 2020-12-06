@@ -8,6 +8,7 @@ public class TokenBasedAuthentication extends AbstractAuthenticationToken {
     private static final long serialVersionUID = 1L;
 
     private String token;
+
     private final UserDetails principle;
 
     public TokenBasedAuthentication(UserDetails principle) {

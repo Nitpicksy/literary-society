@@ -41,11 +41,18 @@ public class RestExceptionHandler  extends ResponseEntityExceptionHandler {
 //        return buildResponseEntity(error);
 //    }
 //
-//    @ExceptionHandler(BlockedUserException.class)
-//    protected ResponseEntity<Object> handleBlockedUserException(BlockedUserException ex) {
-//        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-//        return buildResponseEntity(error);
-//    }
+    @ExceptionHandler(InvalidTokenException.class)
+    protected ResponseEntity<Object> handleInvalidTokenDataException(InvalidTokenException ex) {
+        ErrorResponse error = new ErrorResponse(ex.getHttpStatus(), ex.getMessage());
+        return buildResponseEntity(error);
+    }
+
+
+    @ExceptionHandler(BlockedUserException.class)
+    protected ResponseEntity<Object> handleBlockedUserException(BlockedUserException ex) {
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildResponseEntity(error);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleOtherExceptions() {

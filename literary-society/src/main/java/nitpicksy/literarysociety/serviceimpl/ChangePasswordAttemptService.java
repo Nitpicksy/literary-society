@@ -20,33 +20,27 @@ public class ChangePasswordAttemptService {
 
     private final int MAX_ATTEMPT = 3;
 
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
-    private IPAddressProvider ipAddressProvider;
+    private final IPAddressProvider ipAddressProvider;
 
-    private LogService logService;
+    private final LogService logService;
 
-    private LoadingCache<String, Integer> changePassAttemptsCache;
-
-    public ChangePasswordAttemptService() {
-        super();
-        changePassAttemptsCache = CacheBuilder.newBuilder().
-                expireAfterWrite(1, TimeUnit.DAYS).build(new CacheLoader<String, Integer>() {
-            public Integer load(String key) {
-                return 0;
-            }
-        });
-    }
+    private LoadingCache<String, Integer> changePassAttemptsCache = CacheBuilder.newBuilder().
+            expireAfterWrite(1, TimeUnit.DAYS).build(new CacheLoader<>() {
+        public Integer load(String key) {
+            return 0;
+        }
+    });
 
     public void changePassSucceeded() {
         String key = getClientIP();
         changePassAttemptsCache.invalidate(key);
     }
 
-
     public void changePassFailed() {
         String key = getClientIP();
-        int attempts = 0;
+        int attempts;
         try {
             if (changePassAttemptsCache.get(key) == MAX_ATTEMPT) {
                 logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CPW", String.format("Because of too many attempts, user from %s is blocked.", ipAddressProvider.get())));
@@ -61,6 +55,9 @@ public class ChangePasswordAttemptService {
 
     public boolean isBlocked(String key) {
         try {
+            if (changePassAttemptsCache.get(key) == MAX_ATTEMPT) {
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CPW", String.format("Because of too many attempts, user from %s is blocked.", ipAddressProvider.get())));
+            }
             return changePassAttemptsCache.get(key) >= MAX_ATTEMPT;
         } catch (ExecutionException e) {
             return false;

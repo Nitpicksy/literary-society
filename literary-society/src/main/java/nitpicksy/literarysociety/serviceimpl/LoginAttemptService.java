@@ -25,22 +25,17 @@ public class LoginAttemptService {
 
     private LogService logService;
 
-    private LoadingCache<String, Integer> attemptsCache;
-
-    public LoginAttemptService() {
-        super();
-        attemptsCache = CacheBuilder.newBuilder().
-                expireAfterWrite(1, TimeUnit.DAYS).build(new CacheLoader<String, Integer>() {
-            public Integer load(String key) {
-                return 0;
-            }
-        });
-    }
+    private LoadingCache<String, Integer> attemptsCache= CacheBuilder.newBuilder().
+            expireAfterWrite(1, TimeUnit.DAYS).build(new CacheLoader<String, Integer>() {
+        public Integer load(String key) {
+            return 0;
+        }
+    });
 
     public void loginSucceeded() {
-        String key = getClientIP();
-        attemptsCache.invalidate(key);
+        attemptsCache.invalidate(getClientIP());
     }
+
 
     public void loginFailed() {
         String key = getClientIP();
@@ -77,5 +72,6 @@ public class LoginAttemptService {
     public LoginAttemptService(HttpServletRequest request, IPAddressProvider ipAddressProvider, LogService logService) {
         this.ipAddressProvider = ipAddressProvider;
         this.logService = logService;
+        this.request = request;
     }
 }
