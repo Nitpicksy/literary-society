@@ -8,6 +8,7 @@ import {createStore,applyMiddleware, compose, combineReducers} from 'redux';
 import thunk from 'redux-thunk';
 import reportWebVitals from './reportWebVitals';
 import signInReducer from './components/Authentication/SignIn/SignInReducer';
+import signUpReducer from './components/Authentication/SignUp/SignUpReducer';
 
 // ReactDOM.render(
 //   <React.StrictMode>
@@ -20,7 +21,8 @@ import signInReducer from './components/Authentication/SignIn/SignInReducer';
 const composeEnhancers = process.env.NODE_ENV === 'development'? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
 const rootReducer = combineReducers({
-    signIn: signInReducer
+    signIn: signInReducer,
+    signUp: signUpReducer
 });
 
 const store = createStore(rootReducer, composeEnhancers(

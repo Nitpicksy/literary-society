@@ -1,4 +1,4 @@
-package nitpicksy.literarysociety.dto;
+package nitpicksy.literarysociety.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

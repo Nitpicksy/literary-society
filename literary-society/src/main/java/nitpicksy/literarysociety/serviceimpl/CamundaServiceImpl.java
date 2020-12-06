@@ -1,6 +1,6 @@
 package nitpicksy.literarysociety.serviceimpl;
 
-import nitpicksy.literarysociety.dto.FormFieldsDTO;
+import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
 import nitpicksy.literarysociety.service.CamundaService;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RepositoryService;

@@ -1,7 +1,7 @@
 package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.constants.CamundaConstants;
-import nitpicksy.literarysociety.dto.FormFieldsDTO;
+import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
 import nitpicksy.literarysociety.service.CamundaService;
 import nitpicksy.literarysociety.service.ReaderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/readers", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/readers", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ReaderController {
 
     private CamundaService camundaService;

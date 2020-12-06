@@ -1,10 +1,10 @@
 export const extractControls = (formFields) => {
     const controlsMap = new Map();
-    for (let field in formFields) {
-        control = extractControl(field);
+    for (let field of formFields) {
+        let control = extractControl(field);
         controlsMap.set(field.id, control[field.id]);
     }
-
+    console.log(Object.fromEntries(controlsMap))
     return Object.fromEntries(controlsMap);
 }
 
@@ -19,7 +19,7 @@ const extractControl = (field) => {
                         label: field.label
                     },
                     value: '',
-                    validation: extractProperties(field.constraints),
+                    validation: extractConstraints(field.validationConstraints),
                     error: false,
                     errorMessage: '',
                 }
@@ -31,10 +31,10 @@ const extractControl = (field) => {
                     elementType: 'textarea',
                     elementConfig: {
                         label: field.label,
-                        ...extractProperties(field.properties),
+                        ...field.properties,
                     },
                     value: '',
-                    validation: extractProperties(field.constraints),
+                    validation: extractConstraints(field.validationConstraints),
                     error: false,
                     errorMessage: '',
                 }
@@ -49,7 +49,7 @@ const extractControl = (field) => {
                         label: field.label,
                     },
                     value: '',
-                    validation: extractProperties(field.constraints),
+                    validation: extractConstraints(field.validationConstraints),
                     error: false,
                     errorMessage: '',
                 }
@@ -61,10 +61,10 @@ const extractControl = (field) => {
                     elementType: 'input',
                     elementConfig: {
                         label: field.label,                        
-                        ...extractProperties(field.properties),
+                        ...extractConstraints(field.properties),
                     },
                     value: '',
-                    validation: extractProperties(field.constraints),
+                    validation: extractConstraints(field.validationConstraints),
                     error: false,
                     errorMessage: '',
                 }
@@ -73,10 +73,10 @@ const extractControl = (field) => {
     return control;
 }
 
-const extractProperties = (properties) =>  {
+const extractConstraints = (validationConstraints) =>  {
     let map = new Map();
-    for (let property in properties) {
-        map.set(property.name, property.value);
+    for (let validationConstraint in validationConstraints) {
+        map.set(validationConstraint.name, validationConstraint.configuration);
     }
 
     return Object.fromEntries(map);
