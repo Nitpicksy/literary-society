@@ -40,7 +40,6 @@ const SignUp = (props) => {
         for (let [key, data] of Object.entries(controls)) {
             array.push({fieldId: key, fieldValue: data.value});
         }
-        console.log(array)
         props.onSignUp(array,props.taskId);
     }
 

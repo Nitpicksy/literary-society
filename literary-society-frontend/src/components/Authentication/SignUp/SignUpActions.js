@@ -4,12 +4,12 @@ import axios from '../../../axios-endpoint';
 import * as actionTypes from './SignUpActionTypes';
 
 
-export const fetchFormSuccess = (formFields,processInstanceId,taskId ) => {
+export const fetchFormSuccess = (formFields, processInstanceId, taskId) => {
     return {
         type: actionTypes.FETCH_FORM_SUCCESS,
         formFields: formFields,
-        processInstanceId:processInstanceId,
-        taskId:taskId
+        processInstanceId: processInstanceId,
+        taskId: taskId
     };
 };
 
@@ -25,13 +25,13 @@ export const fetchForm = () => {
 
         axios.get('/readers/start-registration')
             .then(response => {
-                dispatch(fetchFormSuccess(response.data.formFields,response.data.processInstanceId,response.data.taskId));
+                dispatch(fetchFormSuccess(response.data.formFields, response.data.processInstanceId, response.data.taskId));
             })
             .catch(err => {
-                if(err.response){
-                    dispatch(fetchFormFail(err.response.data.error)); 
+                if (err.response) {
+                    dispatch(fetchFormFail(err.response.data.error));
                 }
-                
+
             })
     };
 };
@@ -57,18 +57,26 @@ export const signUpFail = (error) => {
 };
 
 
-export const signUp = (signUpData,taskId) => {
+export const signUp = (signUpData, taskId) => {
     return dispatch => {
         dispatch(signUpStart());
-        axios.post('/process/'.concat(taskId),signUpData)
-            .then(() => {
+        // axios.post('/process/'.concat(taskId),signUpData)
+        //     .then(() => {
+        //         dispatch(signUpSuccess());
+        //         const history = useHistory();
+        //         history.push('/');
+        //     })
+        //     .catch(err => {
+        //         console.log("ajk")
+        //         // dispatch(signUpFail(err.response.data.error)); 
+        //     })
+        axios.post('/process/'.concat(taskId), signUpData)
+            .then((response) => {
                 dispatch(signUpSuccess());
-                const history = useHistory();
-                history.push('/');
-            })
-            .catch(err => {
-                console.log("ajk")
-                // dispatch(signUpFail(err.response.data.error)); 
+                console.log("Success")
+            }, (err) => {
+                console.log("Failed")
+                dispatch(signUpFail(err.response.data.error));
             })
     };
 };
