@@ -137,13 +137,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
 
-    private String getHashValue(String password) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-1");
-        digest.reset();
-        digest.update(password.getBytes(StandardCharsets.UTF_8));
-        return String.format("%040x", new BigInteger(1, digest.digest()));
-    }
-
     private String getTokenHash(String token) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-512");
         digest.reset();
@@ -158,6 +151,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         return xfHeader.split(",")[0];
     }
+
 
     @Autowired
     public AuthenticationServiceImpl(TokenUtils tokenUtils, AuthenticationManager authenticationManager,

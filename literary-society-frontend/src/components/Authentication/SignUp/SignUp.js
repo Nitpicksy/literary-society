@@ -32,6 +32,18 @@ const SignUp = (props) => {
        
     }, [formFields]);
 
+    const submitHander = (event) => {
+        event.preventDefault();
+
+        let array = new Array();
+
+        for (let [key, data] of Object.entries(controls)) {
+            array.push({fieldId: key, fieldValue: data.value});
+        }
+        console.log(array)
+        props.onSignUp(array,props.taskId);
+    }
+
     if(controls){
         form = <Form controls={controls} setControls={setControls} setFormIsValid= {setFormIsValid}/>;
     }
@@ -44,7 +56,7 @@ const SignUp = (props) => {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h4">Sign up</Typography>
-                <form className={classes.form} noValidate >
+                <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
                          disabled={!formIsValid} >Sign up</Button>
@@ -74,7 +86,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchForm: () => dispatch(actions.fetchForm()),
-
+        onSignUp: (signUpData,taskId) => dispatch(actions.signUp(signUpData,taskId))
     }
 };
 

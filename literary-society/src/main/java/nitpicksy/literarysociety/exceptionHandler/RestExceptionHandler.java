@@ -34,6 +34,12 @@ public class RestExceptionHandler  extends ResponseEntityExceptionHandler {
         ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
         return buildResponseEntity(error);
     }
+
+    @ExceptionHandler(InvalidDataException.class)
+    protected ResponseEntity<Object> handleInvalidDataException(InvalidDataException ex) {
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildResponseEntity(error);
+    }
 //
 //    @ExceptionHandler(InvalidPasswordDataException.class)
 //    protected ResponseEntity<Object> handleInvalidPasswordDataException(InvalidPasswordDataException ex) {

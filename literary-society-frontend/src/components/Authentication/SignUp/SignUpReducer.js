@@ -2,8 +2,8 @@ import * as actionTypes from './SignUpActionTypes';
 
 const initialState = {
     formFields: null,
-    processInstanceId:null,
-    taskId:null
+    processInstanceId: null,
+    taskId: null
 }
 
 const reducer = (state = initialState, action) => {
@@ -17,6 +17,21 @@ const reducer = (state = initialState, action) => {
                 error: null
             };
         case actionTypes.FETCH_FORM_FAIL:
+            return {
+                ...state,
+                error: action.error
+            };
+        case actionTypes.SIGN_UP_START:
+            return {
+                ...state,
+                error: null
+            };
+        case actionTypes.SIGN_UP_SUCCESS:
+            return {
+                ...state,
+                error: null
+            };
+        case actionTypes.SIGN_UP_FAIL:
             return {
                 ...state,
                 error: action.error

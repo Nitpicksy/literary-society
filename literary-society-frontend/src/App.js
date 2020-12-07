@@ -33,7 +33,7 @@ const App = props => {
 
   return (
     <div>
-        <CustomToolbar/>
+        {/* <CustomToolbar/> */}
         <Suspense fallback={<p>Loading...</p>}>{routes}</Suspense>
         <main>
           {props.children}

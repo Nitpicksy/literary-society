@@ -1,3 +1,4 @@
 export { 
-    fetchForm
+    fetchForm,
+    signUp
  } from './SignUpActions';
