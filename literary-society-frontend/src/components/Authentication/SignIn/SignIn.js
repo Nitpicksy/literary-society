@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 
 const SignIn = (props) => {
     const classes = useStyles();
+    const [formIsValid,setFormIsValid] = useState(false);
 
     const [controls, setControls] = useState({
         username: {
@@ -26,6 +27,8 @@ const SignIn = (props) => {
                 required: true,
                 isUsername: true,
             },
+            valid: false,
+            touched: false,
             error: false,
             errorMessage: '',
         },
@@ -38,10 +41,15 @@ const SignIn = (props) => {
             value: '',
             validation: {
                 required: true,
-                isPassword: true
+                pattern: '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[_#?!@$%^&*-.,:;]).{10,64}$'
             },
+            valid: false,
+            touched: false,
             error: false,
             errorMessage: '',
+            additionalData: {
+                errorMessage: 'Password should contain between 10 and 64 characters including 1 number, 1 special character, 1 lowercase and 1 uppercase letter.'
+            }
         },
         // textarea: {
         //     elementType: 'textarea',
@@ -101,9 +109,9 @@ const SignIn = (props) => {
                 </Avatar>
                 <Typography component="h1" variant="h4">Sign in</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
-                    <Form controls={controls} setControls={setControls} />
+                    <Form controls={controls} setControls={setControls} setFormIsValid= {setFormIsValid}/>
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
-                        onClick={submitHander}>Sign In</Button>
+                        onClick={submitHander} disabled={!formIsValid}>Sign In</Button>
                     <Grid container>
                         <Grid item xs>
                             <Link href="#" variant="body2">Forgot password?</Link>

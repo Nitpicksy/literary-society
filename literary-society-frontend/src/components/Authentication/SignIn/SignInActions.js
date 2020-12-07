@@ -55,3 +55,10 @@ export const signIn = (username,password) => {
             })
     };
 };
+
+export const logout = () => {
+    localStorage.removeItem('userTokenState');
+    return {
+        type: actionTypes.LOGOUT
+    };
+}
