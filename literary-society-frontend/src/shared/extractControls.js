@@ -4,7 +4,6 @@ export const extractControls = (formFields) => {
         let control = extractControl(field);
         controlsMap.set(field.id, control[field.id]);
     }
-    console.log(Object.fromEntries(controlsMap))
     return Object.fromEntries(controlsMap);
 }
 
@@ -16,12 +15,15 @@ const extractControl = (field) => {
                 [field.id]: {
                     elementType: 'input',
                     elementConfig: {
-                        label: field.label
+                        label: field.label,
                     },
                     value: '',
                     validation: extractConstraints(field.validationConstraints),
                     error: false,
                     errorMessage: '',
+                    additionalData: {
+                        ...field.properties
+                    }
                 }
             };
             break;
@@ -31,12 +33,15 @@ const extractControl = (field) => {
                     elementType: 'textarea',
                     elementConfig: {
                         label: field.label,
-                        ...field.properties,
+                        rows: field.properties.rows
                     },
                     value: '',
                     validation: extractConstraints(field.validationConstraints),
                     error: false,
                     errorMessage: '',
+                    additionalData: {
+                        ...field.properties
+                    }
                 }
             };
             break;
@@ -47,11 +52,31 @@ const extractControl = (field) => {
                     elementConfig: {
                         type: 'password',
                         label: field.label,
+                        ...field.properties,
                     },
                     value: '',
                     validation: extractConstraints(field.validationConstraints),
                     error: false,
                     errorMessage: '',
+                    additionalData: {
+                        ...field.properties
+                    }
+                }
+            };
+            break;
+        case ('boolean'):
+            let defaultValue = false;
+            if(field.defaultValue){
+                defaultValue = field.defaultValue;
+            }
+            control = {
+                [field.id]: {
+                    elementType: 'checkbox',
+                    elementConfig: {
+                        label: field.label,
+                        ...field.properties,
+                    },
+                    value: defaultValue,
                 }
             };
             break;
@@ -60,24 +85,27 @@ const extractControl = (field) => {
                 [field.id]: {
                     elementType: 'input',
                     elementConfig: {
-                        label: field.label,                        
+                        label: field.label,
                         ...extractConstraints(field.properties),
+                        ...field.properties,
                     },
                     value: '',
                     validation: extractConstraints(field.validationConstraints),
                     error: false,
                     errorMessage: '',
+                    additionalData: {
+                        ...field.properties
+                    }
                 }
             };
     }
     return control;
 }
 
-const extractConstraints = (validationConstraints) =>  {
+const extractConstraints = (validationConstraints) => {
     let map = new Map();
-    for (let validationConstraint in validationConstraints) {
-        map.set(validationConstraint.name, validationConstraint.configuration);
+    for (let i in validationConstraints) {
+        map.set(validationConstraints[i].name, validationConstraints[i].configuration);
     }
-
     return Object.fromEntries(map);
 }

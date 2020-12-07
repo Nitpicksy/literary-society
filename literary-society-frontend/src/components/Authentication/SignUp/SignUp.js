@@ -15,23 +15,26 @@ import { connect } from 'react-redux';
 
 const SignUp = (props) => {
     const classes = useStyles();
+    const {formFields,fetchForm} = props;
 
     let form = null;
     let [controls, setControls] = useState(null);
 
     useEffect(() => {
-        props.fetchForm();
-    }, []);
+        fetchForm();
+    }, [fetchForm]);
 
     useEffect(() => {
-
-        if(props.formFields){
-            setControls(extractControls(props.formFields));
-
-            form = <Form controls={controls} setControls={setControls} />;
+        if(formFields){
+            let extractedControls = extractControls(formFields)
+            setControls(extractedControls);
         }
        
-    }, [props.formFields]);
+    }, [formFields]);
+
+    if(controls){
+        form = <Form controls={controls} setControls={setControls} />;
+    }
 
     return (
         <Container component="main" maxWidth="xs">
