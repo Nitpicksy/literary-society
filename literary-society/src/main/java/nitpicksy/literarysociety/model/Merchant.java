@@ -15,7 +15,7 @@ import javax.persistence.Entity;
 @DiscriminatorValue("MERCHANT")
 public class Merchant extends User{
 
-    @Column(nullable = false)
+    @Column
     private String name;
 
     @Column

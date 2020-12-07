@@ -14,7 +14,7 @@ import java.util.Set;
 @DiscriminatorValue("READER")
 public class Reader extends User{
 
-    @Column(nullable = false)
+    @Column
     private boolean isBetaReader;
 
     @ManyToMany(fetch = FetchType.LAZY)
