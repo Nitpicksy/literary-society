@@ -16,9 +16,9 @@ import { connect } from 'react-redux';
 const SignUp = (props) => {
     const classes = useStyles();
     const {formFields,fetchForm} = props;
-
     let form = null;
     let [controls, setControls] = useState(null);
+    const [formIsValid,setFormIsValid] = useState(false);
 
     useEffect(() => {
         fetchForm();
@@ -33,7 +33,7 @@ const SignUp = (props) => {
     }, [formFields]);
 
     if(controls){
-        form = <Form controls={controls} setControls={setControls} />;
+        form = <Form controls={controls} setControls={setControls} setFormIsValid= {setFormIsValid}/>;
     }
 
     return (
@@ -47,7 +47,7 @@ const SignUp = (props) => {
                 <form className={classes.form} noValidate >
                     {form}
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
-                        >Sign up</Button>
+                         disabled={!formIsValid} >Sign up</Button>
                     <Grid container>
                         <Grid item xs>
                             <Link href="#" variant="body2">Forgot password?</Link>

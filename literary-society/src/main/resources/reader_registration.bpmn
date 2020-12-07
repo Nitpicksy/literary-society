@@ -29,7 +29,10 @@
               <camunda:constraint name="pattern" config="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[_#?!@$%^&#38;*-.,:;]).{10,64}$" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="firstName" label="First Name" type="string">
+          <camunda:formField id="firstName" label="First Name" type="textarea">
+            <camunda:properties>
+              <camunda:property id="rows" value="5" />
+            </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" config="true" />
             </camunda:validation>
@@ -39,10 +42,12 @@
               <camunda:constraint name="required" config="true" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="city" label="City" type="string">
+          <camunda:formField id="city" label="City" type="enum">
             <camunda:validation>
               <camunda:constraint name="required" config="true" />
             </camunda:validation>
+            <camunda:value id="stavka1" name="Stavka1" />
+            <camunda:value id="stavka2" name="Stavka2" />
           </camunda:formField>
           <camunda:formField id="country" label="Country" type="string">
             <camunda:validation>

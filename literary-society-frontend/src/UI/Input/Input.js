@@ -19,16 +19,17 @@ const input = (props) => {
                 multiline />;
             break;
         case ('select'):
+           
             inputElement = <TextField variant="outlined" margin="normal" fullWidth
                 label={props.elementConfig.label} value={props.value} onChange={props.changed}
-                select >
+                select>
                 {props.elementConfig.options.map(option => (
                     <MenuItem key={option.value} value={option.value}>{option.displayValue}</MenuItem>
                 ))}
             </TextField>;
             break;
         case ('checkbox'):
-            console.log(props.value)
+           
             inputElement = <FormControlLabel label={props.elementConfig.label}
                 control={
                     <Checkbox  onChange={props.changed} />

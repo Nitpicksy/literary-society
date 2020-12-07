@@ -23,9 +23,17 @@ const Form = (props) => {
                 value: value,
                 error: !validationData.isValid,
                 errorMessage: validationData.errorMessage,
+                touched:true, 
+                valid: validationData.isValid
             }
         };
+
+        let formIsValid = true;
+        for (let inputIdentifiers in updatedControls) {
+            formIsValid = updatedControls[inputIdentifiers].valid && formIsValid;
+        }
         props.setControls(updatedControls);
+        props.setFormIsValid(formIsValid);
     }
 
 

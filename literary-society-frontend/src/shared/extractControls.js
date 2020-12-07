@@ -19,6 +19,8 @@ const extractControl = (field) => {
                     },
                     value: '',
                     validation: extractConstraints(field.validationConstraints),
+                    valid: false,
+                    touched: false,
                     error: false,
                     errorMessage: '',
                     additionalData: {
@@ -37,6 +39,8 @@ const extractControl = (field) => {
                     },
                     value: '',
                     validation: extractConstraints(field.validationConstraints),
+                    valid: false,
+                    touched: false,
                     error: false,
                     errorMessage: '',
                     additionalData: {
@@ -52,10 +56,11 @@ const extractControl = (field) => {
                     elementConfig: {
                         type: 'password',
                         label: field.label,
-                        ...field.properties,
                     },
                     value: '',
                     validation: extractConstraints(field.validationConstraints),
+                    valid: false,
+                    touched: false,
                     error: false,
                     errorMessage: '',
                     additionalData: {
@@ -66,17 +71,38 @@ const extractControl = (field) => {
             break;
         case ('boolean'):
             let defaultValue = false;
-            if(field.defaultValue){
+            if (field.defaultValue) {
                 defaultValue = field.defaultValue;
             }
             control = {
                 [field.id]: {
                     elementType: 'checkbox',
                     elementConfig: {
-                        label: field.label,
-                        ...field.properties,
+                        label: field.label
                     },
                     value: defaultValue,
+                    error: false,
+                    valid: true
+                }
+            };
+            break;
+        case ('enum'):
+            control = {
+                [field.id]: {
+                    elementType: 'select',
+                    elementConfig: {
+                        label: field.label,
+                        options: extractOptions(field.type.values),
+                    },
+                    value: '',
+                    validation: extractConstraints(field.validationConstraints),
+                    valid: false,
+                    touched: false,
+                    error: false,
+                    errorMessage: '',
+                    additionalData: {
+                        ...field.properties
+                    }
                 }
             };
             break;
@@ -91,6 +117,8 @@ const extractControl = (field) => {
                     },
                     value: '',
                     validation: extractConstraints(field.validationConstraints),
+                    valid: false,
+                    touched: false,
                     error: false,
                     errorMessage: '',
                     additionalData: {
@@ -107,5 +135,15 @@ const extractConstraints = (validationConstraints) => {
     for (let i in validationConstraints) {
         map.set(validationConstraints[i].name, validationConstraints[i].configuration);
     }
+    
     return Object.fromEntries(map);
+}
+
+const extractOptions = (options) => {
+    let array = [];
+    for (let [key, value] of Object.entries(options)) {
+        array.push({value: key, displayValue: value});
+    }
+
+    return array;
 }

@@ -24,12 +24,13 @@ export const fetchForm = () => {
 
         axios.get('/readers/start-registration')
             .then(response => {
-                console.log(response)
                 dispatch(fetchFormSuccess(response.data.formFields,response.data.processInstanceId,response.data.taskId));
             })
             .catch(err => {
-                console.log(err)
-                dispatch(fetchFormFail(err.response.data.error)); 
+                if(err.response){
+                    dispatch(fetchFormFail(err.response.data.error)); 
+                }
+                
             })
     };
 };
