@@ -5,12 +5,12 @@ import * as actions from './SignInExport';
 
 const Logout = props => {
     const {onLogout} = props;
-
+    
     useEffect(() => {
         onLogout();
     }, [onLogout]);
 
-    return <Redirect to="/" />;
+    return <Redirect to="/sign-in"/>;
 }
 
 const mapDispatchToProps = dispatch => {

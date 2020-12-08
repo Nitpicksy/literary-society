@@ -29,7 +29,7 @@ export const fetchForm = () => {
                 if (err.response) {
                     dispatch(fetchFormFail(err.response.data.message));
                     toastr.error('Sign up',err.response.data.message);
-                }{
+                }else {
                     toastr.error('Sign up','Something goes wrong');
                 }
 

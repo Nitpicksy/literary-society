@@ -27,7 +27,8 @@ export const signOut = () => {
     localStorage.removeItem('expiresIn');
     localStorage.removeItem('refreshToken');
     return {
-        type: actionTypes.SIGN_OUT
+        type: actionTypes.SIGN_OUT,
+        path: '/sign-in'
     };
 }
 
@@ -112,5 +113,24 @@ export const refreshToken = (history) => {
                 localStorage.removeItem('refreshToken');
                 dispatch(refreshTokenFail(err.response.data.message));
             })
+    };
+};
+
+
+export const authCheckState = () => {
+    return  dispatch => {
+        const accessToken = localStorage.getItem('accessToken');
+        const expiresIn = localStorage.getItem('expiresIn');
+        const refreshToken = localStorage.getItem('refreshToken');
+        if(!accessToken) {
+            dispatch(signOut());
+        }else {
+            const userTokenState = {
+                accessToken: accessToken,
+                expiresIn: expiresIn,
+                refreshToken:refreshToken
+            };
+            dispatch(signInSuccess(userTokenState));   
+        }
     };
 };
