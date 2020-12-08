@@ -1,7 +1,6 @@
 import axios from '../../../axios-endpoint';
-
+import {toastr} from 'react-redux-toastr';
 import * as actionTypes from './SignUpActionTypes';
-
 
 export const fetchFormSuccess = (formFields, processInstanceId, taskId) => {
     return {
@@ -29,6 +28,9 @@ export const fetchForm = () => {
             .catch(err => {
                 if (err.response) {
                     dispatch(fetchFormFail(err.response.data.message));
+                    toastr.error('Sign up',err.response.data.message);
+                }{
+                    toastr.error('Sign up','Something goes wrong');
                 }
 
             })
@@ -71,8 +73,10 @@ export const signUp = (signUpData, taskId) => {
         axios.post('/process/'.concat(taskId), signUpData)
             .then(() => {
                 dispatch(signUpSuccess());
+                toastr.success('Sign up', 'Success');
             }, (err) => {
-                dispatch(signUpFail(err.response.data.error));
+                toastr.error('Sign up',err.response.data.message);
+                dispatch(signUpFail(err.response.data.message));
             })
     };
 };

@@ -1,5 +1,5 @@
 import axios from '../../../axios-endpoint';
-
+import {toastr} from 'react-redux-toastr';
 import * as actionTypes from './ResetPasswordActionTypes';
 
 export const requestTokenStart = () => {
@@ -33,6 +33,7 @@ export const requestToken = (username) => {
                 dispatch(requestTokenSuccess());
             })
             .catch(err => {
+                toastr.error('Reset password',err.response.data.message);
                 dispatch(requestTokenFail(err.response.data.message));
             })
     };
@@ -68,10 +69,12 @@ export const resetPassword = (token, newPassword,repeatedPassword,history) => {
 
         axios.put('/auth/reset-password?t='+token, authData)
             .then(response => {
-                history.push('/sign-in')
+                history.push('/sign-in');
+                toastr.success('Reset password', 'Success');
                 dispatch(resetPasswordSuccess());
             })
             .catch(err => {
+                toastr.error('Reset password',err.response.data.message);
                 dispatch(resetPasswordFail(err.response.data.message));
             })
     };

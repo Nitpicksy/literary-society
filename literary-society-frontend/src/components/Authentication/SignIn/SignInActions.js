@@ -1,5 +1,5 @@
 import axios from '../../../axios-endpoint';
-
+import {toastr} from 'react-redux-toastr';
 import * as actionTypes from './SignInActionTypes';
 
 export const signInStart = () => {
@@ -48,20 +48,22 @@ export const signIn = (username, password) => {
 
         axios.post('/auth/sign-in', authData)
             .then(response => {
-                console.log("success")
                 if (response.data) {
                     localStorage.setItem('accessToken', response.data.accessToken);
                     localStorage.setItem('expiresIn', response.data.expiresIn);
                     localStorage.setItem('refreshToken', response.data.refreshToken);
                     dispatch(setRedirectPath('/'))
                     dispatch(signInSuccess(response.data));
+                    toastr.success('Login', 'Success');
                 }
             })
             .catch(err => {
                 if (err.response.status === 406) {
                     dispatch(setRedirectPath('/change-password'))
                     dispatch(signInFail("You have to change received generic password on first attempt to login."));
+                    toastr.error('Login','You have to change received generic password on first attempt to login.');
                 } else {
+                    toastr.error('Login',err.response.data.message);
                     dispatch(signInFail(err.response.data.message));
                 }
             })
