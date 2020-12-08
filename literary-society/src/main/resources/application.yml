@@ -1,5 +1,15 @@
 server:
   port: 8090
+  ssl:
+    enabled: true
+    key-alias: ${KEYSTORE_ALIAS:literary}
+    key-store: ${KEYSTORE:classpath:literary.keystore.p12}
+    key-store-password: ${KEYSTORE_PASSWORD:password}
+    key-store-type: ${KEYSTORE_TYPE:PKCS12}
+    trust-store: ${TRUSTSTORE:classpath:literary.truststore.p12}
+    trust-store-password: ${TRUSTSTORE_PASSWORD:password}
+    trust-store-type: ${TRUSTSTORE_TYPE:PKCS12}
+    client-auth: need
 
 spring:
   application:
@@ -34,6 +44,15 @@ eureka:
       healthcheck:
         enabled: true
     fetchRegistry: true
+  instance:
+    nonSecurePortEnabled: false
+    securePortEnabled: true
+    securePort: ${server.port}
+    homePageUrl: https://${eureka.instance.hostname}:${server.port}/
+    secureVirtualHostName: ${spring.application.name}
+
+ribbon:
+  IsSecure: true
 
 TOKEN_UTILS_APP_NAME: literary-society
 TOKEN_UTILS_SECRET: Nitpicsky

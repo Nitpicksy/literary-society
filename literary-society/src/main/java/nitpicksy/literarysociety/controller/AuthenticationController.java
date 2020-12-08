@@ -1,4 +1,5 @@
 package nitpicksy.literarysociety.controller;
+
 import nitpicksy.literarysociety.dto.request.ChangePasswordDTO;
 import nitpicksy.literarysociety.dto.request.RequestTokenDTO;
 import nitpicksy.literarysociety.dto.request.ResetPasswordDTO;
@@ -11,6 +12,7 @@ import nitpicksy.literarysociety.security.JwtAuthenticationRequest;
 import nitpicksy.literarysociety.service.AuthenticationService;
 import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
+import nitpicksy.literarysociety.serviceimpl.TestServiceImpl;
 import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
@@ -41,7 +43,9 @@ public class AuthenticationController {
 
     private IPAddressProvider ipAddressProvider;
 
-    @PostMapping(value = "/sign-in",consumes = MediaType.APPLICATION_JSON_VALUE)
+    private TestServiceImpl testService;
+
+    @PostMapping(value = "/sign-in", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserTokenState> login(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest) {
         try {
             UserTokenState userTokenState = authenticationService.login(authenticationRequest);
@@ -117,11 +121,17 @@ public class AuthenticationController {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(userService.refreshAuthenticationToken(request));
     }
 
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        return new ResponseEntity<>(testService.healthCheck(), HttpStatus.OK);
+    }
+
     @Autowired
-    public AuthenticationController(UserService userService, AuthenticationService authenticationService, LogService logService, IPAddressProvider ipAddressProvider) {
+    public AuthenticationController(UserService userService, AuthenticationService authenticationService, LogService logService, IPAddressProvider ipAddressProvider, TestServiceImpl testService) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.logService = logService;
         this.ipAddressProvider = ipAddressProvider;
+        this.testService = testService;
     }
 }

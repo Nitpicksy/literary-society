@@ -1,12 +1,21 @@
 server:
   port: 8080
+  ssl:
+    enabled: true
+    key-alias: ${KEYSTORE_ALIAS:zuul}
+    key-store: ${KEYSTORE:classpath:zuul.keystore.p12}
+    key-store-password: ${KEYSTORE_PASSWORD:password}
+    key-store-type: ${KEYSTORE_TYPE:PKCS12}
+    trust-store: ${TRUSTSTORE:classpath:zuul.truststore.p12}
+    trust-store-password: ${TRUSTSTORE_PASSWORD:password}
+    trust-store-type: ${TRUSTSTORE_TYPE:PKCS12}
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://eureka-peer1:8761/eureka,http://eureka-peer2:8762/eureka
+      defaultZone: http://localhost:8761/eureka
       healthcheck-enabled: true
 
 zuul:
@@ -15,30 +24,35 @@ zuul:
       path: /payment-gateway/**
     literary-society:
       path: /literary-society/**
-      url: http://localhost:8090
+      url: https://localhost:8090
     bank:
       path: /bank/**
       url: http://localhost:8100
     pcc:
       path: /pcc/**
       url: http://localhost:8101
-#    paypal-service:
-#      path: /paypal-service/**
-#      url: http://localhost:8200
+    paypal-service:
+      path: /paypal-service/**
+      url: http://localhost:8200
     bitcoin-service:
       path: /bitcoin-service/**
       url: http://localhost:8300
   host:
     connect-timeout-millis: 5000000
     socket-timeout-millis: 5000000
-#  prefix: /api
+  #  prefix: /api
   ignored-services: '*'
 
 ribbon:
   eureka:
     enabled: true
+  IsSecure: true
   ReadTimeout: 60000
   ConnectTimeout: 6000
+
+#literary-society:
+#  ribbon:
+#    listOfServers: https://localhost:8090
 
 hystrix:
   command:
