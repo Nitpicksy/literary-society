@@ -35,7 +35,7 @@ const SignUp = (props) => {
     const submitHander = (event) => {
         event.preventDefault();
 
-        let array = new Array();
+        let array = [];
 
         for (let [key, data] of Object.entries(controls)) {
             array.push({fieldId: key, fieldValue: data.value});

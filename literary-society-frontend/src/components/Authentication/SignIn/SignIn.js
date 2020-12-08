@@ -11,8 +11,13 @@ import Container from '@material-ui/core/Container';
 import { useStyles } from './SignInStyles';
 import Form from '../../../UI/Form/Form';
 import { connect } from 'react-redux';
+import { Redirect, useHistory } from 'react-router';
+import responseInterceptor from '../../../responseInterceptor';
 
 const SignIn = (props) => {
+    const history = useHistory();
+    responseInterceptor.setupInterceptor(history);
+    
     const classes = useStyles();
     const [formIsValid,setFormIsValid] = useState(false);
 
@@ -95,13 +100,15 @@ const SignIn = (props) => {
         props.onSignIn(controls.username.value, controls.password.value);
     }
 
-    // let authredirect = null;
-    // if (props.isAuthenticated) {
-    //     authredirect = <Redirect to={props.authRedirect} />
-    // }
+    let authredirect = null;
+    if (props.authRedirectPath) {
+        console.log(props.authRedirectPath)
+        authredirect = <Redirect to={props.authRedirectPath} />
+    }
 
     return (
         <Container component="main" maxWidth="xs">
+            {authredirect}
             <CssBaseline />
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
@@ -114,10 +121,10 @@ const SignIn = (props) => {
                         onClick={submitHander} disabled={!formIsValid}>Sign In</Button>
                     <Grid container>
                         <Grid item xs>
-                            <Link href="#" variant="body2">Forgot password?</Link>
+                            <Link href="/forgot-password" variant="body2">Forgot password?</Link>
                         </Grid>
                         <Grid item>
-                            <Link href="#" variant="body2">Don't have an account? Sign Up</Link>
+                            <Link href="/sign-up" variant="body2">Don't have an account? Sign Up</Link>
                         </Grid>
                     </Grid>
                 </form>
@@ -126,10 +133,17 @@ const SignIn = (props) => {
     );
 };
 
-const mapDispatchToProps = dispatch => {
+const mapStateToProps = state => {
     return {
-        onSignIn: (email, password) => dispatch(actions.signIn(email, password))
+        isAuthenticated: state.signIn.isAuthenticated,
+        authRedirectPath: state.signIn.authRedirectPath
     }
 };
 
-export default connect(null, mapDispatchToProps)(SignIn);
+const mapDispatchToProps = dispatch => {
+    return {
+        onSignIn: (username, password) => dispatch(actions.signIn(username, password))
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

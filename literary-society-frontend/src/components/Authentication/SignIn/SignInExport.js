@@ -1,6 +1,5 @@
 export {
     signIn,
     signOut, 
-    setRedirectPath,
-    logout
+    setRedirectPath
  } from './SignInActions';

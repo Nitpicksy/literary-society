@@ -1,4 +1,3 @@
-import { useHistory } from 'react-router';
 import axios from '../../../axios-endpoint';
 
 import * as actionTypes from './SignUpActionTypes';
@@ -29,7 +28,7 @@ export const fetchForm = () => {
             })
             .catch(err => {
                 if (err.response) {
-                    dispatch(fetchFormFail(err.response.data.error));
+                    dispatch(fetchFormFail(err.response.data.message));
                 }
 
             })
@@ -71,7 +70,7 @@ export const signUp = (signUpData, taskId) => {
         //         // dispatch(signUpFail(err.response.data.error)); 
         //     })
         axios.post('/process/'.concat(taskId), signUpData)
-            .then((response) => {
+            .then(() => {
                 dispatch(signUpSuccess());
                 console.log("Success")
             }, (err) => {

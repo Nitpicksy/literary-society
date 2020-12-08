@@ -24,7 +24,9 @@ export const signInFail = (error) => {
 };
 
 export const signOut = () => {
-    localStorage.removeItem('userTokenState');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('expiresIn');
+    localStorage.removeItem('refreshToken');
     return {
         type: actionTypes.SIGN_OUT
     };
@@ -32,33 +34,37 @@ export const signOut = () => {
 
 export const setRedirectPath = (path) => {
     return {
-        type: actionTypes.SET_SIGN_IN_REDIRECT_PATH, 
-        path:path
+        type: actionTypes.SET_SIGN_IN_REDIRECT_PATH,
+        path: path
     };
 };
 
-export const signIn = (username,password) => {
+export const signIn = (username, password) => {
     return dispatch => {
         dispatch(signInStart());
         const authData = {
-            username:username, 
-            password:password
+            username: username,
+            password: password
         };
 
-        axios.post('/auth/sign-in',authData)
+        axios.post('/auth/sign-in', authData)
             .then(response => {
-                localStorage.setItem('userTokenState',response.data);
-                dispatch(signInSuccess(response.data));
+                console.log("success")
+                if(response.data){
+                    localStorage.setItem('accessToken', response.data.accessToken);
+                    localStorage.setItem('expiresIn', response.data.expiresIn);
+                    localStorage.setItem('refreshToken', response.data.refreshToken);
+                    dispatch(setRedirectPath('/'))
+                    dispatch(signInSuccess(response.data));
+                }
             })
             .catch(err => {
-                dispatch(signInFail(err.response.data.error)); 
+                if (err.response.status === 406) {
+                    dispatch(setRedirectPath('/change-password'))
+                    dispatch(signInFail("You have to change received generic password on first attempt to login."));
+                } else {
+                    dispatch(signInFail(err.response.data.message));
+                }
             })
     };
 };
-
-export const logout = () => {
-    localStorage.removeItem('userTokenState');
-    return {
-        type: actionTypes.LOGOUT
-    };
-}
