@@ -66,15 +66,12 @@ export const signUp = (signUpData, taskId) => {
         //         history.push('/');
         //     })
         //     .catch(err => {
-        //         console.log("ajk")
         //         // dispatch(signUpFail(err.response.data.error)); 
         //     })
         axios.post('/process/'.concat(taskId), signUpData)
             .then(() => {
                 dispatch(signUpSuccess());
-                console.log("Success")
             }, (err) => {
-                console.log("Failed")
                 dispatch(signUpFail(err.response.data.error));
             })
     };
