@@ -36,6 +36,7 @@ export const changePassword = (username, oldPassword,newPassword,repeatedPasswor
 
         axios.put('/auth', authData)
             .then((response) => {
+                console.log("Success")
                 history.push('/sign-in')
                 dispatch(changePasswordSuccess());
             })

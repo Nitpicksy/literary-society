@@ -47,8 +47,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .and()
-                .authorizeRequests().antMatchers("/api/readers/**").permitAll()
-                .and()
+//                .authorizeRequests().antMatchers("/api/readers/**").permitAll()
+//                .and()
                 .authorizeRequests().antMatchers("/api/process/**").permitAll()
                 .anyRequest().authenticated().and()
 

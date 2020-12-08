@@ -6,7 +6,8 @@ const initialState = {
     refreshToken: null,
     error: null,
     authRedirectPath: null,
-    isAuthenticated: false
+    isAuthenticated: false,
+    refreshTokenRequestSent: false
 }
 
 const reducer = (state = initialState, action) => {
@@ -43,6 +44,24 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 authRedirectPath: action.path
+            };
+        case actionTypes.REFRESH_TOKEN_START:
+            return {
+                ...state,
+                refreshTokenRequestSent: true
+            };
+        case actionTypes.REFRESH_TOKEN_SUCCESS:
+            return {
+                ...state,
+                accessToken: action.userTokenState.accessToken,
+                expiresIn: action.userTokenState.expiresIn,
+                refreshToken: action.userTokenState.refreshToken,
+                refreshTokenRequestSent: false
+            };
+        case actionTypes.REFRESH_TOKEN_FAIL:
+            return {
+                ...state,
+                refreshTokenRequestSent: false
             };
         default:
             return state;

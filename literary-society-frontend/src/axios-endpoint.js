@@ -9,16 +9,16 @@ instance.interceptors.request.use(
     async request => {
         if (!request.url.includes("/auth")) {
             const accessToken = localStorage.getItem("accessToken");
+            request.headers = {
+                Authorization: `Bearer ${accessToken}`
+            }
+        }else {
             const refreshToken = localStorage.getItem("refreshToken");
-            if (accessToken && refreshToken) {
+            if (refreshToken) {
                 if (request.url.includes("refresh")) {
+                    console.log("refreshToken ddfff")
                     request.headers = {
                         Authorization: `Bearer ${refreshToken}`
-                    }
-                } else {
-                    console.log("Authorization")
-                    request.headers = {
-                        Authorization: `Bearer ${accessToken}`
                     }
                 }
             }

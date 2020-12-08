@@ -59,7 +59,6 @@ export const resetPasswordFail = (error) => {
 };
 
 export const resetPassword = (token, newPassword,repeatedPassword,history) => {
-    console.log(token)
     return dispatch => {
         dispatch(resetPasswordStart());
         const authData = {

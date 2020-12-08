@@ -61,7 +61,7 @@ const ResetPasswordEnterNewPass = (props) => {
     useEffect(() => {
         const params = new URLSearchParams(props.location.search);
         setToken(params.get('t'));
-    }, []);
+    }, [props.location.search]);
 
     const submitHander = (event) => {
         event.preventDefault();

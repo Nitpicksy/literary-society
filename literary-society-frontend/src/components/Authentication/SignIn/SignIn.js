@@ -16,7 +16,7 @@ import responseInterceptor from '../../../responseInterceptor';
 
 const SignIn = (props) => {
     const history = useHistory();
-    responseInterceptor.setupInterceptor(history);
+    responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent,props.onRefreshToken);
     
     const classes = useStyles();
     const [formIsValid,setFormIsValid] = useState(false);
@@ -102,7 +102,6 @@ const SignIn = (props) => {
 
     let authredirect = null;
     if (props.authRedirectPath) {
-        console.log(props.authRedirectPath)
         authredirect = <Redirect to={props.authRedirectPath} />
     }
 
@@ -136,13 +135,15 @@ const SignIn = (props) => {
 const mapStateToProps = state => {
     return {
         isAuthenticated: state.signIn.isAuthenticated,
-        authRedirectPath: state.signIn.authRedirectPath
+        authRedirectPath: state.signIn.authRedirectPath,
+        refreshTokenRequestSent: state.signIn.refreshTokenRequestSent
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onSignIn: (username, password) => dispatch(actions.signIn(username, password))
+        onSignIn: (username, password) => dispatch(actions.signIn(username, password)),
+        onRefreshToken: (history) => dispatch(actions.refreshToken(history))
     }
 };
 

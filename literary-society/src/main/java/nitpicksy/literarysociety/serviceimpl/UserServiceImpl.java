@@ -178,9 +178,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, LoginAttemptService loginAttemptService, LogService logService,
-                           IPAddressProvider ipAddressProvider, Environment environment,EmailNotificationService emailNotificationService,
-                           ResetTokenRepository resetTokenRepository,RoleRepository roleRepository) {
+
+    public UserServiceImpl(UserRepository userRepository, LoginAttemptService loginAttemptService,
+                           LogService logService, IPAddressProvider ipAddressProvider, Environment environment,
+                           EmailNotificationService emailNotificationService, ResetTokenRepository resetTokenRepository,
+                           TokenUtils tokenUtils, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.loginAttemptService = loginAttemptService;
         this.logService = logService;
@@ -188,6 +190,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         this.environment = environment;
         this.emailNotificationService = emailNotificationService;
         this.resetTokenRepository = resetTokenRepository;
+        this.tokenUtils = tokenUtils;
         this.roleRepository = roleRepository;
     }
 }

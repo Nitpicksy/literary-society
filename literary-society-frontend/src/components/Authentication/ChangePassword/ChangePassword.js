@@ -8,13 +8,14 @@ import Container from '@material-ui/core/Container';
 import { useStyles } from './ChangePasswordStyles';
 import Form from '../../../UI/Form/Form';
 import { connect } from 'react-redux';
-import {  useHistory } from 'react-router';
+import { useHistory } from 'react-router';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 
 const ChangePassword = (props) => {
 
     const classes = useStyles();
     const [formIsValid, setFormIsValid] = useState(false);
+    const history = useHistory();
 
     const [controls, setControls] = useState({
         username: {
@@ -90,7 +91,7 @@ const ChangePassword = (props) => {
             }
         },
     })
-    const history = useHistory();
+
 
     const submitHander = (event) => {
         event.preventDefault();
