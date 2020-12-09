@@ -11,9 +11,15 @@ import Container from '@material-ui/core/Container';
 import { useStyles } from './SignInStyles';
 import Form from '../../../UI/Form/Form';
 import { connect } from 'react-redux';
+import { Redirect, useHistory } from 'react-router';
+import responseInterceptor from '../../../responseInterceptor';
 
 const SignIn = (props) => {
+    const history = useHistory();
+    responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent,props.onRefreshToken);
+    
     const classes = useStyles();
+    const [formIsValid,setFormIsValid] = useState(false);
 
     const [controls, setControls] = useState({
         username: {
@@ -26,6 +32,8 @@ const SignIn = (props) => {
                 required: true,
                 isUsername: true,
             },
+            valid: false,
+            touched: false,
             error: false,
             errorMessage: '',
         },
@@ -38,10 +46,15 @@ const SignIn = (props) => {
             value: '',
             validation: {
                 required: true,
-                isPassword: true
+                pattern: '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[_#?!@$%^&*-.,:;]).{10,64}$'
             },
+            valid: false,
+            touched: false,
             error: false,
             errorMessage: '',
+            additionalData: {
+                errorMessage: 'Password should contain between 10 and 64 characters including 1 number, 1 special character, 1 lowercase and 1 uppercase letter.'
+            }
         },
         // textarea: {
         //     elementType: 'textarea',
@@ -87,13 +100,14 @@ const SignIn = (props) => {
         props.onSignIn(controls.username.value, controls.password.value);
     }
 
-    // let authredirect = null;
-    // if (props.isAuthenticated) {
-    //     authredirect = <Redirect to={props.authRedirect} />
-    // }
+    let authredirect = null;
+    if (props.authRedirectPath) {
+        authredirect = <Redirect to={props.authRedirectPath} />
+    }
 
     return (
         <Container component="main" maxWidth="xs">
+            {authredirect}
             <CssBaseline />
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
@@ -101,15 +115,15 @@ const SignIn = (props) => {
                 </Avatar>
                 <Typography component="h1" variant="h4">Sign in</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
-                    <Form controls={controls} setControls={setControls} />
+                    <Form controls={controls} setControls={setControls} setFormIsValid= {setFormIsValid}/>
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
-                        onClick={submitHander}>Sign In</Button>
+                        onClick={submitHander} disabled={!formIsValid}>Sign In</Button>
                     <Grid container>
                         <Grid item xs>
-                            <Link href="#" variant="body2">Forgot password?</Link>
+                            <Link href="/forgot-password" variant="body2">Forgot password?</Link>
                         </Grid>
                         <Grid item>
-                            <Link href="#" variant="body2">Don't have an account? Sign Up</Link>
+                            <Link href="/sign-up" variant="body2">Don't have an account? Sign Up</Link>
                         </Grid>
                     </Grid>
                 </form>
@@ -118,10 +132,19 @@ const SignIn = (props) => {
     );
 };
 
-const mapDispatchToProps = dispatch => {
+const mapStateToProps = state => {
     return {
-        onSignIn: (email, password) => dispatch(actions.signIn(email, password))
+        isAuthenticated: state.signIn.isAuthenticated,
+        authRedirectPath: state.signIn.authRedirectPath,
+        refreshTokenRequestSent: state.signIn.refreshTokenRequestSent
     }
 };
 
-export default connect(null, mapDispatchToProps)(SignIn);
+const mapDispatchToProps = dispatch => {
+    return {
+        onSignIn: (username, password) => dispatch(actions.signIn(username, password)),
+        onRefreshToken: (history) => dispatch(actions.refreshToken(history))
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

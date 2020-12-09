@@ -20,7 +20,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private UserDetailsService userDetailsService;
 
-    @Autowired
     public TokenAuthenticationFilter(TokenUtils tokenHelper, UserDetailsService userDetailsService) {
         this.tokenUtils = tokenHelper;
         this.userDetailsService = userDetailsService;
@@ -30,23 +29,21 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        if(tokenUtils != null){
-            String username;
-            String authToken = tokenUtils.getToken(request);
-            if (authToken != null) {
-                username = tokenUtils.getUsernameFromToken(authToken);
+        String username;
+        String authToken = tokenUtils.getToken(request);
+        if (authToken != null) {
+            username = tokenUtils.getUsernameFromToken(authToken);
 
-                if (username != null) {
-                    UserDetails userDetails;
-                    try {
-                        userDetails = userDetailsService.loadUserByUsername(username);
-                        if (tokenUtils.validateToken(authToken, userDetails)) {
-                            TokenBasedAuthentication authentication = new TokenBasedAuthentication(userDetails);
-                            authentication.setToken(authToken);
-                            SecurityContextHolder.getContext().setAuthentication(authentication);
-                        }
-                    } catch (UsernameNotFoundException e) {
+            if (username != null) {
+                UserDetails userDetails;
+                try {
+                    userDetails = userDetailsService.loadUserByUsername(username);
+                    if (tokenUtils.validateToken(authToken, userDetails)) {
+                        TokenBasedAuthentication authentication = new TokenBasedAuthentication(userDetails);
+                        authentication.setToken(authToken);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
+                } catch (UsernameNotFoundException e) {
                 }
             }
         }

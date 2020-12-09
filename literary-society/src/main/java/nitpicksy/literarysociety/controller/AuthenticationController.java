@@ -56,7 +56,7 @@ public class AuthenticationController {
             return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(userTokenState);
         } catch (AuthenticationException e) {
             if (authenticationService.userIsNeverLoggedIn(authenticationRequest.getUsername())) {
-                return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+                return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
             }
             if (e.getMessage().equals("Blocked")) {
                 logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "LGN", String.format("User from %s is blocked.", ipAddressProvider.get())));
@@ -76,6 +76,9 @@ public class AuthenticationController {
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordDTO changePasswordDTO) {
         try {
+            if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getRepeatedPassword())) {
+                throw new InvalidUserDataException("Passwords do not match", HttpStatus.BAD_REQUEST);
+            }
             authenticationService.changePassword(changePasswordDTO);
         } catch (NullPointerException e) {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CPW", String.format("Invalid email or password provided from %s", ipAddressProvider.get())));
@@ -104,6 +107,9 @@ public class AuthenticationController {
             @RequestParam @Pattern(regexp = "^([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}-){3})([0-9a-fA-F]{12})$", message = "This reset token is invalid.") String t,
             @Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
         try {
+            if (!resetPasswordDTO.getNewPassword().equals(resetPasswordDTO.getRepeatedPassword())) {
+                throw new InvalidUserDataException("Passwords do not match", HttpStatus.BAD_REQUEST);
+            }
             authenticationService.resetPassword(t, resetPasswordDTO);
         } catch (NullPointerException e) {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "RPW", String.format("Invalid username or password provided from %s", ipAddressProvider.get())));
@@ -123,6 +129,7 @@ public class AuthenticationController {
 
     @GetMapping("/health")
     public ResponseEntity<String> health() {
+        System.out.println("Greetings!");
         return new ResponseEntity<>(testService.healthCheck(), HttpStatus.OK);
     }
 

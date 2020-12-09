@@ -18,6 +18,7 @@ public class CloudConfigApplication {
     public static void main(String[] args) {
         SpringApplication.run(CloudConfigApplication.class, args);
     }
+
 //    @Bean
 //    public DiscoveryClient.DiscoveryClientOptionalArgs discoveryClientOptionalArgs() throws NoSuchAlgorithmException {
 //        DiscoveryClient.DiscoveryClientOptionalArgs args = new DiscoveryClient.DiscoveryClientOptionalArgs();

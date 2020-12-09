@@ -4,9 +4,11 @@ import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidUserDataException;
 import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.ResetToken;
+import nitpicksy.literarysociety.model.Role;
 import nitpicksy.literarysociety.model.User;
 import nitpicksy.literarysociety.model.UserTokenState;
 import nitpicksy.literarysociety.repository.ResetTokenRepository;
+import nitpicksy.literarysociety.repository.RoleRepository;
 import nitpicksy.literarysociety.repository.UserRepository;
 import nitpicksy.literarysociety.security.TokenUtils;
 import nitpicksy.literarysociety.service.EmailNotificationService;
@@ -53,6 +55,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     public TokenUtils tokenUtils;
 
+    public RoleRepository roleRepository;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12); // recommended work rounds is 12 (default is 10)
@@ -75,6 +79,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public Role findRoleByName(String name) {
+        return roleRepository.findByName(name);
     }
 
     @Override
@@ -164,9 +178,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, LoginAttemptService loginAttemptService, LogService logService,
-                           IPAddressProvider ipAddressProvider, Environment environment,EmailNotificationService emailNotificationService,
-                           ResetTokenRepository resetTokenRepository) {
+
+    public UserServiceImpl(UserRepository userRepository, LoginAttemptService loginAttemptService,
+                           LogService logService, IPAddressProvider ipAddressProvider, Environment environment,
+                           EmailNotificationService emailNotificationService, ResetTokenRepository resetTokenRepository,
+                           TokenUtils tokenUtils, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.loginAttemptService = loginAttemptService;
         this.logService = logService;
@@ -174,5 +190,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         this.environment = environment;
         this.emailNotificationService = emailNotificationService;
         this.resetTokenRepository = resetTokenRepository;
+        this.tokenUtils = tokenUtils;
+        this.roleRepository = roleRepository;
     }
 }

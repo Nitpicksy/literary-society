@@ -87,6 +87,17 @@ public class User implements org.camunda.bpm.engine.identity.User, UserDetails {
         this.status = status;
     }
 
+    public User(String firstName, String lastName, String city, String country, String email,
+                String username, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.city = city;
+        this.country = country;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+    }
+
     @Override
     public String getUsername() {
         return username;

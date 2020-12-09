@@ -9,6 +9,7 @@ import thunk from 'redux-thunk';
 import reportWebVitals from './reportWebVitals';
 import signInReducer from './components/Authentication/SignIn/SignInReducer';
 import signUpReducer from './components/Authentication/SignUp/SignUpReducer';
+import resetPasswordReducer from './components/Authentication/ResetPassword/ResetPasswordReducer';
 
 // ReactDOM.render(
 //   <React.StrictMode>
@@ -22,7 +23,8 @@ const composeEnhancers = process.env.NODE_ENV === 'development'? window.__REDUX_
 
 const rootReducer = combineReducers({
     signIn: signInReducer,
-    signUp: signUpReducer
+    signUp: signUpReducer,
+    resetPassword: resetPasswordReducer,
 });
 
 const store = createStore(rootReducer, composeEnhancers(
