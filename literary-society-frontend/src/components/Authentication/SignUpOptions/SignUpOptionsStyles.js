@@ -11,11 +11,10 @@ export const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(1),
         backgroundColor: theme.palette.secondary.main,
     },
-    form: {
-        width: '100%',
-        marginTop: theme.spacing(1),
+    title: {
+        margin: theme.spacing(0, 0, 1, 0),
     },
-    submit: {
-        margin: theme.spacing(3, 0, 2),
-    },
+    paragraph: {
+        margin: theme.spacing(0, 0, 3, 0),
+    }
 }));

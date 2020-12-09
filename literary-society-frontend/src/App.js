@@ -9,6 +9,7 @@ import NonAuthorized from './components/Authentication/Error/NonAuthorized';
 import ChangePassword from './components/Authentication/ChangePassword/ChangePassword';
 import ResetPasswordEnterNewPass from './components/Authentication/ResetPassword/ResetPasswordEnterNewPass';
 import ResetPasswordEnterUsername from './components/Authentication/ResetPassword/ResetPasswordEnterUsername';
+import SignUpOptions from './components/Authentication/SignUpOptions/SignUpOptions';
 //ovo koristis za sve stranice osim za pocetnu!!!Pocetnu stranicu ce user uvek posetiti i zato to ne radis za pocetnu stranicu 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -20,6 +21,7 @@ const App = props => {
     <Switch>
       <Route path="/sign-in" render={(props) => <SignIn {...props} />} />
       <Route path="/sign-up" render={(props) => <SignUp {...props} />} />
+      <Route path="/sign-up-options" render={(props) => <SignUpOptions {...props} />} />
       <Route path="/logout" render={(props) => <Logout {...props} />} />
       <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
       <Route path="/forgot-password" render={(props) => <ResetPasswordEnterUsername {...props} />} />
