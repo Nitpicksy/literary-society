@@ -1,5 +1,5 @@
 import axios from '../../../axios-endpoint';
-
+import {toastr} from 'react-redux-toastr';
 import * as actionTypes from './ChangePasswordActionTypes';
 import * as signInActions from '../SignIn/SignInActions';
 
@@ -22,7 +22,7 @@ export const changePasswordFail = (error) => {
     };
 };
 
-export const changePassword = (username, oldPassword,newPassword,repeatedPassword,history) => {
+export const changePassword = (username, oldPassword,newPassword,repeatedPassword, history) => {
     return dispatch => {
         dispatch(changePasswordStart());
         dispatch(signInActions.signOut());
@@ -36,11 +36,12 @@ export const changePassword = (username, oldPassword,newPassword,repeatedPasswor
 
         axios.put('/auth', authData)
             .then((response) => {
-                console.log("Success")
-                history.push('/sign-in')
+                history.push('/sign-in');
+                toastr.success('Change password', 'Success');
                 dispatch(changePasswordSuccess());
             })
             .catch(err => {
+                toastr.error('Change password',err.response.data.message);
                 dispatch(changePasswordFail(err.response.data.message));
             })
     };

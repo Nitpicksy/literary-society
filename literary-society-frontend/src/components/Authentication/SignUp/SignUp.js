@@ -1,41 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import * as actions from './SignUpExport';
 import * as signInActions from '../SignIn/SignInExport';
-import {extractControls} from '../../../shared/extractControls';
+import { extractControls } from '../../../shared/extractControls';
 import Form from '../../../UI/Form/Form';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import PersonIcon from '@material-ui/icons/Person';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import { useStyles } from '../SignIn/SignInStyles';
 import { connect } from 'react-redux';
-import responseInterceptor from '../../../responseInterceptor';
+import {responseInterceptor} from '../../../responseInterceptor';
 import { useHistory } from 'react-router';
 
 const SignUp = (props) => {
     const history = useHistory();
     const classes = useStyles();
-    const {formFields,fetchForm} = props;
+    const { formFields, fetchForm } = props;
     let form = null;
     let [controls, setControls] = useState(null);
-    const [formIsValid,setFormIsValid] = useState(false);
+    const [formIsValid, setFormIsValid] = useState(false);
 
-    responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent,props.onRefreshToken);
+    responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
 
     useEffect(() => {
         fetchForm();
     }, [fetchForm]);
 
     useEffect(() => {
-        if(formFields){
+        if (formFields) {
             let extractedControls = extractControls(formFields)
             setControls(extractedControls);
         }
-       
+
     }, [formFields]);
 
     const submitHander = (event) => {
@@ -44,13 +44,13 @@ const SignUp = (props) => {
         let array = [];
 
         for (let [key, data] of Object.entries(controls)) {
-            array.push({fieldId: key, fieldValue: data.value});
+            array.push({ fieldId: key, fieldValue: data.value });
         }
-        props.onSignUp(array,props.taskId);
+        props.onSignUp(array, props.taskId);
     }
 
-    if(controls){
-        form = <Form controls={controls} setControls={setControls} setFormIsValid= {setFormIsValid}/>;
+    if (controls) {
+        form = <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} />;
     }
 
     return (
@@ -58,19 +58,16 @@ const SignUp = (props) => {
             <CssBaseline />
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
-                    <LockOutlinedIcon />
+                    <PersonIcon />
                 </Avatar>
                 <Typography component="h1" variant="h4">Sign up</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
-                         disabled={!formIsValid} >Sign up</Button>
-                    <Grid container>
-                        <Grid item xs>
-                            <Link href="#" variant="body2">Forgot password?</Link>
-                        </Grid>
+                        disabled={!formIsValid} >Sign up</Button>
+                    <Grid container justify="flex-end">
                         <Grid item>
-                            <Link href="#" variant="body2">Don't have an account? Sign Up</Link>
+                            <Link href="/sign-in" variant="body2">Already have an account? Sign in</Link>
                         </Grid>
                     </Grid>
                 </form>
@@ -92,7 +89,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchForm: () => dispatch(actions.fetchForm()),
-        onSignUp: (signUpData,taskId) => dispatch(actions.signUp(signUpData,taskId)),
+        onSignUp: (signUpData, taskId) => dispatch(actions.signUp(signUpData, taskId)),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history))
     }
 };

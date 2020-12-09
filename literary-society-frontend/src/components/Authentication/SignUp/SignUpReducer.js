@@ -3,7 +3,8 @@ import * as actionTypes from './SignUpActionTypes';
 const initialState = {
     formFields: null,
     processInstanceId: null,
-    taskId: null
+    taskId: null, 
+    error: ''
 }
 
 const reducer = (state = initialState, action) => {

@@ -7,6 +7,7 @@ export const instance = axios.create({
 
 instance.interceptors.request.use(
     async request => {
+        console.log("Moj interceptor 2")
         if (!request.url.includes("/auth")) {
             const accessToken = localStorage.getItem("accessToken");
             request.headers = {
@@ -16,7 +17,6 @@ instance.interceptors.request.use(
             const refreshToken = localStorage.getItem("refreshToken");
             if (refreshToken) {
                 if (request.url.includes("refresh")) {
-                    console.log("refreshToken ddfff")
                     request.headers = {
                         Authorization: `Bearer ${refreshToken}`
                     }

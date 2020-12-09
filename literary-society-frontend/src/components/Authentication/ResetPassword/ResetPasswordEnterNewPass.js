@@ -65,7 +65,6 @@ const ResetPasswordEnterNewPass = (props) => {
 
     const submitHander = (event) => {
         event.preventDefault();
-        console.log(token)
         props.onResetPassword(token, controls.newPassword.value, controls.repeatedPassword.value, history);
     }
 
