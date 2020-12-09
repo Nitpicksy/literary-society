@@ -33,11 +33,7 @@ public class CamundaServiceImpl implements CamundaService {
         Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).list().get(0);
 
         TaskFormData tfd = formService.getTaskFormData(task.getId());
-
         List<FormField> properties = tfd.getFormFields();
-        for(FormField fp : properties) {
-            System.out.println(fp.getId() + fp.getType());
-        }
 
         return new FormFieldsDTO(pi.getId(), task.getId(), properties);
     }

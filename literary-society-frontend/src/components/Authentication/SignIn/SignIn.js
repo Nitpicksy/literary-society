@@ -12,7 +12,7 @@ import { useStyles } from './SignInStyles';
 import Form from '../../../UI/Form/Form';
 import { connect } from 'react-redux';
 import { Redirect, useHistory } from 'react-router';
-import responseInterceptor from '../../../responseInterceptor';
+import {responseInterceptor} from '../../../responseInterceptor';
 
 const SignIn = (props) => {
     const history = useHistory();
@@ -123,7 +123,7 @@ const SignIn = (props) => {
                             <Link href="/forgot-password" variant="body2">Forgot password?</Link>
                         </Grid>
                         <Grid item>
-                            <Link href="/sign-up" variant="body2">Don't have an account? Sign Up</Link>
+                            <Link href="/sign-up-options" variant="body2">Don't have an account? Sign Up</Link>
                         </Grid>
                     </Grid>
                 </form>

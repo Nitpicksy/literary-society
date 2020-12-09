@@ -1,6 +1,6 @@
 import instance from './axios-endpoint';
 
-export default {
+export const responseInterceptor = {
     setupInterceptor: (history, refreshTokenRequestSent, onRefreshToken) => {
 
         instance.interceptors.response.use((response) => {
