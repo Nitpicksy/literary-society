@@ -2,7 +2,7 @@ import instance from './axios-endpoint';
 
 export const responseInterceptor = {
     setupInterceptor: (history, refreshTokenRequestSent, onRefreshToken) => {
-
+        console.log("Moj interceptor")
         instance.interceptors.response.use((response) => {
             return response
         }, error => {
@@ -15,15 +15,12 @@ export const responseInterceptor = {
                     localStorage.removeItem('expiresIn');
                     localStorage.removeItem('refreshToken');
                     history.push('/error/non-authenticated');
-                    console.log(history)
                     return Promise.reject(error)
                 }
                 if (refreshToken && !refreshTokenRequestSent) {
-                    console.log("refresh token")
                     onRefreshToken(history);
                     return Promise.resolve();
                 } else {
-                    console.log("dssdsddsdddddd")
                     localStorage.removeItem('accessToken');
                     localStorage.removeItem('expiresIn');
                     localStorage.removeItem('refreshToken');

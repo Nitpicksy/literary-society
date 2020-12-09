@@ -178,7 +178,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
 
     @Autowired
-
     public UserServiceImpl(UserRepository userRepository, LoginAttemptService loginAttemptService,
                            LogService logService, IPAddressProvider ipAddressProvider, Environment environment,
                            EmailNotificationService emailNotificationService, ResetTokenRepository resetTokenRepository,

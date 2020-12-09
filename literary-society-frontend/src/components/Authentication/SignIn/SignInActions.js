@@ -1,5 +1,5 @@
 import axios from '../../../axios-endpoint';
-
+import {toastr} from 'react-redux-toastr';
 import * as actionTypes from './SignInActionTypes';
 
 export const signInStart = () => {
@@ -27,7 +27,8 @@ export const signOut = () => {
     localStorage.removeItem('expiresIn');
     localStorage.removeItem('refreshToken');
     return {
-        type: actionTypes.SIGN_OUT
+        type: actionTypes.SIGN_OUT,
+        path: '/sign-in'
     };
 }
 
@@ -48,20 +49,22 @@ export const signIn = (username, password) => {
 
         axios.post('/auth/sign-in', authData)
             .then(response => {
-                console.log("success")
                 if (response.data) {
                     localStorage.setItem('accessToken', response.data.accessToken);
                     localStorage.setItem('expiresIn', response.data.expiresIn);
                     localStorage.setItem('refreshToken', response.data.refreshToken);
                     dispatch(setRedirectPath('/'))
                     dispatch(signInSuccess(response.data));
+                    toastr.success('Login', 'Success');
                 }
             })
             .catch(err => {
                 if (err.response.status === 406) {
                     dispatch(setRedirectPath('/change-password'))
                     dispatch(signInFail("You have to change received generic password on first attempt to login."));
+                    toastr.error('Login','You have to change received generic password on first attempt to login.');
                 } else {
+                    toastr.error('Login',err.response.data.message);
                     dispatch(signInFail(err.response.data.message));
                 }
             })
@@ -110,5 +113,24 @@ export const refreshToken = (history) => {
                 localStorage.removeItem('refreshToken');
                 dispatch(refreshTokenFail(err.response.data.message));
             })
+    };
+};
+
+
+export const authCheckState = () => {
+    return  dispatch => {
+        const accessToken = localStorage.getItem('accessToken');
+        const expiresIn = localStorage.getItem('expiresIn');
+        const refreshToken = localStorage.getItem('refreshToken');
+        if(!accessToken) {
+            dispatch(signOut());
+        }else {
+            const userTokenState = {
+                accessToken: accessToken,
+                expiresIn: expiresIn,
+                refreshToken:refreshToken
+            };
+            dispatch(signInSuccess(userTokenState));   
+        }
     };
 };
