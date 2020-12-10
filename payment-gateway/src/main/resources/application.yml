@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:8990}
+  port: ${PORT:0}
   ssl:
     enabled: true
     key-alias: ${KEYSTORE_ALIAS:gateway}

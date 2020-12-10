@@ -16,4 +16,6 @@ public interface AuthenticationService {
     void resetPassword(String token, ResetPasswordDTO resetPasswordDTO) throws NoSuchAlgorithmException;
 
     boolean userIsNeverLoggedIn(String username);
+
+    void activateAccount(String hash) throws NoSuchAlgorithmException;
 }

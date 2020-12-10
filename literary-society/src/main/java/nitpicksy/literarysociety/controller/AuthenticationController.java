@@ -45,6 +45,7 @@ public class AuthenticationController {
 
     private TestServiceImpl testService;
 
+
     @PostMapping(value = "/sign-in", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserTokenState> login(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest) {
         try {
@@ -86,6 +87,16 @@ public class AuthenticationController {
         } catch (NoSuchAlgorithmException e) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CPW", "External password check failed"));
             throw new InvalidUserDataException("Password cannot be checked. Please try again.", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(null);
+    }
+
+    @PutMapping(value = "/activate/{hash}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> activateAccount(@PathVariable String hash) {
+        try {
+            authenticationService.activateAccount(hash);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(null);
     }

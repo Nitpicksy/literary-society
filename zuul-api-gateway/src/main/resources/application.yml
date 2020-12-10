@@ -32,24 +32,24 @@ zuul:
       service-id: payment-gateway
     literary-society:
       path: /literary-society/**
-      #      url: https://localhost:8090
-      service-id: literary-society
+      url: https://localhost:8090
+    #      service-id: literary-society
     bank:
       path: /bank/**
-      #      url: http://localhost:8100
-      service-id: bank
+      url: http://localhost:8100
+    #  service-id: bank
     pcc:
       path: /pcc/**
-      #      url: http://localhost:8101
-      service-id: pcc
+      url: http://localhost:8101
+    #    service-id: pcc
     paypal-service:
       path: /paypal-service/**
-      #      url: http://localhost:8200
-      service-id: paypal
+      url: http://localhost:8200
+    #    service-id: paypal
     bitcoin-service:
       path: /bitcoin-service/**
-      #      url: http://localhost:8300
-      service-id: bitcoin
+      url: http://localhost:8300
+  #    service-id: bitcoin
   host:
     connect-timeout-millis: 5000000
     socket-timeout-millis: 5000000
