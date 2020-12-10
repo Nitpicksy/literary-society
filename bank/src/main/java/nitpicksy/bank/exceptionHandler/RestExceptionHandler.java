@@ -1,4 +1,6 @@
-package nitpicksy.literarysociety.exceptionHandler;
+package nitpicksy.bank.exceptionHandler;
+
+
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -6,7 +8,6 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -23,33 +24,9 @@ import java.util.List;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class RestExceptionHandler  extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(UsernameNotFoundException.class)
-    protected ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException ex) {
-        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-        return buildResponseEntity(error);
-    }
-
-    @ExceptionHandler(InvalidUserDataException.class)
-    protected ResponseEntity<Object> handleInvalidUserDataException(InvalidUserDataException ex) {
-        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-        return buildResponseEntity(error);
-    }
 
     @ExceptionHandler(InvalidDataException.class)
     protected ResponseEntity<Object> handleInvalidDataException(InvalidDataException ex) {
-        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-        return buildResponseEntity(error);
-    }
-
-    @ExceptionHandler(InvalidTokenException.class)
-    protected ResponseEntity<Object> handleInvalidTokenDataException(InvalidTokenException ex) {
-        ErrorResponse error = new ErrorResponse(ex.getHttpStatus(), ex.getMessage());
-        return buildResponseEntity(error);
-    }
-
-
-    @ExceptionHandler(BlockedUserException.class)
-    protected ResponseEntity<Object> handleBlockedUserException(BlockedUserException ex) {
         ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
         return buildResponseEntity(error);
     }
@@ -127,3 +104,4 @@ public class RestExceptionHandler  extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, error.getStatus());
     }
 }
+
