@@ -36,7 +36,7 @@ const App = props => {
       <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
       <Route path="/forgot-password" render={(props) => <ResetPasswordEnterUsername {...props} />} />
       <Route path="/reset-password" render={(props) => <ResetPasswordEnterNewPass {...props} />} />
-      <Route path="/activate-account" render={(props) => <ActivateAccount {...props} />} />
+      <Route path="/activate-account=:id" render={(props) => <ActivateAccount {...props} />} />
       <Route path="/error/non-authenticated" render={(props) => <NonAuthenticated {...props} />} />
       <Route path="/error/non-authorized" render={(props) => <NonAuthorized {...props} />} />
       <Route path="/" exact render={(props) => <HomePage {...props} />} />
