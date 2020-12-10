@@ -19,7 +19,7 @@ const ActivateAccount = (props) => {
   useEffect(() => {
     props.activateAccount(props.match.params.id);
     console.log("props", props);
-  }, [props]);
+  }, []);
 
   let message = "Account activated, you're all set!";
 
