@@ -4,6 +4,7 @@ import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
 import nitpicksy.literarysociety.service.CamundaService;
 import nitpicksy.literarysociety.service.ReaderService;
+import org.camunda.bpm.engine.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,8 +22,10 @@ public class ReaderController {
     private ReaderService readerService;
 
     @GetMapping("/start-registration")
-    public ResponseEntity<FormFieldsDTO> get() {
-        return new ResponseEntity<>(camundaService.start(CamundaConstants.PROCESS_READER_REGISTRATION), HttpStatus.OK);
+    public ResponseEntity<FormFieldsDTO> getRegistrationFields() {
+        FormFieldsDTO formFieldsDTO = camundaService.start(CamundaConstants.PROCESS_READER_REGISTRATION);
+        FormFieldsDTO newFormFieldsDTO = camundaService.setEnumValues(formFieldsDTO);
+        return new ResponseEntity<>(newFormFieldsDTO, HttpStatus.OK);
     }
 
     @Autowired

@@ -9,6 +9,9 @@ spring:
     password: ${DATABASE_PASSWORD:Nitpicksy-2020}
     url: jdbc:mysql://${DATABASE_DOMAIN:localhost}:${DATABASE_PORT:3306}/${DATABASE_SCHEMA:literary_society}?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true
     driver-class-name: com.mysql.cj.jdbc.Driver
+    # za ucitavanje data.sql fajla
+    initialization-mode: always
+    platform: mysql
   jpa:
     properties:
       hibernate:

@@ -30,8 +30,10 @@ public class CamundaController {
     private FormService formService;
 
     @PostMapping(path = "/{taskId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> submitForm(@Valid  @RequestBody List<FormSubmissionDTO> formDTO, @PathVariable String taskId) {
+    public ResponseEntity<Void> submitForm(@Valid @RequestBody List<FormSubmissionDTO> formDTO, @PathVariable String taskId) {
         HashMap<String, Object> map = this.mapListToDto(formDTO);
+        // TODO: Videti sa asistentkinjom
+        map.remove("genres");
 
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         String processInstanceId = task.getProcessInstanceId();
@@ -41,10 +43,9 @@ public class CamundaController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private HashMap<String, Object> mapListToDto(List<FormSubmissionDTO> list)
-    {
+    private HashMap<String, Object> mapListToDto(List<FormSubmissionDTO> list) {
         HashMap<String, Object> map = new HashMap<>();
-        for(FormSubmissionDTO temp : list){
+        for (FormSubmissionDTO temp : list) {
             map.put(temp.getFieldId(), temp.getFieldValue());
         }
         return map;
