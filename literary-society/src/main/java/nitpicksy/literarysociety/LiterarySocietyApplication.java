@@ -1,6 +1,6 @@
 package nitpicksy.literarysociety;
 
-import nitpicksy.literarysociety.serviceimpl.RepositoryWithRefreshMethodImpl;
+import nitpicksy.literarysociety.repository.RefreshMethodRepositoryImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,25 +16,25 @@ import org.springframework.web.context.request.RequestContextListener;
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableTransactionManagement
-@EnableJpaRepositories(repositoryBaseClass = RepositoryWithRefreshMethodImpl.class)
+@EnableJpaRepositories(repositoryBaseClass = RefreshMethodRepositoryImpl.class)
 public class LiterarySocietyApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(LiterarySocietyApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(LiterarySocietyApplication.class, args);
+    }
 
-	@Bean
-	public ModelMapper modelMapper() {
-		return new ModelMapper();
-	}
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 
-	@Bean
-	GrantedAuthorityDefaults grantedAuthorityDefaults() {
-		return new GrantedAuthorityDefaults(""); // Remove the ROLE_ prefix
-	}
+    @Bean
+    GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults(""); // Remove the ROLE_ prefix
+    }
 
-	@Bean
-	public RequestContextListener requestContextListener() {
-		return new RequestContextListener();
-	}
+    @Bean
+    public RequestContextListener requestContextListener() {
+        return new RequestContextListener();
+    }
 }

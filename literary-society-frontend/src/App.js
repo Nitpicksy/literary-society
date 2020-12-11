@@ -11,7 +11,7 @@ import ResetPasswordEnterNewPass from './components/Authentication/ResetPassword
 import ResetPasswordEnterUsername from './components/Authentication/ResetPassword/ResetPasswordEnterUsername';
 import SignUpOptions from './components/Authentication/SignUpOptions/SignUpOptions';
 import { connect } from 'react-redux';
-import HomePage from './components/HomePage';
+import HomePage from './components/HomePage/HomePage';
 import CustomToolbar from './components/Navigation/Toolbar/Toolbar';
 import  * as actions from './components/Authentication/SignIn/SignInExport';
 

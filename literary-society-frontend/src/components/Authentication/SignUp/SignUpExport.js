@@ -1,4 +1,4 @@
-export { 
+export {
     fetchForm,
     signUp
- } from './SignUpActions';
+} from './SignUpActions';

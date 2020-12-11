@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -29,10 +30,10 @@ public class User implements org.camunda.bpm.engine.identity.User, UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String firstName;
 
-    @Column(nullable = false)
+    @Column
     private String lastName;
 
     @Column(nullable = false)
@@ -98,12 +99,15 @@ public class User implements org.camunda.bpm.engine.identity.User, UserDetails {
         this.password = password;
     }
 
+    public Long getIdAsLong() {
+        return this.id;
+    }
+
     @Override
     public String getUsername() {
         return username;
     }
-
-
+    
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -145,11 +149,13 @@ public class User implements org.camunda.bpm.engine.identity.User, UserDetails {
 
     }
 
+    // For Camunda
     @Override
     public String getId() {
         return username;
     }
 
+    // For Camunda
     @Override
     public void setId(String s) {
         this.username = s;

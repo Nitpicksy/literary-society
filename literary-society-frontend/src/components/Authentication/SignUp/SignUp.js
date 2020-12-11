@@ -13,10 +13,11 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import { useStyles } from '../SignIn/SignInStyles';
 import { connect } from 'react-redux';
-import {responseInterceptor} from '../../../responseInterceptor';
+import { responseInterceptor } from '../../../responseInterceptor';
 import { useHistory } from 'react-router';
 
 const SignUp = (props) => {
+    
     const history = useHistory();
     const classes = useStyles();
     const { formFields, fetchForm } = props;
@@ -46,11 +47,11 @@ const SignUp = (props) => {
         for (let [key, data] of Object.entries(controls)) {
             // convert array to comma-separated string
             let value = data.value
-            if(Array.isArray(data.value)) {
+            if (Array.isArray(data.value)) {
                 value = data.value.join();
             }
 
-            array.push({fieldId: key, fieldValue: value});
+            array.push({ fieldId: key, fieldValue: value });
         }
         props.onSignUp(array, props.taskId);
     }

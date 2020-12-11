@@ -4,11 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -21,11 +17,9 @@ public class Image {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String data;
 
-    @Column(nullable = false)
-    private String type;
-
-    @Column(length = 1000)
-    private byte[] picByte;
+    public Image(String data) {
+        this.data = data;
+    }
 }
