@@ -179,7 +179,7 @@ openssl pkcs12 \
 mkdir -p "certs/${EUREKA_NAME}/keystore"
 
 # Create Eureka request
-SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost,IP.1:127.0.0.1 \
+SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost,IP.1:127.0.0.1,DNS:eureka-peer1,IP.2:127.0.0.1,DNS:eureka-peer2,IP.3:127.0.0.1 \
 openssl req \
     -new \
     -nodes \

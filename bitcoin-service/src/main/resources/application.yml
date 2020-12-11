@@ -9,7 +9,7 @@ server:
     trust-store: ${TRUSTSTORE:classpath:bitcoin.truststore.p12}
     trust-store-password: ${TRUSTSTORE_PASSWORD:password}
     trust-store-type: ${TRUSTSTORE_TYPE:PKCS12}
-    client-auth: need
+    client-auth: want
 
 spring:
   application:
@@ -18,8 +18,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: https://localhost:8761/eureka
-      #      ,http://eureka-peer2:8762/eureka
+      defaultZone: https://eureka-peer1:8761/eureka, https://eureka-peer2:8762/eureka
       healthcheck:
         enabled: true
     fetchRegistry: true

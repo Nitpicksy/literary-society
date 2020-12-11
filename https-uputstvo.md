@@ -6,7 +6,7 @@
 
 * moja linux komanda: 
 ``` 
-sudo keytool -importkeystore -srckeystore ~/master/nitpicksy/literary-society/tls/certs/zuul/keystore/zuul.keystore.p12 -alias zuul -destkeystore cacerts -storepass changeit  #komande za windows su iste, sem putanje ka keystoru.
+sudo keytool -importkeystore -srckeystore ~/master/nitpicksy/literary-society/tls/certs/zuul/keystore/zuul.keystore.p12 -storetype pkcs12 -alias zuul -destkeystore cacerts -storepass changeit  #komande za windows su iste, sem putanje ka keystoru.
 ```
 
 * šifre svih keystore i truststore je password
@@ -15,21 +15,23 @@ sudo keytool -importkeystore -srckeystore ~/master/nitpicksy/literary-society/tl
 ```
 * eureka: 
 ```
-sudo keytool -importkeystore -srckeystore ~/master/nitpicksy/literary-society/tls/certs/eureka/keystore/eureka.keystore.p12 -alias eureka -destkeystore cacerts -storepass changeit
+sudo keytool -importkeystore -srckeystore ~/master/nitpicksy/literary-society/tls/certs/eureka/keystore/eureka.keystore.p12 -storetype pkcs12 -alias eureka -destkeystore cacerts -storepass changeit
 ```
 
 * ROOT:
 ```
-sudo keytool -importcert -file ~/master/nitpicksy/literary-society/tls/ca/root-ca.crt -alias root -destkeystore cacerts -storepass changeit
+sudo keytool -importcert -trustcacerts -file ~/master/nitpicksy/literary-society/tls/ca/root-ca.crt -alias root -destkeystore cacerts -storepass changeit
 ```
 
 * TLS-CA 
 ```
-sudo keytool -importcert -file ~/master/nitpicksy/literary-society/tls/ca/tls-ca.crt -alias tls-ca -destkeystore cacerts -storepass changeit
+sudo keytool -importcert -trustcacerts -file ~/master/nitpicksy/literary-society/tls/ca/tls-ca.crt -alias tls-ca -destkeystore cacerts -storepass changeit
 ```
 
+* Napomena: nakon importa u cacerts, u IntelliJ ići Files->Invalidate Caches and Restart
 ## dodavanje sertifikata u browser
 
+* klijentski sertifikat je: tls/certs/client
 * onda sledi procedura dodavanja CLIENT sertifikata u chrome, što se na windowsu razlikuje od linux-a, a to se nalazi u pdfu jeleninog kursa
 
 ## testiranje
@@ -39,6 +41,8 @@ sudo keytool -importcert -file ~/master/nitpicksy/literary-society/tls/ca/tls-ca
 https://localhost:8080/literary-society/api/auth/health
 ```
 * preduslov: upaljeni LU, KP, Eureka, Zuul, Paypal, Bank servisi.
+
+### ako request puca i zuul ispisuje gresku "Load balancer does not have available server for client: literary-society", sacekati 10,15 sekundi pa pokusati ponovo
 * ako želite da testirate samo jedan deo te mreže, u KP-u testServiceImpl zakomentarisati feignClient zahteve ka banci i paypalu.
 
 ### rezultat ispisa: 

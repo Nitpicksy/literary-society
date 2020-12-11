@@ -1,5 +1,15 @@
 server:
   port: 8101
+  ssl:
+    enabled: true
+    key-alias: ${KEYSTORE_ALIAS:pcc}
+    key-store: ${KEYSTORE:classpath:pcc.keystore.p12}
+    key-store-password: ${KEYSTORE_PASSWORD:password}
+    key-store-type: ${KEYSTORE_TYPE:PKCS12}
+    trust-store: ${TRUSTSTORE:classpath:pcc.truststore.p12}
+    trust-store-password: ${TRUSTSTORE_PASSWORD:password}
+    trust-store-type: ${TRUSTSTORE_TYPE:PKCS12}
+    client-auth: want
 
 spring:
   application:
@@ -12,3 +22,12 @@ eureka:
       healthcheck:
         enabled: true
     fetchRegistry: true
+  instance:
+    hostname: localhost
+    nonSecurePortEnabled: false
+    securePortEnabled: true
+    securePort: ${server.port}
+    homePageUrl: https://${eureka.instance.hostname}:${server.port}/
+    secureVirtualHostName: ${spring.application.name}
+    prefer-ip-address: false
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
