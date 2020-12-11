@@ -33,7 +33,7 @@ public class Transaction {
     private String merchantId;
 
     @Column(nullable = false)
-    private Integer merchantOrderId;
+    private Long merchantOrderId;
 
     @Column(nullable = false)
     private Timestamp merchantTimestamp;
@@ -44,5 +44,11 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 
-
+    public Transaction(Double amount, String merchantId, Long merchantOrderId, Timestamp merchantTimestamp, String pan) {
+        this.amount = amount;
+        this.merchantId = merchantId;
+        this.merchantOrderId = merchantOrderId;
+        this.merchantTimestamp = merchantTimestamp;
+        this.pan = pan;
+    }
 }

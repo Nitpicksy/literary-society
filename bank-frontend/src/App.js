@@ -6,7 +6,7 @@ const App = props => {
 
   let routes = (
     <Switch>
-      <Route path="/payment/pay/:id" render={(props) => <EnterCreditData {...props} />} />
+      <Route path="/payment/confirm/:id" render={(props) => <EnterCreditData {...props} />} />
       <Redirect to="/" />
     </Switch>
   );

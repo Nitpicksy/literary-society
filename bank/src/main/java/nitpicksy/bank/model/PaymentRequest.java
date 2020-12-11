@@ -24,7 +24,7 @@ public class PaymentRequest {
     private Long id;
 
     @Column(nullable = false)
-    private Integer merchantOrderId;
+    private Long merchantOrderId;
 
     @Column(nullable = false)
     private Timestamp merchantTimestamp;

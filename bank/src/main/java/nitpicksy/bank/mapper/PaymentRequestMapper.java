@@ -23,7 +23,7 @@ public class PaymentRequestMapper implements MapperInterface<PaymentRequest, Pay
     public PaymentRequest toEntity(PaymentRequestDTO dto) throws NoSuchAlgorithmException {
         PaymentRequest request =  modelMapper.map(dto, PaymentRequest.class);
         request.setMerchantTimestamp(Timestamp.valueOf(dto.getMerchantTimestamp()));
-        request.setMerchantId(getHashValue(dto.getMerchantPassword()));
+        request.setMerchantId(getHashValue(dto.getMerchantId()));
         return request;
     }
 

@@ -44,7 +44,7 @@ public class PaymentController {
     @PostMapping(value = "/confirm/{paymentId}",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> confirmPayment(@PathVariable @Positive(message = "Payment id must be positive.") Long paymentId,
                                                              @Valid @RequestBody ConfirmPaymentDTO confirmPaymentDTO) throws NoSuchAlgorithmException {
-        return new ResponseEntity<>(paymentService.confirmPayment(confirmPaymentDTO), HttpStatus.OK);
+        return new ResponseEntity<>(paymentService.confirmPayment(confirmPaymentDTO,paymentId), HttpStatus.OK);
     }
 
     @Autowired

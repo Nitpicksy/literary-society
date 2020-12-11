@@ -1,5 +1,6 @@
 package nitpicksy.bank.serviceImpl;
 
+import nitpicksy.bank.constants.BankConstants;
 import nitpicksy.bank.exceptionHandler.InvalidDataException;
 import nitpicksy.bank.model.CreditCard;
 import nitpicksy.bank.repository.CreditCardRepository;
@@ -10,10 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Service
 public class CreditCardServiceImpl implements CreditCardService {
@@ -38,6 +37,12 @@ public class CreditCardServiceImpl implements CreditCardService {
         }
 
         return creditCard;
+    }
+
+    @Override
+    public boolean isClientOfThisBank(String pan){
+        String bankIdentificationNumber = pan.substring(1, 7);
+        return bankIdentificationNumber.equals(BankConstants.BANK_IDENTIFICATION_NUMBER);
     }
 
     private boolean checkCreditCardExpirationDate(LocalDate expirationDate, String expiration){

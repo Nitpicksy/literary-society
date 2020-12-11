@@ -32,6 +32,13 @@ public class MerchantServiceImpl implements MerchantService {
         return merchant;
     }
 
+    @Override
+    public void transferMoneyToMerchant(String merchantId, Double amount) throws NoSuchAlgorithmException {
+        Merchant merchant = merchantRepository.findByMerchantId(merchantId);
+        merchant.setBalance(merchant.getBalance() + amount);
+        merchantRepository.save(merchant);
+    }
+
     @Autowired
     public MerchantServiceImpl(MerchantRepository merchantRepository, HashValueServiceImpl hashValueServiceImpl) {
         this.merchantRepository = merchantRepository;

@@ -10,5 +10,5 @@ public interface PaymentService {
 
     PaymentResponseDTO pay(PaymentRequest paymentRequest);
 
-    String confirmPayment(ConfirmPaymentDTO confirmPaymentDTO) throws NoSuchAlgorithmException;
+    String confirmPayment(ConfirmPaymentDTO confirmPaymentDTO,Long paymentId) throws NoSuchAlgorithmException;
 }
