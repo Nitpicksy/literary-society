@@ -36,7 +36,6 @@ const Form = (props) => {
         props.setFormIsValid(formIsValid);
     }
 
-
     const formElementsArray = [];
     for (let key in props.controls) {
         formElementsArray.push({

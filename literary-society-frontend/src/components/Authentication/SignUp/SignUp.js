@@ -44,7 +44,13 @@ const SignUp = (props) => {
         let array = [];
 
         for (let [key, data] of Object.entries(controls)) {
-            array.push({ fieldId: key, fieldValue: data.value });
+            // convert array to comma-separated string
+            let value = data.value
+            if(Array.isArray(data.value)) {
+                value = data.value.join();
+            }
+
+            array.push({fieldId: key, fieldValue: value});
         }
         props.onSignUp(array, props.taskId);
     }
