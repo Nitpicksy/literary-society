@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -17,7 +18,7 @@ public class ConfirmPaymentRequestDTO {
 
     private Long acquirerOrderId;
 
-    private String acquirerTimestamp;
+    private Timestamp acquirerTimestamp;
 
     @NotNull
     @Positive(message = "Payment id must be positive.")

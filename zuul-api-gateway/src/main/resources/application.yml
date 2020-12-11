@@ -19,6 +19,9 @@ zuul:
     bank:
       path: /bank/**
       url: http://localhost:8100
+    bank2:
+      path: /bank2/**
+      url: http://localhost:8102
     pcc:
       path: /pcc/**
       url: http://localhost:8101
