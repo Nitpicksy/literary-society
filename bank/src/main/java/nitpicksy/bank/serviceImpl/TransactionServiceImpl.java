@@ -31,7 +31,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Transaction transferInsideBank(PaymentRequest paymentRequest, CreditCard creditCard)  {
-        Transaction transaction = null;
+        Transaction transaction;
             transaction = create(paymentRequest,creditCard.getPan());
         try {
             transfer(creditCard,paymentRequest.getMerchantId(),paymentRequest.getAmount());
@@ -51,7 +51,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private Transaction create(PaymentRequest paymentRequest, String pan)  {
         return new Transaction(paymentRequest.getAmount(), paymentRequest.getMerchantId(), paymentRequest.getMerchantOrderId(),
-                paymentRequest.getMerchantTimestamp(),pan);
+                paymentRequest.getMerchantTimestamp(),pan,paymentRequest.getId());
     }
 
     @Transactional
@@ -65,7 +65,6 @@ public class TransactionServiceImpl implements TransactionService {
     private Transaction setTransactionStatus(Transaction transaction, TransactionStatus status){
         transaction.setStatus(status);
         transactionRepository.save(transaction);
-        //send response to KP
         return transaction;
     }
 

@@ -2,7 +2,7 @@ import './App.css';
 import SignIn from './components/Authentication/SignIn/SignIn';
 import SignUp from './components/Authentication/SignUp/SignUp';
 import Logout from './components/Authentication/SignIn/Logout';
-import React, { Suspense,useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
 import NonAuthenticated from './components/Authentication/Error/NonAuthenticated';
 import NonAuthorized from './components/Authentication/Error/NonAuthorized';
@@ -13,7 +13,10 @@ import SignUpOptions from './components/Authentication/SignUpOptions/SignUpOptio
 import { connect } from 'react-redux';
 import HomePage from './components/HomePage';
 import CustomToolbar from './components/Navigation/Toolbar/Toolbar';
-import  * as actions from './components/Authentication/SignIn/SignInExport';
+import * as actions from './components/Authentication/SignIn/SignInExport';
+import PaymentSuccess from './components/Payment/PaymentSuccess';
+import PaymentError from './components/Payment/PaymentError';
+import PaymentFailed from './components/Payment/PaymentFailed';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -37,6 +40,9 @@ const App = props => {
       <Route path="/reset-password" render={(props) => <ResetPasswordEnterNewPass {...props} />} />
       <Route path="/error/non-authenticated" render={(props) => <NonAuthenticated {...props} />} />
       <Route path="/error/non-authorized" render={(props) => <NonAuthorized {...props} />} />
+      <Route path="/payment/success" render={(props) => <PaymentSuccess {...props} />} />
+      <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
+      <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
       <Route path="/" exact render={(props) => <HomePage {...props} />} />
       <Redirect to="/" />
     </Switch>
@@ -47,6 +53,9 @@ const App = props => {
       <Switch>
         <Route path="/sign-out" render={(props) => <Logout {...props} />} />
         <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
+        <Route path="/payment/success" render={(props) => <PaymentSuccess {...props} />} />
+        <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
+        <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
         <Route path="/" exact render={(props) => <HomePage {...props} />} />
         <Redirect to="/" />
       </Switch>
@@ -54,16 +63,16 @@ const App = props => {
   }
 
   let toolbar = null;
-  if(props.isAuthenticated){
-    toolbar = <CustomToolbar/>;
+  if (props.isAuthenticated) {
+    toolbar = <CustomToolbar />;
   }
   return (
     <div>
-        {toolbar}
-        <Suspense fallback={<p>Loading...</p>}>{routes}</Suspense>
-        <main>
-          {props.children}
-        </main>
+      {toolbar}
+      <Suspense fallback={<p>Loading...</p>}>{routes}</Suspense>
+      <main>
+        {props.children}
+      </main>
     </div>
   );
 

@@ -39,16 +39,20 @@ public class Transaction {
     private Timestamp merchantTimestamp;
 
     @Column(nullable = false)
+    private Long paymentId;
+
+    @Column(nullable = false)
     private String pan;
 
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 
-    public Transaction(Double amount, String merchantId, Long merchantOrderId, Timestamp merchantTimestamp, String pan) {
+    public Transaction(Double amount, String merchantId, Long merchantOrderId, Timestamp merchantTimestamp, String pan,Long paymentId) {
         this.amount = amount;
         this.merchantId = merchantId;
         this.merchantOrderId = merchantOrderId;
         this.merchantTimestamp = merchantTimestamp;
         this.pan = pan;
+        this.paymentId = paymentId;
     }
 }
