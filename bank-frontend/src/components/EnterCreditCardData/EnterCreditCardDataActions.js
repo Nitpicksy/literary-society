@@ -13,7 +13,7 @@ export const confirmPayment = (pan, securityCode,cardHolderName,expirationDate,p
 
         axios.post('/payments/confirm/' + paymentId, data)
             .then((response) => {
-                history.push(response.data.url);
+                window.location.href =response.data
             })
             .catch(err => {
                 toastr.error('Confirm Purchase',err.response.data.message);
