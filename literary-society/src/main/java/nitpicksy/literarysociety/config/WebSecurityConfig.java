@@ -56,6 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(new TokenAuthenticationFilter(jwtUserDetailsService.tokenUtils,
                         jwtUserDetailsService), BasicAuthenticationFilter.class);
         http.csrf().disable();
+        //http.requiresChannel().anyRequest().requiresSecure();
     }
 
     @Override

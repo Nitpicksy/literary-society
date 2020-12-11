@@ -10,6 +10,7 @@ import reportWebVitals from './reportWebVitals';
 import signInReducer from './components/Authentication/SignIn/SignInReducer';
 import signUpReducer from './components/Authentication/SignUp/SignUpReducer';
 import resetPasswordReducer from './components/Authentication/ResetPassword/ResetPasswordReducer';
+import activateAccountReducer from './components/Authentication/ActivateAccount/ActivateAccountReducer'
 import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
 import { reducer as toastrReducer } from 'react-redux-toastr';
 import ReduxToastr from 'react-redux-toastr';
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
     signIn: signInReducer,
     signUp: signUpReducer,
     resetPassword: resetPasswordReducer,
-    toastr: toastrReducer
+    activateAccount: activateAccountReducer,
+    toastr: toastrReducer,
 });
 
 const store = createStore(rootReducer, composeEnhancers(

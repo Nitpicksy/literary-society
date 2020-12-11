@@ -2,21 +2,18 @@ package nitpicksy.literarysociety.serviceimpl;
 
 import nitpicksy.literarysociety.dto.request.ChangePasswordDTO;
 import nitpicksy.literarysociety.dto.request.ResetPasswordDTO;
-import nitpicksy.literarysociety.dto.response.CheckPassDTO;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.BlockedUserException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidUserDataException;
-import nitpicksy.literarysociety.model.Log;
-import nitpicksy.literarysociety.model.ResetToken;
-import nitpicksy.literarysociety.model.User;
-import nitpicksy.literarysociety.model.UserTokenState;
+import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.repository.ResetTokenRepository;
 import nitpicksy.literarysociety.repository.UserRepository;
 import nitpicksy.literarysociety.security.JwtAuthenticationRequest;
 import nitpicksy.literarysociety.security.TokenUtils;
 import nitpicksy.literarysociety.service.AuthenticationService;
 import nitpicksy.literarysociety.service.LogService;
+import nitpicksy.literarysociety.service.VerificationService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -31,7 +28,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
@@ -50,6 +46,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRepository userRepository;
 
+    private final VerificationService verificationService;
+
     private final ResetTokenRepository resetTokenRepository;
 
     private final PasswordEncoder passwordEncoder;
@@ -58,7 +56,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final HttpServletRequest request;
 
-    private  ChangePasswordAttemptService changePasswordAttemptService;
+    private ChangePasswordAttemptService changePasswordAttemptService;
 
     private final LogService logService;
 
@@ -98,7 +96,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new InvalidUserDataException("Invalid username or password. Please try again.", HttpStatus.BAD_REQUEST);
         }
 
-        if(userIsNeverLoggedIn(changePasswordDTO.getUsername())){
+        if (userIsNeverLoggedIn(changePasswordDTO.getUsername())) {
             user.setStatus(UserStatus.ACTIVE);
         }
 
@@ -125,6 +123,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userRepository.save(user);
 
         resetTokenRepository.deleteById(resetToken.getId());
+    }
+
+    @Override
+    public void activateAccount(String hash) throws NoSuchAlgorithmException {
+        VerificationToken token = verificationService.verifyToken(hash);
+
+        if (token == null) {
+            throw new InvalidTokenException("Activation token is expired or invalid.", HttpStatus.BAD_REQUEST);
+        }
+
+        User user = token.getUser();
+        user.setEnabled(true);
+        user.setStatus(UserStatus.ACTIVE);
+        userRepository.save(user);
     }
 
     @Override
@@ -155,9 +167,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Autowired
     public AuthenticationServiceImpl(TokenUtils tokenUtils, AuthenticationManager authenticationManager,
-                                       UserRepository userRepository, PasswordEncoder passwordEncoder, RestTemplateBuilder restTemplateBuilder,
-                                       HttpServletRequest request, ChangePasswordAttemptService changePasswordAttemptService,
-                                       ResetTokenRepository resetTokenRepository, LogService logService) {
+                                     UserRepository userRepository, PasswordEncoder passwordEncoder, RestTemplateBuilder restTemplateBuilder,
+                                     HttpServletRequest request, ChangePasswordAttemptService changePasswordAttemptService,
+                                     ResetTokenRepository resetTokenRepository, LogService logService, VerificationService verificationService) {
         this.tokenUtils = tokenUtils;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
@@ -167,5 +179,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.changePasswordAttemptService = changePasswordAttemptService;
         this.resetTokenRepository = resetTokenRepository;
         this.logService = logService;
+        this.verificationService = verificationService;
     }
 }

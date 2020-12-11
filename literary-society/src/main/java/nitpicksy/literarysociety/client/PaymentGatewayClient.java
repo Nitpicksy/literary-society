@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient(name = "payment-gateway")
 public interface PaymentGatewayClient {
 
-    @RequestMapping(method = RequestMethod.GET, path = "/pg-test/health")
+    @RequestMapping(method = RequestMethod.GET, path = "pg-test/health")
     String healthCheck();
 
 }

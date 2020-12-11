@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/pg-test", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TestController {
-
+    
     private TestServiceImpl testService;
 
     @GetMapping("/health")
     public ResponseEntity<String> health() {
+        System.out.println("Greetings from payment");
         return new ResponseEntity<>(testService.healthCheck(), HttpStatus.OK);
     }
 

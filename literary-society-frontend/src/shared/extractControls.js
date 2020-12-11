@@ -96,8 +96,8 @@ const extractControl = (field) => {
                     },
                     value: [],
                     validation: extractConstraints(field.validationConstraints),
-                    valid: false,
-                    touched: false,
+                    valid: true,
+                    touched: true,
                     error: false,
                     errorMessage: '',
                     additionalData: {
