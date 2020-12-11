@@ -19,7 +19,7 @@ public class TestServiceImpl {
     public String healthCheck() {
         System.out.println("Hello from health LS!");
         String response = paymentGatewayClient.healthCheck();
-//        ResponseEntity<String> res = restTemplate.exchange("https://localhost:8990/pg-test/health", HttpMethod.GET, new HttpEntity<>(null), String.class);
+//        ResponseEntity<String> response = restTemplate.exchange("https://localhost:8080/payment-gateway/pg-test/health", HttpMethod.GET, new HttpEntity<>(null), String.class);
         StringBuilder sb = new StringBuilder("Literary Society is up and running!" + response.toString());
         sb.append(System.lineSeparator());
         sb.append(response);

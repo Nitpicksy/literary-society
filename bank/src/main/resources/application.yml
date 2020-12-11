@@ -1,5 +1,15 @@
 server:
   port: 8100
+  ssl:
+    enabled: true
+    key-alias: ${KEYSTORE_ALIAS:bank}
+    key-store: ${KEYSTORE:classpath:bank.keystore.p12}
+    key-store-password: ${KEYSTORE_PASSWORD:password}
+    key-store-type: ${KEYSTORE_TYPE:PKCS12}
+    trust-store: ${TRUSTSTORE:classpath:bank.truststore.p12}
+    trust-store-password: ${TRUSTSTORE_PASSWORD:password}
+    trust-store-type: ${TRUSTSTORE_TYPE:PKCS12}
+    client-auth: want
 
 spring:
   application:
@@ -8,7 +18,17 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-peer1:8761/eureka,http://eureka-peer2:8762/eureka
+      defaultZone: https://localhost:8761/eureka
+      #      ,http://eureka-peer2:8762/eureka
       healthcheck:
         enabled: true
     fetchRegistry: true
+  instance:
+    hostname: localhost
+    nonSecurePortEnabled: false
+    securePortEnabled: true
+    securePort: ${server.port}
+    homePageUrl: https://${eureka.instance.hostname}:${server.port}/
+    secureVirtualHostName: ${spring.application.name}
+    prefer-ip-address: false
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}

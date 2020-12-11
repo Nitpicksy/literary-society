@@ -24,9 +24,11 @@ eureka:
   #    hostname: eureka-peer1
   #    appname: eureka-cluster
   instance:
+    hostname: localhost
     nonSecurePortEnabled: false
     securePortEnabled: true
     secure-port: ${server.port}
+    prefer-ip-address: false
   client:
     serviceUrl:
       defaultZone: https://localhost:${peers.port1}/eureka

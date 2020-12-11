@@ -1,6 +1,6 @@
-package nitpicksy.paypalservice.controller;
+package nitpicksy.bank.controller;
 
-import nitpicksy.paypalservice.serviceimpl.TestServiceImpl;
+import nitpicksy.bank.serviceImpl.TestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,9 +15,9 @@ public class TestController {
 
     private TestServiceImpl testService;
 
-
     @GetMapping("/health")
-    public ResponseEntity<String> healthCheck() {
+    public ResponseEntity<String> health() {
+        System.out.println("Greetings from bank");
         return new ResponseEntity<>(testService.healthCheck(), HttpStatus.OK);
     }
 

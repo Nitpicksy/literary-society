@@ -115,7 +115,7 @@ cat ca/tls-ca.crt ca/root-ca.crt > \
 mkdir -p "certs/${ZUUL_NAME}/keystore"
 
 # Create Zuul request
-SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost \
+SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost,IP.1:127.0.0.1,IP.2:192.168.64.169 \
 openssl req \
     -new \
     -nodes \
@@ -180,7 +180,7 @@ openssl pkcs12 \
 mkdir -p "certs/${EUREKA_NAME}/keystore"
 
 # Create Eureka request
-SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost \
+SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost,IP.1:127.0.0.1,IP.2:192.168.64.169 \
 openssl req \
     -new \
     -nodes \
@@ -211,7 +211,7 @@ openssl pkcs12 \
 mkdir -p "certs/${CLOUD_NAME}/keystore"
 
 # Create Cloud request
-SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost \
+SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost,IP.1:127.0.0.1,IP.2:192.168.64.169 \
 openssl req \
     -new \
     -nodes \
@@ -243,7 +243,7 @@ openssl pkcs12 \
 mkdir -p "certs/${LITERARY_NAME}/keystore"
 
 # Create Literary society request
-SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost \
+SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost,IP.1:127.0.0.1,IP.2:192.168.64.169 \
 openssl req \
     -new \
     -nodes \
@@ -274,7 +274,7 @@ openssl pkcs12 \
 mkdir -p "certs/${GATEWAY_NAME}/keystore"
 
 # Create Payment gateway request
-SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost \
+SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost,IP.1:127.0.0.1,IP.2:192.168.64.169 \
 openssl req \
     -new \
     -nodes \
@@ -305,7 +305,7 @@ openssl pkcs12 \
 mkdir -p "certs/${PAYPAL_NAME}/keystore"
 
 # Create Paypal request
-SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost \
+SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost,IP.1:127.0.0.1,IP.2:192.168.64.169 \
 openssl req \
     -new \
     -nodes \
@@ -337,7 +337,7 @@ openssl pkcs12 \
 mkdir -p "certs/${BITCOIN_NAME}/keystore"
 
 # Create Bitcoin request
-SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost \
+SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost,IP.1:127.0.0.1,IP.2:192.168.64.169 \
 openssl req \
     -new \
     -nodes \
@@ -368,7 +368,7 @@ openssl pkcs12 \
 mkdir -p "certs/${BANK_NAME}/keystore"
 
 # Create Bank request
-SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost \
+SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost,IP.1:127.0.0.1,IP.2:192.168.64.169 \
 openssl req \
     -new \
     -nodes \
@@ -399,7 +399,7 @@ openssl pkcs12 \
 mkdir -p "certs/${PCC_NAME}/keystore"
 
 # Create PCC request
-SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost \
+SAN=DNS:nitpicksy.no,DNS:www.nitpicksy.no,DNS:localhost,IP.1:127.0.0.1,IP.2:192.168.64.169 \
 openssl req \
     -new \
     -nodes \

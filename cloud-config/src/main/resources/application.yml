@@ -37,6 +37,8 @@ eureka:
       healthcheck:
         enabled: true
     fetchRegistry: true
+  instance:
+    hostname: localhost
 
 management:
   endpoints:

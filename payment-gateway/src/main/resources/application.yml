@@ -9,6 +9,7 @@ server:
     trust-store: ${TRUSTSTORE:classpath:gateway.truststore.p12}
     trust-store-password: ${TRUSTSTORE_PASSWORD:password}
     trust-store-type: ${TRUSTSTORE_TYPE:PKCS12}
+    client-auth: want
 
 spring:
   application:
@@ -36,11 +37,10 @@ eureka:
     fetchRegistry: true
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-#    secureVirtualHostName: ${spring.application.name}
-
-ribbon:
-  IsSecure: true
-#
-#paypal-service:
-#  ribbon:
-#    listOfServers: https://localhost:8200
+    nonSecurePortEnabled: false
+    securePortEnabled: true
+    securePort: ${server.port}
+    homePageUrl: https://${eureka.instance.hostname}:${server.port}/
+    secureVirtualHostName: ${spring.application.name}
+    prefer-ip-address: false
+    hostname: localhost

@@ -9,6 +9,7 @@ server:
     trust-store: ${TRUSTSTORE:classpath:zuul.truststore.p12}
     trust-store-password: ${TRUSTSTORE_PASSWORD:password}
     trust-store-type: ${TRUSTSTORE_TYPE:PKCS12}
+    client-auth: want
 
 eureka:
   client:
@@ -24,6 +25,8 @@ eureka:
     homePageUrl: https://${eureka.instance.hostname}:${server.port}/
     secureVirtualHostName: ${spring.application.name}
     prefer-ip-address: false
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+    hostname: localhost
 
 zuul:
   routes:
@@ -32,24 +35,24 @@ zuul:
       service-id: payment-gateway
     literary-society:
       path: /literary-society/**
-      url: https://localhost:8090
-    #      service-id: literary-society
+      #      url: http://localhost:8090
+      service-id: literary-society
     bank:
       path: /bank/**
-      url: http://localhost:8100
-    #  service-id: bank
+      #      url: http://localhost:8100
+      service-id: bank
     pcc:
       path: /pcc/**
-      url: http://localhost:8101
-    #    service-id: pcc
-    paypal-service:
-      path: /paypal-service/**
-      url: http://localhost:8200
-    #    service-id: paypal
-    bitcoin-service:
-      path: /bitcoin-service/**
-      url: http://localhost:8300
-  #    service-id: bitcoin
+      #      url: http://localhost:8101
+      service-id: pcc
+    paypal:
+      path: /paypal/**
+      #      url: http://localhost:8200
+      service-id: paypal
+    bitcoin:
+      path: /bitcoin/**
+      #      url: http://localhost:8300
+      service-id: bitcoin
   host:
     connect-timeout-millis: 5000000
     socket-timeout-millis: 5000000
@@ -67,10 +70,6 @@ ribbon:
   TrustStorePassword: ${TRUSTSTORE_PASSWORD:password}
   CustomSSLSocketFactoryClassName: com.netflix.http4.ssl.AcceptAllSocketFactory
   IsHostnameValidationRequired: false
-
-#literary-society:
-#  ribbon:
-#    listOfServers: https://localhost:8090
 
 hystrix:
   command:
