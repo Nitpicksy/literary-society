@@ -10,8 +10,11 @@ import nitpicksy.literarysociety.repository.ReaderRepository;
 import nitpicksy.literarysociety.service.GenreService;
 import nitpicksy.literarysociety.service.ReaderService;
 import nitpicksy.literarysociety.service.VerificationService;
+import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -37,6 +40,8 @@ public class ReaderServiceImpl implements ReaderService, JavaDelegate {
 
     private Environment environment;
 
+    private TaskService taskService;
+
     @Override
     public Reader create(Reader reader, DelegateExecution execution) throws NoSuchAlgorithmException {
         if (userService.findByUsername(reader.getUsername()) != null) {
@@ -53,14 +58,18 @@ public class ReaderServiceImpl implements ReaderService, JavaDelegate {
         reader.setRole(userService.findRoleByName(RoleConstants.ROLE_READER));
         String password = reader.getPassword();
         reader.setPassword(passwordEncoder.encode(password));
-
         Reader savedReader = readerRepository.save(reader);
         String nonHashedToken = verificationService.generateToken(savedReader);
 
         execution.setVariable("success", true);
-        execution.setVariable("email", reader.getEmail());
+        execution.setVariable("email", savedReader.getEmail());
         execution.setVariable("subject", "Account activation");
-        execution.setVariable("text", composeEmailToActivate(nonHashedToken));
+
+        List<Task> tasks = taskService.createTaskQuery().processInstanceId(execution.getProcessInstanceId()).list();
+        taskService.createTaskQuery().processDefinitionId("Process_Reader_Registration").list();
+        Task task = tasks.get(tasks.size()-1);
+        System.out.println(task.getId());
+        execution.setVariable("text", composeEmailToActivate(nonHashedToken,task.getId()));
         return savedReader;
     }
 
@@ -86,9 +95,10 @@ public class ReaderServiceImpl implements ReaderService, JavaDelegate {
         }
 
         create(reader,execution);
+
     }
 
-    private String composeEmailToActivate(String token) {
+    private String composeEmailToActivate(String token,String taskId) {
         StringBuilder sb = new StringBuilder();
         sb.append("You have successfully registered to the Literary Society website.");
         sb.append(System.lineSeparator());
@@ -96,7 +106,7 @@ public class ReaderServiceImpl implements ReaderService, JavaDelegate {
         sb.append("To activate your account click the following link:");
         sb.append(System.lineSeparator());
         sb.append(getLocalhostURL());
-        sb.append("activate-account=" + token);
+        sb.append("activate-account?taskId=" + taskId + "&t=" + token);
         String text = sb.toString();
         return text;
     }
@@ -109,12 +119,13 @@ public class ReaderServiceImpl implements ReaderService, JavaDelegate {
 
     @Autowired
     public ReaderServiceImpl(UserServiceImpl userService, PasswordEncoder passwordEncoder, ReaderRepository readerRepository,
-                             VerificationService verificationService, Environment environment,GenreService genreService) {
+                             VerificationService verificationService, Environment environment,GenreService genreService,TaskService taskService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.readerRepository = readerRepository;
         this.verificationService = verificationService;
         this.environment = environment;
         this.genreService = genreService;
+        this.taskService = taskService;
     }
 }

@@ -79,6 +79,12 @@ public class CamundaServiceImpl implements CamundaService {
         return formFieldsDTO;
     }
 
+    @Override
+    public void complete(String taskId) {
+        taskService.createTaskQuery().taskId(taskId).singleResult();
+        taskService.complete(taskId);
+    }
+
     @Autowired
     public CamundaServiceImpl(RuntimeService runtimeService, TaskService taskService, FormService formService,
                               RepositoryService repositoryService) {

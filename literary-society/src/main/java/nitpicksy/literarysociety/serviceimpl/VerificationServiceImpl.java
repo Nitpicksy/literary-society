@@ -19,7 +19,6 @@ public class VerificationServiceImpl implements VerificationService {
 
     private VerificationTokenRepository verificationTokenRepository;
 
-
     /**
      * @param user
      * @return nonHashedToken to be sent by email

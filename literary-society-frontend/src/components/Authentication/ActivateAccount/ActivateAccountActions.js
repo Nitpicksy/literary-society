@@ -21,10 +21,10 @@ export const activateAccountFail = (error) => {
   };
 };
 
-export const activateAccount = (hashId) => {
+export const activateAccount = (hashId,taskId) => {
   return (dispatch) => {
     axios
-      .put(`/auth/activate/${hashId}`, {})
+      .put(`/auth/activate?taskId=${taskId}&t=${hashId}`, {})
       .then((response) => {
         toastr.success("Activation successful");
         dispatch(activateAccountSuccess());

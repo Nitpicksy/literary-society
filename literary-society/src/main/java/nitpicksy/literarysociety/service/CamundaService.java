@@ -8,4 +8,5 @@ public interface CamundaService {
 
     FormFieldsDTO setEnumValues(FormFieldsDTO formFieldsDTO);
 
+    void complete(String taskId);
 }

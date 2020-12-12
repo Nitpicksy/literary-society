@@ -9,16 +9,20 @@ import {
 import { useStyles } from "./ActivateAccountStyles";
 import DoneAllRoundedIcon from "@material-ui/icons/DoneAllRounded";
 import SentimentVeryDissatisfiedIcon from "@material-ui/icons/SentimentVeryDissatisfied";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { activateAccount } from "./ActivateAccountActions";
 
 const ActivateAccount = (props) => {
   const classes = useStyles();
+  const [taskId, setTaskId] = useState(null);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    props.activateAccount(props.match.params.id);
-    console.log("props", props);
+    const params = new URLSearchParams(props.location.search);
+    setTaskId(params.get('taskId'));
+    setToken(params.get('t'));
+    props.activateAccount(params.get('t'),params.get('taskId'));
   }, []);
 
   let message = "Account activated, you're all set!";
@@ -63,7 +67,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    activateAccount: (hashId) => dispatch(activateAccount(hashId)),
+    activateAccount: (hashId,taskId) => dispatch(activateAccount(hashId,taskId)),
   };
 };
 

@@ -10,6 +10,7 @@ import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.UserTokenState;
 import nitpicksy.literarysociety.security.JwtAuthenticationRequest;
 import nitpicksy.literarysociety.service.AuthenticationService;
+import nitpicksy.literarysociety.service.CamundaService;
 import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
 import nitpicksy.literarysociety.serviceimpl.TestServiceImpl;
@@ -45,6 +46,7 @@ public class AuthenticationController {
 
     private TestServiceImpl testService;
 
+    private CamundaService camundaService;
 
     @PostMapping(value = "/sign-in", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserTokenState> login(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest) {
@@ -91,10 +93,13 @@ public class AuthenticationController {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(null);
     }
 
-    @PutMapping(value = "/activate/{hash}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> activateAccount(@PathVariable String hash) {
+    @PutMapping(value = "/activate", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> activateAccount(@RequestParam(required = false) String taskId, @RequestParam String t) {
         try {
-            authenticationService.activateAccount(hash);
+            authenticationService.activateAccount(t);
+            if(taskId != null && !taskId.isEmpty()){
+                camundaService.complete(taskId);
+            }
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -145,11 +150,13 @@ public class AuthenticationController {
     }
 
     @Autowired
-    public AuthenticationController(UserService userService, AuthenticationService authenticationService, LogService logService, IPAddressProvider ipAddressProvider, TestServiceImpl testService) {
+    public AuthenticationController(UserService userService, AuthenticationService authenticationService, LogService logService,
+                                    IPAddressProvider ipAddressProvider, TestServiceImpl testService,CamundaService camundaService) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.logService = logService;
         this.ipAddressProvider = ipAddressProvider;
         this.testService = testService;
+        this.camundaService = camundaService;
     }
 }
