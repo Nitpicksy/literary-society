@@ -18,9 +18,9 @@ export const fetchFormFail = (error) => {
     };
 };
 
-export const fetchForm = () => {
+export const fetchForm = (piId) => {
     return dispatch => {
-        axios.get('/readers/beta/choose-genres')
+        axios.get(`/readers/beta/choose-genres?piId=${piId}`)
             .then(response => {
                 console.log(response.data)
                 dispatch(fetchFormSuccess(response.data.formFields, response.data.processInstanceId, response.data.taskId));

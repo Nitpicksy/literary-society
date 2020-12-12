@@ -28,7 +28,8 @@ public class RegisterReaderProcessHandler implements ExecutionListener {
             String key = "id_" + genre.getId();
             enumList.add(new EnumKeyValueDTO(key, genre.getName()));
         }
-        execution.setVariable("genresList", enumList);
+        execution.setVariable("selectGenresList", enumList);
+        execution.setVariable("selectBetaReaderGenresList", enumList);
     }
 
     @Autowired

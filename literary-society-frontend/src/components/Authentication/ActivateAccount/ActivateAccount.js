@@ -9,20 +9,16 @@ import {
 import { useStyles } from "./ActivateAccountStyles";
 import DoneAllRoundedIcon from "@material-ui/icons/DoneAllRounded";
 import SentimentVeryDissatisfiedIcon from "@material-ui/icons/SentimentVeryDissatisfied";
-import React, { useEffect, useState } from "react";
+import React, { useEffect} from "react";
 import { connect } from "react-redux";
 import { activateAccount } from "./ActivateAccountActions";
 
 const ActivateAccount = (props) => {
   const classes = useStyles();
-  const [piId, setPiId] = useState(null);
-  const [token, setToken] = useState(null);
   const {activateAccount} = props;
 
   useEffect(() => {
     const params = new URLSearchParams(props.location.search);
-    setPiId(params.get('piId'));
-    setToken(params.get('t'));
     activateAccount(params.get('t'),params.get('piId'));
   }, [props.location.search, activateAccount]);
 

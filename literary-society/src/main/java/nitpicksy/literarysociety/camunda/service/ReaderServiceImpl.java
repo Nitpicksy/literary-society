@@ -1,4 +1,4 @@
-package nitpicksy.literarysociety.serviceimpl;
+package nitpicksy.literarysociety.camunda.service;
 
 import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
@@ -10,7 +10,9 @@ import nitpicksy.literarysociety.repository.ReaderRepository;
 import nitpicksy.literarysociety.service.GenreService;
 import nitpicksy.literarysociety.service.ReaderService;
 import nitpicksy.literarysociety.service.VerificationService;
+import nitpicksy.literarysociety.serviceimpl.UserServiceImpl;
 import org.camunda.bpm.engine.TaskService;
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +49,8 @@ public class ReaderServiceImpl implements ReaderService, JavaDelegate {
     public Reader create(Reader reader, DelegateExecution execution) throws NoSuchAlgorithmException {
         if (userService.findByUsername(reader.getUsername()) != null) {
             execution.setVariable("success", false);
-            throw new InvalidDataException("User with same username already exists.", HttpStatus.BAD_REQUEST);
+            throw new BpmnError("User with same username already exists.");
+            // throw new InvalidDataException("User with same username already exists.", HttpStatus.BAD_REQUEST);
         }
 
         if (userService.findByEmail(reader.getEmail()) != null) {
@@ -82,12 +85,15 @@ public class ReaderServiceImpl implements ReaderService, JavaDelegate {
 
         if (isBetaReader) {
             List<Long> ids = new ArrayList<>();
-            String[] genresStr = map.get("genres").split(",");
+            String[] genresStr = map.get("selectGenres").split(",");
             for (String idStr : genresStr) {
                 Long id = Long.valueOf(idStr.split("_")[1]);
                 ids.add(id);
             }
             List<Genre> genres = genreService.findWithIds(ids);
+            if(genres.isEmpty()){
+                throw new InvalidDataException("You have to choose at least one genre.", HttpStatus.BAD_REQUEST);
+            }
             reader.setGenres(new HashSet<>(genres));
         }
 

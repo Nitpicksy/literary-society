@@ -59,7 +59,7 @@ export const signUpFail = (error) => {
 };
 
 
-export const signUp = (signUpData, taskId) => {
+export const signUp = (signUpData, taskId, history,isBetaReader) => {
     return dispatch => {
         dispatch(signUpStart());
         // axios.post('/process/'.concat(taskId),signUpData)
@@ -75,6 +75,10 @@ export const signUp = (signUpData, taskId) => {
             .then(() => {
                 dispatch(signUpSuccess());
                 toastr.success('Sign up', 'Success');
+                if(isBetaReader){
+                  history.push('/choose-genres');
+                }
+
             }, (err) => {
                 toastr.error('Sign up',err.response.data.message);
                 dispatch(signUpFail(err.response.data.message));

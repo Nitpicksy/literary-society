@@ -52,7 +52,7 @@ const SignUp = (props) => {
 
             array.push({fieldId: key, fieldValue: value});
         }
-        props.onSignUp(array, props.taskId);
+        props.onSignUp(array, props.taskId,history,controls['isBetaReader'].value);
     }
 
     if (controls) {
@@ -95,7 +95,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchForm: () => dispatch(actions.fetchForm()),
-        onSignUp: (signUpData, taskId) => dispatch(actions.signUp(signUpData, taskId)),
+        onSignUp: (signUpData, taskId,history,isBetaReader) => dispatch(actions.signUp(signUpData, taskId,history,isBetaReader)),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history))
     }
 };

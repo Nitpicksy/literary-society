@@ -36,11 +36,15 @@ public class CamundaServiceImpl implements CamundaService {
     public FormFieldsDTO start(String processId) {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey(processId);
         Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).list().get(0);
+        return getFormFields(pi.getId(), task.getId());
+    }
 
-        TaskFormData tfd = formService.getTaskFormData(task.getId());
+    @Override
+    public FormFieldsDTO getFormFields(String piId, String taskId) {
+        TaskFormData tfd = formService.getTaskFormData(taskId);
         List<FormField> properties = tfd.getFormFields();
 
-        return new FormFieldsDTO(pi.getId(), task.getId(), properties);
+        return new FormFieldsDTO(piId, taskId, properties);
     }
 
     @Override
