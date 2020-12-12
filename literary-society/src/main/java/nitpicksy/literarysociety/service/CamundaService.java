@@ -4,5 +4,8 @@ import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
 
 public interface CamundaService {
 
-   FormFieldsDTO start(String processId);
+    FormFieldsDTO start(String processId);
+
+    FormFieldsDTO setEnumValues(FormFieldsDTO formFieldsDTO);
+
 }

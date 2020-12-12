@@ -4,7 +4,7 @@ peers:
 
 server:
   ssl:
-    enabled: true
+    enabled: false
     key-alias: ${KEYSTORE_ALIAS:eureka}
     key-store: ${KEYSTORE:classpath:eureka.keystore.p12}
     key-store-password: ${KEYSTORE_PASSWORD:password}
@@ -20,18 +20,19 @@ spring:
     activate:
       on-profile: peer1
 eureka:
-  instance:
-    hostname: eureka-peer1
-    appname: eureka-cluster
-    nonSecurePortEnabled: false
-    securePortEnabled: true
-    secure-port: ${server.port}
-    prefer-ip-address: false
-  client:
-    serviceUrl:
-      defaultZone: https://eureka-peer1:${peers.port1}/eureka
-    register-with-eureka: false
-    fetch-registry: false
+  <<<<<<< HEAD
+instance:
+  hostname: eureka-peer1
+  appname: eureka-cluster
+  nonSecurePortEnabled: false
+  securePortEnabled: true
+  secure-port: ${server.port}
+  prefer-ip-address: false
+client:
+  serviceUrl:
+    defaultZone: https://eureka-peer1:${peers.port1}/eureka
+  register-with-eureka: false
+  fetch-registry: false
 
 ---
 server:
