@@ -2,13 +2,11 @@ package nitpicksy.literarysociety.serviceimpl;
 
 import nitpicksy.literarysociety.dto.camunda.EnumKeyValueDTO;
 import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
-import nitpicksy.literarysociety.model.Genre;
 import nitpicksy.literarysociety.service.CamundaService;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.form.FormField;
 import org.camunda.bpm.engine.form.TaskFormData;
 import org.camunda.bpm.engine.impl.form.FormFieldImpl;
@@ -41,7 +39,7 @@ public class CamundaServiceImpl implements CamundaService {
 
         TaskFormData tfd = formService.getTaskFormData(task.getId());
         List<FormField> properties = tfd.getFormFields();
-        
+
         return new FormFieldsDTO(pi.getId(), task.getId(), properties);
     }
 
@@ -80,9 +78,9 @@ public class CamundaServiceImpl implements CamundaService {
     }
 
     @Override
-    public void complete(String taskId) {
-        taskService.createTaskQuery().taskId(taskId).singleResult();
-        taskService.complete(taskId);
+    public void complete(String processInstanceId) {
+        Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).list().get(0);
+        taskService.complete(task.getId());
     }
 
     @Autowired

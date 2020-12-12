@@ -94,14 +94,14 @@ public class AuthenticationController {
     }
 
     @PutMapping(value = "/activate", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> activateAccount(@RequestParam(required = false) String taskId, @RequestParam String t) {
+    public ResponseEntity<Void> activateAccount(@RequestParam(required = false) String piId, @RequestParam String t) {
         try {
             authenticationService.activateAccount(t);
-            if(taskId != null && !taskId.isEmpty()){
-                camundaService.complete(taskId);
+            if (piId != null && !piId.isEmpty()) {
+                camundaService.complete(piId);
             }
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            throw new InvalidTokenException("Activation token cannot be checked. Please try again.", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(null);
     }
@@ -151,7 +151,7 @@ public class AuthenticationController {
 
     @Autowired
     public AuthenticationController(UserService userService, AuthenticationService authenticationService, LogService logService,
-                                    IPAddressProvider ipAddressProvider, TestServiceImpl testService,CamundaService camundaService) {
+                                    IPAddressProvider ipAddressProvider, TestServiceImpl testService, CamundaService camundaService) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.logService = logService;

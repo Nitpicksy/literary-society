@@ -10,7 +10,8 @@ import reportWebVitals from './reportWebVitals';
 import signInReducer from './components/Authentication/SignIn/SignInReducer';
 import signUpReducer from './components/Authentication/SignUp/SignUpReducer';
 import resetPasswordReducer from './components/Authentication/ResetPassword/ResetPasswordReducer';
-import activateAccountReducer from './components/Authentication/ActivateAccount/ActivateAccountReducer'
+import activateAccountReducer from './components/Authentication/ActivateAccount/ActivateAccountReducer';
+import betaReaderGenres from './components/Authentication/BetaReaderGenres/BetaReaderGenresReducer';
 import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
 import { reducer as toastrReducer } from 'react-redux-toastr';
 import ReduxToastr from 'react-redux-toastr';
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
     signUp: signUpReducer,
     resetPassword: resetPasswordReducer,
     activateAccount: activateAccountReducer,
+    betaReaderGenres: betaReaderGenres,
     toastr: toastrReducer,
 });
 

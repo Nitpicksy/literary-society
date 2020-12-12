@@ -13,8 +13,6 @@ import nitpicksy.literarysociety.service.VerificationService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -22,7 +20,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,11 +66,7 @@ public class ReaderServiceImpl implements ReaderService, JavaDelegate {
         execution.setVariable("email", savedReader.getEmail());
         execution.setVariable("subject", "Account activation");
 
-        List<Task> tasks = taskService.createTaskQuery().processInstanceId(execution.getProcessInstanceId()).list();
-        taskService.createTaskQuery().processDefinitionId("Process_Reader_Registration").list();
-        Task task = tasks.get(tasks.size()-1);
-        System.out.println(task.getId());
-        execution.setVariable("text", composeEmailToActivate(nonHashedToken,task.getId()));
+        execution.setVariable("text", composeEmailToActivate(nonHashedToken, execution.getProcessInstanceId()));
         return savedReader;
     }
 
@@ -94,11 +91,11 @@ public class ReaderServiceImpl implements ReaderService, JavaDelegate {
             reader.setGenres(new HashSet<>(genres));
         }
 
-        create(reader,execution);
+        create(reader, execution);
 
     }
 
-    private String composeEmailToActivate(String token,String taskId) {
+    private String composeEmailToActivate(String token, String processInstanceId) {
         StringBuilder sb = new StringBuilder();
         sb.append("You have successfully registered to the Literary Society website.");
         sb.append(System.lineSeparator());
@@ -106,20 +103,19 @@ public class ReaderServiceImpl implements ReaderService, JavaDelegate {
         sb.append("To activate your account click the following link:");
         sb.append(System.lineSeparator());
         sb.append(getLocalhostURL());
-        sb.append("activate-account?taskId=" + taskId + "&t=" + token);
+        sb.append("activate-account?piId=" + processInstanceId + "&t=" + token);
         String text = sb.toString();
         return text;
     }
 
     private String getLocalhostURL() {
         return environment.getProperty("LOCALHOST_URL");
-
     }
 
 
     @Autowired
     public ReaderServiceImpl(UserServiceImpl userService, PasswordEncoder passwordEncoder, ReaderRepository readerRepository,
-                             VerificationService verificationService, Environment environment,GenreService genreService,TaskService taskService) {
+                             VerificationService verificationService, Environment environment, GenreService genreService, TaskService taskService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.readerRepository = readerRepository;

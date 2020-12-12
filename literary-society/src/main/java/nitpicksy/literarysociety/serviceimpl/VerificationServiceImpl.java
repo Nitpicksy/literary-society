@@ -12,7 +12,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.Calendar;
 
 @Service
 public class VerificationServiceImpl implements VerificationService {
@@ -36,30 +35,19 @@ public class VerificationServiceImpl implements VerificationService {
             dbToken = verificationTokenRepository.findByToken(verificationToken.getToken());
         }
         verificationTokenRepository.save(verificationToken);
+
         return nonHashedToken;
     }
 
-
     @Override
     public VerificationToken verifyToken(String token) throws NoSuchAlgorithmException {
-        VerificationToken repositoryToken = verificationTokenRepository.findByToken(getTokenHash(token));
+        return verificationTokenRepository
+                .findByTokenAndExpiryDateTimeAfter(getTokenHash(token), LocalDateTime.now());
+    }
 
-        if (repositoryToken == null) {
-            return null;
-        }
-
-        Calendar calendar = Calendar.getInstance();
-        LocalDateTime localDate = LocalDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId());
-
-        if (repositoryToken.getExpiryDateTime().isBefore(localDate)) {
-            return null;
-        }
-
-        //token has been consumed, expire it so the user can't reactivate again.
-        repositoryToken.setExpiryDateTime(localDate);
-        verificationTokenRepository.save(repositoryToken);
-
-        return repositoryToken;
+    @Override
+    public void invalidateToken(Long tokenId) {
+        verificationTokenRepository.deleteById(tokenId);
     }
 
     private String getTokenHash(String token) throws NoSuchAlgorithmException {

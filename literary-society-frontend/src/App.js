@@ -15,6 +15,7 @@ import HomePage from './components/HomePage';
 import CustomToolbar from './components/Navigation/Toolbar/Toolbar';
 import  * as actions from './components/Authentication/SignIn/SignInExport';
 import ActivateAccount from './components/Authentication/ActivateAccount/ActivateAccount';
+import BetaReaderGenres from './components/Authentication/BetaReaderGenres/BetaReaderGenres';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -31,8 +32,9 @@ const App = props => {
   let routes = (
     <Switch>
       <Route path="/sign-in" render={(props) => <SignIn {...props} />} />
-      <Route path="/sign-up" render={(props) => <SignUp {...props} />} />
       <Route path="/sign-up-options" render={(props) => <SignUpOptions {...props} />} />
+      <Route path="/sign-up" render={(props) => <SignUp {...props} />} />
+      <Route path="/choose-genres" render={(props) => <BetaReaderGenres {...props} />} />
       <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
       <Route path="/forgot-password" render={(props) => <ResetPasswordEnterUsername {...props} />} />
       <Route path="/reset-password" render={(props) => <ResetPasswordEnterNewPass {...props} />} />

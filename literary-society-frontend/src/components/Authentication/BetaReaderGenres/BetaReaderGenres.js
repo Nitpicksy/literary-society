@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import * as actions from './SignUpExport';
+import * as actions from './BetaReaderGenresExport';
 import * as signInActions from '../SignIn/SignInExport';
 import { extractControls } from '../../../shared/extractControls';
 import Form from '../../../UI/Form/Form';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import PersonIcon from '@material-ui/icons/Person';
+import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import { useStyles } from './SignUpStyles';
+import { useStyles } from './BetaReaderGenresStyles';
 import { connect } from 'react-redux';
 import {responseInterceptor} from '../../../responseInterceptor';
 import { useHistory } from 'react-router';
 
-const SignUp = (props) => {
+const BetaReaderGenres = (props) => {
     const history = useHistory();
     const classes = useStyles();
     const { formFields, fetchForm } = props;
@@ -52,7 +50,7 @@ const SignUp = (props) => {
 
             array.push({fieldId: key, fieldValue: value});
         }
-        props.onSignUp(array, props.taskId);
+        props.chooseGenres(array, props.taskId);
     }
 
     if (controls) {
@@ -64,30 +62,26 @@ const SignUp = (props) => {
             <CssBaseline />
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
-                    <PersonIcon />
+                    <PlaylistAddCheckIcon />
                 </Avatar>
-                <Typography component="h1" variant="h4">Sign up</Typography>
+                <Typography component="h1" variant="h4">Choose genres</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
-                    <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
-                        disabled={!formIsValid}>Sign up</Button>
-                    <Grid container justify="flex-end">
-                        <Grid item>
-                            <Link href="/sign-in" variant="body2">Already have an account? Sign in</Link>
-                        </Grid>
-                    </Grid>
+                    <Button type="submit" color="primary" className={classes.submit} fullWidth 
+                        variant="contained" disabled={!formIsValid}>
+                        Confirm
+                    </Button>
                 </form>
             </div>
         </Container>
     );
 };
 
-
 const mapStateToProps = state => {
     return {
-        formFields: state.signUp.formFields,
-        processInstanceId: state.signUp.processInstanceId,
-        taskId: state.signUp.taskId,
+        formFields: state.betaReaderGenres.formFields,
+        processInstanceId: state.betaReaderGenres.processInstanceId,
+        taskId: state.betaReaderGenres.taskId,
         refreshTokenRequestSent: state.signIn.refreshTokenRequestSent
     }
 };
@@ -95,9 +89,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchForm: () => dispatch(actions.fetchForm()),
-        onSignUp: (signUpData, taskId) => dispatch(actions.signUp(signUpData, taskId)),
+        chooseGenres: (genresData, taskId) => dispatch(actions.chooseGenres(genresData, taskId)),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history))
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
+export default connect(mapStateToProps, mapDispatchToProps)(BetaReaderGenres);

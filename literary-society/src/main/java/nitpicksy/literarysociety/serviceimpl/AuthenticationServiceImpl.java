@@ -17,7 +17,7 @@ import nitpicksy.literarysociety.service.VerificationService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -130,12 +130,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         VerificationToken token = verificationService.verifyToken(hash);
 
         if (token == null) {
-            throw new InvalidTokenException("Activation token is expired or invalid.", HttpStatus.BAD_REQUEST);
+            throw new InvalidTokenException("This activation link is invalid or expired.", HttpStatus.BAD_REQUEST);
         }
 
         User user = token.getUser();
         user.setEnabled(true);
         user.setStatus(UserStatus.ACTIVE);
+
+        verificationService.invalidateToken(token.getId());
         userRepository.save(user);
     }
 

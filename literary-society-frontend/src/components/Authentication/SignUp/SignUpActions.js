@@ -71,7 +71,7 @@ export const signUp = (signUpData, taskId) => {
         //     .catch(err => {
         //         // dispatch(signUpFail(err.response.data.error)); 
         //     })
-        axios.post('/process/'.concat(taskId), signUpData)
+        axios.post('/process/' + taskId, signUpData)
             .then(() => {
                 dispatch(signUpSuccess());
                 toastr.success('Sign up', 'Success');

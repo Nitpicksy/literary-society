@@ -15,15 +15,16 @@ import { activateAccount } from "./ActivateAccountActions";
 
 const ActivateAccount = (props) => {
   const classes = useStyles();
-  const [taskId, setTaskId] = useState(null);
+  const [piId, setPiId] = useState(null);
   const [token, setToken] = useState(null);
+  const {activateAccount} = props;
 
   useEffect(() => {
     const params = new URLSearchParams(props.location.search);
-    setTaskId(params.get('taskId'));
+    setPiId(params.get('piId'));
     setToken(params.get('t'));
-    props.activateAccount(params.get('t'),params.get('taskId'));
-  }, []);
+    activateAccount(params.get('t'),params.get('piId'));
+  }, [props.location.search, activateAccount]);
 
   let message = "Account activated, you're all set!";
 
@@ -67,7 +68,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    activateAccount: (hashId,taskId) => dispatch(activateAccount(hashId,taskId)),
+    activateAccount: (hashId,piId) => dispatch(activateAccount(hashId,piId)),
   };
 };
 
