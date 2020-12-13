@@ -1,19 +1,20 @@
 import './App.css';
-import SignIn from './components/Authentication/SignIn/SignIn';
-import SignUp from './components/Authentication/SignUp/SignUp';
-import Logout from './components/Authentication/SignIn/Logout';
 import React, { Suspense,useEffect } from 'react';
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import  * as actions from './components/Authentication/SignIn/SignInExport';
+import SignIn from './components/Authentication/SignIn/SignIn';
+import SignUpOptions from './components/Authentication/SignUpOptions/SignUpOptions';
+import SignUp from './components/Authentication/SignUp/SignUp';
+import SignUpFinished from './components/Authentication/SignUpFinished/SignUpFinished';
+import Logout from './components/Authentication/SignIn/Logout';
 import NonAuthenticated from './components/Authentication/Error/NonAuthenticated';
 import NonAuthorized from './components/Authentication/Error/NonAuthorized';
 import ChangePassword from './components/Authentication/ChangePassword/ChangePassword';
 import ResetPasswordEnterNewPass from './components/Authentication/ResetPassword/ResetPasswordEnterNewPass';
 import ResetPasswordEnterUsername from './components/Authentication/ResetPassword/ResetPasswordEnterUsername';
-import SignUpOptions from './components/Authentication/SignUpOptions/SignUpOptions';
-import { connect } from 'react-redux';
 import HomePage from './components/HomePage';
 import CustomToolbar from './components/Navigation/Toolbar/Toolbar';
-import  * as actions from './components/Authentication/SignIn/SignInExport';
 import ActivateAccount from './components/Authentication/ActivateAccount/ActivateAccount';
 import BetaReaderGenres from './components/Authentication/BetaReaderGenres/BetaReaderGenres';
 
@@ -34,6 +35,7 @@ const App = props => {
       <Route path="/sign-in" render={(props) => <SignIn {...props} />} />
       <Route path="/sign-up-options" render={(props) => <SignUpOptions {...props} />} />
       <Route path="/sign-up" render={(props) => <SignUp {...props} />} />
+      <Route path="/sign-up-finished" render={(props) => <SignUpFinished {...props} />} />
       <Route path="/choose-genres" render={(props) => <BetaReaderGenres {...props} />} />
       <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
       <Route path="/forgot-password" render={(props) => <ResetPasswordEnterUsername {...props} />} />

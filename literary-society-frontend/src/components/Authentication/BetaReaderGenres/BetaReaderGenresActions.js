@@ -22,7 +22,6 @@ export const fetchForm = (piId) => {
     return dispatch => {
         axios.get(`/readers/beta/choose-genres?piId=${piId}`)
             .then(response => {
-                console.log(response.data)
                 dispatch(fetchFormSuccess(response.data.formFields, response.data.processInstanceId, response.data.taskId));
             })
             .catch(err => {
@@ -36,10 +35,10 @@ export const fetchForm = (piId) => {
     };
 };
 
-export const chooseGenres = (genresData, taskId) => {
+export const chooseGenres = (genresData, taskId, history) => {
     axios.post('/process/' + taskId, genresData)
         .then(() => {
-            toastr.success('Choose genres', 'Success');
+            history.push('/sign-up-finished');
         }, (err) => {
             toastr.error('Choose genres', err.response.data.message);
         })

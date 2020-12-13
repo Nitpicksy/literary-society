@@ -33,25 +33,32 @@ public class BetaReaderServiceImpl implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
+        Reader reader = readerRepository.findByUsername((String) execution.getVariable("username"));
+        if (reader == null) {
+            throw new InvalidDataException("You are not a Beta-reader, therefore you cannot choose these genres.", HttpStatus.BAD_REQUEST);
+        }
+
         List<FormSubmissionDTO> formData = (List<FormSubmissionDTO>) execution.getVariable("formData");
         Map<String, String> map = formData.stream().collect(Collectors.toMap(FormSubmissionDTO::getFieldId, FormSubmissionDTO::getFieldValue));
         List<Long> ids = new ArrayList<>();
         String[] genresStr = map.get("selectBetaReaderGenres").split(",");
         for (String idStr : genresStr) {
-            Long id = Long.valueOf(idStr.split("_")[1]);
-            ids.add(id);
+            if (idStr.contains("_")) {
+                Long id = Long.valueOf(idStr.split("_")[1]);
+                ids.add(id);
+            }
         }
+
         List<Genre> genres = genreService.findWithIds(ids);
-        if(genres.isEmpty()){
+        if (genres.isEmpty()) {
             throw new InvalidDataException("You have to choose at least one genre.", HttpStatus.BAD_REQUEST);
         }
-        Reader reader = readerRepository.findByUsername((String) execution.getVariable("username"));
         reader.setBetaReaderGenres(new HashSet<>(genres));
         readerRepository.save(reader);
     }
 
     @Autowired
-    public BetaReaderServiceImpl(UserServiceImpl userService, TaskService taskService, GenreService genreService,ReaderRepository readerRepository) {
+    public BetaReaderServiceImpl(UserServiceImpl userService, TaskService taskService, GenreService genreService, ReaderRepository readerRepository) {
         this.userService = userService;
         this.taskService = taskService;
         this.genreService = genreService;

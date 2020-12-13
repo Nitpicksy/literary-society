@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as actions from './BetaReaderGenresExport';
-import { extractControls } from '../../../shared/extractControls';
+import { extractControls } from '../../../utility/extractControls';
 import Form from '../../../UI/Form/Form';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
@@ -21,7 +21,6 @@ const BetaReaderGenres = (props) => {
     const [formIsValid, setFormIsValid] = useState(false);
 
     useEffect(() => {
-        console.log(props.processInstanceId)
         fetchForm(props.processInstanceId);
     }, [fetchForm,props.processInstanceId]);
 
@@ -47,7 +46,7 @@ const BetaReaderGenres = (props) => {
 
             array.push({fieldId: key, fieldValue: value});
         }
-        props.chooseGenres(array, props.taskId);
+        props.chooseGenres(array, props.taskId, history);
     }
 
     if (controls) {
@@ -85,7 +84,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchForm: (piId) => dispatch(actions.fetchForm(piId)),
-        chooseGenres: (genresData, taskId) => actions.chooseGenres(genresData, taskId)
+        chooseGenres: (genresData, taskId, history) => actions.chooseGenres(genresData, taskId, history)
     }
 };
 

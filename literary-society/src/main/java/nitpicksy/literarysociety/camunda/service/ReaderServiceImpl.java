@@ -87,11 +87,13 @@ public class ReaderServiceImpl implements ReaderService, JavaDelegate {
             List<Long> ids = new ArrayList<>();
             String[] genresStr = map.get("selectGenres").split(",");
             for (String idStr : genresStr) {
-                Long id = Long.valueOf(idStr.split("_")[1]);
-                ids.add(id);
+                if (idStr.contains("_")) {
+                    Long id = Long.valueOf(idStr.split("_")[1]);
+                    ids.add(id);
+                }
             }
             List<Genre> genres = genreService.findWithIds(ids);
-            if(genres.isEmpty()){
+            if (genres.isEmpty()) {
                 throw new InvalidDataException("You have to choose at least one genre.", HttpStatus.BAD_REQUEST);
             }
             reader.setGenres(new HashSet<>(genres));
