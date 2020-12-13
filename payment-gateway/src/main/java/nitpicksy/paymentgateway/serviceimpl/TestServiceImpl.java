@@ -19,7 +19,6 @@ public class TestServiceImpl {
     private String apiGatewayURL;
 
     public String healthCheck() {
-
         String bankPath = apiGatewayURL + "bank";
         String paypalPath = apiGatewayURL + "paypal";
 
