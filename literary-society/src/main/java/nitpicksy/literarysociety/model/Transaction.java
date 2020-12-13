@@ -9,6 +9,7 @@ import nitpicksy.literarysociety.enumeration.TransactionStatus;
 import nitpicksy.literarysociety.enumeration.TransactionType;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class Transaction {
     private User buyer;
 
     @Column(nullable = false)
-    private LocalDate merchantTimestamp;
+    private Timestamp merchantTimestamp;
 
     @Column(nullable = false)
     private Double amount;

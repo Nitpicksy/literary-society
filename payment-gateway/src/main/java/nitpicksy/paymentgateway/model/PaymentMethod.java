@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaymentMethod {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,4 +35,7 @@ public class PaymentMethod {
     @OneToMany
     @JoinColumn(name = "payment_method_id")
     private Set<Data> data;
+
+    @Column
+    private boolean subscription;
 }

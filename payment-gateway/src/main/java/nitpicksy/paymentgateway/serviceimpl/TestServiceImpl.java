@@ -15,7 +15,7 @@ public class TestServiceImpl {
     @Value("${eureka.instance.instance-id}")
     private String instanceId;
 
-    @Value("${api-gateway.URL}")
+    @Value("${API_GATEWAY_URL}")
     private String apiGatewayURL;
 
     public String healthCheck() {
