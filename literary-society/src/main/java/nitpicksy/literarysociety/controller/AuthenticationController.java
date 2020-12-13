@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.controller;
 
+import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.dto.request.ChangePasswordDTO;
 import nitpicksy.literarysociety.dto.request.RequestTokenDTO;
 import nitpicksy.literarysociety.dto.request.ResetPasswordDTO;
@@ -10,7 +11,6 @@ import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.UserTokenState;
 import nitpicksy.literarysociety.security.JwtAuthenticationRequest;
 import nitpicksy.literarysociety.service.AuthenticationService;
-import nitpicksy.literarysociety.service.CamundaService;
 import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
 import nitpicksy.literarysociety.serviceimpl.TestServiceImpl;

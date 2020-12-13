@@ -6,8 +6,6 @@ import nitpicksy.literarysociety.model.Genre;
 import nitpicksy.literarysociety.model.Reader;
 import nitpicksy.literarysociety.repository.ReaderRepository;
 import nitpicksy.literarysociety.service.GenreService;
-import nitpicksy.literarysociety.serviceimpl.UserServiceImpl;
-import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class BetaReaderServiceImpl implements JavaDelegate {
-
-    private UserServiceImpl userService;
-
-    private TaskService taskService;
+public class BetaReaderRegistrationService implements JavaDelegate {
 
     private GenreService genreService;
 
@@ -58,10 +52,9 @@ public class BetaReaderServiceImpl implements JavaDelegate {
     }
 
     @Autowired
-    public BetaReaderServiceImpl(UserServiceImpl userService, TaskService taskService, GenreService genreService, ReaderRepository readerRepository) {
-        this.userService = userService;
-        this.taskService = taskService;
+    public BetaReaderRegistrationService(GenreService genreService, ReaderRepository readerRepository) {
         this.genreService = genreService;
         this.readerRepository = readerRepository;
     }
+
 }

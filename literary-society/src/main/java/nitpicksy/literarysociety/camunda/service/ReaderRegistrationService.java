@@ -8,10 +8,8 @@ import nitpicksy.literarysociety.model.Genre;
 import nitpicksy.literarysociety.model.Reader;
 import nitpicksy.literarysociety.repository.ReaderRepository;
 import nitpicksy.literarysociety.service.GenreService;
-import nitpicksy.literarysociety.service.ReaderService;
 import nitpicksy.literarysociety.service.VerificationService;
 import nitpicksy.literarysociety.serviceimpl.UserServiceImpl;
-import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -29,7 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class ReaderServiceImpl implements ReaderService, JavaDelegate {
+public class ReaderRegistrationService implements JavaDelegate {
 
     private UserServiceImpl userService;
 
@@ -40,38 +38,6 @@ public class ReaderServiceImpl implements ReaderService, JavaDelegate {
     private VerificationService verificationService;
 
     private GenreService genreService;
-
-    private Environment environment;
-
-    private TaskService taskService;
-
-    @Override
-    public Reader create(Reader reader, DelegateExecution execution) throws NoSuchAlgorithmException {
-        if (userService.findByUsername(reader.getUsername()) != null) {
-            execution.setVariable("success", false);
-            throw new BpmnError("User with same username already exists.");
-            // throw new InvalidDataException("User with same username already exists.", HttpStatus.BAD_REQUEST);
-        }
-
-        if (userService.findByEmail(reader.getEmail()) != null) {
-            execution.setVariable("success", false);
-            throw new InvalidDataException("User with same email already exists.", HttpStatus.BAD_REQUEST);
-        }
-
-        reader.setStatus(UserStatus.NON_VERIFIED);
-        reader.setRole(userService.findRoleByName(RoleConstants.ROLE_READER));
-        String password = reader.getPassword();
-        reader.setPassword(passwordEncoder.encode(password));
-        Reader savedReader = readerRepository.save(reader);
-        String nonHashedToken = verificationService.generateToken(savedReader);
-
-        execution.setVariable("success", true);
-        execution.setVariable("email", savedReader.getEmail());
-        execution.setVariable("subject", "Account activation");
-
-        execution.setVariable("text", composeEmailToActivate(nonHashedToken, execution.getProcessInstanceId()));
-        return savedReader;
-    }
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -100,36 +66,37 @@ public class ReaderServiceImpl implements ReaderService, JavaDelegate {
         }
 
         create(reader, execution);
-
     }
 
-    private String composeEmailToActivate(String token, String processInstanceId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("You have successfully registered to the Literary Society website.");
-        sb.append(System.lineSeparator());
-        sb.append(System.lineSeparator());
-        sb.append("To activate your account click the following link:");
-        sb.append(System.lineSeparator());
-        sb.append(getLocalhostURL());
-        sb.append("activate-account?piId=" + processInstanceId + "&t=" + token);
-        String text = sb.toString();
-        return text;
-    }
+    public Reader create(Reader reader, DelegateExecution execution) throws NoSuchAlgorithmException {
+        if (userService.findByUsername(reader.getUsername()) != null) {
+            throw new BpmnError("greskaKreiranjeCitaoca");
+        }
 
-    private String getLocalhostURL() {
-        return environment.getProperty("LOCALHOST_URL");
+        if (userService.findByEmail(reader.getEmail()) != null) {
+            throw new BpmnError("greskaKreiranjeCitaoca");
+        }
+
+        reader.setStatus(UserStatus.NON_VERIFIED);
+        reader.setRole(userService.findRoleByName(RoleConstants.ROLE_READER));
+        String password = reader.getPassword();
+        reader.setPassword(passwordEncoder.encode(password));
+        Reader savedReader = readerRepository.save(reader);
+        String nonHashedToken = verificationService.generateToken(savedReader);
+
+        execution.setVariable("token", nonHashedToken);
+
+        return savedReader;
     }
 
 
     @Autowired
-    public ReaderServiceImpl(UserServiceImpl userService, PasswordEncoder passwordEncoder, ReaderRepository readerRepository,
-                             VerificationService verificationService, Environment environment, GenreService genreService, TaskService taskService) {
+    public ReaderRegistrationService(UserServiceImpl userService, PasswordEncoder passwordEncoder, ReaderRepository readerRepository,
+                                     VerificationService verificationService, Environment environment, GenreService genreService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.readerRepository = readerRepository;
         this.verificationService = verificationService;
-        this.environment = environment;
         this.genreService = genreService;
-        this.taskService = taskService;
     }
 }

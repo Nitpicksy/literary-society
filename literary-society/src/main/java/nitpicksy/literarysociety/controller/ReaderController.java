@@ -1,10 +1,8 @@
 package nitpicksy.literarysociety.controller;
 
+import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
-import nitpicksy.literarysociety.service.CamundaService;
-import nitpicksy.literarysociety.service.ReaderService;
-import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,8 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReaderController {
 
     private CamundaService camundaService;
-
-    private ReaderService readerService;
 
     private TaskService taskService;
 
@@ -36,14 +31,13 @@ public class ReaderController {
     @GetMapping("/beta/choose-genres")
     public ResponseEntity<FormFieldsDTO> betaReaderChooseGenres(@RequestParam String piId) {
         Task task = taskService.createTaskQuery().processInstanceId(piId).list().get(0);
-        FormFieldsDTO formFieldsDTO  = camundaService.getFormFields(task.getProcessInstanceId(),task.getId());
+        FormFieldsDTO formFieldsDTO = camundaService.getFormFields(task.getProcessInstanceId(), task.getId());
         return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
     }
 
     @Autowired
-    public ReaderController(CamundaService camundaService, ReaderService readerService,TaskService taskService) {
+    public ReaderController(CamundaService camundaService, TaskService taskService) {
         this.camundaService = camundaService;
-        this.readerService = readerService;
         this.taskService = taskService;
     }
 }
