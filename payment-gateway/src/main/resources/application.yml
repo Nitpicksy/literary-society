@@ -43,3 +43,6 @@ eureka:
     secureVirtualHostName: ${spring.application.name}
     prefer-ip-address: false
     hostname: localhost
+
+api-gateway:
+  URL: https://zuul:8080/
