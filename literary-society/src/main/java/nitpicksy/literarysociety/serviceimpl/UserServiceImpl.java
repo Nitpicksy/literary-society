@@ -144,7 +144,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         if (currentUser == null) {
             return null;
         }
-        return userRepository.findByEmail(currentUser.getName());
+        return userRepository.findByUsername(currentUser.getName());
     }
 
     private void composeAndSendEmail(String recipientEmail) {

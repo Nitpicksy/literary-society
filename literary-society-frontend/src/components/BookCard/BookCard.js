@@ -8,7 +8,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-
+import {toastr} from 'react-redux-toastr';
 
 export default function BookCard(props) {
     const classes = useStyles();
@@ -25,11 +25,18 @@ export default function BookCard(props) {
             merchantBooks = [];
         }
 
-        merchantBooks.push(props.book);
-        shoppingCart.set(props.book.merchantName,merchantBooks);
-        console.log(shoppingCart)
+        const found = merchantBooks.find(element => element.id == props.book.id);
 
-        localStorage.setItem('shoppingCart', JSON.stringify(Array.from(shoppingCart.entries())));
+        console.log(found)
+        if(!found){
+            merchantBooks.push(props.book);
+            shoppingCart.set(props.book.merchantName,merchantBooks);
+            console.log(shoppingCart)
+    
+            localStorage.setItem('shoppingCart', JSON.stringify(Array.from(shoppingCart.entries())));
+        }else{
+            toastr.success('Shopping cart', 'This book is already added');
+        }
     }
 
     let button = <Button size="small" color="primary" onClick={addToCart}>Add to cart</Button>;

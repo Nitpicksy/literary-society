@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import * as actions from './ShoppingCartActions';
+import * as actions from './ShoppingCartExport';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
@@ -10,9 +10,13 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { useStyles } from './ShoppingCartStyles';
 import BookCard from '../BookCard/BookCard';
 import { Button, MenuItem, TextField } from '@material-ui/core';
+import { connect } from 'react-redux';
+import { responseInterceptor } from '../../responseInterceptor';
+import * as signInActions from '../Authentication/SignIn/SignInExport';
+import { useHistory } from 'react-router';
 
 const ShoppingCart = (props) => {
-
+    const history = useHistory();
     const [loading, setLoading] = useState(true);
     const [merchants, setMerchants] = useState(null);
     const [shoppingCart, setShoppingCart] = useState(null);
@@ -24,6 +28,7 @@ const ShoppingCart = (props) => {
     let bookCards = null;
     let select = null;
     let payButton = null;
+    responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
 
     useEffect(() => {
         const map = new Map(JSON.parse(localStorage.getItem('shoppingCart')));
@@ -60,24 +65,33 @@ const ShoppingCart = (props) => {
         const map = new Map(JSON.parse(localStorage.getItem('shoppingCart')));
 
         let merchantBooks = map.get(book.merchantName);
-        let bookIndex = null;
         for (var count = 0; count < merchantBooks.length; count++) {
             console.log(merchantBooks[count])
-            if(merchantBooks[count].id === book.id){
-                bookIndex = count; 
+            if (merchantBooks[count].id === book.id) {
                 break;
             }
         }
         merchantBooks.splice(count, 1);
 
         console.log(merchantBooks);
-        map.set(book.merchantName, merchantBooks);
+        if(merchantBooks.length > 0){
+            map.set(book.merchantName, merchantBooks);
+            setSelectedMerchantAndBooks(map, selectedMerchant);
+        }else {
+            map.delete(book.merchantName);
+            const merchantsArray = Array.from(map.keys());
+            setMerchants(merchantsArray);
+            setSelectedMerchant(merchantsArray[0]);
+            setSelectedMerchantAndBooks(map, merchantsArray[0]);
+        }
 
-        console.log(map);
         localStorage.setItem('shoppingCart', JSON.stringify(Array.from(map.entries())));
         setShoppingCart(map);
-        
-        setSelectedMerchantAndBooks(map, selectedMerchant);
+    }
+
+    const onProceedToPayment = () => {
+        console.log(books)
+        props.onProceedToPayment(books);
     }
 
     if (!loading) {
@@ -103,14 +117,16 @@ const ShoppingCart = (props) => {
 
     if (books && books.length > 0) {
         payButton = <Grid container>
-                        <Grid item xs={9}>
+                        <Grid item xs={7}>
                             &nbsp;
                         </Grid>
-                        <Grid item xs={2} className={classes.price}>
-                            <Typography component="h1" variant="h4">Price: {amount}</Typography>
+                        <Grid item xs={3} className={classes.price}>
+                            <Typography component="h1" variant="h4">Price: <span className={classes.priceValue}>{amount.toFixed(2)} din.</span></Typography>
                         </Grid>
-                        <Grid item xs={1}>
-                            <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained">Pay </Button>
+                        <Grid item xs={2}>
+                            <Button type="submit" color="primary" className={classes.submit}
+                             fullWidth variant="contained"
+                             onClick={onProceedToPayment} >Proceed to payment </Button>
                         </Grid>
                     </Grid>;
     }
@@ -132,12 +148,12 @@ const ShoppingCart = (props) => {
         </Container>
     );
 };
-//onClick={pay}
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         fetchBooks: () => dispatch(actions.fetchBooks()),
-//     }
-// };
 
-// export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
-export default ShoppingCart;
+const mapDispatchToProps = dispatch => {
+    return {
+        onProceedToPayment: (choosenBooks) => actions.proceedToPayment(choosenBooks),
+        onRefreshToken: (history) => dispatch(signInActions.refreshToken(history))
+    }
+};
+
+export default connect(null, mapDispatchToProps)(ShoppingCart);

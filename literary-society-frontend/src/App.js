@@ -50,7 +50,6 @@ const App = props => {
       <Route path="/payment/success" render={(props) => <PaymentSuccess {...props} />} />
       <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
       <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
-      <Route path="/shopping-cart" render={(props) => <ShoppingCart {...props} />} />
       <Route path="/" exact render={(props) => <HomePage {...props} />} />
     </Switch>
   );
@@ -64,6 +63,7 @@ const App = props => {
         <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
         <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
         <Route path="/" exact render={(props) => <HomePage {...props} />} />
+        <Route path="/shopping-cart" render={(props) => <ShoppingCart {...props} />} />
         <Redirect to="/" />
       </Switch>
     );

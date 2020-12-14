@@ -1,4 +1,5 @@
 package nitpicksy.literarysociety.exceptionHandler;
+import feign.FeignException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,6 +17,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
@@ -121,6 +123,12 @@ public class RestExceptionHandler  extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleDuplicateKeyException(DuplicateKeyException ex) {
         ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
         return buildResponseEntity(error);
+    }
+
+    @ExceptionHandler(FeignException.NotFound.class)
+    public ResponseEntity<?> handleFeignNotFoundException(FeignException e,
+                                                          HttpServletResponse response) {
+        return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     private ResponseEntity<Object> buildResponseEntity(ErrorResponse error) {

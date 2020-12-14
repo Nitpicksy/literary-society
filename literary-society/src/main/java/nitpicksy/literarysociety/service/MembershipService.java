@@ -6,4 +6,5 @@ public interface MembershipService {
 
     Membership findByUserId(Long id);
 
+    boolean checkIfUserMembershipIsValid(Long id);
 }

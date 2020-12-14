@@ -21,4 +21,7 @@ export const useStyles = makeStyles((theme) => ({
     price: {
         margin: theme.spacing(2.5, 0, 1),
     },
+    priceValue: {
+       fontWeight:500
+    },
 }));
