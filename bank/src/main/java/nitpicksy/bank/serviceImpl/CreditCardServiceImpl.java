@@ -47,7 +47,7 @@ public class CreditCardServiceImpl implements CreditCardService {
         }
 
         if(!BCrypt.checkpw(securityCode, creditCard.getSecurityCode())){
-            throw new InvalidDataException("Invalid Credit Card data. Please try again.", HttpStatus.BAD_REQUEST);
+            return null;
         }
 
         if(!checkCreditCardExpirationDate(creditCard.getExpirationDate(),expirationDate)){
@@ -79,8 +79,10 @@ public class CreditCardServiceImpl implements CreditCardService {
         if(expirationDate.getYear() < currentDateAndTime.getYear()){
             return false;
         }
-
-        return expirationDate.getMonthValue() >= currentDateAndTime.getMonthValue();
+        if(expirationDate.getYear() == currentDateAndTime.getYear()){
+            return expirationDate.getMonthValue() >= currentDateAndTime.getMonthValue();
+        }
+        return true;
     }
 
     @Autowired
