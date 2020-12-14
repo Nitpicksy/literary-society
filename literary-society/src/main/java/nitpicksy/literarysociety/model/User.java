@@ -149,6 +149,10 @@ public class User implements org.camunda.bpm.engine.identity.User, UserDetails {
 
     }
 
+    public Long getUserId() {
+        return id;
+    }
+
     // For Camunda
     @Override
     public String getId() {

@@ -1,13 +1,12 @@
 package nitpicksy.literarysociety.service;
 
 import nitpicksy.literarysociety.model.Book;
+import nitpicksy.literarysociety.model.User;
 
 import java.util.List;
 import java.util.Set;
 
-public interface BookService {
+public interface PaymentService {
 
-    List<Book> findAllForSale();
-
-    Set<Book> findByIds(List<Long> ids);
+    String proceedToPayment(Set<Book> bookList, User user);
 }

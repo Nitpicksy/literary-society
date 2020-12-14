@@ -8,17 +8,46 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-
+import {toastr} from 'react-redux-toastr';
 
 export default function BookCard(props) {
     const classes = useStyles();
 
-    let button = <Button size="small" color="primary">Add to cart</Button>;
+    const addToCart = () => {
+        let shoppingCart = new Map(JSON.parse(localStorage.getItem('shoppingCart')));
+
+        if(!shoppingCart){
+            shoppingCart = new Map();
+        }
+
+        let merchantBooks = shoppingCart.get(props.book.merchantName);
+        if(!merchantBooks){
+            merchantBooks = [];
+        }
+
+        const found = merchantBooks.find(element => element.id === props.book.id);
+        if(!found){
+            merchantBooks.push(props.book);
+            shoppingCart.set(props.book.merchantName,merchantBooks);
+    
+            localStorage.setItem('shoppingCart', JSON.stringify(Array.from(shoppingCart.entries())));
+        }else{
+            toastr.success('Shopping cart', 'This book is already added');
+        }
+    }
+
+    let button = <Button size="small" color="primary" onClick={addToCart}>Add to cart</Button>;
+
+    if(props.forShoppingCart){
+        button = <Button size="small" color="primary"  onClick={()=> props.removeItem(props.book)}>Remove item</Button>;
+    }
+
     let price =
         <Typography className={classes.price}>
             {props.book.price.toFixed(2)} din.
         </Typography>;
-    if (props.book.price <= 0) {
+
+    if (props.book.price <= 0 && !props.forShoppingCart) {
         button = <Button size="small" color="secondary">Get for free</Button>;
         price = <Typography className={classes.price}>Free</Typography>;
     }

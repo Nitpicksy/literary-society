@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -18,6 +19,11 @@ public class BookServiceImpl implements BookService {
     public List<Book> findAllForSale() {
         return bookRepository.findAllByStatusAndPublishingInfoMerchantSupportsPaymentMethods(
                 BookStatus.IN_STORES, true);
+    }
+
+    @Override
+    public Set<Book> findByIds(List<Long> ids) {
+        return bookRepository.findByIdIn(ids);
     }
 
     @Autowired

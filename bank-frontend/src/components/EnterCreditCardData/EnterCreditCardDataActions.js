@@ -11,7 +11,7 @@ export const confirmPayment = (pan, securityCode,cardHolderName,expirationDate,p
             expirationDate:expirationDate
         };
 
-        axios.post('/payments/confirm/' + paymentId, data)
+        axios.post(`/payments/confirm/${paymentId}`, data)
             .then((response) => {
                 window.location.href =response.data
             })
