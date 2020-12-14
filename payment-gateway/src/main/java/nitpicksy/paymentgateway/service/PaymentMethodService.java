@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface PaymentMethodService {
 
-    List<PaymentMethod> findMerchantPaymentMethods(String orderId);
+    List<PaymentMethod> findMerchantPaymentMethods(Long orderId);
 
 }

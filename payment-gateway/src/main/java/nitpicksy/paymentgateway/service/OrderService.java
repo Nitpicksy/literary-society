@@ -6,4 +6,6 @@ import nitpicksy.paymentgateway.model.Transaction;
 public interface OrderService {
 
     Transaction createOrder(OrderRequestDTO orderDTO);
+
+    Transaction findOrder(Long orderId);
 }

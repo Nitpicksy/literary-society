@@ -1,6 +1,7 @@
 package nitpicksy.paymentgateway.controller;
 
 import nitpicksy.paymentgateway.dto.response.PaymentMethodResponseDTO;
+import nitpicksy.paymentgateway.mapper.PaymentMethodMapper;
 import nitpicksy.paymentgateway.service.PaymentMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Positive;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Validated
 @RestController
@@ -20,15 +23,16 @@ import javax.validation.constraints.Positive;
 public class PaymentMethodController {
 
     private PaymentMethodService paymentMethodService;
+    private PaymentMethodMapper paymentMethodMapper;
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<PaymentMethodResponseDTO> getPaymentMethodsForMerchant(@PathVariable("orderId") @Positive(message = "Id must be positive.") Long orderId) {
-
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<List<PaymentMethodResponseDTO>> getPaymentMethodsForMerchant(@PathVariable("orderId") @Positive(message = "Id must be positive.") Long orderId) {
+        return new ResponseEntity<>(paymentMethodService.findMerchantPaymentMethods(orderId).stream().map(paymentMethod -> paymentMethodMapper.toDto(paymentMethod)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @Autowired
-    public PaymentMethodController(PaymentMethodService paymentMethodService) {
+    public PaymentMethodController(PaymentMethodService paymentMethodService, PaymentMethodMapper paymentMethodMapper) {
         this.paymentMethodService = paymentMethodService;
+        this.paymentMethodMapper = paymentMethodMapper;
     }
 }

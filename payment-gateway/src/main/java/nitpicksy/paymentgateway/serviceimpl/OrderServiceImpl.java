@@ -38,9 +38,13 @@ public class OrderServiceImpl implements OrderService {
         if (orderMerchant == null) {
             throw new InvalidDataException("Merchant not found.", HttpStatus.BAD_REQUEST);
         }
-        System.out.println("Merchant " + orderMerchant);
 
         return createTransaction(orderDTO, orderMerchant, company);
+    }
+
+    @Override
+    public Transaction findOrder(Long orderId) {
+        return transactionRepository.findById(orderId).orElse(null);
     }
 
 

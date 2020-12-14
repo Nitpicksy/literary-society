@@ -36,5 +36,5 @@ public class DataForPayment {
 
     @PrimaryKeyJoinColumn
     @ManyToOne(fetch = FetchType.EAGER)
-    private Company company;
+    private Merchant merchant;
 }
