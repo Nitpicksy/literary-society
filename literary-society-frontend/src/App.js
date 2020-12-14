@@ -13,7 +13,7 @@ import NonAuthorized from './components/Authentication/Error/NonAuthorized';
 import ChangePassword from './components/Authentication/ChangePassword/ChangePassword';
 import ResetPasswordEnterNewPass from './components/Authentication/ResetPassword/ResetPasswordEnterNewPass';
 import ResetPasswordEnterUsername from './components/Authentication/ResetPassword/ResetPasswordEnterUsername';
-import HomePage from './components/HomePage';
+import HomePage from './components/HomePage/HomePage';
 import CustomToolbar from './components/Navigation/Toolbar/Toolbar';
 import ActivateAccount from './components/Authentication/ActivateAccount/ActivateAccount';
 import BetaReaderGenres from './components/Authentication/BetaReaderGenres/BetaReaderGenres';

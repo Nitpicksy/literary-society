@@ -30,10 +30,10 @@ public class User implements org.camunda.bpm.engine.identity.User, UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String firstName;
 
-    @Column(nullable = false)
+    @Column
     private String lastName;
 
     @Column(nullable = false)
@@ -149,11 +149,13 @@ public class User implements org.camunda.bpm.engine.identity.User, UserDetails {
 
     }
 
+    // For Camunda
     @Override
     public String getId() {
         return username;
     }
 
+    // For Camunda
     @Override
     public void setId(String s) {
         this.username = s;

@@ -37,6 +37,9 @@ public class PublishingInfo {
     @Column(nullable = false)
     private Double price;
 
+    @Column(nullable = false)
+    private Integer discount;
+
     @OneToOne
     @JoinColumn(referencedColumnName = "id")
     private Book book;

@@ -21,4 +21,5 @@ public interface UserService {
 
     UserTokenState refreshAuthenticationToken(HttpServletRequest request);
 
+    User getAuthenticatedUser();
 }

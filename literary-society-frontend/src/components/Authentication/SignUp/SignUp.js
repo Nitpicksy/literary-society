@@ -17,6 +17,7 @@ import { responseInterceptor } from '../../../responseInterceptor';
 import { useHistory } from 'react-router';
 
 const SignUp = (props) => {
+    
     const history = useHistory();
     const classes = useStyles();
     const { formFields, fetchForm } = props;

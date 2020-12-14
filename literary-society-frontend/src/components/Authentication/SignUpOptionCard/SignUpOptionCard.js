@@ -14,9 +14,6 @@ const useStyles = makeStyles({
     },
     content: {
         minHeight: 160,
-    },
-    btnText: {
-        fontWeight: 700,
     }
 });
 
@@ -37,7 +34,7 @@ const SignUpOptionCard = (props) => {
                     <Typography variant="body2" color="textSecondary" component="p">{props.description}</Typography>
                 </CardContent>
                 <CardActions>
-                    <Button className={classes.btnText} size="small" color="primary"
+                    <Button size="small" color="primary"
                         onClick={() => chooseOptionHandler(path)}>Choose</Button>
                 </CardActions>
             </Card>
