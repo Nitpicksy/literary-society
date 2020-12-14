@@ -1,22 +1,18 @@
-package nitpicksy.literarysociety.taskhandler;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+package nitpicksy.literarysociety.camunda.handler;
 
 import nitpicksy.literarysociety.dto.camunda.EnumKeyValueDTO;
-import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.model.Genre;
 import nitpicksy.literarysociety.service.GenreService;
-import org.camunda.bpm.engine.IdentityService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.ExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
-public class RegisterReaderProcessHandler implements ExecutionListener {
+public class ReaderRegistrationProcessHandler implements ExecutionListener {
 
     private GenreService genreService;
 
@@ -28,11 +24,12 @@ public class RegisterReaderProcessHandler implements ExecutionListener {
             String key = "id_" + genre.getId();
             enumList.add(new EnumKeyValueDTO(key, genre.getName()));
         }
-        execution.setVariable("genresList", enumList);
+        execution.setVariable("selectGenresList", enumList);
+        execution.setVariable("selectBetaReaderGenresList", enumList);
     }
 
     @Autowired
-    public RegisterReaderProcessHandler(GenreService genreService) {
+    public ReaderRegistrationProcessHandler(GenreService genreService) {
         this.genreService = genreService;
     }
 }

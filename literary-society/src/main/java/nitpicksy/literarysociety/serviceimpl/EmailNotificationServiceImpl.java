@@ -1,4 +1,5 @@
 package nitpicksy.literarysociety.serviceimpl;
+
 import nitpicksy.literarysociety.service.EmailNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -26,7 +27,7 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
         mail.setText(text);
 
         javaMailSender.send(mail);
-        System.out.println("Email sent at: " + LocalDateTime.now().toLocalTime());
+        System.out.println(String.format("Email '%s' sent to %s at %s", subject, to, LocalDateTime.now().toLocalTime()));
     }
 
     @Autowired

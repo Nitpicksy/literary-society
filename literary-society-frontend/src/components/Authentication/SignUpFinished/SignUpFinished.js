@@ -1,16 +1,16 @@
 import React from 'react';
-import { useStyles } from './ErrorStyles';
+import { useStyles } from './SignUpFinishedStyles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
+import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
-import BlockIcon from '@material-ui/icons/Block';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 
-export default function NonAuthorized() {
-    
+export default function NonAuthenticated() {
+
     const classes = useStyles();
 
     return (
@@ -19,14 +19,12 @@ export default function NonAuthorized() {
             <Card className={classes.card}>
                 <CardContent className={classes.cardContent}>
                     <Avatar className={classes.avatar}>
-                        <BlockIcon />
+                        <GroupAddIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5" className={classes.message}>
-                        As a non-authorized user, you are not allowed to enter this page.
+                        You have successfully signed up. Check you email for a link to activate the account.
                     </Typography>
-                    <Link href="/" variant="body1">
-                        Back to Homepage
-                    </Link>
+                    <Link href="/">Back to Homepage</Link>
                 </CardContent>
             </Card>
         </Container>

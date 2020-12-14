@@ -1,13 +1,8 @@
 import {
-  Avatar,
-  Container,
-  CssBaseline,
-  Grid,
-  Link,
-  Typography,
+  Avatar, Card, CardContent, Container, CssBaseline, Link, Typography,
 } from "@material-ui/core";
 import { useStyles } from "./ActivateAccountStyles";
-import DoneAllRoundedIcon from "@material-ui/icons/DoneAllRounded";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
 import SentimentVeryDissatisfiedIcon from "@material-ui/icons/SentimentVeryDissatisfied";
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
@@ -15,11 +10,12 @@ import { activateAccount } from "./ActivateAccountActions";
 
 const ActivateAccount = (props) => {
   const classes = useStyles();
+  const { activateAccount } = props;
 
   useEffect(() => {
-    props.activateAccount(props.match.params.id);
-    console.log("props", props);
-  }, []);
+    const params = new URLSearchParams(props.location.search);
+    activateAccount(params.get('t'), params.get('piId'));
+  }, [props.location.search, activateAccount]);
 
   let message = "Account activated, you're all set!";
 
@@ -28,28 +24,25 @@ const ActivateAccount = (props) => {
   }
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="sm">
       <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          {props.error ? (
-            <SentimentVeryDissatisfiedIcon />
-          ) : (
-            <DoneAllRoundedIcon />
-          )}
-        </Avatar>
-        <Typography component="h1" variant="h4">
-          {message}
-        </Typography>
-      </div>
-      <br />
-      <Grid container spacing={3}>
-        <Grid item xs>
-          <Link href="/sign-in" variant="body2">
-            Back to sign in
+      <Card className={classes.card}>
+        <CardContent className={classes.cardContent}>
+          <Avatar className={classes.avatar}>
+            {props.error ? (
+              <SentimentVeryDissatisfiedIcon />
+            ) : (
+                <DoneAllIcon />
+              )}
+          </Avatar>
+          <Typography component="h1" variant="h5" className={classes.message}>
+            {message}
+          </Typography>
+          <Link href="/sign-in" variant="body1">
+            Back to Sign in
           </Link>
-        </Grid>
-      </Grid>
+        </CardContent>
+      </Card>
     </Container>
   );
 };
@@ -63,7 +56,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    activateAccount: (hashId) => dispatch(activateAccount(hashId)),
+    activateAccount: (hashId, piId) => dispatch(activateAccount(hashId, piId)),
   };
 };
 

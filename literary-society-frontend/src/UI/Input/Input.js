@@ -21,6 +21,7 @@ const input = (props) => {
         case ('select'):
             inputElement = <TextField variant="outlined" margin="normal" fullWidth
                 label={props.elementConfig.label} value={props.value} onChange={props.changed}
+                error={props.error} helperText={props.error ? props.errorMessage : ''}
                 select SelectProps={{ multiple: true }}>
                 {props.elementConfig.options.map(option => (
                     <MenuItem key={option.value} value={option.value}>{option.displayValue}</MenuItem>

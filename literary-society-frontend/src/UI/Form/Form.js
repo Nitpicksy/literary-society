@@ -1,20 +1,20 @@
 import { React } from 'react'
 import Input from '../Input/Input';
-import { checkValidity } from '../../shared/checkValidity';
+import { checkValidity } from '../../utility/checkValidity';
 
 const Form = (props) => {
 
     const inputChangedHandler = (event, controlName) => {
         let errorMessage;
         let value = event.target.value;
-        if(props.controls[controlName].elementType === 'checkbox'){
+        if (props.controls[controlName].elementType === 'checkbox') {
             value = event.target.checked;
-        }else {
-            if(props.controls[controlName].additionalData){
+        } else {
+            if (props.controls[controlName].additionalData) {
                 errorMessage = props.controls[controlName].additionalData.errorMessage
             }
         }
-        const validationData = checkValidity(value, props.controls[controlName].validation, props.controls[controlName].elementConfig.label,errorMessage);
+        const validationData = checkValidity(value, props.controls[controlName].validation, props.controls[controlName].elementConfig.label, errorMessage);
 
         const updatedControls = {
             ...props.controls,
@@ -23,14 +23,14 @@ const Form = (props) => {
                 value: value,
                 error: !validationData.isValid,
                 errorMessage: validationData.errorMessage,
-                touched:true, 
+                touched: true,
                 valid: validationData.isValid
             }
         };
 
         let formIsValid = true;
-        for (let inputIdentifiers in updatedControls) {
-            formIsValid = updatedControls[inputIdentifiers].valid && formIsValid;
+        for (let inputId in updatedControls) {
+            formIsValid = updatedControls[inputId].valid && formIsValid;
         }
         props.setControls(updatedControls);
         props.setFormIsValid(formIsValid);
@@ -55,7 +55,7 @@ const Form = (props) => {
             touched={formElement.config.touched}
             error={formElement.config.error}
             errorMessage={formElement.config.errorMessage}
-            additionalData = {formElement.config.additionalData}
+            additionalData={formElement.config.additionalData}
             changed={(event) => inputChangedHandler(event, formElement.id)} />
     ));
 

@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -98,11 +99,14 @@ public class User implements org.camunda.bpm.engine.identity.User, UserDetails {
         this.password = password;
     }
 
+    public Long getIdFromDB() {
+        return this.id;
+    }
+
     @Override
     public String getUsername() {
         return username;
     }
-
 
     @Override
     public boolean isAccountNonExpired() {

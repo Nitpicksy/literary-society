@@ -1,36 +1,37 @@
 export const checkValidity = (value, rules, name, patternErrorMessage) => {
 
     if (!rules) {
-        return {isValid: true, errorMessage: ''} ;
+        return { isValid: true, errorMessage: '' };
     }
 
-    let isRequired = false;
+    let reqiredFulfilled = true;
     let isValid = true;
     let errorMessage = name + ' ';
 
     if (rules.required) {
-        isRequired = value.trim() === '';
-        if (isRequired) {
-            isValid = false;
-            errorMessage = name + ' is required.';
-        }
+        reqiredFulfilled = value.trim() !== '';
+    } else if (rules.requiredSelect) {
+        reqiredFulfilled = Array.isArray(value) && value.length;
     }
 
-    if(!isRequired){
+    if (!reqiredFulfilled) {
+        isValid = false;
+        errorMessage = name + ' field is required.';
+    } else {
         if (rules.minlength) {
             isValid = value.length >= rules.minlength;
             if (!isValid) {
                 errorMessage = 'Minimal length for ' + name.toLowerCase() + ' is ' + rules.minlength + '.';
             }
         }
-    
+
         if (isValid && rules.maxlength) {
             isValid = value.length <= rules.maxlength;
             if (!isValid) {
-                errorMessage = 'Maximal length for ' + name.toLowerCase() + ' is ' + rules.maxlength  + '.';
+                errorMessage = 'Maximal length for ' + name.toLowerCase() + ' is ' + rules.maxlength + '.';
             }
         }
-    
+
         if (isValid && rules.isNumeric) {
             const pattern = /^\d+$/;
             isValid = pattern.test(value);
@@ -47,5 +48,6 @@ export const checkValidity = (value, rules, name, patternErrorMessage) => {
             }
         }
     }
+
     return { isValid: isValid, errorMessage: errorMessage };
 }
