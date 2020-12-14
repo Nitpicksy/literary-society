@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
@@ -7,12 +7,22 @@ import { useStyles } from './PaymentStatusStyles';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import * as actions from './Transaction/TransactionExport';
+import { connect } from 'react-redux';
 
-export default function PaymentSuccess() {
+const PaymentSuccess = (props) => {
     const classes = useStyles();
-    return (
+    const {fetchTransaction} = props;
 
-        <Container component="main" maxWidth="sm">
+    useEffect(() => {
+        const { id } = props.match.params;
+        if(id){
+            fetchTransaction(id);
+        }
+    }, [props.match.params, fetchTransaction]);
+
+    return (
+           <Container component="main" maxWidth="sm">
             <CssBaseline />
             <Card className={classes.card}>
                 <CardContent className={classes.cardContent}>
@@ -26,4 +36,12 @@ export default function PaymentSuccess() {
             </Card>
         </Container>
     );
-}
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        fetchTransaction: (id) => dispatch(actions.fetchTransaction(id)),
+    }
+};
+
+export default connect(null, mapDispatchToProps)(PaymentSuccess);

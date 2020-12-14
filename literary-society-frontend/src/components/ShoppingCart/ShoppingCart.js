@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import * as actions from './ShoppingCartExport';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
@@ -30,6 +30,12 @@ const ShoppingCart = (props) => {
     let payButton = null;
     responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
 
+    const setSelectedMerchantAndBooks = useCallback((shoppingCartMap, selectedMerchant) => {
+        setBooks(shoppingCartMap.get(selectedMerchant));
+        calculatePrice(shoppingCartMap.get(selectedMerchant))
+        setSelectedMerchant(selectedMerchant);
+      }, []);
+      
     useEffect(() => {
         const map = new Map(JSON.parse(localStorage.getItem('shoppingCart')));
         const merchantsArray = Array.from(map.keys());
@@ -38,18 +44,14 @@ const ShoppingCart = (props) => {
 
         setSelectedMerchantAndBooks(map, merchantsArray[0]);
         setLoading(false);
-    }, []);
+    }, [setSelectedMerchantAndBooks]);
 
     const inputChangedHandler = (event) => {
         const value = event.target.value;
         setSelectedMerchantAndBooks(shoppingCart, value);
     }
 
-    const setSelectedMerchantAndBooks = (shoppingCartMap, selectedMerchant) => {
-        setBooks(shoppingCartMap.get(selectedMerchant));
-        calculatePrice(shoppingCartMap.get(selectedMerchant))
-        setSelectedMerchant(selectedMerchant);
-    }
+   
 
     const calculatePrice = (books) => {
         if (books) {
@@ -66,14 +68,12 @@ const ShoppingCart = (props) => {
 
         let merchantBooks = map.get(book.merchantName);
         for (var count = 0; count < merchantBooks.length; count++) {
-            console.log(merchantBooks[count])
             if (merchantBooks[count].id === book.id) {
                 break;
             }
         }
         merchantBooks.splice(count, 1);
 
-        console.log(merchantBooks);
         if(merchantBooks.length > 0){
             map.set(book.merchantName, merchantBooks);
             setSelectedMerchantAndBooks(map, selectedMerchant);
@@ -90,7 +90,6 @@ const ShoppingCart = (props) => {
     }
 
     const onProceedToPayment = () => {
-        console.log(books)
         props.onProceedToPayment(books);
     }
 

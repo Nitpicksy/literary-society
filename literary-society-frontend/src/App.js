@@ -47,7 +47,7 @@ const App = props => {
       <Route path="/activate-account" render={(props) => <ActivateAccount {...props} />} />
       <Route path="/error/non-authenticated" render={(props) => <NonAuthenticated {...props} />} />
       <Route path="/error/non-authorized" render={(props) => <NonAuthorized {...props} />} />
-      <Route path="/payment/success" render={(props) => <PaymentSuccess {...props} />} />
+      <Route path="/payment/success/:id" render={(props) => <PaymentSuccess {...props} />} />
       <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
       <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
       <Route path="/" exact render={(props) => <HomePage {...props} />} />

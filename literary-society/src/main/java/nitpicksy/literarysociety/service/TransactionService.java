@@ -14,4 +14,6 @@ public interface TransactionService {
     Transaction create(TransactionStatus status, TransactionType type, User buyer, Double amount, Set<Book> orderedBooks, Merchant merchant);
 
     Transaction save(Transaction transaction);
+
+    Transaction findById(Long id);
 }

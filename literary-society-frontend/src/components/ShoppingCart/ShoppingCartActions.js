@@ -8,7 +8,7 @@ export const proceedToPayment = (books) => {
             })
             .catch(err => {
                 if (err.response) {
-                    if (err.response.status != 401) {
+                    if (err.response.status !== 401) {
                         toastr.error('Proceed to Payment', err.response.data.message);
                     }
                 }

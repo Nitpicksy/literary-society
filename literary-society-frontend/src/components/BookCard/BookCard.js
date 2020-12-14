@@ -25,13 +25,10 @@ export default function BookCard(props) {
             merchantBooks = [];
         }
 
-        const found = merchantBooks.find(element => element.id == props.book.id);
-
-        console.log(found)
+        const found = merchantBooks.find(element => element.id === props.book.id);
         if(!found){
             merchantBooks.push(props.book);
             shoppingCart.set(props.book.merchantName,merchantBooks);
-            console.log(shoppingCart)
     
             localStorage.setItem('shoppingCart', JSON.stringify(Array.from(shoppingCart.entries())));
         }else{

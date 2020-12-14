@@ -7,7 +7,6 @@ export const instance = axios.create({
 
 instance.interceptors.request.use(
     async request => {
-        console.log("Moj interceptor 2")
         if (!request.url.includes("/auth")) {
             const accessToken = localStorage.getItem("accessToken");
             request.headers = {

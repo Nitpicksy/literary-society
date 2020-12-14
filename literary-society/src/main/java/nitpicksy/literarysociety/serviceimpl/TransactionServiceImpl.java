@@ -27,6 +27,11 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.save(transaction);
     }
 
+    @Override
+    public Transaction findById(Long id) {
+        return transactionRepository.findOneById(id);
+    }
+
 
     public TransactionServiceImpl(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
