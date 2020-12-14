@@ -35,8 +35,8 @@ export default function BookCard(props) {
                         <Typography className={classes.title}>
                             {props.book.title}
                         </Typography>
-                        <Typography gutterBottom color="textSecondary" className={classes.writerName}>
-                            {props.book.writerName}
+                        <Typography gutterBottom color="textSecondary" className={classes.writersNames}>
+                            {props.book.writersNames}
                         </Typography>
                         {price}
                         <Typography color="textSecondary" className={classes.merchantName}>

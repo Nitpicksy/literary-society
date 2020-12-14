@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -94,6 +95,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public List<User> findAllWithRole(String roleName) {
+        return userRepository.findByRoleName(roleName);
+    }
+
+    @Override
     public void generateResetToken(String username) throws NoSuchAlgorithmException {
         User user = findByUsername(username);
         if (user == null) {
@@ -142,7 +148,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         if (currentUser == null) {
             return null;
         }
-        return userRepository.findByEmail(currentUser.getName());
+        return userRepository.findByUsername(currentUser.getName());
     }
 
     private void composeAndSendEmail(String recipientEmail) {

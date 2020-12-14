@@ -39,7 +39,6 @@ const HomePage = (props) => {
         <Container component="main" maxWidth="lg">
             <CssBaseline />
             <div className={classes.paper}>
-                <CssBaseline />
                 <Avatar className={classes.avatar}>
                     <MenuBookIcon />
                 </Avatar>

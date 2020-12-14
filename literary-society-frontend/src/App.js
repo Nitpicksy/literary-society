@@ -1,8 +1,8 @@
 import './App.css';
-import React, { Suspense,useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import  * as actions from './components/Authentication/SignIn/SignInExport';
+import * as actions from './components/Authentication/SignIn/SignInExport';
 import SignIn from './components/Authentication/SignIn/SignIn';
 import SignUpOptions from './components/Authentication/SignUpOptions/SignUpOptions';
 import SignUp from './components/Authentication/SignUp/SignUp';
@@ -17,6 +17,8 @@ import HomePage from './components/HomePage/HomePage';
 import CustomToolbar from './components/Navigation/Toolbar/Toolbar';
 import ActivateAccount from './components/Authentication/ActivateAccount/ActivateAccount';
 import BetaReaderGenres from './components/Authentication/BetaReaderGenres/BetaReaderGenres';
+import PublicationRequests from './components/WriterPages/PublicationRequests/PublicationRequests';
+import CreatePublicationRequest from './components/WriterPages/CreatePublicationRequest/CreatePublicationRequest';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -44,13 +46,15 @@ const App = props => {
       <Route path="/error/non-authenticated" render={(props) => <NonAuthenticated {...props} />} />
       <Route path="/error/non-authorized" render={(props) => <NonAuthorized {...props} />} />
       <Route path="/" exact render={(props) => <HomePage {...props} />} />
-      <Redirect to="/" />
     </Switch>
   );
 
   if (props.isAuthenticated) {
     routes = (
       <Switch>
+        <Route path="/publication-requests" render={(props) => <PublicationRequests {...props} />} />
+        <Route path="/create-publication-request" render={(props) => <CreatePublicationRequest {...props} />} />
+
         <Route path="/sign-out" render={(props) => <Logout {...props} />} />
         <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
         <Route path="/" exact render={(props) => <HomePage {...props} />} />
@@ -60,16 +64,16 @@ const App = props => {
   }
 
   let toolbar = null;
-  if(props.isAuthenticated){
-    toolbar = <CustomToolbar/>;
+  if (props.isAuthenticated) {
+    toolbar = <CustomToolbar />;
   }
   return (
     <div>
-        {toolbar}
-        <Suspense fallback={<p>Loading...</p>}>{routes}</Suspense>
-        <main>
-          {props.children}
-        </main>
+      {toolbar}
+      <Suspense fallback={<p>Loading...</p>}>{routes}</Suspense>
+      <main>
+        {props.children}
+      </main>
     </div>
   );
 

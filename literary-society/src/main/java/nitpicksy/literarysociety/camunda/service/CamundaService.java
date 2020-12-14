@@ -79,6 +79,28 @@ public class CamundaService {
         taskService.complete(task.getId());
     }
 
+    public List<Long> extractIds(String selectedIdsString) {
+        List<Long> ids = new ArrayList<>();
+        String[] selectedIdsArray = selectedIdsString.split(",");
+        for (String idStr : selectedIdsArray) {
+            if (idStr.contains("_")) {
+                Long id = Long.valueOf(idStr.split("_")[1]);
+                ids.add(id);
+            }
+        }
+
+        return ids;
+    }
+
+    public Long extractId(String selectedIdString) {
+        Long id = null;
+        if (selectedIdString.contains("_")) {
+            id = Long.valueOf(selectedIdString.split("_")[1]);
+        }
+        
+        return id;
+    }
+
     @Autowired
     public CamundaService(RuntimeService runtimeService, TaskService taskService, FormService formService) {
         this.runtimeService = runtimeService;

@@ -3,10 +3,7 @@ package nitpicksy.literarysociety.serviceimpl;
 import nitpicksy.literarysociety.model.Genre;
 import nitpicksy.literarysociety.repository.GenreRepository;
 import nitpicksy.literarysociety.service.GenreService;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +12,11 @@ import java.util.List;
 public class GenreServiceImpl implements GenreService {
 
     private GenreRepository genreRepository;
+
+    @Override
+    public Genre findById(Long id) {
+        return genreRepository.findOneById(id);
+    }
 
     @Override
     public List<Genre> findAll() {

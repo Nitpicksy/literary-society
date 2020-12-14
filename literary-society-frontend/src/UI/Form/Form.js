@@ -14,7 +14,8 @@ const Form = (props) => {
                 errorMessage = props.controls[controlName].additionalData.errorMessage
             }
         }
-        const validationData = checkValidity(value, props.controls[controlName].validation, props.controls[controlName].elementConfig.label, errorMessage);
+        let controlToValidate = props.controls[controlName];
+        const validationData = checkValidity(controlToValidate.elementConfig.label, value, controlToValidate.validation, controlToValidate.elementType, errorMessage);
 
         const updatedControls = {
             ...props.controls,

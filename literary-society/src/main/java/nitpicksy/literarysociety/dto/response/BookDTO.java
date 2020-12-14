@@ -18,8 +18,8 @@ public class BookDTO {
     @NotBlank(message = "Title is empty.")
     private String title;
 
-    @NotBlank(message = "Writer's name is empty.")
-    private String writerName;
+    @NotBlank(message = "Writers' names are empty.")
+    private String writersNames;
 
     @NotNull(message = "Price is null.")
     @PositiveOrZero(message = "Price is not a positive number.")

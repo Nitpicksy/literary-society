@@ -89,12 +89,12 @@ const extractControl = (field) => {
         case ('enum'):
             control = {
                 [field.id]: {
-                    elementType: 'select',
+                    elementType: field.properties.multipleSelect === 'true' ? 'selectMultiple' : 'selectOne',
                     elementConfig: {
                         label: field.label,
                         options: extractOptions(field.type.values),
                     },
-                    value: [],
+                    value: field.properties.multipleSelect === 'true' ? [] : '',
                     validation: extractConstraints(field.validationConstraints),
                     valid: false,
                     touched: true,

@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import * as actions from './BetaReaderGenresExport';
+import * as actions from './CreatePublicationRequestExport';
 import { extractControls } from '../../../utility/extractControls';
 import Form from '../../../UI/Form/Form';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import { useStyles } from './BetaReaderGenresStyles';
+import { CssBaseline, Typography, Container, Avatar, Button } from '@material-ui/core';
+import NoteAddIcon from '@material-ui/icons/NoteAdd';
+import { useStyles } from './CreatePublicationRequestStyles';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 
-const BetaReaderGenres = (props) => {
+const CreatePublicationRequest = (props) => {
     const history = useHistory();
     const classes = useStyles();
     const { formFields, fetchForm } = props;
@@ -20,33 +16,31 @@ const BetaReaderGenres = (props) => {
     let [controls, setControls] = useState(null);
     const [formIsValid, setFormIsValid] = useState(false);
 
+    // DODAJ responseInterceptor
+
     useEffect(() => {
-        fetchForm(props.processInstanceId);
-    }, [fetchForm,props.processInstanceId]);
+        fetchForm();
+    }, [fetchForm]);
 
     useEffect(() => {
         if (formFields) {
             let extractedControls = extractControls(formFields)
             setControls(extractedControls);
         }
-
     }, [formFields]);
 
     const submitHander = (event) => {
         event.preventDefault();
-
         let array = [];
-
         for (let [key, data] of Object.entries(controls)) {
             // convert array to comma-separated string
             let value = data.value
-            if(Array.isArray(data.value)) {
+            if (Array.isArray(data.value)) {
                 value = data.value.join();
             }
-
-            array.push({fieldId: key, fieldValue: value});
+            array.push({ fieldId: key, fieldValue: value });
         }
-        props.chooseGenres(array, props.taskId, history);
+        props.createRequest(array, props.taskId, history);
     }
 
     if (controls) {
@@ -58,14 +52,14 @@ const BetaReaderGenres = (props) => {
             <CssBaseline />
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
-                    <PlaylistAddCheckIcon />
+                    <NoteAddIcon />
                 </Avatar>
-                <Typography component="h1" variant="h4" className={classes.title}>Choose genres</Typography>
+                <Typography component="h1" variant="h5" className={classes.title}>Create Publication Request</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
-                    <Button type="submit" color="primary" className={classes.submit} fullWidth 
+                    <Button type="submit" color="primary" className={classes.submit} fullWidth
                         variant="contained" disabled={!formIsValid}>
-                        Confirm
+                        Create
                     </Button>
                 </form>
             </div>
@@ -75,17 +69,17 @@ const BetaReaderGenres = (props) => {
 
 const mapStateToProps = state => {
     return {
-        formFields: state.betaReaderGenres.formFields,
-        processInstanceId: state.signUp.processInstanceId,
-        taskId: state.betaReaderGenres.taskId,
+        formFields: state.createPublicationRequest.formFields,
+        processInstanceId: state.createPublicationRequest.processInstanceId,
+        taskId: state.createPublicationRequest.taskId,
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchForm: (piId) => dispatch(actions.fetchForm(piId)),
-        chooseGenres: (genresData, taskId, history) => actions.chooseGenres(genresData, taskId, history)
+        fetchForm: () => dispatch(actions.fetchForm()),
+        createRequest: (enteredData, taskId, history) => actions.createRequest(enteredData, taskId, history)
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(BetaReaderGenres);
+export default connect(mapStateToProps, mapDispatchToProps)(CreatePublicationRequest);

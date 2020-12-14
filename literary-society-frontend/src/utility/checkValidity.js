@@ -1,4 +1,4 @@
-export const checkValidity = (value, rules, name, patternErrorMessage) => {
+export const checkValidity = (name, value, rules, type, patternErrorMessage) => {
 
     if (!rules) {
         return { isValid: true, errorMessage: '' };
@@ -10,7 +10,7 @@ export const checkValidity = (value, rules, name, patternErrorMessage) => {
 
     if (rules.required) {
         reqiredFulfilled = value.trim() !== '';
-    } else if (rules.requiredSelect) {
+    } else if (rules.requiredSelect && type === 'selectMultiple') {
         reqiredFulfilled = Array.isArray(value) && value.length;
     }
 

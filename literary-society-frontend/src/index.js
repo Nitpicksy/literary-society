@@ -17,6 +17,7 @@ import resetPasswordReducer from './components/Authentication/ResetPassword/Rese
 import activateAccountReducer from './components/Authentication/ActivateAccount/ActivateAccountReducer';
 import betaReaderGenresReducer from './components/Authentication/BetaReaderGenres/BetaReaderGenresReducer';
 import homePageReducer from './components/HomePage/HomePageReducer';
+import createPublicationRequestReducer from './components/WriterPages/CreatePublicationRequest/CreatePublicationRequestReducer';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
     activateAccount: activateAccountReducer,
     betaReaderGenres: betaReaderGenresReducer,
     homePage: homePageReducer,
+    createPublicationRequest: createPublicationRequestReducer,
 });
 
 const store = createStore(rootReducer, composeEnhancers(

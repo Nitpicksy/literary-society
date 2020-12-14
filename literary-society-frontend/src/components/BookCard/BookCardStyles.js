@@ -23,7 +23,7 @@ export const useStyles = makeStyles((theme) => ({
     lineHeight: 'normal',
     marginBottom: theme.spacing(0.4),
   },
-  writerName: {
+  writersNames: {
     fontFamily: 'Bitter, Roboto',
     fontSize: '0.85rem',
     fontWeight: 500,
