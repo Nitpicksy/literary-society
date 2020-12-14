@@ -19,8 +19,6 @@ public interface UserService {
 
     void generateResetToken(String email) throws NoSuchAlgorithmException;
 
-    void deleteNonVerifiedUser(String username);
-
     UserTokenState refreshAuthenticationToken(HttpServletRequest request);
 
 }

@@ -119,14 +119,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public void deleteNonVerifiedUser(String username) {
-        User user = findByUsername(username);
-        if (user.getStatus() == UserStatus.NON_VERIFIED) {
-            userRepository.deleteByUsername(username);
-        }
-    }
-
-    @Override
     public UserTokenState refreshAuthenticationToken(HttpServletRequest request) {
         String refreshToken = tokenUtils.getToken(request);
         String username = this.tokenUtils.getUsernameFromToken(refreshToken);

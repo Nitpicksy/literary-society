@@ -26,14 +26,12 @@ public class TokenExpiredEmail implements JavaDelegate {
         String subject = "Activation link expired";
         String text = composeEmailToActivate();
 
-        userService.deleteNonVerifiedUser(user.getUsername());
-
         emailNotificationService.sendEmail(email, subject, text);
     }
 
     private String composeEmailToActivate() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Link for activating your account has expired. The account will be deleted.");
+        sb.append("Link for activating your account has expired. The account will be suspended.");
         sb.append(System.lineSeparator());
         return sb.toString();
     }
