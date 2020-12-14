@@ -20,6 +20,7 @@ export const fetchBooks = () => {
         axios.get('/books')
             .then(response => {
                 dispatch(fetchBooksSuccess(response.data));
+                console.log(response.data)
             })
             .catch(err => {
                 if (err.response) {

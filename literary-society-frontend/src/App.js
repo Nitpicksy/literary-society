@@ -20,7 +20,7 @@ import PaymentError from './components/Payment/PaymentError';
 import PaymentFailed from './components/Payment/PaymentFailed';
 import ActivateAccount from './components/Authentication/ActivateAccount/ActivateAccount';
 import BetaReaderGenres from './components/Authentication/BetaReaderGenres/BetaReaderGenres';
-
+import ShoppingCart from './components/ShoppingCart/ShoppingCart';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -50,8 +50,8 @@ const App = props => {
       <Route path="/payment/success" render={(props) => <PaymentSuccess {...props} />} />
       <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
       <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
+      <Route path="/shopping-cart" render={(props) => <ShoppingCart {...props} />} />
       <Route path="/" exact render={(props) => <HomePage {...props} />} />
-      <Redirect to="/" />
     </Switch>
   );
 

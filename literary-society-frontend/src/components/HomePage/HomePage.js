@@ -26,7 +26,7 @@ const HomePage = (props) => {
     if (!loading) {
         if (props.books) {
             bookCards = props.books.map(book => {
-                return <BookCard key={book.id} book={book} />
+                return <BookCard key={book.id} book={book} forShoppingCart = {false}/>
             });
         } else {
             bookCards = <Typography component="h3" variant="h6">No available books for sale at the moment.</Typography>;
@@ -39,7 +39,6 @@ const HomePage = (props) => {
         <Container component="main" maxWidth="lg">
             <CssBaseline />
             <div className={classes.paper}>
-                <CssBaseline />
                 <Avatar className={classes.avatar}>
                     <MenuBookIcon />
                 </Avatar>

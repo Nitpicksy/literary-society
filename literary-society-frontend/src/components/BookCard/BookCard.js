@@ -13,12 +13,37 @@ import Grid from '@material-ui/core/Grid';
 export default function BookCard(props) {
     const classes = useStyles();
 
-    let button = <Button size="small" color="primary">Add to cart</Button>;
+    const addToCart = () => {
+        let shoppingCart = new Map(JSON.parse(localStorage.getItem('shoppingCart')));
+
+        if(!shoppingCart){
+            shoppingCart = new Map();
+        }
+
+        let merchantBooks = shoppingCart.get(props.book.merchantName);
+        if(!merchantBooks){
+            merchantBooks = [];
+        }
+
+        merchantBooks.push(props.book);
+        shoppingCart.set(props.book.merchantName,merchantBooks);
+        console.log(shoppingCart)
+
+        localStorage.setItem('shoppingCart', JSON.stringify(Array.from(shoppingCart.entries())));
+    }
+
+    let button = <Button size="small" color="primary" onClick={addToCart}>Add to cart</Button>;
+
+    if(props.forShoppingCart){
+        button = <Button size="small" color="primary"  onClick={()=> props.removeItem(props.book)}>Remove item</Button>;
+    }
+
     let price =
         <Typography className={classes.price}>
             {props.book.price.toFixed(2)} din.
         </Typography>;
-    if (props.book.price <= 0) {
+
+    if (props.book.price <= 0 && !props.forShoppingCart) {
         button = <Button size="small" color="secondary">Get for free</Button>;
         price = <Typography className={classes.price}>Free</Typography>;
     }
