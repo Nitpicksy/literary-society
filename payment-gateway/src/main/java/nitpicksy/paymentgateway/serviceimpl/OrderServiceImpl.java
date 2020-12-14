@@ -22,6 +22,7 @@ public class OrderServiceImpl implements OrderService {
     private TransactionRepository transactionRepository;
     private CompanyRepository companyRepository;
 
+    @Override
     public Transaction createOrder(OrderRequestDTO orderDTO) {
 
         //TODO: based on certificate? for now we only have 1 literary society
