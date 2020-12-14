@@ -1,14 +1,8 @@
 package nitpicksy.bank.serviceImpl;
-
-import nitpicksy.bank.dto.request.PayRequestDTO;
-import nitpicksy.bank.enumeration.TransactionStatus;
 import nitpicksy.bank.model.Account;
 import nitpicksy.bank.model.CreditCard;
-import nitpicksy.bank.model.Transaction;
 import nitpicksy.bank.repository.AccountRepository;
 import nitpicksy.bank.service.AccountService;
-import nitpicksy.bank.service.CreditCardService;
-import nitpicksy.bank.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
