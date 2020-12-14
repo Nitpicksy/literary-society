@@ -11,6 +11,7 @@ import nitpicksy.literarysociety.service.EmailNotificationService;
 import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
 import nitpicksy.literarysociety.utils.IPAddressProvider;
+import org.bouncycastle.crypto.generators.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -56,6 +57,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+
         return new BCryptPasswordEncoder(12); // recommended work rounds is 12 (default is 10)
     }
 

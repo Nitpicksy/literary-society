@@ -37,19 +37,18 @@ zuul:
     bank:
       path: /bank/**
       url: http://localhost:8100
-    #  service-id: bank
+    bank2:
+      path: /bank2/**
+      url: http://localhost:8102
     pcc:
       path: /pcc/**
       url: http://localhost:8101
-    #    service-id: pcc
     paypal-service:
       path: /paypal-service/**
       url: http://localhost:8200
-    #    service-id: paypal
     bitcoin-service:
       path: /bitcoin-service/**
       url: http://localhost:8300
-  #    service-id: bitcoin
   host:
     connect-timeout-millis: 5000000
     socket-timeout-millis: 5000000
