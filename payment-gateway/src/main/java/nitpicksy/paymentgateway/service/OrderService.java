@@ -1,5 +1,6 @@
 package nitpicksy.paymentgateway.service;
 
+import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
 import nitpicksy.paymentgateway.dto.request.OrderRequestDTO;
 import nitpicksy.paymentgateway.model.Transaction;
 
@@ -8,4 +9,6 @@ public interface OrderService {
     Transaction createOrder(OrderRequestDTO orderDTO);
 
     Transaction findOrder(Long orderId);
+
+    DynamicPaymentDetailsDTO forwardPaymentRequest(Long orderId, String paymentMethodCommonName);
 }

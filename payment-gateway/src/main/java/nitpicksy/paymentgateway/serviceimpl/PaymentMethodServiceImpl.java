@@ -1,10 +1,13 @@
 package nitpicksy.paymentgateway.serviceimpl;
 
+import nitpicksy.paymentgateway.dto.response.PaymentMethodResponseDTO;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.model.PaymentMethod;
 import nitpicksy.paymentgateway.model.Transaction;
+import nitpicksy.paymentgateway.repository.PaymentMethodRepository;
 import nitpicksy.paymentgateway.service.OrderService;
 import nitpicksy.paymentgateway.service.PaymentMethodService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,8 @@ import java.util.List;
 public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     private OrderService orderService;
+
+    private PaymentMethodRepository paymentMethodRepository;
 
     public List<PaymentMethod> findMerchantPaymentMethods(Long orderId) {
 
@@ -31,8 +36,14 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
         return paymentMethods;
     }
 
-    public PaymentMethodServiceImpl(OrderService orderService) {
-        this.orderService = orderService;
+    @Override
+    public PaymentMethod findPaymentMethod(String commonName) {
+        return paymentMethodRepository.findByCommonName(commonName);
     }
 
+    @Autowired
+    public PaymentMethodServiceImpl(OrderService orderService, PaymentMethodRepository paymentMethodRepository) {
+        this.orderService = orderService;
+        this.paymentMethodRepository = paymentMethodRepository;
+    }
 }

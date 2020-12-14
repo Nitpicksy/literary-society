@@ -27,7 +27,8 @@ public class PaymentMethodController {
 
     @GetMapping("/{orderId}")
     public ResponseEntity<List<PaymentMethodResponseDTO>> getPaymentMethodsForMerchant(@PathVariable("orderId") @Positive(message = "Id must be positive.") Long orderId) {
-        return new ResponseEntity<>(paymentMethodService.findMerchantPaymentMethods(orderId).stream().map(paymentMethod -> paymentMethodMapper.toDto(paymentMethod)).collect(Collectors.toList()), HttpStatus.OK);
+        return new ResponseEntity<>(paymentMethodService.findMerchantPaymentMethods(orderId).stream()
+                .map(paymentMethod -> paymentMethodMapper.toDto(paymentMethod)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @Autowired

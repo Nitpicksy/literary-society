@@ -1,32 +1,40 @@
 package nitpicksy.paymentgateway.serviceimpl;
 
+import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
 import nitpicksy.paymentgateway.dto.request.OrderRequestDTO;
 import nitpicksy.paymentgateway.enumeration.TransactionStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
-import nitpicksy.paymentgateway.model.Company;
-import nitpicksy.paymentgateway.model.Merchant;
-import nitpicksy.paymentgateway.model.Transaction;
+import nitpicksy.paymentgateway.mapper.ForwardRequestMapper;
+import nitpicksy.paymentgateway.model.*;
 import nitpicksy.paymentgateway.repository.CompanyRepository;
+import nitpicksy.paymentgateway.repository.DataForPaymentRepository;
+import nitpicksy.paymentgateway.repository.PaymentMethodRepository;
 import nitpicksy.paymentgateway.repository.TransactionRepository;
+import nitpicksy.paymentgateway.service.CompanyService;
 import nitpicksy.paymentgateway.service.OrderService;
+import nitpicksy.paymentgateway.service.PaymentMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
     private TransactionRepository transactionRepository;
-    private CompanyRepository companyRepository;
+    private CompanyService companyService;
+    private PaymentMethodRepository paymentMethodRepository;
+    private ForwardRequestMapper forwardRequestMapper;
+    private DataForPaymentRepository dataForPaymentRepository;
 
     @Override
     public Transaction createOrder(OrderRequestDTO orderDTO) {
 
         //TODO: based on certificate? for now we only have 1 literary society
-        Company company = companyRepository.findByCommonName("nitpicksy.com");
+        Company company = companyService.findCompanyByCommonName("nitpicksy.com");
 
         if (company == null) {
             throw new InvalidDataException("Company not found.", HttpStatus.BAD_REQUEST);
@@ -43,6 +51,36 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public DynamicPaymentDetailsDTO forwardPaymentRequest(Long orderId, String paymentMethodCommonName) {
+
+        Transaction transaction = findOrder(orderId);
+        if (transaction == null) {
+            throw new InvalidDataException("Invalid Transaction.", HttpStatus.BAD_REQUEST);
+        }
+
+        PaymentMethod paymentMethod = paymentMethodRepository.findByCommonName(paymentMethodCommonName);
+        if (paymentMethod == null) {
+            throw new InvalidDataException("Invalid Payment Method ID.", HttpStatus.BAD_REQUEST);
+        }
+
+        //set payment method to transaction
+        transaction.setPaymentMethod(paymentMethod);
+
+        //dataForPayment for transaction merchant and his payment method
+        List<DataForPayment> dataForPayments = dataForPaymentRepository.findDataForPaymentByMerchantAndPaymentMethod(transaction.getMerchant().getId(), paymentMethod.getId());
+
+        //start mapping values to the requestDTO
+        DynamicPaymentDetailsDTO forwardDTO = forwardRequestMapper.toDto(transaction);
+
+        //dynamically setting paymentDetails.
+        for (DataForPayment dataForPayment : dataForPayments) {
+            forwardDTO.setDetails(dataForPayment.getAttributeName(), dataForPayment.getAttributeValue());
+        }
+
+        return forwardDTO;
+    }
+
+    @Override
     public Transaction findOrder(Long orderId) {
         return transactionRepository.findById(orderId).orElse(null);
     }
@@ -56,14 +94,18 @@ public class OrderServiceImpl implements OrderService {
         transaction.setMerchantOrderId(orderRequestDTO.getOrderId());
         transaction.setStatus(TransactionStatus.CREATED);
         transaction.setMerchant(merchant);
+        transaction.setPaymentMethod(null);
 
         System.out.println("Transaction - " + transaction);
         return transactionRepository.save(transaction);
     }
 
     @Autowired
-    public OrderServiceImpl(TransactionRepository transactionRepository, CompanyRepository companyRepository) {
+    public OrderServiceImpl(TransactionRepository transactionRepository, CompanyService companyService, PaymentMethodRepository paymentMethodRepository, ForwardRequestMapper forwardRequestMapper, DataForPaymentRepository dataForPaymentRepository) {
         this.transactionRepository = transactionRepository;
-        this.companyRepository = companyRepository;
+        this.companyService = companyService;
+        this.paymentMethodRepository = paymentMethodRepository;
+        this.forwardRequestMapper = forwardRequestMapper;
+        this.dataForPaymentRepository = dataForPaymentRepository;
     }
 }
