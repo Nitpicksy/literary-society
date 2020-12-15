@@ -1,7 +1,7 @@
 server:
   port: 8080
   ssl:
-    enabled: true
+    enabled: false
     key-alias: ${KEYSTORE_ALIAS:zuul}
     key-store: ${KEYSTORE:classpath:zuul.keystore.p12}
     key-store-password: ${KEYSTORE_PASSWORD:password}
@@ -15,15 +15,15 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: https://localhost:8761/eureka
+      defaultZone: http://localhost:8761/eureka
       healthcheck-enabled: true
-  instance:
-    nonSecurePortEnabled: false
-    securePortEnabled: true
-    securePort: ${server.port}
-    homePageUrl: https://${eureka.instance.hostname}:${server.port}/
-    secureVirtualHostName: ${spring.application.name}
-    prefer-ip-address: false
+#  instance:
+#    nonSecurePortEnabled: false
+#    securePortEnabled: true
+#    securePort: ${server.port}
+#    homePageUrl: https://${eureka.instance.hostname}:${server.port}/
+#    secureVirtualHostName: ${spring.application.name}
+#    prefer-ip-address: false
 
 zuul:
   routes:

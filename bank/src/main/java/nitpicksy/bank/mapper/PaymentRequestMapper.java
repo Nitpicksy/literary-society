@@ -20,10 +20,10 @@ public class PaymentRequestMapper implements MapperInterface<PaymentRequest, Pay
     private ModelMapper modelMapper;
 
     @Override
-    public PaymentRequest toEntity(PaymentRequestDTO dto) throws NoSuchAlgorithmException {
+    public PaymentRequest toEntity(PaymentRequestDTO dto) {
         PaymentRequest request =  modelMapper.map(dto, PaymentRequest.class);
         request.setMerchantTimestamp(Timestamp.valueOf(dto.getMerchantTimestamp()));
-        request.setMerchantId(getHashValue(dto.getMerchantId()));
+        request.setMerchantId(dto.getPaymentDetails().getMerchantId());
         return request;
     }
 
@@ -33,14 +33,6 @@ public class PaymentRequestMapper implements MapperInterface<PaymentRequest, Pay
         dto.setMerchantTimestamp(entity.getMerchantTimestamp().toString());
         return dto;
     }
-
-    private String getHashValue(String token) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-512");
-        digest.reset();
-        digest.update(token.getBytes());
-        return String.format("%040x", new BigInteger(1, digest.digest()));
-    }
-
 
     @Autowired
     public PaymentRequestMapper(ModelMapper modelMapper) {

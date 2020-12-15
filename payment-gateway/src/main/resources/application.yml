@@ -1,7 +1,7 @@
 server:
   port: ${PORT:0}
   ssl:
-    enabled: true
+    enabled: false
     key-alias: ${KEYSTORE_ALIAS:gateway}
     key-store: ${KEYSTORE:classpath:gateway.keystore.p12}
     key-store-password: ${KEYSTORE_PASSWORD:password}
@@ -29,7 +29,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: https://localhost:8761/eureka
+      defaultZone: http://localhost:8761/eureka
       #,http://eureka-peer2:8762/eureka
       healthcheck:
         enabled: true

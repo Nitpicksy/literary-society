@@ -35,7 +35,8 @@ public class PaymentController {
 
     @PostMapping(value = "/pay",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PaymentResponseDTO> pay(@Valid @RequestBody PaymentRequestDTO paymentRequestDTO) throws NoSuchAlgorithmException {
-        merchantService.findByMerchantIdAndPassword(paymentRequestDTO.getMerchantId(),paymentRequestDTO.getMerchantPassword());
+        merchantService.findByMerchantIdAndPassword(paymentRequestDTO.getPaymentDetails().getMerchantId(),
+                paymentRequestDTO.getPaymentDetails().getMerchantPassword());
 
         return new ResponseEntity<>(paymentService.pay(paymentRequestMapper.toEntity(paymentRequestDTO)), HttpStatus.OK);
     }

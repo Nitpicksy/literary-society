@@ -19,14 +19,14 @@ public class MerchantServiceImpl implements MerchantService {
     private HashValueServiceImpl hashValueServiceImpl;
 
     @Override
-    public Merchant findByMerchantIdAndPassword(String merchantId, String merchantPassword) throws NoSuchAlgorithmException {
-        Merchant merchant = merchantRepository.findByMerchantId(hashValueServiceImpl.getHashValue(merchantId));
-        System.out.println(hashValueServiceImpl.getHashValue(merchantId));
+    public Merchant findByMerchantIdAndPassword(String merchantId, String merchantPassword) {
+        Merchant merchant = merchantRepository.findByMerchantId(merchantId);
+
         if(merchant == null){
             throw new InvalidDataException("Invalid merchant id or password. Please try again.", HttpStatus.BAD_REQUEST);
         }
 
-        if(!BCrypt.checkpw(merchantPassword, merchant.getMerchantPassword())){
+        if(!merchantPassword.equals(merchant.getMerchantPassword())){
             throw new InvalidDataException("Invalid merchant id or password. Please try again.", HttpStatus.BAD_REQUEST);
         }
         return merchant;

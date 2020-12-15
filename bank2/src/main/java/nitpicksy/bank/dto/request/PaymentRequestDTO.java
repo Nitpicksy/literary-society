@@ -25,11 +25,8 @@ public class PaymentRequestDTO {
     @Min(value = 1,message = "Amount must be greater than 0")
     private Double amount;
 
-    @NotBlank(message = "Merchant id is empty")
-    private String merchantId;
-
-    @NotBlank(message = "Merchant password is empty")
-    private String merchantPassword;
+    @NotNull(message = "Payment details is null.")
+    private PaymentDetailsDTO paymentDetails;
 
     @NotBlank(message = "Success URL is empty")
     @Pattern(regexp = "(http(s)?:\\/\\/)?((www\\.)|(localhost:))[(\\/)?a-zA-Z0-9@:%._\\+~#=-]{1,256}")
