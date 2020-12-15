@@ -53,11 +53,13 @@ public class TransactionServiceImpl implements TransactionService {
         try {
             transfer(creditCard,paymentRequest.getMerchantId(),paymentRequest.getAmount());
         } catch (NoSuchAlgorithmException e) {
-            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", String.format("Hash algorithm does not exist.")));
-            return setTransactionStatus(transaction,TransactionStatus.ERROR);
+            transaction = setTransactionStatus(transaction,TransactionStatus.ERROR);
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", String.format("Transaction %s is failed. Hash algorithm does not exist.", transaction.getId())));
+            return transaction;
         }catch (InvalidDataException e){
-            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", String.format("User with credit card %s doesn't have enough money.", creditCard.getId())));
-            return setTransactionStatus(transaction,TransactionStatus.FAILED);
+            transaction = setTransactionStatus(transaction,TransactionStatus.ERROR);
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", String.format("Transaction %s is failed. User with credit card %s doesn't have enough money.", transaction.getId(), creditCard.getId())));
+            return transaction;
         }
 
         return setTransactionStatus(transaction,TransactionStatus.SUCCESS);
