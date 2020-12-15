@@ -13,11 +13,12 @@ import javax.persistence.Entity;
 @Setter
 @NoArgsConstructor
 @DiscriminatorValue("MERCHANT")
-public class Merchant extends User{
+public class Merchant extends User {
 
     @Column
     private String name;
 
     @Column
     private boolean supportsPaymentMethods;
+
 }

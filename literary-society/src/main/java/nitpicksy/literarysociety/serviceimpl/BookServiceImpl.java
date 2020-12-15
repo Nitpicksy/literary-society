@@ -16,7 +16,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> findAllForSale() {
-        return bookRepository.findAllByStatusAndPublishingInfoMerchantSupportsPaymentMethods(
+        return bookRepository.findByStatusAndPublishingInfoMerchantSupportsPaymentMethods(
                 BookStatus.IN_STORES, true);
     }
 

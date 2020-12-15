@@ -8,6 +8,8 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import { useStyles } from './HomePageStyles';
 import { connect } from 'react-redux';
 
@@ -24,12 +26,17 @@ const HomePage = (props) => {
     }, [fetchBooks]);
 
     if (!loading) {
-        if (props.books) {
+        if (props.books && Array.isArray(props.books) && props.books.length) {
             bookCards = props.books.map(book => {
                 return <BookCard key={book.id} book={book} />
             });
         } else {
-            bookCards = <Typography component="h3" variant="h6">No available books for sale at the moment.</Typography>;
+            bookCards =
+                <Card className={classes.card}>
+                    <CardContent className={classes.cardContent}>
+                        <Typography component="h3" variant="h5">No available books for sale at the moment.</Typography>
+                    </CardContent>
+                </Card>;
         }
     } else {
         <LinearProgress />
@@ -44,7 +51,7 @@ const HomePage = (props) => {
                 </Avatar>
                 <Typography component="h1" variant="h4">Available books</Typography>
             </div>
-            <Grid container spacing={3} align="center">
+            <Grid container spacing={3} align="center" justify="center">
                 {bookCards}
             </Grid>
         </Container>
