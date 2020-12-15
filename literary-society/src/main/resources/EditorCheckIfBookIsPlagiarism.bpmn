@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0byfp9e" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:process id="EditorCheckIfBookIsPlagiarism" isExecutable="true">
+    <bpmn:startEvent id="Event_1va4jtp" name="Start">
+      <bpmn:outgoing>Flow_0g9m8ga</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_1v2q3be" name="Success">
+      <bpmn:incoming>Flow_1hxyfvb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_1wm1e2u" name="Urednik provera da li je delo originalno" camunda:assignee="${mainEditor}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="decision" label="My opinion is" type="enum">
+            <camunda:properties>
+              <camunda:property id="multipleSelect" value="false" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="requiredSelect" config="true" />
+            </camunda:validation>
+            <camunda:value id="ORIGINAL" name="Manuscript is original" />
+            <camunda:value id="NOT_ORIGINAL" name="Manuscript is not original" />
+          </camunda:formField>
+          <camunda:formField id="reason" label="If you choose manuscript is not original, elaborate why" type="textarea">
+            <camunda:properties>
+              <camunda:property id="rows" value="3" />
+            </camunda:properties>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0g9m8ga</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mdorzv</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_1snzx2p" name="Promena statusa knjige" camunda:class="nitpicksy.literarysociety.camunda.service.PublicationRequestService">
+      <bpmn:incoming>Flow_0mdorzv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ujm23v</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_1f7o7zx">
+      <bpmn:incoming>Flow_0ujm23v</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hxyfvb</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0tadsiy</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_1yw3u5w" name="Fail">
+      <bpmn:incoming>Flow_1w9ozoa</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_01hbtkz" errorRef="Error_1gyiyga" />
+    </bpmn:endEvent>
+    <bpmn:sendTask id="Activity_03kp4pw" name="Slanje email-a piscu" camunda:class="nitpicksy.literarysociety.camunda.messages.ManuscriptIsNotOriginalEmail">
+      <bpmn:incoming>Flow_0tadsiy</bpmn:incoming>
+      <bpmn:outgoing>Flow_1w9ozoa</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_0g9m8ga" sourceRef="Event_1va4jtp" targetRef="Activity_1wm1e2u" />
+    <bpmn:sequenceFlow id="Flow_0mdorzv" sourceRef="Activity_1wm1e2u" targetRef="Activity_1snzx2p" />
+    <bpmn:sequenceFlow id="Flow_0ujm23v" sourceRef="Activity_1snzx2p" targetRef="Gateway_1f7o7zx" />
+    <bpmn:sequenceFlow id="Flow_1hxyfvb" name="Delo je originalno" sourceRef="Gateway_1f7o7zx" targetRef="Event_1v2q3be">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${original}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0tadsiy" name="Delo nije originalno" sourceRef="Gateway_1f7o7zx" targetRef="Activity_03kp4pw">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${not original}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1w9ozoa" sourceRef="Activity_03kp4pw" targetRef="Event_1yw3u5w" />
+  </bpmn:process>
+  <bpmn:error id="Error_1gyiyga" name="greskaDeloNijeOriginalno" errorCode="greskaDeloNijeOriginalno" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="EditorCheckIfBookIsPlagiarism">
+      <bpmndi:BPMNEdge id="Flow_1w9ozoa_di" bpmnElement="Flow_1w9ozoa">
+        <di:waypoint x="730" y="140" />
+        <di:waypoint x="802" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tadsiy_di" bpmnElement="Flow_0tadsiy">
+        <di:waypoint x="540" y="265" />
+        <di:waypoint x="540" y="140" />
+        <di:waypoint x="630" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="526" y="113" width="48" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hxyfvb_di" bpmnElement="Flow_1hxyfvb">
+        <di:waypoint x="565" y="290" />
+        <di:waypoint x="792" y="290" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="604" y="303" width="85" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ujm23v_di" bpmnElement="Flow_0ujm23v">
+        <di:waypoint x="470" y="290" />
+        <di:waypoint x="515" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mdorzv_di" bpmnElement="Flow_0mdorzv">
+        <di:waypoint x="320" y="290" />
+        <di:waypoint x="370" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g9m8ga_di" bpmnElement="Flow_0g9m8ga">
+        <di:waypoint x="178" y="290" />
+        <di:waypoint x="220" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1va4jtp_di" bpmnElement="Event_1va4jtp">
+        <dc:Bounds x="142" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="150" y="315" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wm1e2u_di" bpmnElement="Activity_1wm1e2u">
+        <dc:Bounds x="220" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1snzx2p_di" bpmnElement="Activity_1snzx2p">
+        <dc:Bounds x="370" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1f7o7zx_di" bpmnElement="Gateway_1f7o7zx" isMarkerVisible="true">
+        <dc:Bounds x="515" y="265" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03kp4pw_di" bpmnElement="Activity_03kp4pw">
+        <dc:Bounds x="630" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1yw3u5w_di" bpmnElement="Event_1yw3u5w">
+        <dc:Bounds x="802" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="811" y="169" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1v2q3be_di" bpmnElement="Event_1v2q3be">
+        <dc:Bounds x="792" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="790" y="315" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

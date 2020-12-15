@@ -9,6 +9,13 @@ export const extractControls = (formFields) => {
 
 const extractControl = (field) => {
     let control = null;
+    const constaints = extractConstraints(field.validationConstraints);
+    let valid = false;
+    let touched = false;
+    if(isEmpty(constaints)){
+        valid = true
+        touched = true
+    }
     switch (field.type.name) {
         case ('string'):
             control = {
@@ -18,7 +25,7 @@ const extractControl = (field) => {
                         label: field.label,
                     },
                     value: '',
-                    validation: extractConstraints(field.validationConstraints),
+                    validation:constaints,
                     valid: false,
                     touched: false,
                     error: false,
@@ -39,8 +46,8 @@ const extractControl = (field) => {
                     },
                     value: '',
                     validation: extractConstraints(field.validationConstraints),
-                    valid: false,
-                    touched: false,
+                    valid: valid,
+                    touched: touched,
                     error: false,
                     errorMessage: '',
                     additionalData: {
@@ -146,4 +153,8 @@ const extractOptions = (options) => {
     }
 
     return array;
+}
+
+const isEmpty = (obj) => {
+    return Object.keys(obj).length === 0;
 }

@@ -19,6 +19,8 @@ import ActivateAccount from './components/Authentication/ActivateAccount/Activat
 import BetaReaderGenres from './components/Authentication/BetaReaderGenres/BetaReaderGenres';
 import PublicationRequests from './components/WriterPages/PublicationRequests/PublicationRequests';
 import CreatePublicationRequest from './components/WriterPages/CreatePublicationRequest/CreatePublicationRequest';
+import Tasks from './components/Tasks/Tasks';
+import PublicationRequest from './components/Tasks/Task/PublicationRequest/PublicationRequest';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -54,6 +56,8 @@ const App = props => {
       <Switch>
         <Route path="/publication-requests" render={(props) => <PublicationRequests {...props} />} />
         <Route path="/create-publication-request" render={(props) => <CreatePublicationRequest {...props} />} />
+        <Route path="/tasks" render={(props) => <Tasks {...props} />} />
+        <Route path="/publication-request" render={(props) => <PublicationRequest {...props} />} />
 
         <Route path="/sign-out" render={(props) => <Logout {...props} />} />
         <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />

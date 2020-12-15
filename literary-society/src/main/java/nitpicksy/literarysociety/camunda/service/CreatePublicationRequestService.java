@@ -52,9 +52,13 @@ public class CreatePublicationRequestService implements JavaDelegate {
         List<User> editors = userService.findAllWithRole("ROLE_EDITOR");
         User mainEditor = editors.get(new Random().nextInt(editors.size()));
         bookRequest.setEditor(mainEditor);
-        execution.setVariable("mainEditor", mainEditor.getUsername());
+        Book savedBook = bookRepository.save(bookRequest);
 
-        bookRepository.save(bookRequest);
+        execution.setVariable("mainEditor", mainEditor.getUsername());
+        execution.setVariable("bookId", savedBook.getId().toString());
+
+        System.out.println(mainEditor.getUsername());
+
     }
 
     @Autowired
