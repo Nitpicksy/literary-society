@@ -1,6 +1,6 @@
 package nitpicksy.literarysociety.serviceimpl;
 
-import nitpicksy.literarysociety.client.PaymentGatewayClient;
+import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
 import nitpicksy.literarysociety.enumeration.TransactionStatus;
 import nitpicksy.literarysociety.enumeration.TransactionType;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +30,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private TransactionService transactionService;
 
-    private PaymentGatewayClient paymentGatewayClient;
+    private ZuulClient zuulClient;
 
     private MembershipService membershipService;
 
@@ -44,7 +45,8 @@ public class PaymentServiceImpl implements PaymentService {
         Transaction transaction = transactionService.create(TransactionStatus.CREATED, TransactionType.ORDER, user, amount,
                 new HashSet<>(bookList), merchant);
         try {
-            return paymentGatewayClient.pay(new PaymentGatewayPayRequestDTO(transaction.getId(), merchant.getName(), amount));
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            return zuulClient.pay(new PaymentGatewayPayRequestDTO(transaction.getId(), merchant.getName(), amount, timestamp.toString()));
         } catch (RuntimeException exception) {
             transaction.setStatus(TransactionStatus.ERROR);
             transactionService.save(transaction);
@@ -66,11 +68,11 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Autowired
-    public PaymentServiceImpl(MerchantService merchantService, TransactionService transactionService, PaymentGatewayClient paymentGatewayClient,
+    public PaymentServiceImpl(MerchantService merchantService, TransactionService transactionService, ZuulClient zuulClient,
                               MembershipService membershipService) {
         this.merchantService = merchantService;
         this.transactionService = transactionService;
-        this.paymentGatewayClient = paymentGatewayClient;
+        this.zuulClient = zuulClient;
         this.membershipService = membershipService;
     }
 }

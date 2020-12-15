@@ -49,4 +49,4 @@ eureka:
 API_GATEWAY_URL: https://zuul:8080/
 
 #payment methods redirect url
-GATEWAY_PAYMENT_REDIRECT_URL: http://localhost:3000/gateway/payment
+GATEWAY_PAYMENT_REDIRECT_URL: https://localhost:3003/payment

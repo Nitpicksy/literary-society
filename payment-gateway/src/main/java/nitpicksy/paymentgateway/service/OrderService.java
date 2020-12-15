@@ -11,4 +11,6 @@ public interface OrderService {
     Transaction findOrder(Long orderId);
 
     DynamicPaymentDetailsDTO forwardPaymentRequest(Long orderId, String paymentMethodCommonName);
+
+    void cancelOrder(Long id);
 }

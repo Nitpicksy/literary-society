@@ -82,6 +82,11 @@ public class OrderServiceImpl implements OrderService {
         return transactionRepository.findById(orderId).orElse(null);
     }
 
+    @Override
+    public void cancelOrder(Long orderId) {
+        transactionRepository.findById(orderId).ifPresent(transaction -> transaction.setStatus(TransactionStatus.CANCELED));
+
+    }
 
     private Transaction createTransaction(OrderRequestDTO orderRequestDTO, Merchant merchant, Company company) {
         Transaction transaction = new Transaction();
@@ -96,6 +101,7 @@ public class OrderServiceImpl implements OrderService {
         System.out.println("Transaction - " + transaction);
         return transactionRepository.save(transaction);
     }
+
 
     @Autowired
     public OrderServiceImpl(TransactionRepository transactionRepository, CompanyService companyService, PaymentMethodRepository paymentMethodRepository, ForwardRequestMapper forwardRequestMapper, DataForPaymentRepository dataForPaymentRepository) {

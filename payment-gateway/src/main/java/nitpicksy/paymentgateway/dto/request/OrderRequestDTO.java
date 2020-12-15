@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.*;
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -23,7 +22,7 @@ public class OrderRequestDTO {
     @NotNull
     @DecimalMin(value = "0.0", inclusive = false)
     @Digits(integer = 10, fraction = 2)
-    private BigDecimal amount;
+    private Double amount;
 
     @NotBlank(message = "Timestamp is not provided.")
     private String timestamp;
