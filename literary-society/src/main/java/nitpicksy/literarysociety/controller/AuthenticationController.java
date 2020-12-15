@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.controller;
 
+import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.dto.request.ChangePasswordDTO;
 import nitpicksy.literarysociety.dto.request.RequestTokenDTO;
 import nitpicksy.literarysociety.dto.request.ResetPasswordDTO;
@@ -45,6 +46,7 @@ public class AuthenticationController {
 
     private TestServiceImpl testService;
 
+    private CamundaService camundaService;
 
     @PostMapping(value = "/sign-in", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserTokenState> login(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest) {
@@ -91,12 +93,15 @@ public class AuthenticationController {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(null);
     }
 
-    @PutMapping(value = "/activate/{hash}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> activateAccount(@PathVariable String hash) {
+    @PutMapping(value = "/activate", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> activateAccount(@RequestParam(required = false) String piId, @RequestParam String t) {
         try {
-            authenticationService.activateAccount(hash);
+            authenticationService.activateAccount(t);
+            if (piId != null && !piId.isEmpty()) {
+                camundaService.complete(piId);
+            }
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            throw new InvalidTokenException("Activation token cannot be checked. Please try again.", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(null);
     }
@@ -145,11 +150,13 @@ public class AuthenticationController {
     }
 
     @Autowired
-    public AuthenticationController(UserService userService, AuthenticationService authenticationService, LogService logService, IPAddressProvider ipAddressProvider, TestServiceImpl testService) {
+    public AuthenticationController(UserService userService, AuthenticationService authenticationService, LogService logService,
+                                    IPAddressProvider ipAddressProvider, TestServiceImpl testService, CamundaService camundaService) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.logService = logService;
         this.ipAddressProvider = ipAddressProvider;
         this.testService = testService;
+        this.camundaService = camundaService;
     }
 }

@@ -13,9 +13,13 @@ public interface UserService {
 
     User findByEmail(String email);
 
+    User findById(Long id);
+
     Role findRoleByName(String name);
 
     void generateResetToken(String email) throws NoSuchAlgorithmException;
 
     UserTokenState refreshAuthenticationToken(HttpServletRequest request);
+
+    User getAuthenticatedUser();
 }

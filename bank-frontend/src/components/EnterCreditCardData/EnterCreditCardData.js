@@ -22,6 +22,7 @@ const EnterCreditData = (props) => {
         pan: {
             elementType: 'input',
             elementConfig: {
+                type: 'password',
                 label: 'PAN',
             },
             value: '',

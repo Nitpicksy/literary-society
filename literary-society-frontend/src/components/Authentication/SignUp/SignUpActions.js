@@ -1,5 +1,5 @@
 import axios from '../../../axios-endpoint';
-import {toastr} from 'react-redux-toastr';
+import { toastr } from 'react-redux-toastr';
 import * as actionTypes from './SignUpActionTypes';
 
 export const fetchFormSuccess = (formFields, processInstanceId, taskId) => {
@@ -20,24 +20,20 @@ export const fetchFormFail = (error) => {
 
 export const fetchForm = () => {
     return dispatch => {
-
         axios.get('/readers/start-registration')
             .then(response => {
-                console.log(response.data)
                 dispatch(fetchFormSuccess(response.data.formFields, response.data.processInstanceId, response.data.taskId));
             })
             .catch(err => {
                 if (err.response) {
                     dispatch(fetchFormFail(err.response.data.message));
-                    toastr.error('Sign up',err.response.data.message);
-                }else {
-                    toastr.error('Sign up','Something goes wrong');
+                    toastr.error('Sign up', err.response.data.message);
+                } else {
+                    toastr.error('Sign up', 'Something went wrong');
                 }
-
-            })
+            });
     };
 };
-
 
 export const signUpStart = () => {
     return {
@@ -59,7 +55,7 @@ export const signUpFail = (error) => {
 };
 
 
-export const signUp = (signUpData, taskId) => {
+export const signUp = (signUpData, taskId, history, isBetaReader) => {
     return dispatch => {
         dispatch(signUpStart());
         // axios.post('/process/'.concat(taskId),signUpData)
@@ -71,13 +67,17 @@ export const signUp = (signUpData, taskId) => {
         //     .catch(err => {
         //         // dispatch(signUpFail(err.response.data.error)); 
         //     })
-        axios.post('/process/'.concat(taskId), signUpData)
+        axios.post('/process/' + taskId, signUpData)
             .then(() => {
                 dispatch(signUpSuccess());
-                toastr.success('Sign up', 'Success');
+                if (isBetaReader) {
+                    history.push('/choose-genres');
+                } else {
+                    history.push('/sign-up-finished');
+                }
             }, (err) => {
-                toastr.error('Sign up',err.response.data.message);
+                toastr.error('Sign up', err.response.data.message);
                 dispatch(signUpFail(err.response.data.message));
-            })
+            });
     };
 };

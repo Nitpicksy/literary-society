@@ -26,6 +26,7 @@ export const signOut = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('expiresIn');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('shoppingCart');
     return {
         type: actionTypes.SIGN_OUT,
         path: '/sign-in'

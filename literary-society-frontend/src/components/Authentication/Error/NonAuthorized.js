@@ -1,37 +1,32 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { useStyles } from './ErrorStyles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        minWidth: 700,
-        margin: theme.spacing(10, 0, 0, 0),
-    },
-    bullet: {
-        display: 'inline-block',
-        margin: '0 2px',
-        transform: 'scale(0.8)',
-    },
-    title: {
-        fontSize: 14,
-    },
-    pos: {
-        marginBottom: 12,
-    },
-}));
+import Link from '@material-ui/core/Link';
+import Avatar from '@material-ui/core/Avatar';
+import BlockIcon from '@material-ui/icons/Block';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 export default function NonAuthorized() {
+    
     const classes = useStyles();
+
     return (
         <Container component="main" maxWidth="sm">
-            <Card className={classes.root}>
-                <CardContent>
-                    <Typography variant="h5" component="h1">
-                    As a non-authorized user, you are not allowed to enter this page.</Typography>
-                    <br/>
+            <CssBaseline />
+            <Card className={classes.card}>
+                <CardContent className={classes.cardContent}>
+                    <Avatar className={classes.avatar}>
+                        <BlockIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h5" className={classes.message}>
+                        As a non-authorized user, you are not allowed to enter this page.
+                    </Typography>
+                    <Link href="/" variant="body1">
+                        Back to Homepage
+                    </Link>
                 </CardContent>
             </Card>
         </Container>

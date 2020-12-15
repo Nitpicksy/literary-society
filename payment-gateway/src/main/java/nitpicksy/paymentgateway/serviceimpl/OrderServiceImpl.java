@@ -6,19 +6,16 @@ import nitpicksy.paymentgateway.enumeration.TransactionStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.mapper.ForwardRequestMapper;
 import nitpicksy.paymentgateway.model.*;
-import nitpicksy.paymentgateway.repository.CompanyRepository;
 import nitpicksy.paymentgateway.repository.DataForPaymentRepository;
 import nitpicksy.paymentgateway.repository.PaymentMethodRepository;
 import nitpicksy.paymentgateway.repository.TransactionRepository;
 import nitpicksy.paymentgateway.service.CompanyService;
 import nitpicksy.paymentgateway.service.OrderService;
-import nitpicksy.paymentgateway.service.PaymentMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -90,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
         Transaction transaction = new Transaction();
         transaction.setCompany(company);
         transaction.setAmount(orderRequestDTO.getAmount().doubleValue());
-        transaction.setMerchantTimestamp(LocalDateTime.ofInstant(orderRequestDTO.getTimestamp().toInstant(), ZoneId.systemDefault()));
+        transaction.setMerchantTimestamp(Timestamp.valueOf(orderRequestDTO.getTimestamp()));
         transaction.setMerchantOrderId(orderRequestDTO.getOrderId());
         transaction.setStatus(TransactionStatus.CREATED);
         transaction.setMerchant(merchant);

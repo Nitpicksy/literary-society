@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -26,8 +25,8 @@ public class OrderRequestDTO {
     @Digits(integer = 10, fraction = 2)
     private BigDecimal amount;
 
-    //    @NotBlank(message = "Timestamp is not provided.")
-    private Date timestamp;
+    @NotBlank(message = "Timestamp is not provided.")
+    private String timestamp;
 
     @NotNull
     @Pattern(regexp = "^(([A-Za-zÀ-ƒ]+[ ]?|[a-zÀ-ƒ]+['-]?){0,30})$", message = "Name is not valid.")

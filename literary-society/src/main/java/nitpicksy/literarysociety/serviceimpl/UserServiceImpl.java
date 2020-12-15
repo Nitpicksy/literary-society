@@ -2,11 +2,7 @@ package nitpicksy.literarysociety.serviceimpl;
 
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidUserDataException;
-import nitpicksy.literarysociety.model.Log;
-import nitpicksy.literarysociety.model.ResetToken;
-import nitpicksy.literarysociety.model.Role;
-import nitpicksy.literarysociety.model.User;
-import nitpicksy.literarysociety.model.UserTokenState;
+import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.repository.ResetTokenRepository;
 import nitpicksy.literarysociety.repository.RoleRepository;
 import nitpicksy.literarysociety.repository.UserRepository;
@@ -18,18 +14,19 @@ import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.bouncycastle.crypto.generators.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.core.env.Environment;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -89,6 +86,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public User findById(Long id) {
+        return userRepository.findOneById(id);
+    }
+
+    @Override
     public Role findRoleByName(String name) {
         return roleRepository.findByName(name);
     }
@@ -101,7 +103,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             return;
         }
 
-        if(user.getStatus() != UserStatus.ACTIVE){
+        if (user.getStatus() != UserStatus.ACTIVE) {
             composeAndSendEmail(user.getEmail());
             return;
         }
@@ -134,6 +136,15 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "REF", String.format("User from %s tried to refresh token manually", ipAddressProvider.get())));
             throw new InvalidUserDataException("Token can not be refreshed", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Override
+    public User getAuthenticatedUser() {
+        Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+        if (currentUser == null) {
+            return null;
+        }
+        return userRepository.findByUsername(currentUser.getName());
     }
 
     private void composeAndSendEmail(String recipientEmail) {
@@ -176,7 +187,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         digest.update(token.getBytes());
         return String.format("%040x", new BigInteger(1, digest.digest()));
     }
-
 
 
     @Autowired

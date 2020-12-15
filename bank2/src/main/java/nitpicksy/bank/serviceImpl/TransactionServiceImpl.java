@@ -9,10 +9,12 @@ import nitpicksy.bank.enumeration.TransactionStatus;
 import nitpicksy.bank.exceptionHandler.InvalidDataException;
 import nitpicksy.bank.mapper.PCCRequestMapper;
 import nitpicksy.bank.model.CreditCard;
+import nitpicksy.bank.model.Log;
 import nitpicksy.bank.model.PaymentRequest;
 import nitpicksy.bank.model.Transaction;
 import nitpicksy.bank.repository.TransactionRepository;
 import nitpicksy.bank.service.AccountService;
+import nitpicksy.bank.service.LogService;
 import nitpicksy.bank.service.MerchantService;
 import nitpicksy.bank.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,10 @@ import java.sql.Timestamp;
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
     private HashValueServiceImpl hashValueServiceImpl;
 
     private TransactionRepository transactionRepository;
@@ -38,6 +44,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     private ZuulClient pccClient;
 
+    private LogService logService;
+
     @Override
     public Transaction transferInsideBank(PaymentRequest paymentRequest, CreditCard creditCard)  {
         Transaction transaction = create(paymentRequest,creditCard.getPan());
@@ -45,9 +53,13 @@ public class TransactionServiceImpl implements TransactionService {
         try {
             transfer(creditCard,paymentRequest.getMerchantId(),paymentRequest.getAmount());
         } catch (NoSuchAlgorithmException e) {
-            return setTransactionStatus(transaction,TransactionStatus.ERROR);
+            transaction = setTransactionStatus(transaction,TransactionStatus.ERROR);
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", String.format("Transaction %s is failed. Hash algorithm does not exist.", transaction.getId())));
+            return transaction;
         }catch (InvalidDataException e){
-            return setTransactionStatus(transaction,TransactionStatus.FAILED);
+            transaction = setTransactionStatus(transaction,TransactionStatus.ERROR);
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", String.format("Transaction %s is failed. User with credit card %s doesn't have enough money.", transaction.getId(), creditCard.getId())));
+            return transaction;
         }
 
         return setTransactionStatus(transaction,TransactionStatus.SUCCESS);
@@ -67,6 +79,7 @@ public class TransactionServiceImpl implements TransactionService {
         } catch (NoSuchAlgorithmException e) {
             setTransactionStatus(transaction, TransactionStatus.ERROR);
             confirmPaymentResponseDTO.setStatus(TransactionStatus.ERROR.toString());
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", String.format("Transaction %s is failed. Hash algorithm does not exist.", transaction.getId())));
             return confirmPaymentResponseDTO;
         }
         transactionRepository.save(transaction);
@@ -84,6 +97,7 @@ public class TransactionServiceImpl implements TransactionService {
         } catch (NoSuchAlgorithmException | IllegalArgumentException e) {
             setTransactionStatus(transaction, TransactionStatus.ERROR);
             confirmPaymentResponseDTO.setStatus(TransactionStatus.ERROR.toString());
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", String.format("Transaction %s is failed. Hash algorithm does not exist.", transaction.getId())));
             return confirmPaymentResponseDTO;
         }
     }
@@ -116,12 +130,13 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
     public TransactionServiceImpl(HashValueServiceImpl hashValueServiceImpl, TransactionRepository transactionRepository,AccountService accountService,
-                                  MerchantService merchantService,PCCRequestMapper pccRequestMapper,ZuulClient pccClient) {
+                                  MerchantService merchantService,PCCRequestMapper pccRequestMapper,ZuulClient pccClient,LogService logService) {
         this.hashValueServiceImpl = hashValueServiceImpl;
         this.transactionRepository = transactionRepository;
         this.accountService = accountService;
         this.merchantService = merchantService;
         this.pccRequestMapper = pccRequestMapper;
         this.pccClient = pccClient;
+        this.logService=logService;
     }
 }

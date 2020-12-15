@@ -28,6 +28,7 @@ eureka:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
     hostname: localhost
 
+
 zuul:
   routes:
     payment-gateway:

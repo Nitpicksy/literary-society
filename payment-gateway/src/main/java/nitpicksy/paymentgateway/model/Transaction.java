@@ -4,7 +4,7 @@ import lombok.*;
 import nitpicksy.paymentgateway.enumeration.TransactionStatus;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -33,7 +33,7 @@ public class Transaction {
     private Long merchantOrderId;
 
     @Column(nullable = false)
-    private LocalDateTime merchantTimestamp;
+    private Timestamp merchantTimestamp;
 
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;

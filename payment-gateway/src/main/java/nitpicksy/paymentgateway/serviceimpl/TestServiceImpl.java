@@ -1,6 +1,6 @@
 package nitpicksy.paymentgateway.serviceimpl;
 
-import nitpicksy.paymentgateway.client.PaymentServiceClient;
+import nitpicksy.paymentgateway.client.ZuulClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import java.net.URI;
 @Service
 public class TestServiceImpl {
 
-    private PaymentServiceClient client;
+    private ZuulClient client;
 
     @Value("${eureka.instance.instance-id}")
     private String instanceId;
@@ -36,7 +36,7 @@ public class TestServiceImpl {
     }
 
     @Autowired
-    public TestServiceImpl(PaymentServiceClient client) {
+    public TestServiceImpl(ZuulClient client) {
         this.client = client;
     }
 

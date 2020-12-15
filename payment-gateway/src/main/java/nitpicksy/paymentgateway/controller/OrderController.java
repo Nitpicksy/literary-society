@@ -1,7 +1,7 @@
 package nitpicksy.paymentgateway.controller;
 
 import feign.FeignException;
-import nitpicksy.paymentgateway.client.PaymentServiceClient;
+import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
 import nitpicksy.paymentgateway.dto.request.OrderRequestDTO;
 import nitpicksy.paymentgateway.dto.request.PaymentRequestDTO;
@@ -40,7 +40,7 @@ public class OrderController {
 
     private OrderService orderService;
 
-    private PaymentServiceClient paymentServiceClient;
+    private ZuulClient zuulClient;
 
 
     /**
@@ -85,7 +85,7 @@ public class OrderController {
         DynamicPaymentDetailsDTO forwardDTO = orderService.forwardPaymentRequest(paymentRequestDTO.getOrderId(), paymentRequestDTO.getPaymentCommonName());
         PaymentResponseDTO dto;
         try {
-            dto = paymentServiceClient.forwardPaymentRequest(URI.create(apiGatewayURL + '/' + paymentRequestDTO.getPaymentCommonName()), forwardDTO);
+            dto = zuulClient.forwardPaymentRequest(URI.create(apiGatewayURL + '/' + paymentRequestDTO.getPaymentCommonName()), forwardDTO);
         } catch (FeignException.FeignClientException e) {
             e.printStackTrace();
             //if bank request fails, redirect user to the errorURL;
@@ -95,10 +95,10 @@ public class OrderController {
     }
 
     @Autowired
-    public OrderController(OrderService orderService, TransactionMapper transactionMapper, PaymentServiceClient paymentServiceClient) {
+    public OrderController(OrderService orderService, TransactionMapper transactionMapper, ZuulClient zuulClient) {
         this.orderService = orderService;
         this.transactionMapper = transactionMapper;
-        this.paymentServiceClient = paymentServiceClient;
+        this.zuulClient = zuulClient;
     }
 
 }

@@ -10,15 +10,8 @@ export const useStyles = makeStyles((theme) => ({
     title: {
         flexGrow: 1,
     },
-}));
-
-export const useMenuItemStyles = makeStyles((theme) => ({
-    root: {
-        '&:focus': {
-          backgroundColor: theme.palette.primary.main,
-          '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-            color: theme.palette.common.white,
-          },
-        },
-      },
+    titleLink: {
+        textDecoration: 'none',
+        color: 'white'
+    }
 }));

@@ -1,6 +1,6 @@
 package nitpicksy.literarysociety;
 
-import nitpicksy.literarysociety.serviceimpl.RepositoryWithRefreshMethodImpl;
+import nitpicksy.literarysociety.repository.RefreshMethodRepositoryImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,7 +18,7 @@ import org.springframework.web.context.request.RequestContextListener;
 @EnableEurekaClient
 @EnableFeignClients
 @EnableTransactionManagement
-@EnableJpaRepositories(repositoryBaseClass = RepositoryWithRefreshMethodImpl.class)
+@EnableJpaRepositories(repositoryBaseClass = RefreshMethodRepositoryImpl.class)
 public class LiterarySocietyApplication {
 
     public static void main(String[] args) {
