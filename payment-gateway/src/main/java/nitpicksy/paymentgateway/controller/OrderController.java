@@ -1,5 +1,6 @@
 package nitpicksy.paymentgateway.controller;
 
+import feign.FeignException;
 import nitpicksy.paymentgateway.client.PaymentServiceClient;
 import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
 import nitpicksy.paymentgateway.dto.request.OrderRequestDTO;
@@ -79,12 +80,18 @@ public class OrderController {
      */
 
     @PutMapping("/{orderId}")
-    public ResponseEntity<DynamicPaymentDetailsDTO> forwardPaymentRequest(@RequestBody PaymentRequestDTO paymentRequestDTO) {
+    public ResponseEntity<PaymentResponseDTO> forwardPaymentRequest(@RequestBody PaymentRequestDTO paymentRequestDTO) {
 
         DynamicPaymentDetailsDTO forwardDTO = orderService.forwardPaymentRequest(paymentRequestDTO.getOrderId(), paymentRequestDTO.getPaymentCommonName());
-        //missing handling feignException
-        PaymentResponseDTO dto = paymentServiceClient.forwardPaymentRequest(URI.create(apiGatewayURL + '/' + paymentRequestDTO.getPaymentCommonName()), forwardDTO);
-        return new ResponseEntity<>(forwardDTO, HttpStatus.OK);
+        PaymentResponseDTO dto;
+        try {
+            dto = paymentServiceClient.forwardPaymentRequest(URI.create(apiGatewayURL + '/' + paymentRequestDTO.getPaymentCommonName()), forwardDTO);
+        } catch (FeignException.FeignClientException e) {
+            e.printStackTrace();
+            //if bank request fails, redirect user to the errorURL;
+            throw new InvalidDataException(forwardDTO.getErrorURL(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @Autowired

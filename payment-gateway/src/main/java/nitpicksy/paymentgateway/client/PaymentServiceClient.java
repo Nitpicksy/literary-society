@@ -15,6 +15,13 @@ public interface PaymentServiceClient {
     @RequestMapping(method = RequestMethod.GET, path = "/test/health")
     String healthCheck(URI baseUrl);
 
+    /**
+     * Generic method that targets payment services in runtime.
+     *
+     * @param baseUrl path to API-gateway + path to payment service
+     * @param dto
+     * @return URLs
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/api/payments/pay")
     PaymentResponseDTO forwardPaymentRequest(URI baseUrl, @RequestBody DynamicPaymentDetailsDTO dto);
 
