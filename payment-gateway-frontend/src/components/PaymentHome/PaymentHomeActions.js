@@ -58,6 +58,7 @@ export const forwardPayment = (request) => {
           "Forwarding request to service",
           err.response.data.message
         );
+          window.location.href = err.response.data.message;
       });
   };
 };

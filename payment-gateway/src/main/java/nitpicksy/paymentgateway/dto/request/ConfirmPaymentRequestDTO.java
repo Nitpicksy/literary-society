@@ -18,6 +18,8 @@ public class ConfirmPaymentRequestDTO {
 
     private Long acquirerOrderId;
 
+    private Long merchantOrderId;
+
     private Timestamp acquirerTimestamp;
 
     @NotNull

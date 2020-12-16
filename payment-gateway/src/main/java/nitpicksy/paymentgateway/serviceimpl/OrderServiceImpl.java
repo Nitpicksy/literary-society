@@ -1,5 +1,6 @@
 package nitpicksy.paymentgateway.serviceimpl;
 
+import nitpicksy.paymentgateway.dto.request.ConfirmPaymentRequestDTO;
 import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
 import nitpicksy.paymentgateway.dto.request.OrderRequestDTO;
 import nitpicksy.paymentgateway.enumeration.TransactionStatus;
@@ -88,6 +89,25 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+    @Override
+    public void setPayment(Long orderId, Long paymentId) {
+        Transaction transaction = transactionRepository.findById(orderId).orElse(null);
+        if (transaction == null) {
+            throw new InvalidDataException("Transaction null when receiving invoice from bank.", HttpStatus.BAD_REQUEST);
+        }
+        transaction.setPaymentId(paymentId);
+        transaction.setStatus(TransactionStatus.APPROVED);
+        transactionRepository.save(transaction);
+    }
+
+    @Override
+    public void completeOrder(Long merchantOrderId, ConfirmPaymentRequestDTO dto) {
+        Transaction transaction = transactionRepository.findTransactionByMerchantOrderIdAndPaymentId(merchantOrderId, dto.getPaymentId());
+
+        transaction.setStatus(TransactionStatus.COMPLETED);
+        transactionRepository.save(transaction);
+    }
+
     private Transaction createTransaction(OrderRequestDTO orderRequestDTO, Merchant merchant, Company company) {
         Transaction transaction = new Transaction();
         transaction.setCompany(company);
@@ -97,6 +117,7 @@ public class OrderServiceImpl implements OrderService {
         transaction.setStatus(TransactionStatus.CREATED);
         transaction.setMerchant(merchant);
         transaction.setPaymentMethod(null);
+        transaction.setPaymentId(null);
 
         System.out.println("Transaction - " + transaction);
         return transactionRepository.save(transaction);

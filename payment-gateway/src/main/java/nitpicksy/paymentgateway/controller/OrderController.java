@@ -82,18 +82,21 @@ public class OrderController {
      */
 
     @PostMapping("/forward")
-    public ResponseEntity<PaymentResponseDTO> forwardPaymentRequest(@RequestBody PaymentRequestDTO paymentRequestDTO) {
+    public ResponseEntity<String> forwardPaymentRequest(@RequestBody PaymentRequestDTO paymentRequestDTO) {
 
         DynamicPaymentDetailsDTO forwardDTO = orderService.forwardPaymentRequest(paymentRequestDTO.getOrderId(), paymentRequestDTO.getPaymentCommonName());
-        PaymentResponseDTO dto;
+        String responseURL;
         try {
-            dto = zuulClient.forwardPaymentRequest(URI.create(apiGatewayURL + '/' + paymentRequestDTO.getPaymentCommonName()), forwardDTO);
+            PaymentResponseDTO dto = zuulClient.forwardPaymentRequest(URI.create(apiGatewayURL + '/' + paymentRequestDTO.getPaymentCommonName()), forwardDTO);
+            orderService.setPayment(paymentRequestDTO.getOrderId(), dto.getPaymentId());
+            responseURL = dto.getPaymentURL();
         } catch (FeignException.FeignClientException e) {
             e.printStackTrace();
-            //if bank request fails, redirect user to the errorURL;
-            throw new InvalidDataException(forwardDTO.getErrorURL(), HttpStatus.BAD_REQUEST);
+            //if bank request fails, redirect user to the company failedURL;
+            orderService.cancelOrder(paymentRequestDTO.getOrderId());
+            responseURL = forwardDTO.getFailedURL();
         }
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        return new ResponseEntity<>(responseURL, HttpStatus.OK);
     }
 
     @Autowired

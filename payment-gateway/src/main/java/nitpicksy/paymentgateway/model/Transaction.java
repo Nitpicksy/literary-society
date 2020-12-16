@@ -32,6 +32,9 @@ public class Transaction {
     @Column(nullable = false)
     private Long merchantOrderId;
 
+    @Column
+    private Long paymentId;
+
     @Column(nullable = false)
     private Timestamp merchantTimestamp;
 

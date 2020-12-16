@@ -6,8 +6,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-
 @Component
 public class ForwardRequestMapper implements MapperInterface<Transaction, DynamicPaymentDetailsDTO> {
 
@@ -22,7 +20,7 @@ public class ForwardRequestMapper implements MapperInterface<Transaction, Dynami
     public DynamicPaymentDetailsDTO toDto(Transaction entity) {
         DynamicPaymentDetailsDTO dto = modelMapper.map(entity, DynamicPaymentDetailsDTO.class);
         dto.setAmount(entity.getAmount());
-        dto.setSuccessURL(entity.getCompany().getSuccessURL() + '/' + entity.getId());
+        dto.setSuccessURL(entity.getCompany().getSuccessURL() + '/' + entity.getMerchantOrderId());
         dto.setFailedURL(entity.getCompany().getFailedURL());
         dto.setErrorURL(entity.getCompany().getFailedURL());
         dto.setMerchantTimestamp(entity.getMerchantTimestamp().toString());
