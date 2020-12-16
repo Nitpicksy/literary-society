@@ -18,9 +18,13 @@ export const fetchFormFail = (error) => {
     };
 };
 
+
 export const fetchForm = () => {
-    return dispatch => {
-        axios.get('/readers/start-registration')
+    return (dispatch, getState) => {
+
+        const signUpType  = getState().signUp.signUpType;
+
+        axios.get(`/${signUpType}/start-registration`)
             .then(response => {
                 dispatch(fetchFormSuccess(response.data.formFields, response.data.processInstanceId, response.data.taskId));
             })

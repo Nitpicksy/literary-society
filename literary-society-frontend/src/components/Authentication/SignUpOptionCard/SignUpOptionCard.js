@@ -7,6 +7,8 @@ import CardActions from '@material-ui/core/CardActions';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router';
+import { connect } from 'react-redux';
+import * as actions from '../SignUpOptions/SignUpOptionsActions';
 
 const useStyles = makeStyles({
     root: {
@@ -21,9 +23,11 @@ const SignUpOptionCard = (props) => {
     const classes = useStyles();
     const history = useHistory();
     const { path } = props;
+    const { setSignUpType } = props;
 
     const chooseOptionHandler = (path) => {
         history.push(path);
+        setSignUpType(props.type)
     }
 
     return (
@@ -42,4 +46,10 @@ const SignUpOptionCard = (props) => {
     );
 }
 
-export default SignUpOptionCard;
+const mapDispatchToProps = dispatch => {
+    return {
+        setSignUpType: (type) => dispatch(actions.setSignUpType(type))
+    }
+};
+
+export default connect(null,mapDispatchToProps)(SignUpOptionCard);

@@ -13,9 +13,9 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @DiscriminatorValue("WRITER")
-public class Writer extends User{
+public class Writer extends User {
 
-    @ManyToMany( fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "writer_genre",
             joinColumns = @JoinColumn(name = "writer_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id", referencedColumnName = "id"))
@@ -27,4 +27,10 @@ public class Writer extends User{
     @OneToMany
     @JoinColumn(name = "writer_id")
     private Set<PDFDocument> drafts;
+
+
+    public Writer(String firstName, String lastName, String city, String country, String email, String username,
+                  String password) {
+        super(firstName, lastName, city, country, email, username, password);
+    }
 }
