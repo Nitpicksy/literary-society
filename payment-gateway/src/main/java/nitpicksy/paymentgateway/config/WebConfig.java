@@ -1,4 +1,4 @@
-package nitpicksy.bank.config;
+package nitpicksy.paymentgateway.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -10,6 +10,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**").
-                allowedOrigins("http://localhost:3006", "http://localhost:3000, https://localhost:3003").allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+                allowedOrigins("https://localhost:3003", "https://localhost:3000", "https://localhost:3006").allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }
 }

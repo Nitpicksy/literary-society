@@ -6,12 +6,10 @@ import reportWebVitals from "./reportWebVitals";
 import { reducer as toastrReducer } from "react-redux-toastr";
 import { applyMiddleware, combineReducers, createStore, compose } from "redux";
 import thunk from "redux-thunk";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import ReduxToastr from "react-redux-toastr";
 import paymentHomeReducer from "./components/PaymentHome/PaymentHomeReducer";
-import { Switch } from "@material-ui/core";
-import PaymentHome from "./components/PaymentHome/PaymentHome";
 
 const composeEnhancers =
   process.env.NODE_ENV === "development"

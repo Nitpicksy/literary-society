@@ -73,7 +73,7 @@ public class OrderController {
     }
 
     /**
-     * PUT https://{gateway}/api/orders/1
+     * POST https://{gateway}/api/orders/forward
      * <p>
      * Endpoint that forwards the order to the payment service
      *
@@ -81,7 +81,7 @@ public class OrderController {
      * @return
      */
 
-    @PutMapping("/{orderId}")
+    @PostMapping("/forward")
     public ResponseEntity<PaymentResponseDTO> forwardPaymentRequest(@RequestBody PaymentRequestDTO paymentRequestDTO) {
 
         DynamicPaymentDetailsDTO forwardDTO = orderService.forwardPaymentRequest(paymentRequestDTO.getOrderId(), paymentRequestDTO.getPaymentCommonName());

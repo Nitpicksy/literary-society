@@ -4,13 +4,11 @@ import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import Typography from "../Typography";
-import Paypal from "../../images/paypal2.png";
-import CreditCard from "../../images/credit-card.png";
-import Bitcoin from "../../images/bitcoin.png";
-import OtherMethods from "../../images/other-methods.png";
 
 import * as actions from "./PaymentHomeActionsExport";
 import { connect } from "react-redux";
+import PaymentMethod from "./PaymentMethod/PaymentMethod";
+import { fetchPaymentDetails, forwardPayment } from "./PaymentHomeActions";
 
 const styles = (theme) => ({
   root: {
@@ -45,6 +43,7 @@ const styles = (theme) => ({
     height: 250,
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(4),
+    cursor: "grabbing",
   },
   curvyLines: {
     pointerEvents: "none",
@@ -60,13 +59,51 @@ const styles = (theme) => ({
 const PaymentHome = (props) => {
   const { classes } = props;
   const { fetchPaymentMethods } = props;
+  const { fetchPaymentDetails } = props;
+  const { forwardPayment } = props;
+
+  let methods = null;
+  let details = null;
 
   useEffect(() => {
-    fetchPaymentMethods(props.match.params[0]);
-  }, [fetchPaymentMethods]);
+    fetchPaymentMethods(props.match.params.id);
+    fetchPaymentDetails(props.match.params.id);
+  }, [fetchPaymentMethods, fetchPaymentDetails, props.match.params.id]);
 
-  return (
-    <section className={classes.root}>
+  //this function forwards the request to the appropriate payment service (bank,paypal,bitcoin,etc.)
+  const clicked = (method) => {
+    const request = {
+      orderId: props.match.params.id,
+      paymentCommonName: method.commonName,
+    };
+
+    forwardPayment(request);
+  };
+
+  if (props.paymentMethods) {
+    if (props.paymentDetails) {
+      details = (
+        <div>
+          <br />
+          <Typography
+            variant="h4"
+            marked="center"
+            className={classes.title}
+            component="h2"
+          >
+            {props.paymentDetails.amount} din.
+            <div className={classes.item}>
+              <Typography variant="h5" align="center">
+                {props.paymentDetails.merchantName} in{" "}
+                {props.paymentDetails.companyName}
+              </Typography>
+            </div>
+          </Typography>
+        </div>
+      );
+    }
+
+    methods = (
       <Container className={classes.container}>
         <Typography
           variant="h4"
@@ -78,80 +115,53 @@ const PaymentHome = (props) => {
         </Typography>
         <div>
           <Grid container spacing={5}>
-            <Grid item xs={12} md={3}>
-              <div className={classes.item}>
-                <div className={classes.number}>1.</div>
-                <img src={Paypal} alt="suitcase" className={classes.image} />
-                <Typography variant="h5" align="center" component="h2">
-                  Paypal
-                </Typography>
-              </div>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <div className={classes.item}>
-                <div className={classes.number}>2.</div>
-                <img src={CreditCard} alt="graph" className={classes.image} />
-                <Typography variant="h5" align="center">
-                  Card transfer
-                </Typography>
-              </div>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <div className={classes.item}>
-                <div className={classes.number}>3.</div>
-                <img
-                  src={Bitcoin}
-                  alt="clock"
-                  className={classes.image}
-                  onClick={activate}
+            {props.paymentMethods.map((method, index) => {
+              return (
+                <PaymentMethod
+                  key={index}
+                  number={index}
+                  method={method}
+                  length={props.paymentMethods.length}
+                  clicked={clicked}
+                  {...props}
                 />
-                <Typography variant="h5" align="center">
-                  Bitcoin
-                </Typography>
-              </div>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <div className={classes.item}>
-                <div className={classes.number}>4.</div>
-                <img src={OtherMethods} alt="clock" className={classes.image} />
-                <Typography variant="h5" align="center">
-                  Different payment methods
-                </Typography>
-              </div>
-            </Grid>
+              );
+            })}
           </Grid>
         </div>
 
-        <Typography
-          variant="h4"
-          marked="center"
-          className={classes.title}
-          component="h2"
-        >
-          Payment details
-          <div className={classes.item}>
-            <Typography variant="h5" align="center">
-              More details
-            </Typography>
-          </div>
-        </Typography>
+        {details}
       </Container>
-    </section>
-  );
+    );
+  } else {
+    methods = <h1> No payment methods found for given literary society.</h1>;
+  }
+
+  return <section className={classes.root}>{methods}</section>;
 };
 
 PaymentHome.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
+const mapStateToProps = (state) => {
+  return {
+    paymentMethods: state.paymentHome.paymentMethods,
+    paymentDetails: state.paymentHome.paymentDetails,
+  };
+};
+
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchPaymentMethods: (transactionId) =>
       dispatch(actions.fetchPaymentMethods(transactionId)),
+    fetchPaymentDetails: (transactionId) =>
+      dispatch(actions.fetchPaymentDetails(transactionId)),
+    forwardPayment: (request) => dispatch(actions.forwardPayment(request)),
   };
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(withStyles(styles)(PaymentHome));

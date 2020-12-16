@@ -3,11 +3,8 @@ import "./App.css";
 import PaymentHome from "./components/PaymentHome/PaymentHome";
 import { Switch } from "react-router-dom";
 import { Route } from "react-router-dom";
-import { Suspense } from "react";
 
 const App = (props) => {
-  const { classes } = props;
-
   return (
     <div className="App">
       <Switch>
