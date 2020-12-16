@@ -1,5 +1,6 @@
 import axios from "../../axios-endpoint";
 import * as actionTypes from "./PaymentHomeActionTypes";
+import { toastr } from "react-redux-toastr";
 
 export const fetchPaymentMethodsStart = () => {
   return {
@@ -47,12 +48,16 @@ export const fetchPaymentDetails = (transactionId) => {
 
 export const forwardPayment = (request) => {
   return (dispatch) => {
-    console.log("request", request);
     axios
       .post(`/orders/forward`, request)
       .then((response) => {
-        // dispatch(fetchTransactionSuccess(response.data));
+        window.location.href = response.data;
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastr.error(
+          "Forwarding request to service",
+          err.response.data.message
+        );
+      });
   };
 };

@@ -62,7 +62,7 @@ const PaymentMethod = (props) => {
   return (
     <Grid item xs={12} md={Math.round(12 / props.length)}>
       <div className={classes.item}>
-        <div className={classes.number}>{props.number}</div>
+        <div className={classes.number}>{props.number + 1}</div>
         {img}
         <Typography variant="h5" align="center" component="h2">
           {capitalizeFirstLetter(props.method.commonName)}

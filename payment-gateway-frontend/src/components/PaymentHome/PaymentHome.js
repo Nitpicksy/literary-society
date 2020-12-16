@@ -8,7 +8,6 @@ import Typography from "../Typography";
 import * as actions from "./PaymentHomeActionsExport";
 import { connect } from "react-redux";
 import PaymentMethod from "./PaymentMethod/PaymentMethod";
-import { fetchPaymentDetails, forwardPayment } from "./PaymentHomeActions";
 
 const styles = (theme) => ({
   root: {
