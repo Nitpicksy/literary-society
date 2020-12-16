@@ -19,15 +19,11 @@ export const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(1),
     },
     submit: {
-        margin: theme.spacing(3, 0, 2),
+        marginTop: theme.spacing(2),
     },
     card: {
         marginTop: theme.spacing(1),
         display: 'flex',
         alignItems: 'center',
     },
-    btnGrid: {
-        paddingLeft: theme.spacing(5.5),
-        marginTop: theme.spacing(16),
-    }
 }));

@@ -21,7 +21,7 @@ const Tasks = (props) => {
     const classes = useStyles();
     const { fetchTasks } = props;
     const columns = [
-        { field: 'name', headerName: 'Name', width: 510 },
+        { field: 'name', headerName: 'Name', width: 550 }
     ];
 
     let rows = [];
@@ -40,12 +40,12 @@ const Tasks = (props) => {
 
     if (!loading) {
         data = <Grid align="center" style={{ margin: 20 }}>
-            <Typography component="h3" variant="h6">You don't have an active tasks.</Typography>
+            <Typography component="h3" variant="h6">You don't have any active tasks.</Typography>
         </Grid>;
         if (props.tasks) {
             rows = props.tasks;
-
-            data = <Grid container justify="center" className={classes.table}>
+            
+            data = <Grid container className={classes.table}>
                 <DataGrid rows={rows} columns={columns} pageSize={5} onRowClick={(properties) => selectRow(properties)} />
             </Grid>;
         }
@@ -54,7 +54,7 @@ const Tasks = (props) => {
     }
 
     return (
-        <Container component="main" maxWidth="lg">
+        <Container component="main" maxWidth="sm">
             <CssBaseline />
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
