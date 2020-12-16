@@ -12,6 +12,7 @@ export const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.secondary.main,
     },
     title: {
+        textAlign: 'center',
         margin: theme.spacing(0, 0, 1, 0),
     },
     paragraph: {

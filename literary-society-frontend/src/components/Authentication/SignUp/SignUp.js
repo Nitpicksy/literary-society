@@ -41,16 +41,13 @@ const SignUp = (props) => {
 
     const submitHander = (event) => {
         event.preventDefault();
-
         let array = [];
-
         for (let [key, data] of Object.entries(controls)) {
             // convert array to comma-separated string
             let value = data.value
             if (Array.isArray(data.value)) {
                 value = data.value.join();
             }
-
             array.push({ fieldId: key, fieldValue: value });
         }
         props.onSignUp(array, props.taskId, history, controls['isBetaReader'].value);
@@ -67,7 +64,7 @@ const SignUp = (props) => {
                 <Avatar className={classes.avatar}>
                     <PersonIcon />
                 </Avatar>
-                <Typography component="h1" variant="h4">Sign up</Typography>
+                <Typography component="h1" variant="h4" className={classes.title}>Sign up</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"

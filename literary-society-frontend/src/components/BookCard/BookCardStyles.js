@@ -8,6 +8,20 @@ export const useStyles = makeStyles((theme) => ({
   media: {
     height: 260,
   },
+  imageDiv: {
+    position: 'relative',
+  },
+  tooltip: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+  },
+  discount: {
+    backgroundColor: '#d32f2f',
+    color: 'white',
+    fontWeight: 500,
+    fontSize: '1rem',
+  },
   cardcontent: {
     height: 120,
     display: 'flex',
@@ -23,7 +37,7 @@ export const useStyles = makeStyles((theme) => ({
     lineHeight: 'normal',
     marginBottom: theme.spacing(0.4),
   },
-  writerName: {
+  writersNames: {
     fontFamily: 'Bitter, Roboto',
     fontSize: '0.85rem',
     fontWeight: 500,
@@ -31,11 +45,11 @@ export const useStyles = makeStyles((theme) => ({
   price: {
     fontSize: '1.1rem',
     fontWeight: 500,
-    color: '#d32f2f'
+    color: '#d32f2f',
   },
   merchantName: {
     fontSize: '0.75rem',
     fontWeight: 500,
-    fontStyle: 'italic'
-  }
+    fontStyle: 'italic',
+  },
 }));

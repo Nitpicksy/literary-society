@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.serviceimpl;
 
+import nitpicksy.literarysociety.dto.camunda.PublicationRequestDTO;
 import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.repository.BookRepository;
@@ -17,13 +18,19 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> findAllForSale() {
-        return bookRepository.findAllByStatusAndPublishingInfoMerchantSupportsPaymentMethods(
+        return bookRepository.findByStatusAndPublishingInfoMerchantSupportsPaymentMethods(
                 BookStatus.IN_STORES, true);
     }
 
     @Override
     public Set<Book> findByIds(List<Long> ids) {
         return bookRepository.findByIdIn(ids);
+    }
+
+    @Override
+    public PublicationRequestDTO getPublicationRequest(Long id) {
+        Book book = bookRepository.findOneById(id);
+        return new PublicationRequestDTO(book.getId(),book.getTitle(),book.getGenre().getName(),book.getSynopsis());
     }
 
     @Autowired

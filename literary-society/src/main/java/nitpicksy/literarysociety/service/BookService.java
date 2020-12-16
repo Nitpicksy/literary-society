@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.service;
 
+import nitpicksy.literarysociety.dto.camunda.PublicationRequestDTO;
 import nitpicksy.literarysociety.model.Book;
 
 import java.util.List;
@@ -10,4 +11,6 @@ public interface BookService {
     List<Book> findAllForSale();
 
     Set<Book> findByIds(List<Long> ids);
+
+    PublicationRequestDTO getPublicationRequest(Long id);
 }

@@ -1,8 +1,8 @@
 import './App.css';
-import React, { Suspense,useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import  * as actions from './components/Authentication/SignIn/SignInExport';
+import * as actions from './components/Authentication/SignIn/SignInExport';
 import SignIn from './components/Authentication/SignIn/SignIn';
 import SignUpOptions from './components/Authentication/SignUpOptions/SignUpOptions';
 import SignUp from './components/Authentication/SignUp/SignUp';
@@ -21,6 +21,10 @@ import PaymentFailed from './components/Payment/PaymentFailed';
 import ActivateAccount from './components/Authentication/ActivateAccount/ActivateAccount';
 import BetaReaderGenres from './components/Authentication/BetaReaderGenres/BetaReaderGenres';
 import ShoppingCart from './components/ShoppingCart/ShoppingCart';
+import PublicationRequests from './components/WriterPages/PublicationRequests/PublicationRequests';
+import CreatePublicationRequest from './components/WriterPages/CreatePublicationRequest/CreatePublicationRequest';
+import Tasks from './components/Tasks/Tasks';
+import PublicationRequest from './components/Tasks/Task/PublicationRequest/PublicationRequest';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -57,6 +61,11 @@ const App = props => {
   if (props.isAuthenticated) {
     routes = (
       <Switch>
+        <Route path="/publication-requests" render={(props) => <PublicationRequests {...props} />} />
+        <Route path="/create-publication-request" render={(props) => <CreatePublicationRequest {...props} />} />
+        <Route path="/tasks" render={(props) => <Tasks {...props} />} />
+        <Route path="/publication-request" render={(props) => <PublicationRequest {...props} />} />
+
         <Route path="/sign-out" render={(props) => <Logout {...props} />} />
         <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
         <Route path="/payment/success" render={(props) => <PaymentSuccess {...props} />} />

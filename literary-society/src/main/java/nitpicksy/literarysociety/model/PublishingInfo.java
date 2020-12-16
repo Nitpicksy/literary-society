@@ -41,10 +41,10 @@ public class PublishingInfo {
     private Integer discount;
 
     @OneToOne
-    @JoinColumn(referencedColumnName = "id")
     private Book book;
 
     @PrimaryKeyJoinColumn
     @ManyToOne(fetch = FetchType.EAGER)
     private Merchant merchant;
+
 }

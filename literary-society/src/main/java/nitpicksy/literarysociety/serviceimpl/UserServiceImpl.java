@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -93,6 +94,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public Role findRoleByName(String name) {
         return roleRepository.findByName(name);
+    }
+
+    @Override
+    public List<User> findAllWithRole(String roleName) {
+        return userRepository.findByRoleName(roleName);
     }
 
     @Override

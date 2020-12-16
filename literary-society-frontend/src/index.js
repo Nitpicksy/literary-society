@@ -18,6 +18,9 @@ import activateAccountReducer from './components/Authentication/ActivateAccount/
 import betaReaderGenresReducer from './components/Authentication/BetaReaderGenres/BetaReaderGenresReducer';
 import homePageReducer from './components/HomePage/HomePageReducer';
 import transactionReducer from './components/Payment/Transaction/TransactionReducer';
+import createPublicationRequestReducer from './components/WriterPages/CreatePublicationRequest/CreatePublicationRequestReducer';
+import tasksReducer from './components/Tasks/TasksReducer';
+import publicationRequestReducer from './components/Tasks/Task/PublicationRequest/PublicationRequestReducer';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
@@ -29,7 +32,10 @@ const rootReducer = combineReducers({
     activateAccount: activateAccountReducer,
     betaReaderGenres: betaReaderGenresReducer,
     homePage: homePageReducer,
-    transaction:transactionReducer 
+    transaction:transactionReducer,
+    createPublicationRequest: createPublicationRequestReducer,
+    tasks: tasksReducer,
+    publicationRequest:publicationRequestReducer
 });
 
 const store = createStore(rootReducer, composeEnhancers(
