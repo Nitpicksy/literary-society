@@ -13,7 +13,8 @@ export const useStyles = makeStyles((theme) => ({
     },
     table: {
         height: 400,
-        width: '60%',
-        margin:20
+        '& .MuiDataGrid-root .MuiDataGrid-row:hover': {
+            cursor: 'pointer'
+        },
     },
 }));

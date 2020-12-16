@@ -7,7 +7,7 @@
     <bpmn:endEvent id="Event_0sn6vry" name="Success">
       <bpmn:incoming>Flow_0qk9h5w</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:userTask id="Activity_01h8vb9" name="Urednik obrada pristiglih knjiga" camunda:assignee="${mainEditor}">
+    <bpmn:userTask id="Activity_01h8vb9" name="Obrada zahteva za izdavanje knjige" camunda:assignee="${mainEditor}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="decision" label="Decision" type="enum">
@@ -109,6 +109,12 @@
           <dc:Bounds x="160" y="295" width="24" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0sn6vry_di" bpmnElement="Event_0sn6vry">
+        <dc:Bounds x="852" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="850" y="295" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_01h8vb9_di" bpmnElement="Activity_01h8vb9">
         <dc:Bounds x="230" y="230" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -129,12 +135,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1pxavek_di" bpmnElement="Activity_1pxavek">
         <dc:Bounds x="670" y="230" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0sn6vry_di" bpmnElement="Event_0sn6vry">
-        <dc:Bounds x="852" y="252" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="850" y="295" width="43" height="14" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

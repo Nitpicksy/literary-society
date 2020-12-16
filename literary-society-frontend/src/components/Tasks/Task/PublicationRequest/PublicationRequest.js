@@ -34,7 +34,7 @@ const PublicationRequest = (props) => {
 
     useEffect(() => {
         fetchForm(selectedTask.piId, selectedTask.taskId);
-    }, [fetchForm,selectedTask.piId,selectedTask.taskId]);
+    }, [fetchForm, selectedTask.piId, selectedTask.taskId]);
 
     useEffect(() => {
         if (formFields) {
@@ -54,17 +54,17 @@ const PublicationRequest = (props) => {
             array.push({ fieldId: key, fieldValue: value });
         }
 
-        if(array[0].fieldValue === 'REQUEST_REJECTED'){
+        if (array[0].fieldValue === 'REQUEST_REJECTED') {
             console.log('REQUEST_REJECTED');
-            if(!array[1].fieldValue){
+            if (!array[1].fieldValue) {
                 toastr.error('Reject Publication Request', 'You have to write a reason for rejecting.');
                 return;
             }
         }
 
-        if(array[0].fieldValue === 'NOT_ORIGINAL'){
+        if (array[0].fieldValue === 'NOT_ORIGINAL') {
             console.log('NOT_ORIGINAL');
-            if(!array[1].fieldValue){
+            if (!array[1].fieldValue) {
                 toastr.error('Manuscript', 'You have to write a reason why the manuscript is not original.');
                 return;
             }
@@ -81,7 +81,7 @@ const PublicationRequest = (props) => {
     }
 
     return (
-        <Container component="main" maxWidth="sm">
+        <Container component="main" maxWidth="xs">
             <CssBaseline />
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
@@ -92,18 +92,12 @@ const PublicationRequest = (props) => {
                     {publicationRequestCard}
                 </div>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
-                    <Grid container justify="center">
-                        <Grid item xs={9}>
-                            {form}
-                        </Grid>
-                        <Grid item xs={3} className={classes.btnGrid}>
-                            <Button type="submit" color="primary" className={classes.submit} variant="contained"
-                                disabled={!formIsValid}>Confirm</Button>
-                        </Grid>
-                    </Grid>
+                    {form}
+                    <Button type="submit" color="primary" className={classes.submit}
+                        variant="contained" disabled={!formIsValid} fullWidth>
+                        Confirm
+                    </Button>
                 </form>
-              
-
             </div>
         </Container>
     );
@@ -123,7 +117,7 @@ const mapDispatchToProps = dispatch => {
     return {
         fetchForm: (piId, taskId) => dispatch(actions.fetchForm(piId, taskId)),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
-        onConfirm:  (data, taskId, history) => dispatch(actions.confirm(data, taskId, history)),
+        onConfirm: (data, taskId, history) => dispatch(actions.confirm(data, taskId, history)),
     }
 };
 
