@@ -60,7 +60,7 @@ const BetaReaderGenres = (props) => {
                 <Avatar className={classes.avatar}>
                     <PlaylistAddCheckIcon />
                 </Avatar>
-                <Typography component="h1" variant="h4">Choose genres</Typography>
+                <Typography component="h1" variant="h4" className={classes.title}>Choose genres</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
                     <Button type="submit" color="primary" className={classes.submit} fullWidth 

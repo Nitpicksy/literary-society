@@ -36,29 +36,33 @@ const SignUp = (props) => {
             let extractedControls = extractControls(formFields)
             setControls(extractedControls);
         }
-
     }, [formFields]);
 
     const submitHander = (event) => {
         event.preventDefault();
-
         let array = [];
-
         for (let [key, data] of Object.entries(controls)) {
             // convert array to comma-separated string
             let value = data.value
             if (Array.isArray(data.value)) {
                 value = data.value.join();
             }
-
             array.push({ fieldId: key, fieldValue: value });
         }
-        props.onSignUp(array, props.taskId, history, controls['isBetaReader'].value);
+
+        if(props.signUp === 'readers') {
+            props.onSignUp(array, props.taskId, history, controls['isBetaReader'].value);
+        }
+        else {
+            props.onSignUp(array, props.taskId, history, false);
+        }
+        
     }
 
     if (controls) {
         form = <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} />;
     }
+
 
     return (
         <Container component="main" maxWidth="xs">
@@ -67,7 +71,7 @@ const SignUp = (props) => {
                 <Avatar className={classes.avatar}>
                     <PersonIcon />
                 </Avatar>
-                <Typography component="h1" variant="h4">Sign up</Typography>
+                <Typography component="h1" variant="h4" className={classes.title}>Sign up</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
@@ -89,7 +93,8 @@ const mapStateToProps = state => {
         formFields: state.signUp.formFields,
         processInstanceId: state.signUp.processInstanceId,
         taskId: state.signUp.taskId,
-        refreshTokenRequestSent: state.signIn.refreshTokenRequestSent
+        refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
+        signUpType: state.signUp.signUpType
     }
 };
 

@@ -11,6 +11,9 @@ export const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(1),
         backgroundColor: theme.palette.secondary.main,
     },
+    title: {
+        textAlign: 'center',
+    },
     form: {
         width: '100%',
         marginTop: theme.spacing(1),

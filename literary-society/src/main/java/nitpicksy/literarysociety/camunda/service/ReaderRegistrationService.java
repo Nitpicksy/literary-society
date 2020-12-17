@@ -8,19 +8,17 @@ import nitpicksy.literarysociety.model.Genre;
 import nitpicksy.literarysociety.model.Reader;
 import nitpicksy.literarysociety.repository.ReaderRepository;
 import nitpicksy.literarysociety.service.GenreService;
+import nitpicksy.literarysociety.service.UserService;
 import nitpicksy.literarysociety.service.VerificationService;
-import nitpicksy.literarysociety.serviceimpl.UserServiceImpl;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 public class ReaderRegistrationService implements JavaDelegate {
 
-    private UserServiceImpl userService;
+    private UserService userService;
 
     private PasswordEncoder passwordEncoder;
 
@@ -38,6 +36,8 @@ public class ReaderRegistrationService implements JavaDelegate {
     private VerificationService verificationService;
 
     private GenreService genreService;
+
+    private CamundaService camundaService;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -50,15 +50,8 @@ public class ReaderRegistrationService implements JavaDelegate {
                 map.get("username"), map.get("password"), isBetaReader);
 
         if (isBetaReader) {
-            List<Long> ids = new ArrayList<>();
-            String[] genresStr = map.get("selectGenres").split(",");
-            for (String idStr : genresStr) {
-                if (idStr.contains("_")) {
-                    Long id = Long.valueOf(idStr.split("_")[1]);
-                    ids.add(id);
-                }
-            }
-            List<Genre> genres = genreService.findWithIds(ids);
+            List<Long> genresIds = camundaService.extractIds(map.get("selectGenres"));
+            List<Genre> genres = genreService.findWithIds(genresIds);
             if (genres.isEmpty()) {
                 throw new InvalidDataException("You have to choose at least one genre.", HttpStatus.BAD_REQUEST);
             }
@@ -89,14 +82,15 @@ public class ReaderRegistrationService implements JavaDelegate {
         return savedReader;
     }
 
-
     @Autowired
-    public ReaderRegistrationService(UserServiceImpl userService, PasswordEncoder passwordEncoder, ReaderRepository readerRepository,
-                                     VerificationService verificationService, Environment environment, GenreService genreService) {
+    public ReaderRegistrationService(UserService userService, PasswordEncoder passwordEncoder,
+                                     ReaderRepository readerRepository, VerificationService verificationService,
+                                     GenreService genreService, CamundaService camundaService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.readerRepository = readerRepository;
         this.verificationService = verificationService;
         this.genreService = genreService;
+        this.camundaService = camundaService;
     }
 }

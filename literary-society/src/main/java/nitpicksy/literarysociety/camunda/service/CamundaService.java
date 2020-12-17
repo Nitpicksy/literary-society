@@ -1,6 +1,8 @@
 package nitpicksy.literarysociety.camunda.service;
 
 import nitpicksy.literarysociety.dto.camunda.EnumKeyValueDTO;
+import nitpicksy.literarysociety.dto.camunda.TaskDataDTO;
+import nitpicksy.literarysociety.dto.response.BookDTO;
 import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
@@ -9,6 +11,7 @@ import org.camunda.bpm.engine.form.FormField;
 import org.camunda.bpm.engine.form.TaskFormData;
 import org.camunda.bpm.engine.impl.form.FormFieldImpl;
 import org.camunda.bpm.engine.impl.form.type.EnumFormType;
+import org.camunda.bpm.engine.rest.dto.task.TaskDto;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +80,49 @@ public class CamundaService {
     public void complete(String processInstanceId) {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).list().get(0);
         taskService.complete(task.getId());
+    }
+
+    public List<Long> extractIds(String selectedIdsString) {
+        List<Long> ids = new ArrayList<>();
+        String[] selectedIdsArray = selectedIdsString.split(",");
+        for (String idStr : selectedIdsArray) {
+            if (idStr.contains("_")) {
+                Long id = Long.valueOf(idStr.split("_")[1]);
+                ids.add(id);
+            }
+        }
+
+        return ids;
+    }
+
+    public Long extractId(String selectedIdString) {
+        Long id = null;
+        if (selectedIdString.contains("_")) {
+            id = Long.valueOf(selectedIdString.split("_")[1]);
+        }
+        
+        return id;
+    }
+
+    public String extractValue(String selectedValueString) {
+        String value = null;
+        if (selectedValueString.contains("_")) {
+            value = selectedValueString.split("_")[1];
+        }
+
+        return value;
+    }
+
+    public List<TaskDto> getTasksByAssignee(String userId){
+        List<Task> tasks = taskService.createTaskQuery()
+                .taskAssignee(userId)
+                .orderByDueDate().asc()
+                .list();
+        return tasks.stream().map(TaskDto::fromEntity).collect(Collectors.toList());
+    }
+
+    public String getProcessVariable(String piId, String name){
+       return (String) runtimeService.getVariable(piId, name);
     }
 
     @Autowired

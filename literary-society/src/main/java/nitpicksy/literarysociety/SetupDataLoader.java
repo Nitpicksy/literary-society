@@ -1,12 +1,15 @@
 package nitpicksy.literarysociety;
+
 import nitpicksy.literarysociety.common.RandomPasswordGenerator;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.model.Permission;
 import nitpicksy.literarysociety.model.Role;
 import nitpicksy.literarysociety.model.User;
+import nitpicksy.literarysociety.model.Writer;
 import nitpicksy.literarysociety.repository.PermissionRepository;
 import nitpicksy.literarysociety.repository.RoleRepository;
 import nitpicksy.literarysociety.repository.UserRepository;
+import nitpicksy.literarysociety.repository.WriterRepository;
 import nitpicksy.literarysociety.service.EmailNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -21,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public class SetupDataLoader  implements ApplicationListener<ContextRefreshedEvent> {
+public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
     boolean alreadySetup = false;
 
@@ -30,6 +33,8 @@ public class SetupDataLoader  implements ApplicationListener<ContextRefreshedEve
     private PermissionRepository permissionRepository;
 
     private UserRepository userRepository;
+
+    private WriterRepository writerRepository;
 
     private PasswordEncoder passwordEncoder;
 
@@ -67,10 +72,13 @@ public class SetupDataLoader  implements ApplicationListener<ContextRefreshedEve
         Set<Permission> lecturerPermissions = new HashSet<>();
         createRoleIfNotFound("ROLE_LECTURER", lecturerPermissions);
 
+        Set<Permission> merchantPermissions = new HashSet<>();
+        createRoleIfNotFound("ROLE_MERCHANT", merchantPermissions);
+
         RandomPasswordGenerator randomPasswordGenerator = new RandomPasswordGenerator();
         String generatedPassword = randomPasswordGenerator.generatePassword();
 
-        User admin = new User("Petar","Peric", "Belgrade","Serbia","petarPeric@maildrop.cc","petar",
+        User admin = new User("Petar", "Peric", "Belgrade", "Serbia", "petarperic@maildrop.cc", "petar",
                 passwordEncoder.encode(generatedPassword),
                 roleRepository.findByName("ROLE_ADMIN"), UserStatus.NEVER_LOGGED_IN);
 
@@ -78,14 +86,38 @@ public class SetupDataLoader  implements ApplicationListener<ContextRefreshedEve
             return;
         }
 
+        // TODO: Obrisati kad se user-i ne budu dodavali skriptom
+        assignRoles();
+
         userRepository.save(admin);
         composeAndSendEmailToChangePassword(admin.getEmail(), generatedPassword);
 
         alreadySetup = true;
     }
 
+    private void assignRoles() {
+        Role roleWriter = roleRepository.findByName("ROLE_WRITER");
+        Writer writer1 = writerRepository.findOneById(1L);
+        writer1.setRole(roleWriter);
+        writerRepository.save(writer1);
+        Writer writer2 = writerRepository.findOneById(2L);
+        writer2.setRole(roleWriter);
+        writerRepository.save(writer2);
+
+        Role roleEditor = roleRepository.findByName("ROLE_EDITOR");
+        User editor1 = userRepository.findOneById(3L);
+        editor1.setRole(roleEditor);
+        userRepository.save(editor1);
+        User editor2 = userRepository.findOneById(4L);
+        editor2.setRole(roleEditor);
+        userRepository.save(editor2);
+        User editor3 = userRepository.findOneById(5L);
+        editor3.setRole(roleEditor);
+        userRepository.save(editor3);
+    }
+
     private void composeAndSendEmailToChangePassword(String recipientEmail, String generatedPassword) {
-        String subject = "Activate your account";
+        String subject = "Activate account";
         StringBuilder sb = new StringBuilder();
         sb.append("An account for you on Literary Society website has been created.");
         sb.append(System.lineSeparator());
@@ -133,10 +165,12 @@ public class SetupDataLoader  implements ApplicationListener<ContextRefreshedEve
 
     @Autowired
     public SetupDataLoader(RoleRepository roleRepository, PermissionRepository permissionRepository, UserRepository userRepository,
-                           PasswordEncoder passwordEncoder, EmailNotificationService emailNotificationService, Environment environment) {
+                           WriterRepository writerRepository, PasswordEncoder passwordEncoder, EmailNotificationService emailNotificationService,
+                           Environment environment) {
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
         this.userRepository = userRepository;
+        this.writerRepository = writerRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailNotificationService = emailNotificationService;
         this.environment = environment;

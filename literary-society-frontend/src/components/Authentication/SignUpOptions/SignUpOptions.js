@@ -22,9 +22,9 @@ const SignUpOptions = () => {
                 <Typography className={classes.title} component="h1" variant="h4">Sign up Options</Typography>
                 <Typography className={classes.paragraph} component="h2" variant="body1">What type of user you want to be?</Typography>
                 <Grid container spacing={3} align="center">
-                    <SignUpOptionCard title="Reader" path="/sign-up" smColumns={4} xsColumns={12}
+                    <SignUpOptionCard title="Reader" path="/sign-up" type="readers" smColumns={4} xsColumns={12}
                         description="Readers can purchase and download books. Additionally, beta-readers can review writers' manuscripts." />
-                    <SignUpOptionCard title="Writer" smColumns={4} xsColumns={12}
+                    <SignUpOptionCard title="Writer" path="/sign-up" type="writers" smColumns={4} xsColumns={12}
                         description="Writers can upload their manuscripts to get a review. Manuscripts with positive reviews can be published." />
                     <SignUpOptionCard title="Editor" smColumns={4} xsColumns={12}
                         description="Editors can review writers' manuscripts. They can ask writers to improve their manuscripts if it is necessary." />

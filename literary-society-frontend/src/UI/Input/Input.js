@@ -18,11 +18,23 @@ const input = (props) => {
                 {...props.elementConfig} onChange={props.changed}
                 multiline />;
             break;
-        case ('select'):
+        case ('selectOne'):
             inputElement = <TextField variant="outlined" margin="normal" fullWidth
                 label={props.elementConfig.label} value={props.value} onChange={props.changed}
                 error={props.error} helperText={props.error ? props.errorMessage : ''}
-                select SelectProps={{ multiple: true }}>
+                select>
+                {props.elementConfig.options.map(option => (
+                    <MenuItem key={option.value} value={option.value}>{option.displayValue}</MenuItem>
+                ))}
+            </TextField>;
+            break;
+        case ('selectMultiple'):
+            let multipleSelect = props.additionalData.multipleSelect === 'true' ? true : false;
+            
+            inputElement = <TextField variant="outlined" margin="normal" fullWidth
+                label={props.elementConfig.label} value={props.value} onChange={props.changed}
+                error={props.error} helperText={props.error ? props.errorMessage : ''}
+                select SelectProps={{ multiple: multipleSelect }}>
                 {props.elementConfig.options.map(option => (
                     <MenuItem key={option.value} value={option.value}>{option.displayValue}</MenuItem>
                 ))}

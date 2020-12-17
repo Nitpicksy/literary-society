@@ -6,6 +6,7 @@ import nitpicksy.literarysociety.model.UserTokenState;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public interface UserService {
 
@@ -16,6 +17,8 @@ public interface UserService {
     User findById(Long id);
 
     Role findRoleByName(String name);
+
+    List<User> findAllWithRole(String roleName);
 
     void generateResetToken(String email) throws NoSuchAlgorithmException;
 

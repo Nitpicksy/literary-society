@@ -69,6 +69,31 @@ const SignIn = (props) => {
         //     error: false,
         //     errorMessage: '',
         // },
+        // select: {
+        //     elementType: 'select',
+        //     elementConfig: {
+        //         label: 'Products',
+        //         options: [
+        //             {
+        //                 value: "mleko",
+        //                 displayValue: "Mleko"
+        //             },
+        //             {
+        //                 value: "jogurt",
+        //                 displayValue: "Jogurt"
+        //             }
+        //         ],
+        //     },
+        //     value: "",
+        //     validation: {
+        //         requiredSelect: false,
+        //     },
+        //     error: false,
+        //     errorMessage: '',
+        //     additionalData: {
+        //         multipleSelect: false
+        //     }
+        // },
     })
 
     
