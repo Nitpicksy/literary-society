@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -39,7 +39,7 @@ const styles = (theme) => ({
     fontWeight: theme.typography.fontWeightMedium,
   },
   image: {
-    height: 250,
+    height: 120,
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(4),
     cursor: "grabbing",
@@ -61,12 +61,15 @@ const PaymentHome = (props) => {
   const { fetchPaymentDetails } = props;
   const { forwardPayment } = props;
 
+  const [loading, setLoading] = useState(true);
+
   let methods = null;
   let details = null;
 
   useEffect(() => {
     fetchPaymentMethods(props.match.params.id);
     fetchPaymentDetails(props.match.params.id);
+    setLoading(false)
   }, [fetchPaymentMethods, fetchPaymentDetails, props.match.params.id]);
 
   //this function forwards the request to the appropriate payment service (bank,paypal,bitcoin,etc.)
@@ -102,41 +105,61 @@ const PaymentHome = (props) => {
       );
     }
 
-    methods = (
-      <Container className={classes.container}>
-        <Typography
-          variant="h4"
+    const paymentMethod = props.paymentMethods.sort(({id: previousID}, {id: currentID}) => previousID - currentID).map((method, index) => {
+      return (
+        <PaymentMethod
+          key={index}
+          number={index}
+          method={method}
+          length={props.paymentMethods.length}
+          clicked={clicked}
+          {...props}
+        />
+      );
+    })
+
+    paymentMethod.sort(function(a, b) {
+      if (a.value > b.value) {
+        return 1;
+      }
+      if (a.value < b.value) {
+        return -1;
+      }
+      return 0;
+    });
+
+    if(!loading) {
+      methods = (
+        <Container className={classes.container}>
+          <Typography
+            variant="h4"
+            marked="center"
+            className={classes.title}
+            component="h2"
+          >
+            Choose your payment method
+          </Typography>
+          <div>
+            <Grid container spacing={5}>
+              {paymentMethod}
+            </Grid>
+          </div>
+  
+          {details}
+        </Container>
+      );
+    } else {
+      methods = <h1> No payment methods found for given literary society.</h1>;
+    }
+    }
+    
+
+  return <section className={classes.root}>
+    {!loading ? methods : <Typography  variant="h4"
           marked="center"
           className={classes.title}
-          component="h2"
-        >
-          Choose your payment method
-        </Typography>
-        <div>
-          <Grid container spacing={5}>
-            {props.paymentMethods.map((method, index) => {
-              return (
-                <PaymentMethod
-                  key={index}
-                  number={index}
-                  method={method}
-                  length={props.paymentMethods.length}
-                  clicked={clicked}
-                  {...props}
-                />
-              );
-            })}
-          </Grid>
-        </div>
-
-        {details}
-      </Container>
-    );
-  } else {
-    methods = <h1> No payment methods found for given literary society.</h1>;
-  }
-
-  return <section className={classes.root}>{methods}</section>;
+          component="h2"> Loading... </Typography>}
+    </section>;
 };
 
 PaymentHome.propTypes = {
