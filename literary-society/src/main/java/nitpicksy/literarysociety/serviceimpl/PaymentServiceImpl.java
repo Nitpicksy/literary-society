@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.serviceimpl;
 
 import nitpicksy.literarysociety.client.ZuulClient;
+import nitpicksy.literarysociety.dto.request.LiterarySocietyOrderRequestDTO;
 import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
 import nitpicksy.literarysociety.enumeration.TransactionStatus;
 import nitpicksy.literarysociety.enumeration.TransactionType;
@@ -52,6 +53,21 @@ public class PaymentServiceImpl implements PaymentService {
             transactionService.save(transaction);
             throw new InvalidUserDataException("Something went wrong. Please try again.", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Override
+    public void handlePayment(LiterarySocietyOrderRequestDTO dto) {
+        Transaction order = transactionService.findById(dto.getMerchantOrderId());
+
+        if (dto.getStatus().equals("SUCCESS")) {
+            order.setStatus(TransactionStatus.SUCCESS);
+        } else if (dto.getStatus().equals("ERROR")) {
+            order.setStatus(TransactionStatus.ERROR);
+        } else {
+            order.setStatus(TransactionStatus.FAILED);
+        }
+
+        transactionService.save(order);
     }
 
     private double calculatePrice(List<Book> bookList, User user) {

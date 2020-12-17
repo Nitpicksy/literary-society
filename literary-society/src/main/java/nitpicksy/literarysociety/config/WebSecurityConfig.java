@@ -52,7 +52,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/api/process/**").permitAll()
                 .and()
                 .authorizeRequests().antMatchers("/api/books/**").permitAll()
-                
+                .and()
+                .authorizeRequests().antMatchers("/api/payments/confirm").permitAll()
                 .anyRequest().authenticated().and()
                 .cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(jwtUserDetailsService.tokenUtils,

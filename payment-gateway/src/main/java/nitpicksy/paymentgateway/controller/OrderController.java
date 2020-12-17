@@ -7,9 +7,7 @@ import nitpicksy.paymentgateway.dto.request.OrderRequestDTO;
 import nitpicksy.paymentgateway.dto.request.PaymentRequestDTO;
 import nitpicksy.paymentgateway.dto.response.OrderDetailsDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentResponseDTO;
-import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.mapper.TransactionMapper;
-import nitpicksy.paymentgateway.model.Transaction;
 import nitpicksy.paymentgateway.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,8 +26,6 @@ import java.net.URI;
 @RequestMapping(value = "/api/orders", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OrderController {
 
-    @Value("${GATEWAY_PAYMENT_REDIRECT_URL}")
-    private String gatewayRedirectUrl;
 
     @Value("${API_GATEWAY_URL}")
     private String apiGatewayURL;
@@ -49,15 +45,8 @@ public class OrderController {
      */
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createOrder(@Valid @RequestBody OrderRequestDTO orderDTO) {
-        // create transaction
-        Transaction order = orderService.createOrder(orderDTO);
-
-        if (order == null) {
-            throw new InvalidDataException("Error while creating new order.", HttpStatus.BAD_REQUEST);
-        }
-        
-        String url = gatewayRedirectUrl + "/" + order.getId();
-        return new ResponseEntity<>(url, HttpStatus.OK);
+        String redirectURL = orderService.createOrder(orderDTO);
+        return new ResponseEntity<>(redirectURL, HttpStatus.OK);
     }
 
     /**

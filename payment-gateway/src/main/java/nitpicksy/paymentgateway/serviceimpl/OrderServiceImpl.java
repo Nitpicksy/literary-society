@@ -30,6 +30,9 @@ public class OrderServiceImpl implements OrderService {
     @Value("${API_GATEWAY_URL}")
     private String apiGatewayURL;
 
+    @Value("${GATEWAY_PAYMENT_REDIRECT_URL}")
+    private String gatewayRedirectUrl;
+
     private TransactionRepository transactionRepository;
     private CompanyService companyService;
     private PaymentMethodRepository paymentMethodRepository;
@@ -38,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
     private ZuulClient zuulClient;
 
     @Override
-    public Transaction createOrder(OrderRequestDTO orderDTO) {
+    public String createOrder(OrderRequestDTO orderDTO) {
 
         //TODO: based on certificate? for now we only have 1 literary society
         Company company = companyService.findCompanyByCommonName("literary-society");
@@ -54,7 +57,11 @@ public class OrderServiceImpl implements OrderService {
             throw new InvalidDataException("Merchant not found.", HttpStatus.BAD_REQUEST);
         }
 
-        return createTransaction(orderDTO, orderMerchant, company);
+        Transaction order = createTransaction(orderDTO, orderMerchant, company);
+
+        String url = gatewayRedirectUrl + "/" + order.getId();
+
+        return url;
     }
 
     @Override

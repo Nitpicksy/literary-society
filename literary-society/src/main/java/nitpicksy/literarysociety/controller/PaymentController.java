@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.controller;
 
+import nitpicksy.literarysociety.dto.request.LiterarySocietyOrderRequestDTO;
 import nitpicksy.literarysociety.dto.response.BookDTO;
 import nitpicksy.literarysociety.exceptionHandler.InvalidUserDataException;
 import nitpicksy.literarysociety.mapper.BookDtoMapper;
@@ -40,6 +41,13 @@ public class PaymentController {
         String redirectUrl = paymentService.proceedToPayment(bookService.findByIds(booksIds), userService.getAuthenticatedUser());
         System.out.println("redirectUrl" + redirectUrl);
         return new ResponseEntity<>(redirectUrl, HttpStatus.OK);
+    }
+
+
+    @PostMapping(value = "/confirm", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> confirmPayment(@Valid @RequestBody LiterarySocietyOrderRequestDTO requestDTO) {
+        paymentService.handlePayment(requestDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Autowired
