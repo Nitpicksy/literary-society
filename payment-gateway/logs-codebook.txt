@@ -1,0 +1,9 @@
+APP|Aplication startup/shutdown
+REF|Refresh token
+ATZ|Autorization exception
+FGN|Feign client exception
+OMP|Object mapper exception
+ORD|Order
+PAY|Create payment request 
+CONFPAY|Confirm payment
+TRA|Transaction

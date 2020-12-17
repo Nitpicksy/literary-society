@@ -16,6 +16,7 @@ import nitpicksy.paymentgateway.repository.DataForPaymentRepository;
 import nitpicksy.paymentgateway.repository.PaymentMethodRepository;
 import nitpicksy.paymentgateway.repository.TransactionRepository;
 import nitpicksy.paymentgateway.service.CompanyService;
+import nitpicksy.paymentgateway.service.LogService;
 import nitpicksy.paymentgateway.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,10 @@ import java.util.List;
 @Service
 public class OrderServiceImpl implements OrderService {
 
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
     @Value("${API_GATEWAY_URL}")
     private String apiGatewayURL;
 
@@ -41,6 +46,7 @@ public class OrderServiceImpl implements OrderService {
     private ForwardRequestMapper forwardRequestMapper;
     private DataForPaymentRepository dataForPaymentRepository;
     private ZuulClient zuulClient;
+    private LogService logService;
 
     @Override
     public String createOrder(OrderRequestDTO orderDTO) {
@@ -49,6 +55,7 @@ public class OrderServiceImpl implements OrderService {
         Company company = companyService.findCompanyByCommonName("literary-society");
 
         if (company == null) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", "Company not found"));
             throw new InvalidDataException("Company not found.", HttpStatus.BAD_REQUEST);
         }
 
@@ -56,13 +63,15 @@ public class OrderServiceImpl implements OrderService {
                 .filter(merchant -> merchant.getName().equals(orderDTO.getMerchantName())).findAny().orElse(null);
 
         if (orderMerchant == null) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", "Merchant not found"));
             throw new InvalidDataException("Merchant not found.", HttpStatus.BAD_REQUEST);
         }
 
         Transaction order = createTransaction(orderDTO, orderMerchant, company);
 
-        String url = gatewayRedirectUrl + "/" + order.getId();
 
+        String url = gatewayRedirectUrl + "/" + order.getId();
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Order %s is successfully created and redirect url is %s", order.getId(), url)));
         return url;
     }
 
@@ -71,11 +80,13 @@ public class OrderServiceImpl implements OrderService {
 
         Transaction transaction = findOrder(paymentRequestDTO.getOrderId());
         if (transaction == null) {
-            throw new InvalidDataException("Invalid Transaction.", HttpStatus.BAD_REQUEST);
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", "Invalid transaction"));
+            throw new InvalidDataException("Invalid transaction.", HttpStatus.BAD_REQUEST);
         }
 
         PaymentMethod paymentMethod = paymentMethodRepository.findByCommonName(paymentRequestDTO.getPaymentCommonName());
         if (paymentMethod == null) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", "Invalid Payment Method ID"));
             throw new InvalidDataException("Invalid Payment Method ID.", HttpStatus.BAD_REQUEST);
         }
 
@@ -103,8 +114,10 @@ public class OrderServiceImpl implements OrderService {
             //if bank request fails, redirect user to the company failedURL;
             cancelOrder(paymentRequestDTO.getOrderId());
             responseURL = forwardDTO.getFailedURL();
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Order forward has failed and response URL is %s", responseURL)));
         }
 
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Order is successfully forwarded to payment service and redirect url is %s", responseURL)));
         return responseURL;
     }
 
@@ -117,7 +130,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrder(Long orderId) {
         transactionRepository.findById(orderId).ifPresent(transaction -> transaction.setStatus(TransactionStatus.CANCELED));
-
     }
 
 
@@ -125,7 +137,8 @@ public class OrderServiceImpl implements OrderService {
     public void setPayment(Long orderId, Long paymentId) {
         Transaction transaction = transactionRepository.findById(orderId).orElse(null);
         if (transaction == null) {
-            throw new InvalidDataException("Transaction null when receiving invoice from bank.", HttpStatus.BAD_REQUEST);
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Transaction null when receiving invoice from payment service.")));
+            throw new InvalidDataException("Transaction null when receiving invoice from payment service.", HttpStatus.BAD_REQUEST);
         }
         transaction.setPaymentId(paymentId);
         transaction.setStatus(TransactionStatus.APPROVED);
@@ -148,8 +161,12 @@ public class OrderServiceImpl implements OrderService {
 
         } catch (FeignException.FeignClientException e) {
             e.printStackTrace();
-            System.out.println("Went wrong with contacting the Literary Society.");
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Went wrong when contacting the Literary Society.")));
+            System.out.println("Went wrong when contacting the Literary Society.");
         }
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Order with id %s is done and payment is successfully forwarded to Literary Society", order.getId())));
+
     }
 
     private void handleOrder(Long merchantOrderId, Long paymentId, String status) {
@@ -184,9 +201,9 @@ public class OrderServiceImpl implements OrderService {
         return transactionRepository.save(transaction);
     }
 
-
     @Autowired
-    public OrderServiceImpl(TransactionRepository transactionRepository, CompanyService companyService, PaymentMethodRepository paymentMethodRepository, ForwardRequestMapper forwardRequestMapper, DataForPaymentRepository dataForPaymentRepository, ZuulClient zuulClient) {
+    public OrderServiceImpl(LogService logService, TransactionRepository transactionRepository, CompanyService companyService, PaymentMethodRepository paymentMethodRepository, ForwardRequestMapper forwardRequestMapper, DataForPaymentRepository dataForPaymentRepository, ZuulClient zuulClient) {
+        this.logService = logService;
         this.transactionRepository = transactionRepository;
         this.companyService = companyService;
         this.paymentMethodRepository = paymentMethodRepository;
