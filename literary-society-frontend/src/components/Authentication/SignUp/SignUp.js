@@ -36,7 +36,6 @@ const SignUp = (props) => {
             let extractedControls = extractControls(formFields)
             setControls(extractedControls);
         }
-
     }, [formFields]);
 
     const submitHander = (event) => {
@@ -50,12 +49,20 @@ const SignUp = (props) => {
             }
             array.push({ fieldId: key, fieldValue: value });
         }
-        props.onSignUp(array, props.taskId, history, controls['isBetaReader'].value);
+
+        if(props.signUp === 'readers') {
+            props.onSignUp(array, props.taskId, history, controls['isBetaReader'].value);
+        }
+        else {
+            props.onSignUp(array, props.taskId, history, false);
+        }
+        
     }
 
     if (controls) {
         form = <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} />;
     }
+
 
     return (
         <Container component="main" maxWidth="xs">
@@ -86,7 +93,8 @@ const mapStateToProps = state => {
         formFields: state.signUp.formFields,
         processInstanceId: state.signUp.processInstanceId,
         taskId: state.signUp.taskId,
-        refreshTokenRequestSent: state.signIn.refreshTokenRequestSent
+        refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
+        signUpType: state.signUp.signUpType
     }
 };
 

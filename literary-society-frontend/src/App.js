@@ -25,6 +25,7 @@ import PublicationRequests from './components/WriterPages/PublicationRequests/Pu
 import CreatePublicationRequest from './components/WriterPages/CreatePublicationRequest/CreatePublicationRequest';
 import Tasks from './components/Tasks/Tasks';
 import PublicationRequest from './components/Tasks/Task/PublicationRequest/PublicationRequest';
+import DocumentSubmission from './components/WriterPages/DocumentSubmission/DocumentSubmission';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -65,7 +66,7 @@ const App = props => {
         <Route path="/create-publication-request" render={(props) => <CreatePublicationRequest {...props} />} />
         <Route path="/tasks" render={(props) => <Tasks {...props} />} />
         <Route path="/publication-request" render={(props) => <PublicationRequest {...props} />} />
-
+        <Route path="/upload" render={(props) => <DocumentSubmission {...props} />}/>
         <Route path="/sign-out" render={(props) => <Logout {...props} />} />
         <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
         <Route path="/payment/success" render={(props) => <PaymentSuccess {...props} />} />

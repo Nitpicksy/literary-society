@@ -4,7 +4,8 @@ const initialState = {
     formFields: null,
     processInstanceId: null,
     taskId: null, 
-    error: ''
+    error: '',
+    signUpType: 'readers' //defaults to readers
 }
 
 const reducer = (state = initialState, action) => {
@@ -37,6 +38,11 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 error: action.error
             };
+        case actionTypes.SIGN_UP_TYPE:
+        return {
+            ...state,
+            signUpType: action.signUpType
+        };
         default:
             return state;
     }

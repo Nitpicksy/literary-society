@@ -125,7 +125,7 @@ public class User implements org.camunda.bpm.engine.identity.User, UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.getStatus() == UserStatus.ACTIVE;
+        return (this.getStatus() == UserStatus.ACTIVE || this.getStatus() == UserStatus.WAITING_APPROVAL);
     }
 
     @Override
