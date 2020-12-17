@@ -32,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
     public Transaction createOrder(OrderRequestDTO orderDTO) {
 
         //TODO: based on certificate? for now we only have 1 literary society
-        Company company = companyService.findCompanyByCommonName("nitpicksy.com");
+        Company company = companyService.findCompanyByCommonName("literary-society");
 
         if (company == null) {
             throw new InvalidDataException("Company not found.", HttpStatus.BAD_REQUEST);
@@ -111,7 +111,7 @@ public class OrderServiceImpl implements OrderService {
     private Transaction createTransaction(OrderRequestDTO orderRequestDTO, Merchant merchant, Company company) {
         Transaction transaction = new Transaction();
         transaction.setCompany(company);
-        transaction.setAmount(orderRequestDTO.getAmount().doubleValue());
+        transaction.setAmount(orderRequestDTO.getAmount());
         transaction.setMerchantTimestamp(Timestamp.valueOf(orderRequestDTO.getTimestamp()));
         transaction.setMerchantOrderId(orderRequestDTO.getOrderId());
         transaction.setStatus(TransactionStatus.CREATED);

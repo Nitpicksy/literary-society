@@ -1,5 +1,5 @@
 insert into company (uri, common_name, company_name, error_url, failed_url, success_url)
-values ('http://localhost:8090', 'nitpicksy.com', 'Nitpicksy LU 1', 'https://localhost:3000/payment/error',
+values ('http://localhost:8090', 'literary-society', 'Nitpicksy LU 1', 'https://localhost:3000/payment/error',
         'https://localhost:3000/payment/failed', 'https://localhost:3000/payment/success');
 
 
