@@ -55,12 +55,9 @@ public class OrderController {
         if (order == null) {
             throw new InvalidDataException("Error while creating new order.", HttpStatus.BAD_REQUEST);
         }
-
-        //forward to payment methods url
-        String sb = gatewayRedirectUrl + "/" +
-                order.getId();
-        System.out.println(sb);
-        return new ResponseEntity<>(sb, HttpStatus.OK);
+        
+        String url = gatewayRedirectUrl + "/" + order.getId();
+        return new ResponseEntity<>(url, HttpStatus.OK);
     }
 
     /**

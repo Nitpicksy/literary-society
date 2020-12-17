@@ -36,10 +36,20 @@ insert into company_payment_methods (company_id, payment_method_id)
 values (1, 3);
 
 
+--Vulkan merchantId and merchantPassword
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
 values ('merchantId',
-        '1dcae25c2de2bbab00044e500962d7cf40f9c1bbf19d508af0d1a3a9799462573af4b246d5ec3f3d7286b368f5a85b5fbb3db31ded47f3770e1c79fd5b15532',
+        '91f30b2d7007cd72372ba0761549dca5f8c7dc3f6b104cadf1741a467250a9abd8063ba1136e11d13d2f3ceee82c17f2ac41c632d5fb57c9db8d841ba99b63b3',
         1, 1);
 
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
-values ('merchantPassword', '$2y$12$nUQcibFKSiCXM7o9K3fYLuedSA0how/xjScCGGHpOtjqXNGD1NFc6', 1, 1);
+values ('merchantPassword', '$2y$12$eXrOWDTddWPKYU77BTZpM.1O0ZYAZ9GgVugZi5yK/5eRUT9EYy0xm', 1, 1);
+
+--Laguna merchantId and merchantPassword
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
+values ('merchantId',
+        '1dcae25c2de2bbab00044e500962d7cf40f9c1bbf19d508af0d1a3a9799462573af4b246d5ec3f3d7286b368f5a85b5fbb3db31ded47f3770e1c79fd5b15532',
+        2, 1);
+
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
+values ('merchantPassword', '$2y$12$nUQcibFKSiCXM7o9K3fYLuedSA0how/xjScCGGHpOtjqXNGD1NFc6', 2, 1);

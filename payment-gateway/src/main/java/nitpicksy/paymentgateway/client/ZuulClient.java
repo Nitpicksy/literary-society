@@ -1,6 +1,7 @@
 package nitpicksy.paymentgateway.client;
 
 import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
+import nitpicksy.paymentgateway.dto.response.LiterarySocietyOrderResponseDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +26,7 @@ public interface ZuulClient {
     @RequestMapping(method = RequestMethod.POST, path = "/api/payments/pay")
     PaymentResponseDTO forwardPaymentRequest(URI baseUrl, @RequestBody DynamicPaymentDetailsDTO dto);
 
-    @RequestMapping(method = RequestMethod.POST, path = "literary-society/api/payments/pay")
-    PaymentResponseDTO confirmPaymentToLiterarySociety(URI baseUrl, @RequestBody DynamicPaymentDetailsDTO dto);
+    @RequestMapping(method = RequestMethod.POST, path = "/api/payments/confirm")
+    void confirmPaymentToLiterarySociety(URI baseUrl, @RequestBody LiterarySocietyOrderResponseDTO dto);
 
 }

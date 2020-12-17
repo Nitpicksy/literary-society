@@ -1,8 +1,11 @@
 package nitpicksy.paymentgateway.serviceimpl;
 
+import feign.FeignException;
+import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.dto.request.ConfirmPaymentRequestDTO;
 import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
 import nitpicksy.paymentgateway.dto.request.OrderRequestDTO;
+import nitpicksy.paymentgateway.dto.response.LiterarySocietyOrderResponseDTO;
 import nitpicksy.paymentgateway.enumeration.TransactionStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.mapper.ForwardRequestMapper;
@@ -13,20 +16,26 @@ import nitpicksy.paymentgateway.repository.TransactionRepository;
 import nitpicksy.paymentgateway.service.CompanyService;
 import nitpicksy.paymentgateway.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
 import java.sql.Timestamp;
 import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
+    @Value("${API_GATEWAY_URL}")
+    private String apiGatewayURL;
+
     private TransactionRepository transactionRepository;
     private CompanyService companyService;
     private PaymentMethodRepository paymentMethodRepository;
     private ForwardRequestMapper forwardRequestMapper;
     private DataForPaymentRepository dataForPaymentRepository;
+    private ZuulClient zuulClient;
 
     @Override
     public Transaction createOrder(OrderRequestDTO orderDTO) {
@@ -83,11 +92,13 @@ public class OrderServiceImpl implements OrderService {
         return transactionRepository.findById(orderId).orElse(null);
     }
 
+
     @Override
     public void cancelOrder(Long orderId) {
         transactionRepository.findById(orderId).ifPresent(transaction -> transaction.setStatus(TransactionStatus.CANCELED));
 
     }
+
 
     @Override
     public void setPayment(Long orderId, Long paymentId) {
@@ -101,12 +112,41 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void completeOrder(Long merchantOrderId, ConfirmPaymentRequestDTO dto) {
-        Transaction transaction = transactionRepository.findTransactionByMerchantOrderIdAndPaymentId(merchantOrderId, dto.getPaymentId());
+    public void handleConfirmPayment(Long merchantOrderId, ConfirmPaymentRequestDTO dto) {
+        Transaction order = transactionRepository.findTransactionByMerchantOrderIdAndPaymentId(merchantOrderId, dto.getPaymentId());
 
-        transaction.setStatus(TransactionStatus.COMPLETED);
+        handleOrder(merchantOrderId, dto.getPaymentId(), dto.getStatus());
+
+        LiterarySocietyOrderResponseDTO responseDTO = new LiterarySocietyOrderResponseDTO(order.getMerchantOrderId(), dto.getStatus());
+
+        String companyCommonName = order.getCompany().getCommonName();
+
+        try {
+
+            zuulClient.confirmPaymentToLiterarySociety(URI.create(apiGatewayURL + '/' + companyCommonName), responseDTO);
+
+        } catch (FeignException.FeignClientException e) {
+            e.printStackTrace();
+            System.out.println("Went wrong with contacting the Literary Society.");
+        }
+    }
+
+    private void handleOrder(Long merchantOrderId, Long paymentId, String status) {
+        Transaction transaction = transactionRepository.findTransactionByMerchantOrderIdAndPaymentId(merchantOrderId, paymentId);
+
+        if (transaction == null) {
+            return;
+        }
+
+        if (status.equals("SUCCESS")) {
+            transaction.setStatus(TransactionStatus.COMPLETED);
+        } else {
+            transaction.setStatus(TransactionStatus.REJECTED);
+        }
+
         transactionRepository.save(transaction);
     }
+
 
     private Transaction createTransaction(OrderRequestDTO orderRequestDTO, Merchant merchant, Company company) {
         Transaction transaction = new Transaction();
@@ -125,11 +165,12 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Autowired
-    public OrderServiceImpl(TransactionRepository transactionRepository, CompanyService companyService, PaymentMethodRepository paymentMethodRepository, ForwardRequestMapper forwardRequestMapper, DataForPaymentRepository dataForPaymentRepository) {
+    public OrderServiceImpl(TransactionRepository transactionRepository, CompanyService companyService, PaymentMethodRepository paymentMethodRepository, ForwardRequestMapper forwardRequestMapper, DataForPaymentRepository dataForPaymentRepository, ZuulClient zuulClient) {
         this.transactionRepository = transactionRepository;
         this.companyService = companyService;
         this.paymentMethodRepository = paymentMethodRepository;
         this.forwardRequestMapper = forwardRequestMapper;
         this.dataForPaymentRepository = dataForPaymentRepository;
+        this.zuulClient = zuulClient;
     }
 }

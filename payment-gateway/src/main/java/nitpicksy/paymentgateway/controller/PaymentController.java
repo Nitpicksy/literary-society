@@ -22,7 +22,7 @@ public class PaymentController {
     @PutMapping(value = "/confirm/{merchantOrderId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> confirmPayment(@PathVariable @Positive(message = "Id must be positive.") Long merchantOrderId,
                                                @Valid @RequestBody ConfirmPaymentRequestDTO confirmPaymentRequestDTO) {
-        orderService.completeOrder(merchantOrderId, confirmPaymentRequestDTO);
+        orderService.handleConfirmPayment(merchantOrderId, confirmPaymentRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

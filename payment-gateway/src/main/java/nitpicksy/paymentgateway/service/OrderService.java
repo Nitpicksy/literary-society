@@ -17,5 +17,5 @@ public interface OrderService {
 
     void setPayment(Long orderId, Long paymentId);
 
-    void completeOrder(Long merchantOrderId, ConfirmPaymentRequestDTO dto);
+    void handleConfirmPayment(Long merchantOrderId, ConfirmPaymentRequestDTO dto);
 }
