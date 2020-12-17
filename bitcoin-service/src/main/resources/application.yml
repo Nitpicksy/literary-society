@@ -13,7 +13,7 @@ server:
 
 spring:
   application:
-    name: ${SPRINGBOOT_APP_NAME:bitcoin-service}
+    name: ${SPRINGBOOT_APP_NAME:bitcoin}
 
 eureka:
   client:

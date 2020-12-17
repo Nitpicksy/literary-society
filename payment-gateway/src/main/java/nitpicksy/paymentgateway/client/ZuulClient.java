@@ -26,6 +26,13 @@ public interface ZuulClient {
     @RequestMapping(method = RequestMethod.POST, path = "/api/payments/pay")
     PaymentResponseDTO forwardPaymentRequest(URI baseUrl, @RequestBody DynamicPaymentDetailsDTO dto);
 
+    /**
+     * Generic request that targets literary societies in runtime.
+     *
+     * @param baseUrl: path to API-gateway + path to payment service
+     * @param dto
+     * @return URLs
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/api/payments/confirm")
     void confirmPaymentToLiterarySociety(URI baseUrl, @RequestBody LiterarySocietyOrderResponseDTO dto);
 
