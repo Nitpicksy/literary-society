@@ -69,30 +69,30 @@ values ('na-drini-cuprija.jpg');
 
 
 -- Books
-insert into book (title, writers_names, image_id, status, synopsis)
+insert into book (title, writers_names, image_id, status, synopsis,genre_id)
 values ('Na Drini ćuprija', 'Ivo Andrić', 1, 'IN_STORES',
-        'Sudbina Mehmed-paše Sokolovića predodredila je da njegov život bude prekinut pre otelotvorenja njegove ideje na javi. On je napustio ovaj svet a veliki most na Drini je ostao kao simbol trajanja. Oko njega će se isplesti bezbroj priča o ljudima, njihovim sudbinama i istorijskim dešavanjima.');
-insert into book (title, writers_names, image_id, status, synopsis)
+        'Sudbina Mehmed-paše Sokolovića predodredila je da njegov život bude prekinut pre otelotvorenja njegove ideje na javi. On je napustio ovaj svet a veliki most na Drini je ostao kao simbol trajanja. Oko njega će se isplesti bezbroj priča o ljudima, njihovim sudbinama i istorijskim dešavanjima.',1);
+insert into book (title, writers_names, image_id, status, synopsis,genre_id)
 values ('Moby Dick', 'Herman Melville', 2, 'IN_STORES',
-        'When the young Ishmael gets on board Captain Ahab''s whaling ship, little does he suspect that the mission on which he is about to embark is the fulfilment of his master''s obsessive desire for revenge on Moby Dick, a white whale who has already claimed countless human victims and destroyed many fleets. With some sinister crew members in their midst and the hazardous conditions of the sea to contend with, the expedition becomes increasingly dangerous the closer it gets to its quarry.');
-insert into book (title, writers_names, image_id, status, synopsis)
+        'When the young Ishmael gets on board Captain Ahab''s whaling ship, little does he suspect that the mission on which he is about to embark is the fulfilment of his master''s obsessive desire for revenge on Moby Dick, a white whale who has already claimed countless human victims and destroyed many fleets. With some sinister crew members in their midst and the hazardous conditions of the sea to contend with, the expedition becomes increasingly dangerous the closer it gets to its quarry.',2);
+insert into book (title, writers_names, image_id, status, synopsis,genre_id)
 values ('Naučite Bootstrap 4', 'Benjamin Jakobus, Jason Marah', 3, 'IN_STORES',
-        'Ova knjiga će vam pomoći da upotrebite i prilagodite Bootstrap za kreiranje privlačnih veb sajtova koji odgovaraju vašim potrebama. Kreiraćete prilagođeni Bootstrap veb sajt korišćenjem različitih pristupa za prilagođavanje radnog okvira. Koristićete ključne funkcije Bootstrapa i brzo ćete otkriti različite načine na koje Bootstrap može da vam pomogne da kreirate veb interfejse.');
-insert into book (title, writers_names, image_id, status, synopsis)
+        'Ova knjiga će vam pomoći da upotrebite i prilagodite Bootstrap za kreiranje privlačnih veb sajtova koji odgovaraju vašim potrebama. Kreiraćete prilagođeni Bootstrap veb sajt korišćenjem različitih pristupa za prilagođavanje radnog okvira. Koristićete ključne funkcije Bootstrapa i brzo ćete otkriti različite načine na koje Bootstrap može da vam pomogne da kreirate veb interfejse.',3);
+insert into book (title, writers_names, image_id, status, synopsis,genre_id)
 values ('I leoni di Sicilia', 'Stefania Auci', 4, 'IN_STORES',
-        'Roman o porodici Florio, nekrunisanim kraljevima Sicilije. Bila jednom jedna porodica koja se suprotstavila postojećem. Porodica koja je rizikovala sve. Porodica koja je ušla u legendu. Uplićući priču o društvenom i trgovačkom uspehu Floriovih sa njihovim burnim životima, tokom najnemirnijih godina u italijanskoj istoriji, Stefanija Auči razmotava klupko jedne neverovatne porodične sage.');
-insert into book (title, writers_names, image_id, status, synopsis)
+        'Roman o porodici Florio, nekrunisanim kraljevima Sicilije. Bila jednom jedna porodica koja se suprotstavila postojećem. Porodica koja je rizikovala sve. Porodica koja je ušla u legendu. Uplićući priču o društvenom i trgovačkom uspehu Floriovih sa njihovim burnim životima, tokom najnemirnijih godina u italijanskoj istoriji, Stefanija Auči razmotava klupko jedne neverovatne porodične sage.',4);
+insert into book (title, writers_names, image_id, status, synopsis,genre_id)
 values ('Čovek koji je voleo pse', 'Leonardo Padura', 5, 'IN_STORES',
-        'Kroz razuđenu epsku  sliku najvažnijih događanja u svetu u prve četiri decenije XX veka — čiji odjeci u romanu živo pulsiraju gotovo do kraja veka — u širokom geografskom rasponu od današnjeg Kazahstana, preko Turske, nekoliko evropskih zemalja, pa do prekookeanskih Sjedinjenih Država, Meksika i Kube, pratimo životopis jednog revolucionara i njegovog ubice, dva lika zadojena istim idealima, ali potpuno suprotno ostvarivanim. Između njih i sa njima, na različite načine, nalazi se pripovedač, Kubanac.');
-insert into book (title, writers_names, image_id, status, synopsis)
+        'Kroz razuđenu epsku  sliku najvažnijih događanja u svetu u prve četiri decenije XX veka — čiji odjeci u romanu živo pulsiraju gotovo do kraja veka — u širokom geografskom rasponu od današnjeg Kazahstana, preko Turske, nekoliko evropskih zemalja, pa do prekookeanskih Sjedinjenih Država, Meksika i Kube, pratimo životopis jednog revolucionara i njegovog ubice, dva lika zadojena istim idealima, ali potpuno suprotno ostvarivanim. Između njih i sa njima, na različite načine, nalazi se pripovedač, Kubanac.',1);
+insert into book (title, writers_names, image_id, status, synopsis,genre_id)
 values ('A Young Doctor''s Notebook', 'Mikhail Bulgakov', 6, 'IN_STORES',
-        'Using a sharply realistic and humorous style, Bulgakov reveals his doubts about his own competence and the immense burden of responsibility, as he deals with a superstitious and poorly educated people struggling to enter the modern age.');
-insert into book (title, writers_names, image_id, status, synopsis)
+        'Using a sharply realistic and humorous style, Bulgakov reveals his doubts about his own competence and the immense burden of responsibility, as he deals with a superstitious and poorly educated people struggling to enter the modern age.',4);
+insert into book (title, writers_names, image_id, status, synopsis,genre_id)
 values ('JavaScript funkc. programiranje', 'Federico Kereki', 7, 'IN_STORES',
-        'Funkcionalno programiranje je paradigma za razvoj softvera sa boljim performansama. Ono pomaže da napišete sažet kod i kod koji se može testirati. Da biste podigli vaše programske veštine na viši nivo, ova sveobuhvatna knjiga će vam pomoći da iskoristite mogućnosti funkcionalnog programiranja u JavaScriptu i da napišete visokoodržive i testirane aplikacije za Veb i server pomoću funkcionalnog JavaScripta.');
-insert into book (title, writers_names, image_id, status, synopsis)
+        'Funkcionalno programiranje je paradigma za razvoj softvera sa boljim performansama. Ono pomaže da napišete sažet kod i kod koji se može testirati. Da biste podigli vaše programske veštine na viši nivo, ova sveobuhvatna knjiga će vam pomoći da iskoristite mogućnosti funkcionalnog programiranja u JavaScriptu i da napišete visokoodržive i testirane aplikacije za Veb i server pomoću funkcionalnog JavaScripta.',2);
+insert into book (title, writers_names, image_id, status, synopsis,genre_id)
 values ('Na Drini ćuprija', 'Ivo Andrić', 8, 'IN_STORES',
-        'Sudbina Mehmed-paše Sokolovića predodredila je da njegov život bude prekinut pre otelotvorenja njegove ideje na javi. On je napustio ovaj svet a veliki most na Drini je ostao kao simbol trajanja. Oko njega će se isplesti bezbroj priča o ljudima, njihovim sudbinama i istorijskim dešavanjima.');
+        'Sudbina Mehmed-paše Sokolovića predodredila je da njegov život bude prekinut pre otelotvorenja njegove ideje na javi. On je napustio ovaj svet a veliki most na Drini je ostao kao simbol trajanja. Oko njega će se isplesti bezbroj priča o ljudima, njihovim sudbinama i istorijskim dešavanjima.',3);
 
 
 -- Publishing Infos

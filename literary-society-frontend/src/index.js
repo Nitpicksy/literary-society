@@ -21,6 +21,7 @@ import transactionReducer from './components/Payment/Transaction/TransactionRedu
 import createPublicationRequestReducer from './components/WriterPages/CreatePublicationRequest/CreatePublicationRequestReducer';
 import tasksReducer from './components/Tasks/TasksReducer';
 import publicationRequestReducer from './components/Tasks/Task/PublicationRequest/PublicationRequestReducer';
+import bookReducer from './components/BookDetails/BookDetailsReducer';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
@@ -35,7 +36,8 @@ const rootReducer = combineReducers({
     transaction:transactionReducer,
     createPublicationRequest: createPublicationRequestReducer,
     tasks: tasksReducer,
-    publicationRequest:publicationRequestReducer
+    publicationRequest:publicationRequestReducer, 
+    book:bookReducer
 });
 
 const store = createStore(rootReducer, composeEnhancers(

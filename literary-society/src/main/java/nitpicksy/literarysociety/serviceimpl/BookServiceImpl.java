@@ -33,6 +33,11 @@ public class BookServiceImpl implements BookService {
         return new PublicationRequestDTO(book.getId(),book.getTitle(),book.getGenre().getName(),book.getSynopsis());
     }
 
+    @Override
+    public Book findById(Long id) {
+        return bookRepository.findOneById(id);
+    }
+
     @Autowired
     public BookServiceImpl(BookRepository bookRepository) {
         this.bookRepository = bookRepository;

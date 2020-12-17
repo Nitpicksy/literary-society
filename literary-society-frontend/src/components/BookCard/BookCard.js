@@ -11,11 +11,13 @@ import Grid from '@material-ui/core/Grid';
 import { toastr } from 'react-redux-toastr';
 import Chip from '@material-ui/core/Chip';
 import Tooltip from '@material-ui/core/Tooltip';
+import { useHistory } from 'react-router';
 
 
 export default function BookCard(props) {
     const classes = useStyles();
-
+    const history = useHistory();
+    
     const addToCart = () => {
         let shoppingCart = new Map(JSON.parse(localStorage.getItem('shoppingCart')));
 
@@ -35,10 +37,15 @@ export default function BookCard(props) {
 
             localStorage.setItem('shoppingCart', JSON.stringify(Array.from(shoppingCart.entries())));
         } else {
-            toastr.success('Shopping cart', 'This book is already added');
+            toastr.error('Shopping cart', 'This book is already added');
         }
     }
 
+    const redirectToDetailsPage = () => {
+        console.log(props.book.id)
+        history.push(`/book/${props.book.id}`);
+    } 
+    
     let button = <Button size="small" color="primary" onClick={addToCart}>Add to cart</Button>;
 
     if(props.forShoppingCart){
@@ -68,7 +75,7 @@ export default function BookCard(props) {
     return (
         <Grid item xs={12} sm={4} md={3} lg={2} >
             <Card className={classes.root}>
-                <CardActionArea>
+                <CardActionArea onClick={()=> redirectToDetailsPage()}>
                     <div className={classes.imageDiv} >
                         <CardMedia className={classes.media} image={props.book.imageData} />
                         {discount}
