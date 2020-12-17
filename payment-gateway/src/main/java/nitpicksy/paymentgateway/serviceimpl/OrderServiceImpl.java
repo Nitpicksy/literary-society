@@ -5,7 +5,9 @@ import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.dto.request.ConfirmPaymentRequestDTO;
 import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
 import nitpicksy.paymentgateway.dto.request.OrderRequestDTO;
+import nitpicksy.paymentgateway.dto.request.PaymentRequestDTO;
 import nitpicksy.paymentgateway.dto.response.LiterarySocietyOrderResponseDTO;
+import nitpicksy.paymentgateway.dto.response.PaymentResponseDTO;
 import nitpicksy.paymentgateway.enumeration.TransactionStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.mapper.ForwardRequestMapper;
@@ -65,14 +67,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public DynamicPaymentDetailsDTO forwardPaymentRequest(Long orderId, String paymentMethodCommonName) {
+    public String forwardPaymentRequest(PaymentRequestDTO paymentRequestDTO) {
 
-        Transaction transaction = findOrder(orderId);
+        Transaction transaction = findOrder(paymentRequestDTO.getOrderId());
         if (transaction == null) {
             throw new InvalidDataException("Invalid Transaction.", HttpStatus.BAD_REQUEST);
         }
 
-        PaymentMethod paymentMethod = paymentMethodRepository.findByCommonName(paymentMethodCommonName);
+        PaymentMethod paymentMethod = paymentMethodRepository.findByCommonName(paymentRequestDTO.getPaymentCommonName());
         if (paymentMethod == null) {
             throw new InvalidDataException("Invalid Payment Method ID.", HttpStatus.BAD_REQUEST);
         }
@@ -91,7 +93,19 @@ public class OrderServiceImpl implements OrderService {
             forwardDTO.setDetails(dataForPayment.getAttributeName(), dataForPayment.getAttributeValue());
         }
 
-        return forwardDTO;
+        String responseURL;
+        try {
+            PaymentResponseDTO dto = zuulClient.forwardPaymentRequest(URI.create(apiGatewayURL + '/' + paymentRequestDTO.getPaymentCommonName()), forwardDTO);
+            setPayment(paymentRequestDTO.getOrderId(), dto.getPaymentId());
+            responseURL = dto.getPaymentURL();
+        } catch (FeignException.FeignClientException e) {
+            e.printStackTrace();
+            //if bank request fails, redirect user to the company failedURL;
+            cancelOrder(paymentRequestDTO.getOrderId());
+            responseURL = forwardDTO.getFailedURL();
+        }
+
+        return responseURL;
     }
 
     @Override
