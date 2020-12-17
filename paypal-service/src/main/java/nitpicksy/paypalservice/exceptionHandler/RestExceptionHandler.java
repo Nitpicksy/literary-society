@@ -1,9 +1,10 @@
 package nitpicksy.paypalservice.exceptionHandler;
 
 
-import com.paypal.base.rest.PayPalRESTException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,17 +18,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.servlet.ServletException;
 import javax.validation.ConstraintViolationException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
-
-    @ExceptionHandler(PayPalRESTException.class)
-    protected ResponseEntity<Object> handlePayPalRESTException(PayPalRESTException ex) {
-        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, "Unsuccessful PayPal payment request.");
-        return buildResponseEntity(error);
-    }
 
     @ExceptionHandler(InvalidDataException.class)
     protected ResponseEntity<Object> handleInvalidDataException(InvalidDataException ex) {
@@ -80,29 +76,29 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(error);
     }
 
-//    @ExceptionHandler(DataIntegrityViolationException.class)
-//    protected ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-//        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-//        return buildResponseEntity(error);
-//    }
-//
-//    @ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)
-//    protected ResponseEntity<Object> handleConstraintViolationException(org.hibernate.exception.ConstraintViolationException ex) {
-//        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-//        return buildResponseEntity(error);
-//    }
-//
-//    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-//    protected ResponseEntity<Object> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex) {
-//        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-//        return buildResponseEntity(error);
-//    }
-//
-//    @ExceptionHandler(DuplicateKeyException.class)
-//    protected ResponseEntity<Object> handleDuplicateKeyException(DuplicateKeyException ex) {
-//        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-//        return buildResponseEntity(error);
-//    }
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    protected ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildResponseEntity(error);
+    }
+
+    @ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)
+    protected ResponseEntity<Object> handleConstraintViolationException(org.hibernate.exception.ConstraintViolationException ex) {
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildResponseEntity(error);
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    protected ResponseEntity<Object> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex) {
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildResponseEntity(error);
+    }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    protected ResponseEntity<Object> handleDuplicateKeyException(DuplicateKeyException ex) {
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildResponseEntity(error);
+    }
 
     private ResponseEntity<Object> buildResponseEntity(ErrorResponse error) {
         return new ResponseEntity<>(error, error.getStatus());

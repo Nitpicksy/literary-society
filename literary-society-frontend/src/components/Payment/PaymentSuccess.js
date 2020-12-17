@@ -30,7 +30,7 @@ const PaymentSuccess = (props) => {
                         <ThumbUpIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5" className={classes.message}>
-                        Payment was successful. Click to this link to find the book and download it.
+                        Payment was successful. Click this link to find the book and download it.
                     </Typography>
                 </CardContent>
             </Card>

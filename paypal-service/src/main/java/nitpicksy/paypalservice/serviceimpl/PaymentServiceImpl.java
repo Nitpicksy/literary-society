@@ -6,10 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
-import nitpicksy.paypalservice.dto.request.ConfirmPaymentDTO;
-import nitpicksy.paypalservice.dto.request.PaymentRequestDTO;
 import nitpicksy.paypalservice.dto.response.PaymentResponseDTO;
+import nitpicksy.paypalservice.exceptionHandler.InvalidDataException;
+import nitpicksy.paypalservice.model.PaymentRequest;
+import nitpicksy.paypalservice.repository.PaymentRequestRepository;
 import nitpicksy.paypalservice.service.PaymentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,78 +30,89 @@ import java.util.List;
 public class PaymentServiceImpl implements PaymentService {
 
     private static final String MODE = "sandbox";
+    private static final String CONFIRMATION_URL = "http://localhost:8200/api/payments/confirm";
 
     //API Source: https://exchangerate.host/
     private static final String CURRENCY_CONVERSION_API = "https://api.exchangerate.host/convert";
-    private static final String FROM_CURRENCY = "RSD";
-    private static final String TO_CURRENCY = "USD";
-    private static final String RESULT_NODE = "result";
     private static final Double BACKUP_CONVERSION_RATE = 0.01034;
 
+    private PaymentRequestRepository paymentRequestRepository;
+
     @Override
-    public PaymentResponseDTO createPayment(PaymentRequestDTO paymentRequestDTO) throws PayPalRESTException {
+    public PaymentResponseDTO createPayment(PaymentRequest paymentRequest) {
         Payer payer = new Payer();
         payer.setPaymentMethod("paypal");
 
-        Payment paymentRequest = new Payment();
-        paymentRequest.setPayer(payer);
-        paymentRequest.setRedirectUrls(getRedirectURLs());
-        paymentRequest.setTransactions(getTransactionInformation(paymentRequestDTO.getAmount()));
-        paymentRequest.setIntent("authorize");
+        RedirectUrls redirectUrls = new RedirectUrls();
+        redirectUrls.setCancelUrl(getHomepageURL(paymentRequest.getSuccessURL()));
+        redirectUrls.setReturnUrl(CONFIRMATION_URL);
+
+        Payment payment = new Payment();
+        payment.setPayer(payer);
+        payment.setRedirectUrls(redirectUrls);
+        payment.setTransactions(getTransactionInformation(paymentRequest.getAmount()));
+        payment.setIntent("sale");
 
         APIContext apiContext = new APIContext(
-                paymentRequestDTO.getPaymentDetails().getMerchantClientId(),
-                paymentRequestDTO.getPaymentDetails().getMerchantClientSecret(),
+                paymentRequest.getMerchantClientId(),
+                paymentRequest.getMerchantClientSecret(),
                 MODE);
 
-        Payment approvedPayment = paymentRequest.create(apiContext);
-
-        System.out.println("=== CREATED PAYMENT: ====");
-        System.out.println(approvedPayment);
+        Payment approvedPayment;
+        try {
+            approvedPayment = payment.create(apiContext);
+        } catch (PayPalRESTException e) {
+            throw new InvalidDataException("PayPal payment could not be initialized. Please try again later.", HttpStatus.BAD_REQUEST);
+        }
 
         String paymentId = approvedPayment.getId();
         String approvalUrl = getApprovalUrl(approvedPayment);
 
+        paymentRequest.setPaymentId(paymentId);
+        paymentRequestRepository.save(paymentRequest);
+
         return new PaymentResponseDTO(paymentId, approvalUrl);
     }
 
-    public String completePayment(String paymentId, ConfirmPaymentDTO confirmPaymentDTO) throws PayPalRESTException {
+    @Override
+    public String executePayment(String paymentId, String payerId) {
+        PaymentRequest paymentRequest = paymentRequestRepository.findOneByPaymentId(paymentId);
+        if (paymentRequest == null) {
+            throw new InvalidDataException("Payment could not be continued due to invalid payment id provided.", HttpStatus.BAD_REQUEST);
+        }
+
         PaymentExecution paymentExecution = new PaymentExecution();
-        paymentExecution.setPayerId(confirmPaymentDTO.getPayerId());
+        paymentExecution.setPayerId(payerId);
 
         Payment payment = new Payment().setId(paymentId);
 
         APIContext apiContext = new APIContext(
-                confirmPaymentDTO.getPaymentDetails().getMerchantClientId(),
-                confirmPaymentDTO.getPaymentDetails().getMerchantClientSecret(),
+                paymentRequest.getMerchantClientId(),
+                paymentRequest.getMerchantClientSecret(),
                 MODE);
 
-        payment.execute(apiContext, paymentExecution);
+        Payment paymentResponse;
+        try {
+            paymentResponse = payment.execute(apiContext, paymentExecution);
+        } catch (PayPalRESTException e) {
+            return paymentRequest.getErrorURL();
+        }
 
-        System.out.println("=== EXECUTED PAYMENT: ====");
-        System.out.println(payment);
+        if (!paymentResponse.getState().equals("approved")) {
+            return paymentRequest.getFailedURL();
+        }
 
-        return "SuccessURL";
-    }
-
-    private RedirectUrls getRedirectURLs() {
-        RedirectUrls redirectUrls = new RedirectUrls();
-        redirectUrls.setCancelUrl("http://localhost:3000/cancel-payment");
-        redirectUrls.setReturnUrl("http://localhost:3000/review-payment");
-
-        return redirectUrls;
+        return paymentRequest.getSuccessURL();
     }
 
     private List<Transaction> getTransactionInformation(Double baseAmount) {
         Amount amount = new Amount();
-        amount.setCurrency(TO_CURRENCY);
+        amount.setCurrency("USD");
         String convertedAmount = convertCurrency(baseAmount);
         amount.setTotal(convertedAmount);
-//        amount.setDetails(details);
 
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
-//        transaction.setDescription(orderDetail.getProductName());
 
         List<Transaction> listTransaction = new ArrayList<>();
         listTransaction.add(transaction);
@@ -122,8 +138,8 @@ public class PaymentServiceImpl implements PaymentService {
         RestTemplate restTemplate = new RestTemplate();
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(CURRENCY_CONVERSION_API)
-                .queryParam("from", FROM_CURRENCY)
-                .queryParam("to", TO_CURRENCY)
+                .queryParam("from", "RSD")
+                .queryParam("to", "USD")
                 .queryParam("amount", baseAmount);
 
         ResponseEntity<String> response = restTemplate.getForEntity(uriBuilder.toUriString(), String.class);
@@ -133,7 +149,7 @@ public class PaymentServiceImpl implements PaymentService {
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode root = mapper.readTree(response.getBody());
-                String result = root.path(RESULT_NODE).asText();
+                String result = root.path("result").asText();
                 if (result != null) {
                     BigDecimal bd = new BigDecimal(result);
                     convertedAmount = bd.setScale(2, RoundingMode.HALF_UP).toPlainString();
@@ -145,4 +161,21 @@ public class PaymentServiceImpl implements PaymentService {
 
         return convertedAmount;
     }
+
+    private String getHomepageURL(String fullURL) {
+        String baseURL;
+        try {
+            URL url = URI.create(fullURL).toURL();
+            baseURL = url.getProtocol() + "://" + url.getAuthority();
+        } catch (MalformedURLException e) {
+            baseURL = fullURL;
+        }
+        return baseURL;
+    }
+
+    @Autowired
+    public PaymentServiceImpl(PaymentRequestRepository paymentRequestRepository) {
+        this.paymentRequestRepository = paymentRequestRepository;
+    }
+
 }

@@ -41,9 +41,14 @@ values ('User', 'Oleg', 'Aleksandrov', 'Sankt Petersburg', 'Rusija', 'olega@mail
 
 
 -- Merchants
+
+-- Client Id: ARPDqaQtYU6ilCpwG0IXT35OMXGTjsA3K-QFYLItx5oRcJUOqZ527Z7BfNs6sS3yu45kdINghGRLR8vV
+-- Client Secret: ECBW7VI6Tzi23LnYdLEvnvEW5fm7drD6kvgVRMD2hnTOk9f9AJSqJaD-8p0aLrOWMBdoKGM9wIoPby4j
 insert into users (type, name, city, country, email, username, password, status, enabled, supports_payment_methods)
 values ('MERCHANT', 'Laguna', 'Beograd', 'Srbija', 'laguna@maildrop.cc', 'laguna',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true);
+-- Client Id: Af7nTAdvuAjb3_n5gzUTsfQag0ZCkF-qs6ASwFdMfLKzZ_6GWVNCB9TdTpXVAsKZBeYHSVGRqZx1h68R
+-- Client Secret: EF60H0GD454RHXIpemtrBAi1w6VmeGjmc_sY7C8aa0YaEwLp_Xv2sJTSIpLkVuqaSXdSAQ72VAWiu3MY
 insert into users (type, name, city, country, email, username, password, status, enabled, supports_payment_methods)
 values ('MERCHANT', 'Vulkan', 'Novi Sad', 'Srbija', 'vulkan@maildrop.cc', 'vulkan',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true);

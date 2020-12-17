@@ -1,14 +1,12 @@
 package nitpicksy.paypalservice.service;
 
-import com.paypal.base.rest.PayPalRESTException;
-import nitpicksy.paypalservice.dto.request.ConfirmPaymentDTO;
-import nitpicksy.paypalservice.dto.request.PaymentRequestDTO;
 import nitpicksy.paypalservice.dto.response.PaymentResponseDTO;
+import nitpicksy.paypalservice.model.PaymentRequest;
 
 public interface PaymentService {
 
-    PaymentResponseDTO createPayment(PaymentRequestDTO paymentRequestDTO) throws PayPalRESTException;
+    PaymentResponseDTO createPayment(PaymentRequest paymentRequest);
 
-    String completePayment(String paymentId, ConfirmPaymentDTO confirmPaymentDTO) throws PayPalRESTException;
+    String executePayment(String paymentId, String payerId);
 
 }
