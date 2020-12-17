@@ -26,6 +26,7 @@ import CreatePublicationRequest from './components/WriterPages/CreatePublication
 import Tasks from './components/Tasks/Tasks';
 import PublicationRequest from './components/Tasks/Task/PublicationRequest/PublicationRequest';
 import DocumentSubmission from './components/WriterPages/DocumentSubmission/DocumentSubmission';
+import BookDetails from './components/BookDetails/BookDetails';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -55,6 +56,7 @@ const App = props => {
       <Route path="/payment/success/:id" render={(props) => <PaymentSuccess {...props} />} />
       <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
       <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
+      <Route path="/book/:id" exact render={(props) => <BookDetails {...props} />} />
       <Route path="/" exact render={(props) => <HomePage {...props} />} />
     </Switch>
   );
@@ -72,6 +74,7 @@ const App = props => {
         <Route path="/payment/success" render={(props) => <PaymentSuccess {...props} />} />
         <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
         <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
+        <Route path="/book/:id" exact render={(props) => <BookDetails {...props} />} />
         <Route path="/" exact render={(props) => <HomePage {...props} />} />
         <Route path="/shopping-cart" render={(props) => <ShoppingCart {...props} />} />
         <Redirect to="/" />

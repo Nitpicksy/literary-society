@@ -13,4 +13,6 @@ public interface BookService {
     Set<Book> findByIds(List<Long> ids);
 
     PublicationRequestDTO getPublicationRequest(Long id);
+
+    Book findById(Long id);
 }
