@@ -42,11 +42,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponseDTO pay(PaymentRequest paymentRequest) {
-        if (paymentRequestRepository.findByMerchantOrderId(paymentRequest.getMerchantOrderId()) != null) {
-
-            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAY", String.format("Payment Request for this order already exist.")));
-            throw new InvalidDataException("Payment Request for this order already exist.", HttpStatus.BAD_REQUEST);
-        }
         PaymentRequest createdPaymentRequest = paymentRequestRepository.save(paymentRequest);
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAY", String.format("Payment request %s is successfully created.", createdPaymentRequest.getId())));
@@ -55,16 +50,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public String confirmPayment(ConfirmPaymentDTO confirmPaymentDTO, Long paymentId) throws NoSuchAlgorithmException {
-        // kad budemo imali 3 LU-a, merchantOrderId se moze poklapati
         PaymentRequest paymentRequest = paymentRequestRepository.findOneById(paymentId);
         if (paymentRequest == null) {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CONFPAY", String.format("Payment request %s doesn't exist.", paymentId)));
             throw new InvalidDataException("Payment request doesn't exist.", HttpStatus.BAD_REQUEST);
-        }
-        
-        if (transactionService.findByMerchantOrderId(paymentRequest.getMerchantOrderId()) != null) {
-            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CONFPAY", String.format("Transaction for payment request %s already exist", paymentId)));
-            throw new InvalidDataException("Transaction for this payment request already exist.", HttpStatus.BAD_REQUEST);
         }
 
         if (creditCardService.isClientOfThisBank(confirmPaymentDTO.getPAN())) {
