@@ -45,3 +45,4 @@ eureka:
     secureVirtualHostName: ${spring.application.name}
     prefer-ip-address: false
     instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+

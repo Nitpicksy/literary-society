@@ -40,9 +40,9 @@ zuul:
     bank:
       path: /bank/**
       service-id: bank
-    #    bank2:
-    #      path: /bank2/**
-    #      url: http://localhost:8102
+    bank2:
+      path: /bank2/**
+      service-id: bank2
     pcc:
       path: /pcc/**
       service-id: pcc
