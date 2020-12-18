@@ -32,11 +32,12 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: https://localhost:8761/eureka
-      #,https://eureka-peer2:8762/eureka
+      defaultZone: https://eureka-peer1:8761/eureka, https://eureka-peer2:8762/eureka
       healthcheck:
         enabled: true
     fetchRegistry: true
+  instance:
+    hostname: localhost
 
 management:
   endpoints:

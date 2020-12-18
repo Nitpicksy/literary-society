@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/paypal-test", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/test", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TestController {
 
     private TestServiceImpl testService;

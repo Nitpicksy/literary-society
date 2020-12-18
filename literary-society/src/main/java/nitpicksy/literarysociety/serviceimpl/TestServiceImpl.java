@@ -1,25 +1,18 @@
 package nitpicksy.literarysociety.serviceimpl;
 
-import nitpicksy.literarysociety.client.PaymentGatewayClient;
+import nitpicksy.literarysociety.client.ZuulClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class TestServiceImpl {
 
-    private PaymentGatewayClient paymentGatewayClient;
+    private ZuulClient zuulClient;
 
-    @Autowired
-    private RestTemplate restTemplate;
 
     public String healthCheck() {
         System.out.println("Hello from health LS!");
-        String response = paymentGatewayClient.healthCheck();
-//        ResponseEntity<String> res = restTemplate.exchange("https://localhost:8990/pg-test/health", HttpMethod.GET, new HttpEntity<>(null), String.class);
+        String response = zuulClient.healthCheck();
         StringBuilder sb = new StringBuilder("Literary Society is up and running!" + response.toString());
         sb.append(System.lineSeparator());
         sb.append(response);
@@ -28,7 +21,7 @@ public class TestServiceImpl {
     }
 
     @Autowired
-    public TestServiceImpl(PaymentGatewayClient paymentGatewayClient) {
-        this.paymentGatewayClient = paymentGatewayClient;
+    public TestServiceImpl(ZuulClient zuulClient) {
+        this.zuulClient = zuulClient;
     }
 }

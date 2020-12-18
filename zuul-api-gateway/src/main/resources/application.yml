@@ -1,7 +1,7 @@
 server:
   port: 8080
   ssl:
-    enabled: false
+    enabled: true
     key-alias: ${KEYSTORE_ALIAS:zuul}
     key-store: ${KEYSTORE:classpath:zuul.keystore.p12}
     key-store-password: ${KEYSTORE_PASSWORD:password}
@@ -9,21 +9,25 @@ server:
     trust-store: ${TRUSTSTORE:classpath:zuul.truststore.p12}
     trust-store-password: ${TRUSTSTORE_PASSWORD:password}
     trust-store-type: ${TRUSTSTORE_TYPE:PKCS12}
+    client-auth: want
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: https://eureka-peer1:8761/eureka, https://eureka-peer2:8762/eureka
       healthcheck-enabled: true
-#  instance:
-#    nonSecurePortEnabled: false
-#    securePortEnabled: true
-#    securePort: ${server.port}
-#    homePageUrl: https://${eureka.instance.hostname}:${server.port}/
-#    secureVirtualHostName: ${spring.application.name}
-#    prefer-ip-address: false
+  instance:
+    nonSecurePortEnabled: false
+    securePortEnabled: true
+    securePort: ${server.port}
+    homePageUrl: https://${eureka.instance.hostname}:${server.port}/
+    secureVirtualHostName: ${spring.application.name}
+    prefer-ip-address: false
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+    hostname: localhost
+
 
 zuul:
   routes:
@@ -32,23 +36,22 @@ zuul:
       service-id: payment-gateway
     literary-society:
       path: /literary-society/**
-      url: https://localhost:8090
-    #      service-id: literary-society
+      service-id: literary-society
     bank:
       path: /bank/**
-      url: http://localhost:8100
-    bank2:
-      path: /bank2/**
-      url: http://localhost:8102
+      service-id: bank
+    #    bank2:
+    #      path: /bank2/**
+    #      url: http://localhost:8102
     pcc:
       path: /pcc/**
-      url: http://localhost:8101
-    paypal-service:
-      path: /paypal-service/**
-      url: http://localhost:8200
-    bitcoin-service:
-      path: /bitcoin-service/**
-      url: http://localhost:8300
+      service-id: pcc
+    paypal:
+      path: /paypal/**
+      service-id: paypal
+    bitcoin:
+      path: /bitcoin/**
+      service-id: bitcoin
   host:
     connect-timeout-millis: 5000000
     socket-timeout-millis: 5000000
@@ -66,10 +69,6 @@ ribbon:
   TrustStorePassword: ${TRUSTSTORE_PASSWORD:password}
   CustomSSLSocketFactoryClassName: com.netflix.http4.ssl.AcceptAllSocketFactory
   IsHostnameValidationRequired: false
-
-#literary-society:
-#  ribbon:
-#    listOfServers: https://localhost:8090
 
 hystrix:
   command:
