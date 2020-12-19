@@ -16,7 +16,7 @@ import javax.validation.constraints.Positive;
 public class PaymentResponseDTO {
 
     @Positive(message = "Payment id must be positive.")
-    private String paymentId;
+    private Long paymentId;
 
     @NotBlank(message = "Payment URL is empty")
     @Pattern(regexp = "(http(s)?:\\/\\/)?((www\\.)|(localhost:))[(\\/)?a-zA-Z0-9@:%._\\+~#=-]{1,256}")

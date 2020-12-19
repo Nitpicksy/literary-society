@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
+import nitpicksy.paypalservice.client.ZuulClient;
+import nitpicksy.paypalservice.dto.response.ConfirmPaymentResponseDTO;
 import nitpicksy.paypalservice.dto.response.PaymentResponseDTO;
 import nitpicksy.paypalservice.exceptionHandler.InvalidDataException;
 import nitpicksy.paypalservice.model.Log;
@@ -16,6 +18,7 @@ import nitpicksy.paypalservice.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -33,16 +36,18 @@ import java.util.List;
 public class PaymentServiceImpl implements PaymentService {
 
     private static final String MODE = "sandbox";
-    private static final String CONFIRMATION_URL = "http://localhost:8200/api/payments/confirm";
+    private static final String CONFIRMATION_URL = "https://localhost:8200/api/payments/confirm";
 
     //API Source: https://exchangerate.host/
-    private static final String CURRENCY_CONVERSION_API = "https://api.eeexchangerate.host/convert";
+    private static final String CURRENCY_CONVERSION_API = "https://api.exchangerate.host/convert";
     private static final Double BACKUP_CONVERSION_RATE = 0.01034;
 
     private final String CLASS_PATH = this.getClass().getCanonicalName();
     private final String CLASS_NAME = this.getClass().getSimpleName();
 
     private PaymentRequestRepository paymentRequestRepository;
+
+    private ZuulClient zuulClient;
 
     private LogService logService;
 
@@ -85,7 +90,7 @@ public class PaymentServiceImpl implements PaymentService {
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CRE",
                 String.format("PayPal payment with paymentId=%s successfully created.", paymentId)));
 
-        return new PaymentResponseDTO(paymentId, approvalUrl);
+        return new PaymentResponseDTO(paymentRequest.getId(), approvalUrl);
     }
 
     @Override
@@ -114,17 +119,29 @@ public class PaymentServiceImpl implements PaymentService {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "EXE",
                     String.format("PayPal payment for merchantOrderId=%s could not be executed. PayPal error code: %s",
                             paymentRequest.getMerchantOrderId(), e.getDetails().getName())));
+            ConfirmPaymentResponseDTO confirmPaymentResponseDTO = new ConfirmPaymentResponseDTO(paymentRequest.getId(), "ERROR");
+            sendResponseToPaymentGateway(paymentRequest.getMerchantOrderId(), confirmPaymentResponseDTO);
             return paymentRequest.getErrorURL();
         }
 
         if (!paymentResponse.getState().equals("approved")) {
+            ConfirmPaymentResponseDTO confirmPaymentResponseDTO = new ConfirmPaymentResponseDTO(paymentRequest.getId(), "FAILED");
+            sendResponseToPaymentGateway(paymentRequest.getMerchantOrderId(), confirmPaymentResponseDTO);
             return paymentRequest.getFailedURL();
         }
+
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "EXE",
                 String.format("PayPal payment with paymentId=%s successfully executed.", paymentId)));
 
+        ConfirmPaymentResponseDTO confirmPaymentResponseDTO = new ConfirmPaymentResponseDTO(paymentRequest.getId(), "SUCCESS");
+        sendResponseToPaymentGateway(paymentRequest.getMerchantOrderId(), confirmPaymentResponseDTO);
         return paymentRequest.getSuccessURL();
+    }
+
+    @Async
+    public void sendResponseToPaymentGateway(Long merchantOrderId, ConfirmPaymentResponseDTO confirmPaymentResponseDTO) {
+        zuulClient.confirmPayment(merchantOrderId, confirmPaymentResponseDTO);
     }
 
     private List<Transaction> getTransactionInformation(Double baseAmount) {
@@ -210,9 +227,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Autowired
-    public PaymentServiceImpl(PaymentRequestRepository paymentRequestRepository, LogService logService) {
+    public PaymentServiceImpl(PaymentRequestRepository paymentRequestRepository, ZuulClient zuulClient, LogService logService) {
         this.paymentRequestRepository = paymentRequestRepository;
+        this.zuulClient = zuulClient;
         this.logService = logService;
     }
-
 }
