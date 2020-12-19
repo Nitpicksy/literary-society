@@ -13,7 +13,6 @@ import { useHistory } from 'react-router';
 import Form from '../../../../UI/Form/Form';
 import { extractControls } from '../../../../utility/extractControls';
 import Button from '@material-ui/core/Button';
-import { Grid } from '@material-ui/core';
 import PublicationRequestCard from './PublicationRequestCard/PublicationRequestCard';
 import { toastr } from 'react-redux-toastr';
 
