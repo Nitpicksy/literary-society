@@ -20,7 +20,7 @@ export default function PaymentError() {
                         <ErrorOutlineIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5" className={classes.message}>
-                        Something went wrong. Please try again.
+                        Payment could not be completed due to unexpected error. Please try again later.
                  </Typography>
                 </CardContent>
             </Card>

@@ -10,13 +10,13 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 public class ApplicationConfiguration {
 
-    @Value("${LOG_STORAGE:literary-society-log-storage.log}")
+    @Value("${LOG_STORAGE:literary-society.log}")
     private String logStorage;
 
-    @Value("${LOG_BACKUP_1:literary-society-log-backup-1.log}")
+    @Value("${LOG_BACKUP_1:literary-society-backup1.log}")
     private String logBackup1;
 
-    @Value("${LOG_BACKUP_2:literary-society-log-backup-2.log}")
+    @Value("${LOG_BACKUP_2:literary-society-backup2.log}")
     private String logBackup2;
 }
 
