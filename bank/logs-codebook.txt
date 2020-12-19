@@ -1,11 +1,11 @@
-APP|Aplication startup/shutdown
+APP|Application startup/shutdown
 LGN|Login
 REG|Registration
 CPW|Change password
 RPW|Reset password
 ACT|Activate account
 REF|Refresh token
-ATZ|Autorization exception
+ATZ|Authorization exception
 FGN|Feign client exception
 OMP|Object mapper exception
 RST|Reset token exception

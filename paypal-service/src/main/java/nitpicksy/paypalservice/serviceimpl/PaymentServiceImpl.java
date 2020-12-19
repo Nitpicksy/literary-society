@@ -8,13 +8,16 @@ import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import nitpicksy.paypalservice.dto.response.PaymentResponseDTO;
 import nitpicksy.paypalservice.exceptionHandler.InvalidDataException;
+import nitpicksy.paypalservice.model.Log;
 import nitpicksy.paypalservice.model.PaymentRequest;
 import nitpicksy.paypalservice.repository.PaymentRequestRepository;
+import nitpicksy.paypalservice.service.LogService;
 import nitpicksy.paypalservice.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -33,10 +36,15 @@ public class PaymentServiceImpl implements PaymentService {
     private static final String CONFIRMATION_URL = "http://localhost:8200/api/payments/confirm";
 
     //API Source: https://exchangerate.host/
-    private static final String CURRENCY_CONVERSION_API = "https://api.exchangerate.host/convert";
+    private static final String CURRENCY_CONVERSION_API = "https://api.eeexchangerate.host/convert";
     private static final Double BACKUP_CONVERSION_RATE = 0.01034;
 
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
     private PaymentRequestRepository paymentRequestRepository;
+
+    private LogService logService;
 
     @Override
     public PaymentResponseDTO createPayment(PaymentRequest paymentRequest) {
@@ -62,6 +70,9 @@ public class PaymentServiceImpl implements PaymentService {
         try {
             approvedPayment = payment.create(apiContext);
         } catch (PayPalRESTException e) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CRE",
+                    String.format("PayPal payment for merchantOrderId=%s could not be created. PayPal error code: %s",
+                            paymentRequest.getMerchantOrderId(), e.getDetails().getName())));
             throw new InvalidDataException("PayPal payment could not be initialized. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
@@ -71,6 +82,9 @@ public class PaymentServiceImpl implements PaymentService {
         paymentRequest.setPaymentId(paymentId);
         paymentRequestRepository.save(paymentRequest);
 
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CRE",
+                String.format("PayPal payment with paymentId=%s successfully created.", paymentId)));
+
         return new PaymentResponseDTO(paymentId, approvalUrl);
     }
 
@@ -78,6 +92,8 @@ public class PaymentServiceImpl implements PaymentService {
     public String executePayment(String paymentId, String payerId) {
         PaymentRequest paymentRequest = paymentRequestRepository.findOneByPaymentId(paymentId);
         if (paymentRequest == null) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "EXE",
+                    "Payment could not be continued due to invalid paymentId provided."));
             throw new InvalidDataException("Payment could not be continued due to invalid payment id provided.", HttpStatus.BAD_REQUEST);
         }
 
@@ -95,12 +111,18 @@ public class PaymentServiceImpl implements PaymentService {
         try {
             paymentResponse = payment.execute(apiContext, paymentExecution);
         } catch (PayPalRESTException e) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "EXE",
+                    String.format("PayPal payment for merchantOrderId=%s could not be executed. PayPal error code: %s",
+                            paymentRequest.getMerchantOrderId(), e.getDetails().getName())));
             return paymentRequest.getErrorURL();
         }
 
         if (!paymentResponse.getState().equals("approved")) {
             return paymentRequest.getFailedURL();
         }
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "EXE",
+                String.format("PayPal payment with paymentId=%s successfully executed.", paymentId)));
 
         return paymentRequest.getSuccessURL();
     }
@@ -135,6 +157,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private String convertCurrency(Double baseAmount) {
+        BigDecimal bd1 = new BigDecimal(baseAmount * BACKUP_CONVERSION_RATE);
+        String convertedAmount = bd1.setScale(2, RoundingMode.HALF_UP).toPlainString();
+
         RestTemplate restTemplate = new RestTemplate();
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(CURRENCY_CONVERSION_API)
@@ -142,21 +167,32 @@ public class PaymentServiceImpl implements PaymentService {
                 .queryParam("to", "USD")
                 .queryParam("amount", baseAmount);
 
-        ResponseEntity<String> response = restTemplate.getForEntity(uriBuilder.toUriString(), String.class);
+        ResponseEntity<String> response;
+        try {
+            response = restTemplate.getForEntity(uriBuilder.toUriString(), String.class);
+        } catch (RestClientException e) {
+            response = null;
+        }
 
-        String convertedAmount = String.valueOf(baseAmount * BACKUP_CONVERSION_RATE);
-        if (response.getStatusCode() == HttpStatus.OK) {
+        if (response != null && response.getStatusCode() == HttpStatus.OK) {
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode root = mapper.readTree(response.getBody());
                 String result = root.path("result").asText();
-                if (result != null) {
-                    BigDecimal bd = new BigDecimal(result);
-                    convertedAmount = bd.setScale(2, RoundingMode.HALF_UP).toPlainString();
+                if (!result.isBlank()) {
+                    BigDecimal bd2 = new BigDecimal(result);
+                    convertedAmount = bd2.setScale(2, RoundingMode.HALF_UP).toPlainString();
+                } else {
+                    logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CONV",
+                            "Currency conversion API response changed. Backup conversion rate applied."));
                 }
             } catch (JsonProcessingException e) {
-                convertedAmount = String.valueOf(baseAmount * BACKUP_CONVERSION_RATE);
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CONV",
+                        "Currency conversion API returned invalid JSON response. Backup conversion rate applied."));
             }
+        } else {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CONV",
+                    "Currency conversion API response status is not 200 OK. Backup conversion rate applied."));
         }
 
         return convertedAmount;
@@ -174,8 +210,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Autowired
-    public PaymentServiceImpl(PaymentRequestRepository paymentRequestRepository) {
+    public PaymentServiceImpl(PaymentRequestRepository paymentRequestRepository, LogService logService) {
         this.paymentRequestRepository = paymentRequestRepository;
+        this.logService = logService;
     }
 
 }

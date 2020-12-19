@@ -14,9 +14,9 @@ public class ApplicationConfiguration {
     @Value("${LOG_STORAGE:pcc.log}")
     private String logStorage;
 
-    @Value("${LOG_BACKUP_1:pcc-1.log}")
+    @Value("${LOG_BACKUP_1:pcc-backup1.log}")
     private String logBackup1;
 
-    @Value("${LOG_BACKUP_2:pcc-2.log}")
+    @Value("${LOG_BACKUP_2:pcc-backup2.log}")
     private String logBackup2;
 }
