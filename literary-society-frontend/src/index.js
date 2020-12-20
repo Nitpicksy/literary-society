@@ -22,7 +22,7 @@ import createPublicationRequestReducer from './components/WriterPages/CreatePubl
 import tasksReducer from './components/Tasks/TasksReducer';
 import publicationRequestReducer from './components/Tasks/Task/PublicationRequest/PublicationRequestReducer';
 import bookReducer from './components/BookDetails/BookDetailsReducer';
-
+ 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
 const rootReducer = combineReducers({

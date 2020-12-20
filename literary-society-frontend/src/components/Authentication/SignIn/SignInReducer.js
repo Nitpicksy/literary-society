@@ -7,7 +7,8 @@ const initialState = {
     error: null,
     authRedirectPath: null,
     isAuthenticated: false,
-    refreshTokenRequestSent: false
+    refreshTokenRequestSent: false, 
+    role: null
 }
 
 const reducer = (state = initialState, action) => {
@@ -23,6 +24,7 @@ const reducer = (state = initialState, action) => {
                 accessToken: action.userTokenState.accessToken,
                 expiresIn: action.userTokenState.expiresIn,
                 refreshToken: action.userTokenState.refreshToken,
+                role: action.role,
                 error: null,
                 isAuthenticated: true
             };

@@ -49,7 +49,7 @@ const BookDetails = (props) => {
         if (!found) {
             merchantBooks.push(props.bookDetails.bookDTO);
             shoppingCart.set(props.bookDetails.bookDTO.merchantName, merchantBooks);
-
+            toastr.success('Shopping cart', 'Successfully added book in shopping cart');
             localStorage.setItem('shoppingCart', JSON.stringify(Array.from(shoppingCart.entries())));
         } else {
             toastr.error('Shopping cart', 'This book is already added');

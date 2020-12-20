@@ -13,5 +13,8 @@ export const useStyles = makeStyles((theme) => ({
     titleLink: {
         textDecoration: 'none',
         color: 'white'
+    },
+    button:{
+        marginRight: theme.spacing(5),
     }
 }));

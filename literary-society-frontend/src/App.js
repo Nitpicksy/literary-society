@@ -27,6 +27,7 @@ import Tasks from './components/Tasks/Tasks';
 import PublicationRequest from './components/Tasks/Task/PublicationRequest/PublicationRequest';
 import DocumentSubmission from './components/WriterPages/DocumentSubmission/DocumentSubmission';
 import BookDetails from './components/BookDetails/BookDetails';
+import { GuardProvider, GuardedRoute } from 'react-router-guards';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -36,9 +37,29 @@ const App = props => {
 
   const { onTryAutoSignUp } = props;
 
+  const roleWriter = "ROLE_WRITER";
+  const roleReader = "ROLE_READER";
+  const roleEditor ="ROLE_EDITOR";
+  const roleAdmin ="ROLE_ADMIN";
+  const roleLecturer="ROLE_LECTURER";
+  const roleMerchant ="ROLE_MERCHANT";
+
   useEffect(() => {
     onTryAutoSignUp();
   }, [onTryAutoSignUp]);
+
+  const requireRole = (to, from, next) => {
+    if (to.meta.roles) {
+      to.meta.roles.forEach(element => {
+        if (element === props.role) {
+          next();
+        }
+      });
+      next.redirect('/error/non-authorized');
+    } else {
+      next();
+    }
+  };
 
   let routes = (
     <Switch>
@@ -47,15 +68,20 @@ const App = props => {
       <Route path="/sign-up" render={(props) => <SignUp {...props} />} />
       <Route path="/sign-up-finished" render={(props) => <SignUpFinished {...props} />} />
       <Route path="/choose-genres" render={(props) => <BetaReaderGenres {...props} />} />
+
       <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
       <Route path="/forgot-password" render={(props) => <ResetPasswordEnterUsername {...props} />} />
       <Route path="/reset-password" render={(props) => <ResetPasswordEnterNewPass {...props} />} />
+
       <Route path="/activate-account" render={(props) => <ActivateAccount {...props} />} />
+
       <Route path="/error/non-authenticated" render={(props) => <NonAuthenticated {...props} />} />
       <Route path="/error/non-authorized" render={(props) => <NonAuthorized {...props} />} />
+
       <Route path="/payment/success/:id" render={(props) => <PaymentSuccess {...props} />} />
       <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
       <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
+
       <Route path="/book/:id" exact render={(props) => <BookDetails {...props} />} />
       <Route path="/" exact render={(props) => <HomePage {...props} />} />
     </Switch>
@@ -63,28 +89,38 @@ const App = props => {
 
   if (props.isAuthenticated) {
     routes = (
-      <Switch>
-        <Route path="/publication-requests" render={(props) => <PublicationRequests {...props} />} />
-        <Route path="/create-publication-request" render={(props) => <CreatePublicationRequest {...props} />} />
-        <Route path="/tasks" render={(props) => <Tasks {...props} />} />
-        <Route path="/publication-request" render={(props) => <PublicationRequest {...props} />} />
-        <Route path="/upload" render={(props) => <DocumentSubmission {...props} />}/>
-        <Route path="/sign-out" render={(props) => <Logout {...props} />} />
-        <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
-        <Route path="/payment/success" render={(props) => <PaymentSuccess {...props} />} />
-        <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
-        <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
-        <Route path="/book/:id" exact render={(props) => <BookDetails {...props} />} />
-        <Route path="/" exact render={(props) => <HomePage {...props} />} />
-        <Route path="/shopping-cart" render={(props) => <ShoppingCart {...props} />} />
-        <Redirect to="/" />
-      </Switch>
+      <GuardProvider guards={[requireRole]}>
+        <Switch>
+          <GuardedRoute path="/publication-requests" render={(props) => <PublicationRequests {...props} />} meta={{ roles: [roleWriter] }} />
+          <GuardedRoute path="/create-publication-request" render={(props) => <CreatePublicationRequest {...props} />} meta={{ roles:  [roleWriter] }} />
+        
+          <Route path="/publication-request" render={(props) => <PublicationRequest {...props} />} meta={{ roles: [roleEditor] }} />
+          
+          <Route path="/upload" render={(props) => <DocumentSubmission {...props} />} meta={{ roles:  [roleWriter] }}/>
+
+          <Route path="/tasks" render={(props) => <Tasks {...props} />} />
+          <Route path="/sign-out" render={(props) => <Logout {...props} />} />
+          <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
+
+          <Route path="/payment/success" render={(props) => <PaymentSuccess {...props} />} />
+          <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
+          <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
+
+          <Route path="/shopping-cart" render={(props) => <ShoppingCart {...props} />} />
+          <Route path="/book/:id" exact render={(props) => <BookDetails {...props} />} />
+
+          <Route path="/error/non-authorized" render={(props) => <NonAuthorized {...props} />} />
+          <Route path="/" exact render={(props) => <HomePage {...props} />} />
+
+          <Redirect to="/" />
+        </Switch>
+      </GuardProvider>
     );
   }
 
   let toolbar = null;
   if (props.isAuthenticated) {
-    toolbar = <CustomToolbar />;
+    toolbar = <CustomToolbar role={props.role} />;
   }
   return (
     <div>
@@ -101,6 +137,7 @@ const App = props => {
 const mapStateToProps = state => {
   return {
     isAuthenticated: state.signIn.isAuthenticated,
+    role: state.signIn.role,
   }
 };
 
