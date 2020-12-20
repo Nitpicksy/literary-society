@@ -17,10 +17,10 @@ export const useStyles = makeStyles((theme) => ({
     right: 5,
   },
   discount: {
-    backgroundColor: '#d32f2f',
-    color: 'white',
-    fontWeight: 500,
-    fontSize: '1rem',
+    backgroundColor: '#d32f2f !important',
+    color: 'white !important',
+    fontWeight: '500 !important',
+    fontSize: '1rem !important',
   },
   cardcontent: {
     height: 120,

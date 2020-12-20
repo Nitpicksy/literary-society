@@ -25,13 +25,13 @@ public class PaymentController {
     private PaymentRequestMapper paymentRequestMapper;
 
     @PostMapping(value = "/pay", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PaymentResponseDTO> pay(@Valid @RequestBody PaymentRequestDTO paymentRequestDTO) throws PayPalRESTException {
+    public ResponseEntity<PaymentResponseDTO> pay(@Valid @RequestBody PaymentRequestDTO paymentRequestDTO) {
         return new ResponseEntity<>(paymentService.createPayment(paymentRequestMapper.toEntity(paymentRequestDTO)), HttpStatus.OK);
     }
 
     @GetMapping(value = "/confirm")
     public ResponseEntity<Void> confirmPayment(@RequestParam("paymentId") String paymentId,
-                                               @RequestParam("PayerID") String payerId) throws PayPalRESTException {
+                                               @RequestParam("PayerID") String payerId) {
         return ResponseEntity.status(HttpStatus.SEE_OTHER)
                 .location(URI.create(paymentService.executePayment(paymentId, payerId)))
                 .build();

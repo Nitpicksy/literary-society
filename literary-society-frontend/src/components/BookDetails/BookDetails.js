@@ -31,7 +31,7 @@ const BookDetails = (props) => {
             setLoading(false);
         }
 
-    }, [fetchBook, props.match.params]);
+    }, [fetchBook, props.match.params, history]);
 
     const addToCart = () => {
         let shoppingCart = new Map(JSON.parse(localStorage.getItem('shoppingCart')));

@@ -22,7 +22,7 @@ public class ForwardRequestMapper implements MapperInterface<Transaction, Dynami
         dto.setAmount(entity.getAmount());
         dto.setSuccessURL(entity.getCompany().getSuccessURL() + '/' + entity.getMerchantOrderId());
         dto.setFailedURL(entity.getCompany().getFailedURL());
-        dto.setErrorURL(entity.getCompany().getFailedURL());
+        dto.setErrorURL(entity.getCompany().getErrorURL());
         dto.setMerchantTimestamp(entity.getMerchantTimestamp().toString());
         dto.setMerchantOrderId(entity.getMerchantOrderId());
         return dto;
