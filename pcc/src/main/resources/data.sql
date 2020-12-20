@@ -1,0 +1,2 @@
+insert into incode_book (bank_name,iin,url) values ('Unicredit', '123456','https://localhost:8100/api');
+insert into incode_book (bank_name,iin,url) values ('Vojvodjanska', '123457','https://localhost:8102/api');

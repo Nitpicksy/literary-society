@@ -1,0 +1,15 @@
+APP|Application startup/shutdown
+LGN|Login
+REG|Registration
+CPW|Change password
+RPW|Reset password
+ACT|Activate account
+REF|Refresh token
+ATZ|Authorization exception
+FGN|Feign client exception
+OMP|Object mapper exception
+RST|Reset token exception
+PAY|Create payment request 
+CONFPAY|Confirm payment
+TRA|Transaction
+CARD|Credit Card

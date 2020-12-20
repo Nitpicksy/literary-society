@@ -1,44 +1,74 @@
 server:
   port: 8080
+  ssl:
+    enabled: true
+    key-alias: ${KEYSTORE_ALIAS:zuul}
+    key-store: ${KEYSTORE:classpath:zuul.keystore.p12}
+    key-store-password: ${KEYSTORE_PASSWORD:password}
+    key-store-type: ${KEYSTORE_TYPE:PKCS12}
+    trust-store: ${TRUSTSTORE:classpath:zuul.truststore.p12}
+    trust-store-password: ${TRUSTSTORE_PASSWORD:password}
+    trust-store-type: ${TRUSTSTORE_TYPE:PKCS12}
+    client-auth: want
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://eureka-peer1:8761/eureka,http://eureka-peer2:8762/eureka
+      defaultZone: https://eureka-peer1:8761/eureka, https://eureka-peer2:8762/eureka
       healthcheck-enabled: true
+  instance:
+    nonSecurePortEnabled: false
+    securePortEnabled: true
+    securePort: ${server.port}
+    homePageUrl: https://${eureka.instance.hostname}:${server.port}/
+    secureVirtualHostName: ${spring.application.name}
+    prefer-ip-address: false
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+    hostname: localhost
+
 
 zuul:
   routes:
     payment-gateway:
       path: /payment-gateway/**
+      service-id: payment-gateway
     literary-society:
       path: /literary-society/**
-      url: http://localhost:8090
+      service-id: literary-society
     bank:
       path: /bank/**
-      url: http://localhost:8100
+      service-id: bank
+    bank2:
+      path: /bank2/**
+      service-id: bank2
     pcc:
       path: /pcc/**
-      url: http://localhost:8101
-    paypal-service:
-      path: /paypal-service/**
-      url: http://localhost:8200
-    bitcoin-service:
-      path: /bitcoin-service/**
-      url: http://localhost:8300
+      service-id: pcc
+    paypal:
+      path: /paypal/**
+      service-id: paypal
+    bitcoin:
+      path: /bitcoin/**
+      service-id: bitcoin
   host:
     connect-timeout-millis: 5000000
     socket-timeout-millis: 5000000
-#  prefix: /api
-#  ignored-services: '*'
+  #  prefix: /api
+  ignored-services: '*'
+  sslHostnameValidationEnabled: false
 
 ribbon:
   eureka:
     enabled: true
+  IsSecure: true
   ReadTimeout: 60000
   ConnectTimeout: 6000
+  TrustStore: ${TRUSTSTORE:classpath:zuul.truststore.p12}
+  TrustStorePassword: ${TRUSTSTORE_PASSWORD:password}
+  CustomSSLSocketFactoryClassName: com.netflix.http4.ssl.AcceptAllSocketFactory
+  IsHostnameValidationRequired: false
 
 hystrix:
   command:

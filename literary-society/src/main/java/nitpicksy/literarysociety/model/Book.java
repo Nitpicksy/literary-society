@@ -7,8 +7,6 @@ import lombok.Setter;
 import nitpicksy.literarysociety.enumeration.BookStatus;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -29,19 +27,17 @@ public class Book {
     private Writer writer;
 
     @Column(nullable = false)
-    private String writerName;
+    private String writersNames;
 
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String synopsis;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "book_genre",
-            joinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id", referencedColumnName = "id"))
-    private Set<Genre> genre = new HashSet<>();
+    @PrimaryKeyJoinColumn
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Genre genre;
 
     @OneToOne(mappedBy = "book")
     private PublishingInfo publishingInfo;
@@ -58,5 +54,12 @@ public class Book {
     @ManyToOne(fetch = FetchType.EAGER)
     private Image image;
 
-
+    public Book(Writer writer, String title, String synopsis, Genre genre, BookStatus status) {
+        this.writer = writer;
+        this.writersNames = String.format("%s %s", writer.getFirstName(), writer.getLastName());
+        this.title = title;
+        this.synopsis = synopsis;
+        this.genre = genre;
+        this.status = status;
+    }
 }

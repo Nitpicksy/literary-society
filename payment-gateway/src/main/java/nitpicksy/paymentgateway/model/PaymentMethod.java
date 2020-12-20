@@ -35,4 +35,7 @@ public class PaymentMethod {
     @OneToMany
     @JoinColumn(name = "payment_method_id")
     private Set<Data> data;
+
+    @Column
+    private boolean subscription;
 }

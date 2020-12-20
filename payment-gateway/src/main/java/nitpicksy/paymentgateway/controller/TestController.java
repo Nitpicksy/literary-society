@@ -17,6 +17,7 @@ public class TestController {
 
     @GetMapping("/health")
     public ResponseEntity<String> health() {
+        System.out.println("Greetings from payment");
         return new ResponseEntity<>(testService.healthCheck(), HttpStatus.OK);
     }
 

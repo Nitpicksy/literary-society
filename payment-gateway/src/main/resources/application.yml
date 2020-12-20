@@ -1,5 +1,15 @@
 server:
   port: ${PORT:0}
+  ssl:
+    enabled: true
+    key-alias: ${KEYSTORE_ALIAS:gateway}
+    key-store: ${KEYSTORE:classpath:gateway.keystore.p12}
+    key-store-password: ${KEYSTORE_PASSWORD:password}
+    key-store-type: ${KEYSTORE_TYPE:PKCS12}
+    trust-store: ${TRUSTSTORE:classpath:gateway.truststore.p12}
+    trust-store-password: ${TRUSTSTORE_PASSWORD:password}
+    trust-store-type: ${TRUSTSTORE_TYPE:PKCS12}
+    client-auth: want
 
 spring:
   application:
@@ -9,6 +19,8 @@ spring:
     password: ${DATABASE_PASSWORD:Nitpicksy-2020}
     url: jdbc:mysql://${DATABASE_DOMAIN:localhost}:${DATABASE_PORT:3306}/${DATABASE_SCHEMA:payment_gateway}?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true
     driver-class-name: com.mysql.cj.jdbc.Driver
+    initialization-mode: always
+    platform: mysql
   jpa:
     properties:
       hibernate:
@@ -20,9 +32,21 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-peer1:8761/eureka,http://eureka-peer2:8762/eureka
+      defaultZone: https://eureka-peer1:8761/eureka, https://eureka-peer2:8762/eureka
       healthcheck:
         enabled: true
     fetchRegistry: true
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    nonSecurePortEnabled: false
+    securePortEnabled: true
+    securePort: ${server.port}
+    homePageUrl: https://${eureka.instance.hostname}:${server.port}/
+    secureVirtualHostName: ${spring.application.name}
+    prefer-ip-address: false
+    hostname: localhost
+
+API_GATEWAY_URL: https://zuul:8080
+
+#payment methods redirect url
+GATEWAY_PAYMENT_REDIRECT_URL: https://localhost:3003/payment

@@ -1,0 +1,4 @@
+APP|Application startup/shutdown
+CRE|Create payment
+EXE|Execute payment
+CONV|Currency conversion error
