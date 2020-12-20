@@ -1,6 +1,7 @@
 import axios from '../../../axios-endpoint';
 import {toastr} from 'react-redux-toastr';
 import * as actionTypes from './SignInActionTypes';
+import jwt from 'jwt-decode';
 
 export const signInStart = () => {
     return {
@@ -9,9 +10,15 @@ export const signInStart = () => {
 };
 
 export const signInSuccess = (userTokenState) => {
+    localStorage.setItem('accessToken', userTokenState.accessToken);
+    localStorage.setItem('expiresIn', userTokenState.expiresIn);
+    localStorage.setItem('refreshToken', userTokenState.refreshToken);
+    const token = jwt(userTokenState.accessToken);
+    const role = token.role;
     return {
         type: actionTypes.SIGN_IN_SUCCESS,
-        userTokenState: userTokenState
+        userTokenState: userTokenState, 
+        role:role
     };
 };
 
@@ -51,9 +58,6 @@ export const signIn = (username, password) => {
         axios.post('/auth/sign-in', authData)
             .then(response => {
                 if (response.data) {
-                    localStorage.setItem('accessToken', response.data.accessToken);
-                    localStorage.setItem('expiresIn', response.data.expiresIn);
-                    localStorage.setItem('refreshToken', response.data.refreshToken);
                     dispatch(setRedirectPath('/'))
                     dispatch(signInSuccess(response.data));
                     toastr.success('Login', 'Success');
@@ -80,6 +84,9 @@ export const refreshTokenStart = () => {
 };
 
 export const refreshTokenSuccess = (userTokenState) => {
+    localStorage.setItem('accessToken', userTokenState.accessToken);
+    localStorage.setItem('expiresIn', userTokenState.expiresIn);
+    localStorage.setItem('refreshToken', userTokenState.refreshToken);
     return {
         type: actionTypes.REFRESH_TOKEN_SUCCESS,
         userTokenState: userTokenState
@@ -100,9 +107,6 @@ export const refreshToken = (history) => {
         axios.post('/auth/refresh')
             .then(response => {
                 if (response.data) {
-                    localStorage.setItem('accessToken', response.data.accessToken);
-                    localStorage.setItem('expiresIn', response.data.expiresIn);
-                    localStorage.setItem('refreshToken', response.data.refreshToken);
                     window.location.reload();
                     dispatch(refreshTokenSuccess(response.data));
                 }

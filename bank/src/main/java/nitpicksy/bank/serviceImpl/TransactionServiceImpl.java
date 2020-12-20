@@ -57,7 +57,7 @@ public class TransactionServiceImpl implements TransactionService {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", String.format("Transaction %s is failed. Hash algorithm does not exist.", transaction.getId())));
             return transaction;
         }catch (InvalidDataException e){
-            transaction = setTransactionStatus(transaction,TransactionStatus.ERROR);
+            transaction = setTransactionStatus(transaction,TransactionStatus.FAILED);
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", String.format("Transaction %s is failed. User with credit card %s doesn't have enough money.", transaction.getId(), creditCard.getId())));
             return transaction;
         }

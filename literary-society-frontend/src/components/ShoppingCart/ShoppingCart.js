@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 import { responseInterceptor } from "../../responseInterceptor";
 import * as signInActions from "../Authentication/SignIn/SignInExport";
 import { useHistory } from "react-router";
+import { toastr } from 'react-redux-toastr';
 
 const ShoppingCart = (props) => {
   const history = useHistory();
@@ -28,6 +29,7 @@ const ShoppingCart = (props) => {
   let bookCards = null;
   let select = null;
   let payButton = null;
+
   responseInterceptor.setupInterceptor(
     history,
     props.refreshTokenRequestSent,
@@ -51,6 +53,8 @@ const ShoppingCart = (props) => {
 
     setSelectedMerchantAndBooks(map, merchantsArray[0]);
     setLoading(false);
+    toastr.success('Shopping cart', "If you paid this month's membership, discount will be applied when you proceed to payment.");
+    
   }, [setSelectedMerchantAndBooks]);
 
   const inputChangedHandler = (event) => {
@@ -152,20 +156,14 @@ const ShoppingCart = (props) => {
         </Grid>
         <Grid item xs={3} className={classes.price}>
           <Typography component="h1" variant="h4">
-            Price:{" "}
+            Total:{" "}
             <span className={classes.priceValue}>{amount.toFixed(2)} din.</span>
           </Typography>
         </Grid>
         <Grid item xs={2}>
-          <Button
-            type="submit"
-            color="primary"
-            className={classes.submit}
-            fullWidth
-            variant="contained"
-            onClick={onProceedToPayment}
-          >
-            Proceed to payment{" "}
+          <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained" 
+              onClick={onProceedToPayment} title="If you paid this month's membership, discount will be applied when you proceed to payment." >
+              Proceed to payment{" "}
           </Button>
         </Grid>
       </Grid>

@@ -34,7 +34,7 @@ export default function BookCard(props) {
         if (!found) {
             merchantBooks.push(props.book);
             shoppingCart.set(props.book.merchantName, merchantBooks);
-
+            toastr.success('Shopping cart', 'Successfully added book in shopping cart');
             localStorage.setItem('shoppingCart', JSON.stringify(Array.from(shoppingCart.entries())));
         } else {
             toastr.error('Shopping cart', 'This book is already added');
@@ -42,7 +42,6 @@ export default function BookCard(props) {
     }
 
     const redirectToDetailsPage = () => {
-        console.log(props.book.id)
         history.push(`/book/${props.book.id}`);
     } 
     

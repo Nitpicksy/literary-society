@@ -11,7 +11,7 @@ import { useStyles } from './BookDetailsStyles';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 import Image from 'material-ui-image';
-import { Button, Chip, Tooltip } from '@material-ui/core';
+import { Button, Chip, Paper, Tooltip } from '@material-ui/core';
 import { toastr } from 'react-redux-toastr';
 
 const BookDetails = (props) => {
@@ -49,7 +49,7 @@ const BookDetails = (props) => {
         if (!found) {
             merchantBooks.push(props.bookDetails.bookDTO);
             shoppingCart.set(props.bookDetails.bookDTO.merchantName, merchantBooks);
-
+            toastr.success('Shopping cart', 'Successfully added book in shopping cart');
             localStorage.setItem('shoppingCart', JSON.stringify(Array.from(shoppingCart.entries())));
         } else {
             toastr.error('Shopping cart', 'This book is already added');
@@ -80,37 +80,39 @@ const BookDetails = (props) => {
         }
 
         bookData =
-            <Grid container>
-                <Grid item md={4} sm={3} xs={12} >
-                    <div className={classes.imageDiv} >
-                        <Image aspectRatio={0.70} src={props.bookDetails.bookDTO.imageData} />
-                        {discount}
-                    </div>
-                </Grid>
-                <Grid item md={8} sm={9} xs={12} className={classes.bookInfo}>
-                    <Typography className={classes.title}>{props.bookDetails.bookDTO.title}</Typography>
-                    <Grid container>
-                        <Grid md={8} sm={6} xs={12}>
-                            <Typography className={classes.genre}>{props.bookDetails.genreName.toUpperCase()}</Typography>
-                            <Typography className={classes.isbn}>ISBN:&nbsp; {props.bookDetails.isbn}</Typography>
-                            <Typography className={classes.publicationDate}>Publication Date:&nbsp; {props.bookDetails.publicationDate}</Typography>
-                            <Typography className={classes.publisherCity}>Publication City:&nbsp; {props.bookDetails.publisherCity}</Typography>
-                        </Grid>
-                        <Grid md={4} sm={6} xs={12} className={classes.priceGrid}>
-                            {price}
-                            {button}
-                        </Grid>
+            <Paper className={classes.paper}>
+                <Grid container>
+                    <Grid item md={4} sm={3} xs={12} >
+                        <div className={classes.imageDiv} >
+                            <Image aspectRatio={0.70} src={props.bookDetails.bookDTO.imageData} />
+                            {discount}
+                        </div>
                     </Grid>
-                    <Typography className={classes.writer}>Writer:&nbsp; {props.bookDetails.bookDTO.writersNames}</Typography>
-                    <Typography className={classes.publisher}>Publisher:&nbsp; {props.bookDetails.publisher}</Typography>
-                    <Typography className={classes.merchant}>Merchant:&nbsp; {props.bookDetails.bookDTO.merchantName}</Typography>
-                    <Typography className={classes.synopsis}>{props.bookDetails.synopsis}</Typography>
+                    <Grid item md={8} sm={9} xs={12} className={classes.bookInfo}>
+                        <Typography className={classes.title}>{props.bookDetails.bookDTO.title}</Typography>
+                        <Grid container>
+                            <Grid item md={8} sm={6} xs={12}>
+                                <Typography className={classes.genre}>{props.bookDetails.genreName.toUpperCase()}</Typography>
+                                <Typography className={classes.isbn}>ISBN:&nbsp; {props.bookDetails.isbn}</Typography>
+                                <Typography className={classes.publicationDate}>Publication Date:&nbsp; {props.bookDetails.publicationDate}</Typography>
+                                <Typography className={classes.publisherCity}>Publication City:&nbsp; {props.bookDetails.publisherCity}</Typography>
+                            </Grid>
+                            <Grid item md={4} sm={6} xs={12} className={classes.priceGrid}>
+                                {price}
+                                {button}
+                            </Grid>
+                        </Grid>
+                        <Typography className={classes.writer}>Writer:&nbsp; {props.bookDetails.bookDTO.writersNames}</Typography>
+                        <Typography className={classes.publisher}>Publisher:&nbsp; {props.bookDetails.publisher}</Typography>
+                        <Typography className={classes.merchant}>Merchant:&nbsp; {props.bookDetails.bookDTO.merchantName}</Typography>
+                        <Typography className={classes.synopsis}>{props.bookDetails.synopsis}</Typography>
+                    </Grid>
                 </Grid>
-            </Grid>;
-
+            </Paper>;
     } else {
         <LinearProgress />
-        bookData = <div className={classes.paper}>
+        bookData = 
+        <div>
             <Avatar className={classes.avatar}>
                 <MenuBookIcon />
             </Avatar>
