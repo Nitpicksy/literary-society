@@ -36,7 +36,8 @@ const Tasks = (props) => {
         props.setSelectedTask(properties.row.processInstanceId, properties.row.id, properties.row.name);
         
         if(properties.row.name === "Obrada zahteva za izdavanje knjige" ||
-            properties.row.name === "Urednik provera da li je delo originalno"){
+            properties.row.name === "Urednik provera da li je delo originalno" || 
+            properties.row.name === "Urednik prihvata ili odbija rukopis"){
             history.push('/publication-request');
         }else if (properties.row.name === "Urednik preuzimanje dokumenta"){
             history.push('/editor-download-document');
