@@ -98,7 +98,7 @@ public class AuthenticationController {
         try {
             authenticationService.activateAccount(t);
             if (piId != null && !piId.isEmpty()) {
-                camundaService.complete(piId);
+                camundaService.findAndCompleteActiveTask(piId);
             }
         } catch (NoSuchAlgorithmException e) {
             throw new InvalidTokenException("Activation token cannot be checked. Please try again.", HttpStatus.BAD_REQUEST);

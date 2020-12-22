@@ -34,8 +34,14 @@ const Tasks = (props) => {
 
     const selectRow = (properties) => {
         props.setSelectedTask(properties.row.processInstanceId, properties.row.id, properties.row.name);
-
-        history.push('/publication-request');
+        
+        if(properties.row.name === "Obrada zahteva za izdavanje knjige" ||
+            properties.row.name === "Urednik provera da li je delo originalno"){
+            history.push('/publication-request');
+        }else if (properties.row.name === "Urednik preuzimanje dokumenta"){
+            history.push('/editor-download-document');
+        }
+        
     }
 
     if (!loading) {

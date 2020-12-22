@@ -25,15 +25,13 @@ public class PDFDocument {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
+    private String name;
+
     @Column(nullable = false)
     private LocalDate created;
 
     @PrimaryKeyJoinColumn
     @ManyToOne
     private Book book;
-
-//    @PrimaryKeyJoinColumn
-//    @ManyToOne
-//    private Writer writer;
-
 }

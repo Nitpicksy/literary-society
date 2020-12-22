@@ -77,9 +77,13 @@ public class CamundaService {
         return formFieldsDTO;
     }
 
-    public void complete(String processInstanceId) {
+    public void findAndCompleteActiveTask(String processInstanceId) {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).list().get(0);
         taskService.complete(task.getId());
+    }
+
+    public void completeTask(String taskId) {
+        taskService.complete(taskId);
     }
 
     public List<Long> extractIds(String selectedIdsString) {
