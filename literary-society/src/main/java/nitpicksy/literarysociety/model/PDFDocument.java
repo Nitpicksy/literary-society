@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -29,9 +30,15 @@ public class PDFDocument {
     private String name;
 
     @Column(nullable = false)
-    private LocalDate created;
+    private LocalDateTime created;
 
     @PrimaryKeyJoinColumn
     @ManyToOne
     private Book book;
+
+    public PDFDocument(String name, LocalDateTime created, Book book) {
+        this.name = name;
+        this.created = created;
+        this.book = book;
+    }
 }

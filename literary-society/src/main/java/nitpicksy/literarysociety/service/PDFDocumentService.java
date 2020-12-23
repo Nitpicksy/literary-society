@@ -7,6 +7,8 @@ import java.net.URISyntaxException;
 
 public interface PDFDocumentService {
 
+    PDFDocument save(PDFDocument pdfDocument);
+
     byte[] download(String name) throws IOException, URISyntaxException;
 
     PDFDocument findByBookId(Long id);

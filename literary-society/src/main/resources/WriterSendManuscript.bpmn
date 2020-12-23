@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0uty0sx" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:process id="WriterSendManuscript" isExecutable="true">
+    <bpmn:endEvent id="Event_1lmppvn" name="Success">
+      <bpmn:incoming>Flow_1vepjbi</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1vepjbi" sourceRef="Activity_0e8s0hz" targetRef="Event_1lmppvn" />
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>Flow_19wz333</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_19wz333" sourceRef="StartEvent_1" targetRef="Activity_0e8s0hz" />
+    <bpmn:userTask id="Activity_0e8s0hz" name="Slanje PDF verzije rukopisa" camunda:assignee="${writer}">
+      <bpmn:incoming>Flow_19wz333</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vepjbi</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_1llzg2z" name="Isteklo vreme za slanje rukopisa" attachedToRef="Activity_0e8s0hz">
+      <bpmn:outgoing>Flow_1mjmcnk</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_16prd8b">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_0f4o3y8" name="Fail">
+      <bpmn:incoming>Flow_0l44uae</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1am3e4c" errorRef="Error_0l3fjvu" />
+    </bpmn:endEvent>
+    <bpmn:sendTask id="Activity_0yitj89" name="Slanje email-a da je rok istekao" camunda:class="nitpicksy.literarysociety.camunda.messages.SendManuscriptExpiredEmail">
+      <bpmn:incoming>Flow_1mjmcnk</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l44uae</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_1mjmcnk" sourceRef="Event_1llzg2z" targetRef="Activity_0yitj89" />
+    <bpmn:sequenceFlow id="Flow_0l44uae" sourceRef="Activity_0yitj89" targetRef="Event_0f4o3y8" />
+  </bpmn:process>
+  <bpmn:error id="Error_0l3fjvu" name="greskaRukopisNijeDostavljen" errorCode="greskaRukopisNijeDostavljen" />
+  <bpmn:error id="Error_1i6sjy2" name="greskaNepostojeciZahtev" errorCode="greskaNepostojeciZahtev" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="WriterSendManuscript">
+      <bpmndi:BPMNEdge id="Flow_19wz333_di" bpmnElement="Flow_19wz333">
+        <di:waypoint x="215" y="267" />
+        <di:waypoint x="290" y="267" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vepjbi_di" bpmnElement="Flow_1vepjbi">
+        <di:waypoint x="390" y="267" />
+        <di:waypoint x="612" y="267" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mjmcnk_di" bpmnElement="Flow_1mjmcnk">
+        <di:waypoint x="370" y="209" />
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="440" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0l44uae_di" bpmnElement="Flow_0l44uae">
+        <di:waypoint x="540" y="120" />
+        <di:waypoint x="612" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="249" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="185" y="292" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0evv0aq_di" bpmnElement="Activity_0e8s0hz">
+        <dc:Bounds x="290" y="227" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1lmppvn_di" bpmnElement="Event_1lmppvn">
+        <dc:Bounds x="612" y="249" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="609" y="292" width="42" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1qupynn_di" bpmnElement="Event_0f4o3y8">
+        <dc:Bounds x="612" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="622" y="145" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0895g4s_di" bpmnElement="Activity_0yitj89">
+        <dc:Bounds x="440" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1lfqk7l_di" bpmnElement="Event_1llzg2z">
+        <dc:Bounds x="352" y="209" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="279" y="156" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
