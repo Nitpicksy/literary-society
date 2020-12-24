@@ -5,6 +5,7 @@ import { Switch } from "react-router-dom";
 import { Route } from "react-router-dom";
 import AddPaymentMethod from "./components/PaymentMethodsManagement/AddPaymentMethod/AddPaymentMethod";
 import AddPaymentMethodSuccess from './components/PaymentMethodsManagement/AddPaymentMethod/AddPaymentMethodSuccess';
+import PaymentMethodList from './components/PaymentMethodsManagement/PaymentMethodList/PaymentMethodList';
 
 const App = (props) => {
   return (
@@ -14,6 +15,9 @@ const App = (props) => {
           path="/payment/:id"
           render={(props) => <PaymentHome {...props} />}
         />
+        <Route
+          path="/payment-methods"
+          render={() => <PaymentMethodList {...props} />} />
         <Route
           path="/add-payment-method"
           render={() => <AddPaymentMethod {...props} />} />

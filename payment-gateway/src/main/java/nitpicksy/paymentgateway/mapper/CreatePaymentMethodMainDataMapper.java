@@ -9,7 +9,7 @@ public class CreatePaymentMethodMainDataMapper implements MapperInterface<Paymen
 
     @Override
     public PaymentMethod toEntity(CreatePaymentMethodMainDataDTO dto) {
-        return new PaymentMethod(dto.getName(), dto.getCommonName(),dto.getApi(), dto.getSubscription());
+        return new PaymentMethod(dto.getName(), dto.getCommonName(),dto.getApi(), dto.getSubscription(), dto.getEmail());
     }
 
     @Override

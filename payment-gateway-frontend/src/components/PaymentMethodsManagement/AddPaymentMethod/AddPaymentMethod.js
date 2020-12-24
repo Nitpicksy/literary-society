@@ -53,6 +53,21 @@ const AddPaymentMethod = (props) => {
             error: false,
             errorMessage: 'API is not valid',
         },
+        email: {
+            elementType: 'input',
+            elementConfig: {
+                label: 'Email',
+            },
+            value: '',
+            validation: {
+                required: true,
+                pattern: '^[a-zA-Z0-9_+&*-]+(?:.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+.)+[a-zA-Z]{2,7}$'
+            },
+            valid: false,
+            touched: false,
+            error: false,
+            errorMessage: 'Invalid e-mail address entered.',
+        },
         subscription: {
             elementType: 'checkbox',
             elementConfig: {
@@ -159,7 +174,7 @@ const AddPaymentMethod = (props) => {
         certificateFormData.append('file', certificate);
         console.log(certificateFormData)
         props.onRegisterPaymentMethod({'name': controls.name.value, 'api': controls.api.value, 'commonName': controls.commonName.value, 
-        'subscription': controls.subscription.value},certificateFormData, rows, history );
+        'subscription': controls.subscription.value, 'email':controls.email.value },certificateFormData, rows, history );
     }
 
     const submitDataHander = (event) => {

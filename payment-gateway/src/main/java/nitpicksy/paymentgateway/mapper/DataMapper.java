@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +23,7 @@ public class DataMapper implements MapperInterface<Data, PaymentDataDTO> {
 
     @Override
     public PaymentDataDTO toDto(Data entity) {
-        return null;
+        return modelMapper.map(entity, PaymentDataDTO.class);
     }
 
     public Set<Data> convertList(List<PaymentDataDTO> paymentDataDTOList){
@@ -32,10 +33,17 @@ public class DataMapper implements MapperInterface<Data, PaymentDataDTO> {
         }
         return data;
     }
+
+    public List<PaymentDataDTO> convertToDto(Set<Data> dataDTOList){
+        List<PaymentDataDTO> paymentDataDTO = new ArrayList<>();
+        for (Data data:dataDTOList) {
+            paymentDataDTO.add(toDto(data));
+        }
+        return paymentDataDTO;
+    }
     @Autowired
     public DataMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
-
 
 }

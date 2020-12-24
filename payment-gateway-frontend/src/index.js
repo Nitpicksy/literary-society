@@ -11,6 +11,7 @@ import { Provider } from "react-redux";
 import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
 import ReduxToastr from 'react-redux-toastr';
 import paymentHomeReducer from "./components/PaymentHome/PaymentHomeReducer";
+import paymentMethodListReducer from './components/PaymentMethodsManagement/PaymentMethodList/PaymentMethodListReducer';
 
 const composeEnhancers =
   process.env.NODE_ENV === "development"
@@ -20,6 +21,7 @@ const composeEnhancers =
 const rootReducer = combineReducers({
   toastr: toastrReducer,
   paymentHome: paymentHomeReducer,
+  paymentMethodList:paymentMethodListReducer
 });
 
 const store = createStore(

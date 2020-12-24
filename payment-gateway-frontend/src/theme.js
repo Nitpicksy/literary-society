@@ -13,6 +13,11 @@ const rawTheme = createMuiTheme({
       main: "#ff3366",
       dark: "#e62958",
     },
+    inherit: {
+      light: "#FF5733",
+      main: "#ff3366",
+      dark: "#e62958",
+    },
     warning: {
       main: "#ffc071",
       dark: "#ffb25e",

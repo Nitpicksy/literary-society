@@ -13,6 +13,8 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class PaymentDataDTO {
 
+    private Long id;
+
     @NotBlank(message = "Attribute name is empty")
     private String attributeName;
 

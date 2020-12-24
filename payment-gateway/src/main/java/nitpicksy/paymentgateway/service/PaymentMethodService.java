@@ -13,4 +13,8 @@ public interface PaymentMethodService {
     PaymentMethod findPaymentMethod(String commonName);
 
     PaymentMethod registerPaymentMethod(PaymentMethod paymentMethod, Set<Data> listData);
+
+    List<PaymentMethod>  findAll();
+    
+    PaymentMethod changePaymentMethodStatus(Long id, String status);
 }
