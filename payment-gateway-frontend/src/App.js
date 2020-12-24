@@ -3,6 +3,7 @@ import "./App.css";
 import PaymentHome from "./components/PaymentHome/PaymentHome";
 import { Switch } from "react-router-dom";
 import { Route } from "react-router-dom";
+import AddPaymentMethod from "./components/PaymentMethodsManagement/AddPaymentMethod/AddPaymentMethod";
 
 const App = (props) => {
   return (
@@ -12,10 +13,14 @@ const App = (props) => {
           path="/payment/:id"
           render={(props) => <PaymentHome {...props} />}
         />
+         <Route
+          path="/add-payment-method"
+          render={() => <AddPaymentMethod {...props}/> }/>
         <Route
           path="/"
           render={() => <h1> Welcome, navigate to payment/:id. </h1>}
         />
+        
       </Switch>
     </div>
   );
