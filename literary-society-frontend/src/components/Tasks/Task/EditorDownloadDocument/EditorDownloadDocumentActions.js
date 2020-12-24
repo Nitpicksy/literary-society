@@ -32,10 +32,12 @@ export const download = (piId, taskId, title, history) => {
             responseType: 'blob'
         }).then((response) => {  
             const blob = new Blob([response.data],{ type: 'application/pdf' });
+            console.log(blob)
             saveAs(blob,title);
             history.push('/tasks');
         }).catch(err => {
-            toastr.error('Publication Request', 'Something goes wrong.Please try again.');
+            console.log(err)
+            toastr.error('Publication Request', 'Something went wrong.Please try again.');
             history.push('/tasks');
         });
     };

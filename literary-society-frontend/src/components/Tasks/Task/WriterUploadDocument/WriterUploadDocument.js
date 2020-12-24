@@ -38,7 +38,7 @@ const WriterUploadDocument = (props) => {
             pdfFormData.append('pdfFile', pdfFile);
             props.onUpload(selectedTask.piId, selectedTask.taskId, pdfFormData, history);
         } else {
-            toastr.error('Upload manuscript', 'Please choose PDF file to upload.')
+            toastr.warning('Upload manuscript', 'Please choose PDF file to upload.')
         }
     }
 
@@ -76,7 +76,8 @@ const WriterUploadDocument = (props) => {
                     </Grid>
                     <Grid item xs={3} className={classes.uploadBtn}>
                         <Button color="primary" variant="contained" component="span"
-                            startIcon={<PublishIcon />} onClick={handleUpload}>
+                            startIcon={<PublishIcon />} onClick={handleUpload} 
+                            disabled={pdfFile ? false : true}>
                             Upload
                         </Button>
                     </Grid>

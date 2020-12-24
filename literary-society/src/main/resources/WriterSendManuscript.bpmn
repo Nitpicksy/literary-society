@@ -16,7 +16,7 @@
     <bpmn:boundaryEvent id="Event_1llzg2z" name="Isteklo vreme za slanje rukopisa" attachedToRef="Activity_0e8s0hz">
       <bpmn:outgoing>Flow_1mjmcnk</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_16prd8b">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P7D</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:endEvent id="Event_0f4o3y8" name="Fail">
@@ -32,8 +32,18 @@
   </bpmn:process>
   <bpmn:error id="Error_0l3fjvu" name="greskaRukopisNijeDostavljen" errorCode="greskaRukopisNijeDostavljen" />
   <bpmn:error id="Error_1i6sjy2" name="greskaNepostojeciZahtev" errorCode="greskaNepostojeciZahtev" />
+  <bpmn:error id="Error_1x83sxl" name="greskaNeuspesnoCuvanjeNaDisk" errorCode="greskaNeuspesnoCuvanjeNaDisk" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="WriterSendManuscript">
+      <bpmndi:BPMNEdge id="Flow_0l44uae_di" bpmnElement="Flow_0l44uae">
+        <di:waypoint x="540" y="120" />
+        <di:waypoint x="612" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mjmcnk_di" bpmnElement="Flow_1mjmcnk">
+        <di:waypoint x="370" y="209" />
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="440" y="120" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_19wz333_di" bpmnElement="Flow_19wz333">
         <di:waypoint x="215" y="267" />
         <di:waypoint x="290" y="267" />
@@ -42,15 +52,12 @@
         <di:waypoint x="390" y="267" />
         <di:waypoint x="612" y="267" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1mjmcnk_di" bpmnElement="Flow_1mjmcnk">
-        <di:waypoint x="370" y="209" />
-        <di:waypoint x="370" y="120" />
-        <di:waypoint x="440" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0l44uae_di" bpmnElement="Flow_0l44uae">
-        <di:waypoint x="540" y="120" />
-        <di:waypoint x="612" y="120" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1lmppvn_di" bpmnElement="Event_1lmppvn">
+        <dc:Bounds x="612" y="249" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="609" y="292" width="42" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="249" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -59,12 +66,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0evv0aq_di" bpmnElement="Activity_0e8s0hz">
         <dc:Bounds x="290" y="227" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1lmppvn_di" bpmnElement="Event_1lmppvn">
-        <dc:Bounds x="612" y="249" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="609" y="292" width="42" height="14" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1qupynn_di" bpmnElement="Event_0f4o3y8">
         <dc:Bounds x="612" y="102" width="36" height="36" />

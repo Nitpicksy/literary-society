@@ -6,6 +6,7 @@ import nitpicksy.literarysociety.dto.camunda.TaskDataDTO;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
 import nitpicksy.literarysociety.enumeration.BookStatus;
+import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.PDFDocument;
 import nitpicksy.literarysociety.model.User;
@@ -49,8 +50,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/tasks")
 public class TaskController {
-
-    private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
     private UserService userService;
 
@@ -97,11 +96,11 @@ public class TaskController {
                                                           @Valid @RequestParam MultipartFile pdfFile) {
         Book book = bookService.findById(Long.valueOf(camundaService.getProcessVariable(piId, "bookId")));
 
-        LocalDateTime created = LocalDateTime.now();
-        String pdfName = created.format(FORMATTER) + "_" + pdfFile.getOriginalFilename();
-
-        PDFDocument newPdfDoc = new PDFDocument(pdfName, created, book);
-        pdfDocumentService.save(newPdfDoc);
+        try {
+            pdfDocumentService.upload(pdfFile, book);
+        } catch (IOException e) {
+            throw new InvalidDataException("Manuscript could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
+        }
 
         book.setStatus(BookStatus.SENT);
         bookService.save(book);
@@ -113,22 +112,23 @@ public class TaskController {
     @PostMapping(value = "upload-proba",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> uploadProba(@Valid @RequestParam MultipartFile pdfFile) {
-        LocalDateTime created = LocalDateTime.now();
-        String pdfName = created.format(FORMATTER) + "_" + pdfFile.getOriginalFilename();
-        PDFDocument newPdfDoc = new PDFDocument(pdfName, created, null);
-        pdfDocumentService.save(newPdfDoc);
+        try {
+            pdfDocumentService.upload(pdfFile, null);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping(value = "proba", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<byte[]> proba() {
+    @PutMapping(value = "proba/{name}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> proba(@PathVariable String name) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
 
         try {
-            byte[] content = pdfDocumentService.download("Otvorene dve deonicekoridora 10.pdf");
+            byte[] content = pdfDocumentService.download(name);
             return new ResponseEntity<>(content, headers, HttpStatus.OK);
         } catch (IOException | URISyntaxException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

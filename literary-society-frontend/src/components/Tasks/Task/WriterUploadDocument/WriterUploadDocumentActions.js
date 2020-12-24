@@ -1,7 +1,6 @@
 import axios from '../../../../axios-endpoint';
 import { toastr } from 'react-redux-toastr';
 import * as actionTypes from './WriterUploadDocumentActionTypes';
-import { saveAs } from 'file-saver';
 
 export const fetchFormSuccess = (processInstanceId, taskId, publicationRequest) => {
     return {
@@ -32,7 +31,7 @@ export const upload = (piId, taskId, pdfFormData, history) => {
             toastr.success('Upload manuscript', 'Manuscript uploaded successfully.');
             history.push('/tasks');
         }).catch(err => {
-            toastr.error('Upload manuscript', 'Something went wrong. Please try again.');
+            toastr.error('Upload manuscript', err.response.data.message);
             history.push('/tasks');
         });
     };
