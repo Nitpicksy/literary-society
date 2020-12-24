@@ -30,13 +30,11 @@ export const download = (piId, taskId, title, history) => {
         axios(`/tasks/${taskId}/complete-and-download?piId=${piId}`, {
             method: 'PUT',
             responseType: 'blob'
-        }).then((response) => {  
-            const blob = new Blob([response.data],{ type: 'application/pdf' });
-            console.log(blob)
-            saveAs(blob,title);
+        }).then((response) => {
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            saveAs(blob, title);
             history.push('/tasks');
         }).catch(err => {
-            console.log(err)
             toastr.error('Publication Request', 'Something went wrong.Please try again.');
             history.push('/tasks');
         });
