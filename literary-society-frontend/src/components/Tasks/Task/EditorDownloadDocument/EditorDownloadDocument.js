@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import ListIcon from '@material-ui/icons/List';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { connect } from 'react-redux';
@@ -11,7 +12,6 @@ import { responseInterceptor } from '../../../../responseInterceptor';
 import { useHistory } from 'react-router';
 import Button from '@material-ui/core/Button';
 import PublicationRequestCard from '../PublicationRequest/PublicationRequestCard/PublicationRequestCard';
-import { toastr } from 'react-redux-toastr';
 import * as actions from './EditorDownloadDocumentExport';
 
 const EditorDownloadDocument = (props) => {
@@ -32,7 +32,7 @@ const EditorDownloadDocument = (props) => {
 
 
     const download = () => {
-        props.onDownload(selectedTask.piId, selectedTask.taskId,publicationRequest.title, history);
+        props.onDownload(selectedTask.piId, selectedTask.taskId, publicationRequest.title, history);
     }
 
     if (publicationRequest) {
@@ -47,7 +47,8 @@ const EditorDownloadDocument = (props) => {
                     <ListIcon />
                 </Avatar>
                 <Typography component="h1" variant="h4" className={classes.title}>Publication Request</Typography>
-                <Button color="primary" className={classes.submit} variant="contained" onClick = {download}>
+                <Button color="primary" className={classes.submit} variant="contained"
+                    startIcon={<GetAppIcon />} onClick={download}>
                     Download
                 </Button>
                 <div className={classes.card} justify="center">
@@ -71,7 +72,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
         fetchForm: (piId, taskId) => dispatch(actions.fetchForm(piId, taskId)),
-        onDownload: (piId, taskId,title, history) => dispatch(actions.download(piId, taskId,title, history)),
+        onDownload: (piId, taskId, title, history) => dispatch(actions.download(piId, taskId, title, history)),
     }
 };
 

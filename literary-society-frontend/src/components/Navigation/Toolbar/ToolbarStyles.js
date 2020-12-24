@@ -15,6 +15,6 @@ export const useStyles = makeStyles((theme) => ({
         color: 'white'
     },
     button:{
-        marginRight: theme.spacing(5),
+        marginRight: theme.spacing(2),
     }
 }));

@@ -1,6 +1,8 @@
 package nitpicksy.literarysociety.camunda.messages;
 
 import nitpicksy.literarysociety.dto.camunda.PublicationRequestDTO;
+import nitpicksy.literarysociety.enumeration.BookStatus;
+import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.User;
 import nitpicksy.literarysociety.service.BookService;
 import nitpicksy.literarysociety.service.EmailNotificationService;
@@ -11,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ManuscriptIsNotOriginalEmail implements JavaDelegate {
+public class SendManuscriptExpiredEmail implements JavaDelegate {
 
     private EmailNotificationService emailNotificationService;
 
@@ -22,31 +24,32 @@ public class ManuscriptIsNotOriginalEmail implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) {
         Long bookId = Long.valueOf((String) execution.getVariable("bookId"));
-        PublicationRequestDTO publicationRequestDTO = bookService.getPublicationRequest(bookId);
+        Book book = bookService.findById(bookId);
+        book.setStatus(BookStatus.NOT_SENT);
+        bookService.save(book);
 
         String writerUsername = (String) execution.getVariable("writer");
 
         User writer = userService.findByUsername(writerUsername);
 
         String email = writer.getEmail();
-        String subject = "Manuscript is nor original";
-        String text = composeEmailToActivate(publicationRequestDTO.getTitle(), (String) execution.getVariable("reason"));
+        String subject = "Deadline to send manuscript expired";
+        String text = composeEmailToActivate(book.getTitle());
 
         emailNotificationService.sendEmail(email, subject, text);
     }
 
-    private String composeEmailToActivate(String title, String reason) {
+    private String composeEmailToActivate(String title) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Manuscript '");
+        sb.append("Manuscript for publication request '");
         sb.append(title);
-        sb.append("' is nor original. Editor thinks: ");
-        sb.append(reason);
+        sb.append("' not sent in time. Therefore, publication request is closed.");
         sb.append(System.lineSeparator());
         return sb.toString();
     }
 
     @Autowired
-    public ManuscriptIsNotOriginalEmail(EmailNotificationService emailNotificationService, UserService userService, BookService bookService) {
+    public SendManuscriptExpiredEmail(EmailNotificationService emailNotificationService, UserService userService, BookService bookService) {
         this.emailNotificationService = emailNotificationService;
         this.userService = userService;
         this.bookService = bookService;

@@ -1,7 +1,6 @@
 import axios from '../../../../axios-endpoint';
 import { toastr } from 'react-redux-toastr';
-import * as actionTypes from './EditorDownloadDocumentActionTypes';
-import { saveAs } from 'file-saver';
+import * as actionTypes from './WriterUploadDocumentActionTypes';
 
 export const fetchFormSuccess = (processInstanceId, taskId, publicationRequest) => {
     return {
@@ -20,22 +19,19 @@ export const fetchForm = (piId, taskId) => {
                     response.data.formFieldsDTO.taskId, response.data.publicationRequestDTO));
             })
             .catch(err => {
-                toastr.error('Publication request', 'Something went wrong.Please try again.');
+                toastr.error('Upload manuscript', 'Something went wrong. Please try again.');
             });
     };
 };
 
-export const download = (piId, taskId, title, history) => {
+export const upload = (piId, taskId, pdfFormData, history) => {
     return dispatch => {
-        axios(`/tasks/${taskId}/complete-and-download?piId=${piId}`, {
-            method: 'PUT',
-            responseType: 'blob'
-        }).then((response) => {
-            const blob = new Blob([response.data], { type: 'application/pdf' });
-            saveAs(blob, title);
+        axios.post(`/tasks/${taskId}/complete-and-upload?piId=${piId}`, pdfFormData)
+        .then(response => {
+            toastr.success('Upload manuscript', 'Manuscript uploaded successfully.');
             history.push('/tasks');
         }).catch(err => {
-            toastr.error('Publication Request', 'Something went wrong.Please try again.');
+            toastr.error('Upload manuscript', err.response.data.message);
             history.push('/tasks');
         });
     };

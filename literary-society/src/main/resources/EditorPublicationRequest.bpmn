@@ -20,7 +20,7 @@
             <camunda:value id="TO_BE_SENT" name="I want to read it" />
             <camunda:value id="REQUEST_REJECTED" name="I don&#39;t want to read it." />
           </camunda:formField>
-          <camunda:formField id="reason" label="If you chose not to read it, elaborate why" type="textarea">
+          <camunda:formField id="reason" label="If you chose not to read it, explain why" type="textarea">
             <camunda:properties>
               <camunda:property id="rows" value="3" />
             </camunda:properties>

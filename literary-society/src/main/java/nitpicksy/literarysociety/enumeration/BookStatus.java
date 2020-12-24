@@ -5,6 +5,7 @@ public enum BookStatus {
     REQUEST_REJECTED,
     TO_BE_SENT,
     SENT,
+    NOT_SENT,
     ORIGINAL,
     NOT_ORIGINAL,
     ACCEPTED,
