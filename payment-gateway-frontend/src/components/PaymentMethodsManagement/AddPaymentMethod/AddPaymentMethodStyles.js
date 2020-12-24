@@ -17,7 +17,8 @@ export const useStyles = makeStyles((theme) => ({
     },
     submit: {
         paddingRight: theme.spacing(6),
-        paddingLeft: theme.spacing(6)
+        paddingLeft: theme.spacing(6),
+        marginTop:  theme.spacing(2),
     },
     submitForm: {
         paddingRight: theme.spacing(8),
@@ -33,11 +34,32 @@ export const useStyles = makeStyles((theme) => ({
     },
     paymentData: {
         padding: theme.spacing(2),
+        paddingBottom: theme.spacing(2),
+    },
+    mainData: {
+        padding: theme.spacing(2),
     },
     gridData: {
         paddingTop: theme.spacing(3)
     },
     tablecell: {
         fontSize: '14pt'
-    }
+    },
+    fileName: {
+        color: '#707070',
+        fontWeight: 700,
+        fontSize: '12px',
+    },
+    chooseCertificate:{
+        minWidth: 555,
+        marginTop: theme.spacing(2),
+    },
+    uploadBtn: {
+        textAlign: 'right',
+    },
+    fileNameGrid: {
+        display: 'flex',
+        alignItems: 'center',
+        paddingLeft: theme.spacing(2),
+    },
 }));

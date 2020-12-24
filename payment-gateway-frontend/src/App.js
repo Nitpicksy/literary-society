@@ -4,6 +4,7 @@ import PaymentHome from "./components/PaymentHome/PaymentHome";
 import { Switch } from "react-router-dom";
 import { Route } from "react-router-dom";
 import AddPaymentMethod from "./components/PaymentMethodsManagement/AddPaymentMethod/AddPaymentMethod";
+import AddPaymentMethodSuccess from './components/PaymentMethodsManagement/AddPaymentMethod/AddPaymentMethodSuccess';
 
 const App = (props) => {
   return (
@@ -13,14 +14,17 @@ const App = (props) => {
           path="/payment/:id"
           render={(props) => <PaymentHome {...props} />}
         />
-         <Route
+        <Route
           path="/add-payment-method"
-          render={() => <AddPaymentMethod {...props}/> }/>
+          render={() => <AddPaymentMethod {...props} />} />
+        <Route
+          path="/add-payment-method-success"
+          render={() => <AddPaymentMethodSuccess {...props} />} />
         <Route
           path="/"
           render={() => <h1> Welcome, navigate to payment/:id. </h1>}
         />
-        
+
       </Switch>
     </div>
   );

@@ -41,7 +41,7 @@ const input = (props) => {
             </TextField>;
             break;
         case ('checkbox'):
-            inputElement = <FormControlLabel label={props.elementConfig.label}
+            inputElement = <FormControlLabel  label={props.elementConfig.label} style={{float: "left"}}
                 control={
                     <Checkbox onChange={props.changed} />
                 }

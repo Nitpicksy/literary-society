@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import Avatar from '@material-ui/core/Avatar';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
@@ -7,7 +6,7 @@ import Container from '@material-ui/core/Container';
 import { useStyles } from './AddPaymentMethodStyles';
 import Form from '../../../UI/Form/Form';
 import { connect } from 'react-redux';
-import { Redirect, useHistory } from 'react-router';
+import {  useHistory } from 'react-router';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -15,8 +14,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Grid, Paper } from '@material-ui/core';
-import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import { toastr } from 'react-redux-toastr';
+import * as actions from './AddPaymentMethodExport';
 
 const AddPaymentMethod = (props) => {
     const history = useHistory();
@@ -29,20 +28,6 @@ const AddPaymentMethod = (props) => {
             elementType: 'input',
             elementConfig: {
                 label: 'Name'
-            },
-            value: '',
-            validation: {
-                required: true,
-            },
-            valid: false,
-            touched: false,
-            error: false,
-            errorMessage: '',
-        },
-        commonName: {
-            elementType: 'input',
-            elementConfig: {
-                label: 'Common Name'
             },
             value: '',
             validation: {
@@ -67,12 +52,32 @@ const AddPaymentMethod = (props) => {
             touched: false,
             error: false,
             errorMessage: 'API is not valid',
-        }
+        },
+        subscription: {
+            elementType: 'checkbox',
+            elementConfig: {
+                label: 'Support subscription'
+            },
+            value: false,
+            valid: true,
+            error: false,
+        },
+        commonName: {
+            elementType: 'input',
+            elementConfig: {
+                label: 'Common Name'
+            },
+            value: '',
+            validation: {
+                required: true,
+            },
+            valid: false,
+            touched: false,
+            error: false,
+            errorMessage: '',
+        },
     })
 
-    const initialControlsData = {
-
-    }
     const [formDataIsValid, setFormDataIsValid] = useState(false);
     const initialData = {
         attributeName: {
@@ -131,15 +136,30 @@ const AddPaymentMethod = (props) => {
             errorMessage: '',
         },
     }
-    const [controlsData, setControlsData] = useState({...initialData})
+    const [controlsData, setControlsData] = useState({ ...initialData })
 
     const [rows, setRows] = useState([]);
+    const [certificate, setCertificate] = useState(null);
 
     const submitHander = (event) => {
         event.preventDefault();
         //proveri da li je uneo barem jedan paymentData
         //posalji i podatke sa form i sa formData
-        props.onSignIn(controls.username.value, controls.password.value);
+        //posalji i sertificate
+        if(rows.length === 0){
+            toastr.error("Register payment method", "You have to enter at least one payment data.");
+            return;
+        }
+
+        if(!certificate){
+            toastr.error("Register payment method", "You have to upload your certificate.");
+            return;
+        }
+        const certificateFormData = new FormData();
+        certificateFormData.append('file', certificate);
+        console.log(certificateFormData)
+        props.onRegisterPaymentMethod({'name': controls.name.value, 'api': controls.api.value, 'commonName': controls.commonName.value, 
+        'subscription': controls.subscription.value},certificateFormData, rows, history );
     }
 
     const submitDataHander = (event) => {
@@ -155,15 +175,19 @@ const AddPaymentMethod = (props) => {
 
     }
 
-    const clearForm =  () => {
-        setControlsData({...initialData})
+    const clearForm = () => {
+        setControlsData({ ...initialData })
         setFormDataIsValid(false);
-        // document.getElementById("create-data").reset();
     }
 
-    function createData(attributeName, attributeType, attributeJSONName) {
+    const createData = (attributeName, attributeType, attributeJSONName) => {
         return { 'attributeName': attributeName, 'attributeType': attributeType, 'attributeJSONName': attributeJSONName };
     }
+
+    const handleChooseFile = ({ target }) => {
+        setCertificate(target.files[0]);
+    }
+
 
     return (
         <Container component="main" maxWidth="md">
@@ -172,17 +196,36 @@ const AddPaymentMethod = (props) => {
                 <Typography component="h1" variant="h4">Register Payment Method</Typography>
                 <Grid container align="center" spacing={4} justify="center" className={classes.gridData}>
                     <Grid item md={6}>
-                        <Paper className={classes.paymentData}>
+                        <Paper className={classes.mainData}>
                             <Typography variant="h6">Main Data</Typography>
                             <form className={classes.form} noValidate onSubmit={submitHander}>
                                 <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} />
                             </form>
+                            <div  className={classes.chooseCertificate}>
+                                <input type="file" accept=".crt, .p12" hidden id="upload-file"
+                                    onChange={handleChooseFile} />
+                                <label htmlFor="upload-file">
+                                    <Grid container>
+                                        <Grid item xs={5}>
+                                            <Button color="primary" variant="contained" component="span" style={{float: "left"}}>
+                                                Choose certificate
+                                    </Button>
+                                        </Grid>
+                                        <Grid item xs={7} className={classes.fileNameGrid} >
+                                            <Typography component="span"  className={classes.fileName}>
+                                                {certificate ? certificate.name : ''}
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                </label>
+                            </div>
+
                         </Paper>
                     </Grid>
                     <Grid item md={6}>
                         <Paper className={classes.paymentData}>
                             <Typography variant="h6">Payment Data</Typography>
-                            <form className={classes.form} noValidate onSubmit={submitDataHander} id ="create-data">
+                            <form className={classes.form} noValidate onSubmit={submitDataHander} id="create-data">
                                 <Form controls={controlsData} setControls={setControlsData} setFormIsValid={setFormDataIsValid} />
                                 <Button type="submit" color="primary" className={classes.submit} variant="contained"
                                     onClick={submitDataHander} disabled={!formDataIsValid}>Add</Button>
@@ -223,18 +266,10 @@ const AddPaymentMethod = (props) => {
     );
 };
 
-// const mapStateToProps = state => {
-//     return {
-//         authRedirectPath: state.signIn.authRedirectPath,
-//     }
-// };
 
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         onSignIn: (username, password) => dispatch(actions.signIn(username, password)),
-//         onRefreshToken: (history) => dispatch(actions.refreshToken(history))
-//     }
-// };
-
-// export default connect(mapStateToProps, mapDispatchToProps)(SignIn);
-export default AddPaymentMethod;
+const mapDispatchToProps = dispatch => {
+    return {
+        onRegisterPaymentMethod: (mainData, certificateData, paymentData,history) => dispatch(actions.registerPaymentMethod(mainData, certificateData, paymentData,history)),
+    }
+};
+export default connect(null, mapDispatchToProps)(AddPaymentMethod);;

@@ -38,4 +38,12 @@ public class PaymentMethod {
 
     @Column
     private boolean subscription;
+
+    public PaymentMethod(String name, String commonName, String URI, boolean subscription) {
+        this.name = name;
+        this.commonName = commonName;
+        this.URI = URI;
+        this.status = PaymentMethodStatus.WAITING_APPROVAL;
+        this.subscription = subscription;
+    }
 }
