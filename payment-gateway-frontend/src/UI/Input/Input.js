@@ -8,18 +8,18 @@ const input = (props) => {
     let inputElement = null;
     switch (props.elementType) {
         case ('input'):
-            inputElement = <TextField variant="outlined" margin="normal" fullWidth
+            inputElement = <TextField margin="normal" fullWidth value ={props.value}
                 error={props.error} helperText={props.error ? props.errorMessage : ''}
                 {...props.elementConfig} onChange={props.changed} />;
             break;
         case ('textarea'):
-            inputElement = <TextField variant="outlined" margin="normal" fullWidth
+            inputElement = <TextField margin="normal" fullWidth
                 error={props.error} helperText={props.error ? props.errorMessage : ''}
                 {...props.elementConfig} onChange={props.changed}
                 multiline />;
             break;
         case ('selectOne'):
-            inputElement = <TextField variant="outlined" margin="normal" fullWidth
+            inputElement = <TextField margin="normal" fullWidth
                 label={props.elementConfig.label} value={props.value} onChange={props.changed}
                 error={props.error} helperText={props.error ? props.errorMessage : ''}
                 select>
@@ -31,7 +31,7 @@ const input = (props) => {
         case ('selectMultiple'):
             let multipleSelect = props.additionalData.multipleSelect === 'true' ? true : false;
             
-            inputElement = <TextField variant="outlined" margin="normal" fullWidth
+            inputElement = <TextField margin="normal" fullWidth
                 label={props.elementConfig.label} value={props.value} onChange={props.changed}
                 error={props.error} helperText={props.error ? props.errorMessage : ''}
                 select SelectProps={{ multiple: multipleSelect }}>
@@ -48,7 +48,7 @@ const input = (props) => {
             />;
             break;
         default:
-            inputElement = <TextField variant="outlined" margin="normal" fullWidth
+            inputElement = <TextField margin="normal" fullWidth
                 error={props.error} helperText={props.error ? props.errorMessage : ''}
                 {...props.elementConfig} onChange={props.changed} />;
     }

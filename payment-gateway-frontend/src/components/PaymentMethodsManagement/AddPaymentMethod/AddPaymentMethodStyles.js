@@ -16,9 +16,28 @@ export const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(1),
     },
     submit: {
-        margin: theme.spacing(3, 0, 2),
+        paddingRight: theme.spacing(6),
+        paddingLeft: theme.spacing(6)
+    },
+    submitForm: {
+        paddingRight: theme.spacing(8),
+        paddingLeft: theme.spacing(8)
     },
     table: {
-        minWidth: 650,
-      },
+        minWidth: 100,
+    },
+    mainPaper: {
+        marginTop:theme.spacing(2),
+        padding: theme.spacing(2),
+        backgroundColor: '#fafafa',
+    },
+    paymentData: {
+        padding: theme.spacing(2),
+    },
+    gridData: {
+        paddingTop: theme.spacing(3)
+    },
+    tablecell: {
+        fontSize: '14pt'
+    }
 }));

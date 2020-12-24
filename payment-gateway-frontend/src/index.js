@@ -8,7 +8,8 @@ import { applyMiddleware, combineReducers, createStore, compose } from "redux";
 import thunk from "redux-thunk";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
-import ReduxToastr from "react-redux-toastr";
+import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
+import ReduxToastr from 'react-redux-toastr';
 import paymentHomeReducer from "./components/PaymentHome/PaymentHomeReducer";
 
 const composeEnhancers =
