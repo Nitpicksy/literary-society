@@ -17,6 +17,11 @@ public class BookServiceImpl implements BookService {
     private BookRepository bookRepository;
 
     @Override
+    public Book save(Book book) {
+        return bookRepository.save(book);
+    }
+
+    @Override
     public List<Book> findAllForSale() {
         return bookRepository.findByStatusAndPublishingInfoMerchantSupportsPaymentMethods(
                 BookStatus.IN_STORES, true);
@@ -30,7 +35,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public PublicationRequestDTO getPublicationRequest(Long id) {
         Book book = bookRepository.findOneById(id);
-        return new PublicationRequestDTO(book.getId(),book.getTitle(),book.getGenre().getName(),book.getSynopsis());
+        return new PublicationRequestDTO(book.getId(), book.getTitle(), book.getGenre().getName(), book.getSynopsis());
     }
 
     @Override
