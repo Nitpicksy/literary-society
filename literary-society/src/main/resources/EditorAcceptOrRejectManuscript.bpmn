@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1cqfy44" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:process id="EditorAcceptOrRejectManuscript" isExecutable="true">
+    <bpmn:startEvent id="Event_0gezpvf" name="Start">
+      <bpmn:outgoing>Flow_1hrtkb4</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0vzsuma" name="Success">
+      <bpmn:incoming>Flow_16qqizw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_1w9x7ix" name="Urednik prihvata ili odbija rukopis" camunda:assignee="${mainEditor}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="decision" label="Decision" type="enum">
+            <camunda:properties>
+              <camunda:property id="multipleSelect" value="false" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="requiredSelect" config="true" />
+            </camunda:validation>
+            <camunda:value id="ACCEPTED" name="I want to accept manuscript" />
+            <camunda:value id="REQUEST_REJECTED" name="I want to reject manuscript." />
+          </camunda:formField>
+          <camunda:formField id="reason" label="If you want to reject it, elaborate why" type="textarea">
+            <camunda:properties>
+              <camunda:property id="rows" value="3" />
+            </camunda:properties>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1hrtkb4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tozc9v</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_0p1v23a" name="Promena statusa knjige" camunda:class="nitpicksy.literarysociety.camunda.service.PublicationRequestService">
+      <bpmn:incoming>Flow_0tozc9v</bpmn:incoming>
+      <bpmn:outgoing>Flow_15y1z8z</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_1s7w4h3">
+      <bpmn:incoming>Flow_15y1z8z</bpmn:incoming>
+      <bpmn:outgoing>Flow_16qqizw</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1srp8jb</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_1fv9uea" name="Fail">
+      <bpmn:incoming>Flow_1pk2u9p</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0zzk4x8" errorRef="Error_1dlvfm5" />
+    </bpmn:endEvent>
+    <bpmn:sendTask id="Activity_1kw61yp" name="Slanje email-a piscu sa razlogom odbijanja" camunda:class="nitpicksy.literarysociety.camunda.messages.RequestIsRejectedEmail">
+      <bpmn:incoming>Flow_1srp8jb</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pk2u9p</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_1hrtkb4" sourceRef="Event_0gezpvf" targetRef="Activity_1w9x7ix" />
+    <bpmn:sequenceFlow id="Flow_0tozc9v" sourceRef="Activity_1w9x7ix" targetRef="Activity_0p1v23a" />
+    <bpmn:sequenceFlow id="Flow_15y1z8z" sourceRef="Activity_0p1v23a" targetRef="Gateway_1s7w4h3" />
+    <bpmn:sequenceFlow id="Flow_16qqizw" name="Rukopis je  prihvacen" sourceRef="Gateway_1s7w4h3" targetRef="Event_0vzsuma">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${not rejected}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1srp8jb" name="Rukopis je odbijen" sourceRef="Gateway_1s7w4h3" targetRef="Activity_1kw61yp">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${rejected}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1pk2u9p" sourceRef="Activity_1kw61yp" targetRef="Event_1fv9uea" />
+  </bpmn:process>
+  <bpmn:error id="Error_1dlvfm5" name="greskaOdbijanje" errorCode="greskaOdbijanje" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="EditorAcceptOrRejectManuscript">
+      <bpmndi:BPMNEdge id="Flow_1hrtkb4_di" bpmnElement="Flow_1hrtkb4">
+        <di:waypoint x="188" y="280" />
+        <di:waypoint x="230" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tozc9v_di" bpmnElement="Flow_0tozc9v">
+        <di:waypoint x="330" y="280" />
+        <di:waypoint x="380" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15y1z8z_di" bpmnElement="Flow_15y1z8z">
+        <di:waypoint x="480" y="280" />
+        <di:waypoint x="525" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16qqizw_di" bpmnElement="Flow_16qqizw">
+        <di:waypoint x="575" y="280" />
+        <di:waypoint x="852" y="280" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="564" y="298" width="55" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1srp8jb_di" bpmnElement="Flow_1srp8jb">
+        <di:waypoint x="550" y="255" />
+        <di:waypoint x="550" y="130" />
+        <di:waypoint x="640" y="130" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="515" y="103" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pk2u9p_di" bpmnElement="Flow_1pk2u9p">
+        <di:waypoint x="740" y="130" />
+        <di:waypoint x="852" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0gezpvf_di" bpmnElement="Event_0gezpvf">
+        <dc:Bounds x="152" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="305" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0vzsuma_di" bpmnElement="Event_0vzsuma">
+        <dc:Bounds x="852" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="850" y="305" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1w9x7ix_di" bpmnElement="Activity_1w9x7ix">
+        <dc:Bounds x="230" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0p1v23a_di" bpmnElement="Activity_0p1v23a">
+        <dc:Bounds x="380" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1s7w4h3_di" bpmnElement="Gateway_1s7w4h3" isMarkerVisible="true">
+        <dc:Bounds x="525" y="255" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fv9uea_di" bpmnElement="Event_1fv9uea">
+        <dc:Bounds x="852" y="112" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="861" y="159" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kw61yp_di" bpmnElement="Activity_1kw61yp">
+        <dc:Bounds x="640" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
