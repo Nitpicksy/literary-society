@@ -18,13 +18,10 @@ export const fetchFormFail = (error) => {
     };
 };
 
-
-export const fetchForm = () => {
-    return (dispatch, getState) => {
-
-        const signUpType  = getState().signUp.signUpType;
-
-        axios.get(`/${signUpType}/start-registration`)
+export const fetchForm = (piId, taskId, signUpType) => {
+    return (dispatch) => {
+        console.log(signUpType, piId, taskId)
+        axios.get(`/${signUpType}/registration-form?piId=${piId}&taskId=${taskId}`)
             .then(response => {
                 dispatch(fetchFormSuccess(response.data.formFields, response.data.processInstanceId, response.data.taskId));
             })

@@ -12,6 +12,7 @@ import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import reportWebVitals from './reportWebVitals';
 import signInReducer from './components/Authentication/SignIn/SignInReducer';
+import signUpOptionsReducer from './components/Authentication/SignUpOptions/SignUpOptionsReducer';
 import signUpReducer from './components/Authentication/SignUp/SignUpReducer';
 import resetPasswordReducer from './components/Authentication/ResetPassword/ResetPasswordReducer';
 import activateAccountReducer from './components/Authentication/ActivateAccount/ActivateAccountReducer';
@@ -31,6 +32,7 @@ const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX
 const rootReducer = combineReducers({
     toastr: toastrReducer,
     signIn: signInReducer,
+    signUpOptions: signUpOptionsReducer,
     signUp: signUpReducer,
     resetPassword: resetPasswordReducer,
     activateAccount: activateAccountReducer,

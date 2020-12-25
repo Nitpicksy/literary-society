@@ -5,6 +5,7 @@ import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.response.BookDTO;
 import nitpicksy.literarysociety.dto.response.BookDetailsDTO;
 import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
+import nitpicksy.literarysociety.dto.response.ProcessDataDTO;
 import nitpicksy.literarysociety.mapper.BookDetailsDtoMapper;
 import nitpicksy.literarysociety.mapper.BookDtoMapper;
 import nitpicksy.literarysociety.model.Book;
@@ -14,11 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,8 +43,14 @@ public class BookController {
     }
 
     @GetMapping("/start-publishing")
-    public ResponseEntity<FormFieldsDTO> getPublicationRequestFields() {
-        FormFieldsDTO formFieldsDTO = camundaService.start(CamundaConstants.PROCESS_BOOK_PUBLISHING);
+    public ResponseEntity<ProcessDataDTO> getPublicationRequestFields() {
+        ProcessDataDTO processDataDTO = camundaService.start(CamundaConstants.PROCESS_BOOK_PUBLISHING);
+        return new ResponseEntity<>(processDataDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/publication-request-form")
+    public ResponseEntity<FormFieldsDTO> getPublicationRequestForm(@NotNull @RequestParam String piId, @NotNull @RequestParam String taskId) {
+        FormFieldsDTO formFieldsDTO = camundaService.getFormFields(piId, taskId);
         return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
     }
 

@@ -17,7 +17,7 @@ import { responseInterceptor } from '../../../responseInterceptor';
 import { useHistory } from 'react-router';
 
 const SignUp = (props) => {
-    
+
     const history = useHistory();
     const classes = useStyles();
     const { formFields, fetchForm } = props;
@@ -28,8 +28,11 @@ const SignUp = (props) => {
     responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
 
     useEffect(() => {
-        fetchForm();
-    }, [fetchForm]);
+        console.log(props.processInstanceId, props.taskId, props.signUpType)
+        if (props.processInstanceId && props.taskId && props.signUpType) {
+            fetchForm(props.processInstanceId, props.taskId, props.signUpType);
+        }
+    }, [fetchForm, props.processInstanceId, props.taskId, props.signUpType]);
 
     useEffect(() => {
         if (formFields) {
@@ -50,13 +53,13 @@ const SignUp = (props) => {
             array.push({ fieldId: key, fieldValue: value });
         }
 
-        if(props.signUp === 'readers') {
+        if (props.signUp === 'readers') {
             props.onSignUp(array, props.taskId, history, controls['isBetaReader'].value);
         }
         else {
             props.onSignUp(array, props.taskId, history, false);
         }
-        
+
     }
 
     if (controls) {
@@ -91,16 +94,16 @@ const SignUp = (props) => {
 const mapStateToProps = state => {
     return {
         formFields: state.signUp.formFields,
-        processInstanceId: state.signUp.processInstanceId,
-        taskId: state.signUp.taskId,
+        signUpType: state.signUpOptions.signUpType,
+        processInstanceId: state.signUpOptions.processInstanceId,
+        taskId: state.signUpOptions.taskId,
         refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
-        signUpType: state.signUp.signUpType
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchForm: () => dispatch(actions.fetchForm()),
+        fetchForm: (piId, taskId, signUpType) => dispatch(actions.fetchForm(piId, taskId, signUpType)),
         onSignUp: (signUpData, taskId, history, isBetaReader) => dispatch(actions.signUp(signUpData, taskId, history, isBetaReader)),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history))
     }
