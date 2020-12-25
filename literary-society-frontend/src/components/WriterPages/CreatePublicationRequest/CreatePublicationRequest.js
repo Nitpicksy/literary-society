@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as actions from './CreatePublicationRequestExport';
+import * as signInActions from '../../Authentication/SignIn/SignInExport';
 import { extractControls } from '../../../utility/extractControls';
 import Form from '../../../UI/Form/Form';
 import { CssBaseline, Typography, Container, Avatar, Button } from '@material-ui/core';
@@ -7,20 +8,22 @@ import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import { useStyles } from './CreatePublicationRequestStyles';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
+import { responseInterceptor } from '../../../responseInterceptor';
 
 const CreatePublicationRequest = (props) => {
     const history = useHistory();
     const classes = useStyles();
+    responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
     const { formFields, fetchForm } = props;
     let form = null;
     let [controls, setControls] = useState(null);
     const [formIsValid, setFormIsValid] = useState(false);
 
-    // DODAJ responseInterceptor
-
     useEffect(() => {
-        fetchForm();
-    }, [fetchForm]);
+        if (props.processInstanceId && props.taskId) {
+            fetchForm(props.processInstanceId, props.taskId);
+        }
+    }, [fetchForm, props.processInstanceId, props.taskId]);
 
     useEffect(() => {
         if (formFields) {
@@ -70,15 +73,17 @@ const CreatePublicationRequest = (props) => {
 const mapStateToProps = state => {
     return {
         formFields: state.createPublicationRequest.formFields,
-        processInstanceId: state.createPublicationRequest.processInstanceId,
-        taskId: state.createPublicationRequest.taskId,
+        processInstanceId: state.publRequests.processInstanceId,
+        taskId: state.publRequests.taskId,
+        refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchForm: () => dispatch(actions.fetchForm()),
-        createRequest: (enteredData, taskId, history) => actions.createRequest(enteredData, taskId, history)
+        fetchForm: (piId, taskId) => dispatch(actions.fetchForm(piId, taskId)),
+        createRequest: (enteredData, taskId, history) => actions.createRequest(enteredData, taskId, history),
+        onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
     }
 };
 

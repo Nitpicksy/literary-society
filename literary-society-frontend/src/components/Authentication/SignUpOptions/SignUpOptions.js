@@ -10,7 +10,7 @@ import SignUpOptionCard from '../SignUpOptionCard/SignUpOptionCard';
 const SignUpOptions = (props) => {
 
     const classes = useStyles();
-    const {clearProcessState} = props;
+    const { clearProcessState } = props;
 
     useEffect(() => {
         clearProcessState();

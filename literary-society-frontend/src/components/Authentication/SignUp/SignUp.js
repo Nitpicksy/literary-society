@@ -53,7 +53,7 @@ const SignUp = (props) => {
             array.push({ fieldId: key, fieldValue: value });
         }
 
-        if (props.signUp === 'readers') {
+        if (props.signUpType === 'readers') {
             props.onSignUp(array, props.taskId, history, controls['isBetaReader'].value);
         }
         else {
@@ -79,7 +79,7 @@ const SignUp = (props) => {
                     {form}
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
                         disabled={!formIsValid}>Sign up</Button>
-                    <Grid container justify="flex-end">
+                    <Grid container justify="center">
                         <Grid item>
                             <Link href="/sign-in" variant="body2">Already have an account? Sign in</Link>
                         </Grid>

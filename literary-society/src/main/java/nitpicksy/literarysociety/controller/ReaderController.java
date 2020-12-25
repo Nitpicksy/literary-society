@@ -35,7 +35,7 @@ public class ReaderController {
     }
 
     @GetMapping("/beta/choose-genres")
-    public ResponseEntity<FormFieldsDTO> betaReaderChooseGenres(@RequestParam String piId) {
+    public ResponseEntity<FormFieldsDTO> betaReaderChooseGenres(@NotNull @RequestParam String piId) {
         Task task = taskService.createTaskQuery().processInstanceId(piId).list().get(0);
         FormFieldsDTO formFieldsDTO = camundaService.getFormFields(task.getProcessInstanceId(), task.getId());
         return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
