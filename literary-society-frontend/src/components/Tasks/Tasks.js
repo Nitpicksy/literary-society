@@ -35,7 +35,16 @@ const Tasks = (props) => {
     const selectRow = (properties) => {
         props.setSelectedTask(properties.row.processInstanceId, properties.row.id, properties.row.name);
 
-        history.push('/publication-request');
+        if (properties.row.name === "Obrada zahteva za izdavanje knjige" ||
+            properties.row.name === "Urednik provera da li je delo originalno" ||
+            properties.row.name === "Urednik prihvata ili odbija rukopis") {
+            history.push('/publication-request');
+        } else if (properties.row.name === "Urednik preuzimanje dokumenta") {
+            history.push('/editor-download-document');
+        } else if (properties.row.name === "Slanje PDF verzije rukopisa") {
+            history.push('/writer-upload-document');
+        }
+
     }
 
     if (!loading) {
@@ -44,7 +53,7 @@ const Tasks = (props) => {
         </Grid>;
         if (props.tasks) {
             rows = props.tasks;
-            
+
             data = <Grid container className={classes.table}>
                 <DataGrid rows={rows} columns={columns} pageSize={5} onRowClick={(properties) => selectRow(properties)} />
             </Grid>;

@@ -54,6 +54,12 @@ public class PublicationRequestService implements JavaDelegate {
             execution.setVariable("original",false);
         }
 
+        if(bookStatus.equals(BookStatus.ACCEPTED)){
+            execution.setVariable("rejected",false);
+        }
+        if(bookStatus.equals(BookStatus.REQUEST_REJECTED)){
+            execution.setVariable("rejected",true);
+        }
     }
 
     @Autowired
