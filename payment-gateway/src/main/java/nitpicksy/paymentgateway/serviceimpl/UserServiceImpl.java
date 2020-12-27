@@ -86,6 +86,15 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public Company getAuthenticatedCompany() {
+        Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+        if (currentUser == null) {
+            return null;
+        }
+        return companyRepository.findByCommonName(currentUser.getName());
+    }
+
+    @Override
     public UserTokenState refreshAuthenticationToken(HttpServletRequest request) {
         String refreshToken = tokenUtils.getToken(request);
         String username = this.tokenUtils.getUsernameFromToken(refreshToken);
