@@ -41,7 +41,8 @@ const reducer = (state = initialState, action) => {
                 expiresIn: null,
                 refreshToken: null,
                 isAuthenticated: false,
-                authRedirectPath: action.path
+                authRedirectPath: action.path, 
+                role: null
             };
         case actionTypes.SET_SIGN_IN_REDIRECT_PATH:
             return {

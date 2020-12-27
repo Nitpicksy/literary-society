@@ -52,7 +52,10 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     @Override
     public PaymentMethod registerPaymentMethod(PaymentMethod paymentMethod, Set<Data> listData) {
-
+        if((paymentMethodRepository.findByName(paymentMethod.getName())!= null) ||
+                (paymentMethodRepository.findByCommonName(paymentMethod.getCommonName()) != null)){
+            throw new InvalidDataException("Payment method with same name already exist", HttpStatus.BAD_REQUEST);
+        }
         Set<Data> createdData = dataService.create(listData);
         paymentMethod.setData(createdData);
 

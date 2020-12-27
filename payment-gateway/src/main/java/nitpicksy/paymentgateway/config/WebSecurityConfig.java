@@ -17,6 +17,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+import javax.ws.rs.GET;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -45,8 +47,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
 
-                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .anyRequest().authenticated().and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/payment-methods")
+                .hasAuthority("MANAGE_PAYMENT_METHODS").and()
+                .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/payment-methods/{id}")
+                .hasAuthority("MANAGE_PAYMENT_METHODS")
+                .anyRequest().permitAll().and()
                 .cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(jwtUserDetailsService.tokenUtils,
                         jwtUserDetailsService), BasicAuthenticationFilter.class);

@@ -50,7 +50,7 @@ public class PaymentMethodController {
                 .map(paymentMethod -> paymentMethodMapper.toDto(paymentMethod)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
-    @PostMapping( consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PaymentMethod> registerPaymentMethod(@Valid @RequestBody CreatePaymentMethodDTO createPaymentMethodDTO) {
         //sacuvaj multipart file i sacuvaj njegov naziv
 //        try {

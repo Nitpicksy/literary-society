@@ -10,6 +10,8 @@ import java.util.List;
 @Repository
 public interface PaymentMethodRepository extends JpaRepository<PaymentMethod, Long> {
 
+    PaymentMethod findByName(String name);
+
     PaymentMethod findByCommonName(String commonName);
 
     List<PaymentMethod> findByStatusNot(PaymentMethodStatus status);
