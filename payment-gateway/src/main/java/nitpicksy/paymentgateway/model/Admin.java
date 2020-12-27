@@ -5,64 +5,52 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nitpicksy.paymentgateway.enumeration.AdminStatus;
-import nitpicksy.paymentgateway.enumeration.CompanyStatus;
-import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
+
+import org.joda.time.DateTime;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Company implements UserDetails {
+public class Admin implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String companyName;
-
-    @Column(nullable = false)
-    private String URI;
-
     @Column(unique = true, nullable = false)
-    private String commonName;
+    private String email;
 
-    @Column(name = "success_url", nullable = false)
-    private String successURL;
+    @Column(nullable = false)
+    private String username;
 
-    @Column(name = "error_url", nullable = false)
-    private String errorURL;
-
-    @Column(name ="failed_url", nullable = false)
-    private String failedURL;
+    @Column(nullable = false)
+    private String password;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    private CompanyStatus status;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "company_payment_methods",
-            joinColumns = @JoinColumn(name = "company_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "payment_method_id", referencedColumnName = "id"))
-    private Set<PaymentMethod> paymentMethods = new HashSet<>();
-
-    @OneToMany
-    @JoinColumn(name = "company_id")
-    private Set<Merchant> merchant;
+    private AdminStatus status;
 
     @Column
     private boolean enabled;
@@ -82,15 +70,12 @@ public class Company implements UserDetails {
         return authorities;
     }
 
-
-    @Override
-    public String getPassword() {
-        return "";
-    }
-
-    @Override
-    public String getUsername() {
-        return commonName;
+    public Admin(String email, String username, String password, Role role, AdminStatus status) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.status = status;
     }
 
     @Override
@@ -110,6 +95,27 @@ public class Company implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return (this.getStatus() == CompanyStatus.APPROVED);
+        return (this.getStatus() == AdminStatus.ACTIVE );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Admin admin = (Admin) o;
+        if (admin.id == null || id == null) {
+            return false;
+        }
+        return Objects.equals(id, admin.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+
     }
 }

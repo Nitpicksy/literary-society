@@ -171,7 +171,7 @@ const AddPaymentMethod = (props) => {
             return;
         }
         const certificateFormData = new FormData();
-        certificateFormData.append('file', certificate);
+        certificateFormData.append('certificate', certificate);
         console.log(certificateFormData)
         props.onRegisterPaymentMethod({'name': controls.name.value, 'api': controls.api.value, 'commonName': controls.commonName.value, 
         'subscription': controls.subscription.value, 'email':controls.email.value },certificateFormData, rows, history );
