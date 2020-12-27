@@ -8,11 +8,23 @@ import { DataGrid } from '@material-ui/data-grid';
 import { useStyles } from './PaymentMethodListStyles';
 import { Button, Grid } from '@material-ui/core';
 import * as actions from './PaymentMethodListExport';
+import * as signInActions from "../../Authentication/SignIn/SignInExport";
+import { responseInterceptor } from "../../../responseInterceptor";
+import { useHistory } from "react-router";
 
 const PaymentMethodList = (props) => {
+    const history = useHistory();
+
     const [loading, setLoading] = useState(true);
     const classes = useStyles();
     const { fetchPaymentMethods } = props;
+
+    responseInterceptor.setupInterceptor(
+        history,
+        props.refreshTokenRequestSent,
+        props.onRefreshToken
+    );
+
 
     const columns = [
         { field: 'name', headerName: 'Name', width: 200 },
@@ -33,7 +45,7 @@ const PaymentMethodList = (props) => {
                         variant="contained"
                         color="secondary"
                         size="small"
-                        style={{ marginLeft: 16 }}  onClick={() => rejectHandler(params.row)}> Reject</Button>
+                        style={{ marginLeft: 16 }} onClick={() => rejectHandler(params.row)}> Reject</Button>
                 }
 
                 return (
@@ -129,6 +141,7 @@ const mapDispatchToProps = dispatch => {
     return {
         fetchPaymentMethods: () => dispatch(actions.fetchPaymentMethods()),
         changePaymentMethodStatus: (id, status) => dispatch(actions.changePaymentMethodStatus(id, status)),
+        onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
     }
 };
 
