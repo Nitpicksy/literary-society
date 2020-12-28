@@ -101,7 +101,7 @@ const App = props => {
           <Route path="/publication-request" render={(props) => <PublicationRequest {...props} />} meta={{ roles: [roleEditor] }} />
           <Route path="/editor-download-document" render={(props) => <EditorDownloadDocument {...props} />} meta={{ roles: [roleEditor] }} />
 
-          <Route path="/upload" render={(props) => <WriterUploadWork {...props} />} meta={{ roles:  [roleWriter] }}/>
+          <Route path="/writer-membership-upload" render={(props) => <WriterUploadWork {...props} />} meta={{ roles:  [roleWriter] }}/>
 
           <Route path="/tasks" render={(props) => <Tasks {...props} />} />
           <Route path="/sign-out" render={(props) => <Logout {...props} />} />

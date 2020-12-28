@@ -43,6 +43,8 @@ const Tasks = (props) => {
             history.push('/editor-download-document');
         } else if (properties.row.name === "Slanje PDF verzije rukopisa") {
             history.push('/writer-upload-document');
+        } else if(properties.row.name === 'Membership - submit your work') {
+            history.push('/writer-membership-upload')
         }
 
     }
