@@ -46,16 +46,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
 
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .and()
-                .authorizeRequests().antMatchers("/api/readers/**").permitAll()
-                .and()
-                .authorizeRequests().antMatchers("/api/writers/**").permitAll()
-                .and()
-                .authorizeRequests().antMatchers("/api/process/**").permitAll()
-                .and()
-                .authorizeRequests().antMatchers("/api/books/**").permitAll()
-                .and()
-                .authorizeRequests().antMatchers("/api/payments/confirm").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/books").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/books/{id}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/books/start-publishing").hasAuthority("CREATE_PUBLICATION_REQUEST")
+
+                .antMatchers(HttpMethod.POST, "/api/process/{taskId}").permitAll()
+
+                .antMatchers(HttpMethod.POST, "/api/payments/pay").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/payments/confirm").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/readers/start-registration").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/readers/beta/choose-genres").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/tasks").hasAuthority("MANAGE_TASKS")
+                .antMatchers(HttpMethod.GET, "/api/tasks/{taskId}").hasAuthority("MANAGE_TASKS")
+                .antMatchers(HttpMethod.GET, "/api/tasks/{taskId}/complete-and-download").hasAuthority("DOWNLOAD_BOOK_AND_COMPLETE_TASK")
+                .antMatchers(HttpMethod.GET, "/api/tasks/{taskId}/complete-and-upload").hasAuthority("UPLOAD_BOOK_AND_COMPLETE_TASK")
+
+                .antMatchers(HttpMethod.GET, "/api/transactions/{id}").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/writers/start-registration").permitAll()
+
                 .anyRequest().authenticated().and()
                 .cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(jwtUserDetailsService.tokenUtils,

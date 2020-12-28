@@ -110,32 +110,6 @@ public class TaskController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping(value = "upload-proba",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> uploadProba(@Valid @RequestParam MultipartFile pdfFile) {
-        try {
-            pdfDocumentService.upload(pdfFile, null);
-        } catch (IOException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PutMapping(value = "proba/{name}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<byte[]> proba(@PathVariable String name) {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-
-        try {
-            byte[] content = pdfDocumentService.download(name);
-            return new ResponseEntity<>(content, headers, HttpStatus.OK);
-        } catch (IOException | URISyntaxException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @Autowired
     public TaskController(UserService userService, CamundaService camundaService, BookService bookService,
                           PDFDocumentService pdfDocumentService) {

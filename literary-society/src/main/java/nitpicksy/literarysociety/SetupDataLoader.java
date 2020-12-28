@@ -53,6 +53,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Permission manageEditors = createPermissionIfNotFound("MANAGE_EDITORS");
         Permission manageLecturers = createPermissionIfNotFound("MANAGE_LECTURER");
 
+        Permission manageTasks = createPermissionIfNotFound("MANAGE_TASKS");
+        Permission createPublicationRequest= createPermissionIfNotFound("CREATE_PUBLICATION_REQUEST");
+        Permission downloadBookAndCompleteTask = createPermissionIfNotFound("DOWNLOAD_BOOK_AND_COMPLETE_TASK");
+        Permission uploadBookAndCompleteTask = createPermissionIfNotFound("UPLOAD_BOOK_AND_COMPLETE_TASK");
 
         Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers));
         createRoleIfNotFound("ROLE_ADMIN", adminPermissions);
@@ -60,16 +64,16 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Set<Permission> readerPermissions = new HashSet<>();
         createRoleIfNotFound("ROLE_READER", readerPermissions);
 
-        Set<Permission> writerPermissions = new HashSet<>();
+        Set<Permission> writerPermissions = new HashSet<>(Arrays.asList(createPublicationRequest,manageTasks,downloadBookAndCompleteTask,uploadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_WRITER", writerPermissions);
 
-        Set<Permission> committeeMemberPermissions = new HashSet<>();
+        Set<Permission> committeeMemberPermissions = new HashSet<>(Arrays.asList(manageTasks,downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_COMMITTEE_MEMBER", committeeMemberPermissions);
 
-        Set<Permission> editorPermissions = new HashSet<>();
+        Set<Permission> editorPermissions = new HashSet<>(Arrays.asList(manageTasks,downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_EDITOR", editorPermissions);
 
-        Set<Permission> lecturerPermissions = new HashSet<>();
+        Set<Permission> lecturerPermissions = new HashSet<>(Arrays.asList(manageTasks,downloadBookAndCompleteTask,uploadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_LECTURER", lecturerPermissions);
 
         Set<Permission> merchantPermissions = new HashSet<>();
