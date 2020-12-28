@@ -124,13 +124,9 @@ const App = props => {
     );
   }
 
-  let toolbar = null;
-  if (props.isAuthenticated) {
-    toolbar = <CustomToolbar role={props.role} />;
-  }
   return (
     <div>
-      {toolbar}
+      <CustomToolbar role={props.role} isAuthenticated = {props.isAuthenticated}/>
       <Suspense fallback={<p>Loading...</p>}>{routes}</Suspense>
       <main>
         {props.children}
