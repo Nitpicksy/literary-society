@@ -8,7 +8,7 @@ const input = (props) => {
     let inputElement = null;
     switch (props.elementType) {
         case ('input'):
-            inputElement = <TextField margin="normal" fullWidth
+            inputElement = <TextField margin="normal" fullWidth value ={props.value}
                 error={props.error} helperText={props.error ? props.errorMessage : ''}
                 {...props.elementConfig} onChange={props.changed} />;
             break;
@@ -41,7 +41,7 @@ const input = (props) => {
             </TextField>;
             break;
         case ('checkbox'):
-            inputElement = <FormControlLabel label={props.elementConfig.label}
+            inputElement = <FormControlLabel  label={props.elementConfig.label} style={{float: "left"}}
                 control={
                     <Checkbox onChange={props.changed} />
                 }

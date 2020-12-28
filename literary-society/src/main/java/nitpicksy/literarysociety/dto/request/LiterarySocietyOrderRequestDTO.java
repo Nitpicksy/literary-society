@@ -17,8 +17,8 @@ public class LiterarySocietyOrderRequestDTO {
 
     @NotNull
     @Positive(message = "Id must be positive.")
-    Long merchantOrderId;
+    private Long merchantOrderId;
 
     @NotBlank
-    String status;
+    private String status;
 }

@@ -8,8 +8,11 @@ import { applyMiddleware, combineReducers, createStore, compose } from "redux";
 import thunk from "redux-thunk";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
-import ReduxToastr from "react-redux-toastr";
+import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
+import ReduxToastr from 'react-redux-toastr';
 import paymentHomeReducer from "./components/PaymentHome/PaymentHomeReducer";
+import paymentMethodListReducer from './components/PaymentMethodsManagement/PaymentMethodList/PaymentMethodListReducer';
+import signInReducer from './components/Authentication/SignIn/SignInReducer';
 
 const composeEnhancers =
   process.env.NODE_ENV === "development"
@@ -19,6 +22,8 @@ const composeEnhancers =
 const rootReducer = combineReducers({
   toastr: toastrReducer,
   paymentHome: paymentHomeReducer,
+  paymentMethodList:paymentMethodListReducer, 
+  signIn: signInReducer,
 });
 
 const store = createStore(

@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { useStyles } from './AddPaymentMethodStyles';
 import Form from '../../../UI/Form/Form';
 import { connect } from 'react-redux';
-import { Redirect, useHistory } from 'react-router';
+import {  useHistory } from 'react-router';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { Paper } from '@material-ui/core';
-import LocalAtmIcon from '@material-ui/icons/LocalAtm';
+import { Grid, Paper } from '@material-ui/core';
+import { toastr } from 'react-redux-toastr';
+import * as actions from './AddPaymentMethodExport';
 
 const AddPaymentMethod = (props) => {
     const history = useHistory();
@@ -42,22 +41,60 @@ const AddPaymentMethod = (props) => {
         api: {
             elementType: 'input',
             elementConfig: {
-                label:'Api'
+                label: 'API'
             },
             value: '',
             validation: {
                 required: true,
-                pattern: '^(http(s)?:\/\/)?((www\.)|(localhost:))[(\/)?a-zA-Z0-9@:%._\+~#=-]{1,256}$'
+                pattern: '^(http(s)?:\\/\\/)?((www\\.)|(localhost:))[(\\/)?a-zA-Z0-9@:%._\\+~#=-]{1,256}$'
             },
             valid: false,
             touched: false,
             error: false,
             errorMessage: 'API is not valid',
-        }
+        },
+        email: {
+            elementType: 'input',
+            elementConfig: {
+                label: 'Email',
+            },
+            value: '',
+            validation: {
+                required: true,
+                pattern: '^[a-zA-Z0-9_+&*-]+(?:.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+.)+[a-zA-Z]{2,7}$'
+            },
+            valid: false,
+            touched: false,
+            error: false,
+            errorMessage: 'Invalid e-mail address entered.',
+        },
+        subscription: {
+            elementType: 'checkbox',
+            elementConfig: {
+                label: 'Support subscription'
+            },
+            value: false,
+            valid: true,
+            error: false,
+        },
+        commonName: {
+            elementType: 'input',
+            elementConfig: {
+                label: 'Common Name'
+            },
+            value: '',
+            validation: {
+                required: true,
+            },
+            valid: false,
+            touched: false,
+            error: false,
+            errorMessage: '',
+        },
     })
 
     const [formDataIsValid, setFormDataIsValid] = useState(false);
-    const [controlsData, setControlsData] = useState({
+    const initialData = {
         attributeName: {
             elementType: 'input',
             elementConfig: {
@@ -113,89 +150,141 @@ const AddPaymentMethod = (props) => {
             error: false,
             errorMessage: '',
         },
-    })
+    }
+    const [controlsData, setControlsData] = useState({ ...initialData })
 
     const [rows, setRows] = useState([]);
+    const [certificate, setCertificate] = useState(null);
 
     const submitHander = (event) => {
         event.preventDefault();
         //proveri da li je uneo barem jedan paymentData
         //posalji i podatke sa form i sa formData
-        props.onSignIn(controls.username.value, controls.password.value);
+        //posalji i sertificate
+        if(rows.length === 0){
+            toastr.error("Register payment method", "You have to enter at least one payment data.");
+            return;
+        }
+
+        if(!certificate){
+            toastr.error("Register payment method", "You have to upload your certificate.");
+            return;
+        }
+        const certificateFormData = new FormData();
+        certificateFormData.append('certificate', certificate);
+        console.log(certificateFormData)
+        props.onRegisterPaymentMethod({'name': controls.name.value, 'api': controls.api.value, 'commonName': controls.commonName.value, 
+        'subscription': controls.subscription.value, 'email':controls.email.value },certificateFormData, rows, history );
     }
 
     const submitDataHander = (event) => {
         event.preventDefault();
-        var newRows = {...rows};
-        newRows.push(createData(controls.attributeName.value,controls.attributeType.value,controls.attributeJSONName.value));
-        setRows(newRows)
+        var newRows = [...rows];
+        if (newRows.some(e => e.attributeName === controlsData.attributeName.value)) {
+            toastr.error('Payment Data', 'Payment Data with same attribute name already exist.');
+        } else {
+            newRows.push(createData(controlsData.attributeName.value, controlsData.attributeType.value, controlsData.attributeJSONName.value));
+            setRows(newRows);
+            clearForm();
+        }
+
     }
 
-    function createData(attributeName, attributeType,attributeJSONName ) {
-        return {attributeName, attributeType,attributeJSONName};
+    const clearForm = () => {
+        setControlsData({ ...initialData })
+        setFormDataIsValid(false);
     }
+
+    const createData = (attributeName, attributeType, attributeJSONName) => {
+        return { 'attributeName': attributeName, 'attributeType': attributeType, 'attributeJSONName': attributeJSONName };
+    }
+
+    const handleChooseFile = ({ target }) => {
+        setCertificate(target.files[0]);
+    }
+
 
     return (
-        <Container component="main" maxWidth="sm">
+        <Container component="main" maxWidth="md">
             <CssBaseline />
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                    <LocalAtmIcon />
-                </Avatar>
-                <Typography component="h1" variant="h4">Add your Payment Method</Typography>
-                <form className={classes.form} noValidate onSubmit={submitHander}>
-                    <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} />
-                    <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
-                        onClick={submitHander} disabled={!formIsValid}>Submit</Button>
-                </form>
-                <Paper>
-                    <Typography component="h1" variant="h4">Payment Data</Typography>
-                    <form className={classes.form} noValidate onSubmit={submitDataHander}>
-                        <Form controls={controlsData} setControls={setControlsData} setFormIsValid={setFormDataIsValid} />
-                        <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
-                            onClick={submitDataHander} disabled={!formDataIsValid}>Submit</Button>
-                    </form>
-                    <TableContainer component={Paper}>
-                        <Table aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Attribute name</TableCell>
-                                    <TableCell align="right">Attribute  type</TableCell>
-                                    <TableCell align="right">Attribute JSON name</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {rows.map((row) => (
-                                    <TableRow key={row.name}>
-                                        <TableCell component="th" scope="row">
-                                            {row.attributeName}
-                                        </TableCell>
-                                        <TableCell align="right">{row.attributeType}</TableCell>
-                                        <TableCell align="right">{row.attributeJSONName}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Paper>
+            <Paper className={classes.mainPaper}>
+                <Typography component="h1" variant="h4">Register Payment Method</Typography>
+                <Grid container align="center" spacing={4} justify="center" className={classes.gridData}>
+                    <Grid item md={6}>
+                        <Paper className={classes.mainData}>
+                            <Typography variant="h6">Main Data</Typography>
+                            <form className={classes.form} noValidate onSubmit={submitHander}>
+                                <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} />
+                            </form>
+                            <div  className={classes.chooseCertificate}>
+                                <input type="file" accept=".crt, .p12" hidden id="upload-file"
+                                    onChange={handleChooseFile} />
+                                <label htmlFor="upload-file">
+                                    <Grid container>
+                                        <Grid item xs={5}>
+                                            <Button color="primary" variant="contained" component="span" style={{float: "left"}}>
+                                                Choose certificate
+                                    </Button>
+                                        </Grid>
+                                        <Grid item xs={7} className={classes.fileNameGrid} >
+                                            <Typography component="span"  className={classes.fileName}>
+                                                {certificate ? certificate.name : ''}
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                </label>
+                            </div>
 
-            </div>
+                        </Paper>
+                    </Grid>
+                    <Grid item md={6}>
+                        <Paper className={classes.paymentData}>
+                            <Typography variant="h6">Payment Data</Typography>
+                            <form className={classes.form} noValidate onSubmit={submitDataHander} id="create-data">
+                                <Form controls={controlsData} setControls={setControlsData} setFormIsValid={setFormDataIsValid} />
+                                <Button type="submit" color="primary" className={classes.submit} variant="contained"
+                                    onClick={submitDataHander} disabled={!formDataIsValid}>Add</Button>
+                            </form>
+                        </Paper>
+                    </Grid>
+                    <Grid item md={12}>
+                        <TableContainer component={Paper} className={classes.table}>
+                            <Table aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell className={classes.tablecell}>Attribute name</TableCell>
+                                        <TableCell align="right" className={classes.tablecell}>Attribute  type</TableCell>
+                                        <TableCell align="right" className={classes.tablecell}>Attribute JSON name</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {rows.map((row) => (
+                                        <TableRow key={row.attributeName}>
+                                            <TableCell component="th" scope="row" className={classes.tablecell}>
+                                                {row.attributeName}
+                                            </TableCell>
+                                            <TableCell align="right" className={classes.tablecell}>{row.attributeType}</TableCell>
+                                            <TableCell align="right" className={classes.tablecell}>{row.attributeJSONName}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
+                </Grid>
+                <div className={classes.paper}>
+                    <Button type="submit" color="primary" className={classes.submitForm} variant="contained"
+                        onClick={submitHander} disabled={!formIsValid}>Submit</Button>
+                </div>
+            </Paper>
         </Container>
     );
 };
 
-// const mapStateToProps = state => {
-//     return {
-//         authRedirectPath: state.signIn.authRedirectPath,
-//     }
-// };
 
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         onSignIn: (username, password) => dispatch(actions.signIn(username, password)),
-//         onRefreshToken: (history) => dispatch(actions.refreshToken(history))
-//     }
-// };
-
-// export default connect(mapStateToProps, mapDispatchToProps)(SignIn);
-export default AddPaymentMethod;
+const mapDispatchToProps = dispatch => {
+    return {
+        onRegisterPaymentMethod: (mainData, certificateData, paymentData,history) => dispatch(actions.registerPaymentMethod(mainData, certificateData, paymentData,history)),
+    }
+};
+export default connect(null, mapDispatchToProps)(AddPaymentMethod);;
