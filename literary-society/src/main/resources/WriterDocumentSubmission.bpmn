@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0qezoz3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:process id="WriterDocumentSubmission" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>Flow_1wz7n08</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0rnyu5t" name="End">
+      <bpmn:incoming>Flow_0ahgelm</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1wz7n08" sourceRef="StartEvent_1" targetRef="Activity_03m9fx4" />
+    <bpmn:userTask id="Activity_03m9fx4" name="Posalji svoje radove" camunda:assignee="${writer}">
+      <bpmn:incoming>Flow_1wz7n08</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ahgelm</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0ahgelm" sourceRef="Activity_03m9fx4" targetRef="Event_0rnyu5t" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="WriterDocumentSubmission">
+      <bpmndi:BPMNEdge id="Flow_0ahgelm_di" bpmnElement="Flow_0ahgelm">
+        <di:waypoint x="380" y="120" />
+        <di:waypoint x="1002" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wz7n08_di" bpmnElement="Flow_1wz7n08">
+        <di:waypoint x="178" y="120" />
+        <di:waypoint x="280" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0rnyu5t_di" bpmnElement="Event_0rnyu5t">
+        <dc:Bounds x="1002" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="145" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="142" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="149" y="145" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xt7mcx_di" bpmnElement="Activity_03m9fx4">
+        <dc:Bounds x="280" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
