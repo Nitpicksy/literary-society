@@ -21,6 +21,7 @@ import transactionReducer from './components/Payment/Transaction/TransactionRedu
 import createPublicationRequestReducer from './components/WriterPages/CreatePublicationRequest/CreatePublicationRequestReducer';
 import tasksReducer from './components/Tasks/TasksReducer';
 import publicationRequestReducer from './components/Tasks/Task/PublicationRequest/PublicationRequestReducer';
+import editorChooseBetaReadersReducer from './components/Tasks/Task/EditorChooseBetaReaders/EditorChooseBetaReadersReducer';
 import bookReducer from './components/BookDetails/BookDetailsReducer';
 import editorDownloadDocumentReducer from './components/Tasks/Task/EditorDownloadDocument/EditorDownloadDocumentReducer';
 import writerUploadDocumentReducer from './components/Tasks/Task/WriterUploadDocument/WriterUploadDocumentReducer';
@@ -43,6 +44,7 @@ const rootReducer = combineReducers({
     book:bookReducer, 
     editorDownloadDocument: editorDownloadDocumentReducer,
     writerUploadDocument: writerUploadDocumentReducer,
+    editorChooseBetaReaders:editorChooseBetaReadersReducer
 });
 
 const store = createStore(rootReducer, composeEnhancers(

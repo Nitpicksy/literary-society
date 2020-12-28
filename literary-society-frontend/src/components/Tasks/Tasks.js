@@ -35,14 +35,17 @@ const Tasks = (props) => {
     const selectRow = (properties) => {
         props.setSelectedTask(properties.row.processInstanceId, properties.row.id, properties.row.name);
 
-        if (properties.row.name === "Obrada zahteva za izdavanje knjige" ||
-            properties.row.name === "Urednik provera da li je delo originalno" ||
-            properties.row.name === "Urednik prihvata ili odbija rukopis") {
+        if (properties.row.name === "Obradite zahtev za izdavanje knjige" ||
+            properties.row.name === "Proverite da li je delo originalno" ||
+            properties.row.name === "Prihvatite ili odbijte rukopis" ||
+            properties.row.name === "Definišite da li se rukopis šalje skupu beta čitaoca") {
             history.push('/publication-request');
         } else if (properties.row.name === "Urednik preuzimanje dokumenta") {
             history.push('/editor-download-document');
         } else if (properties.row.name === "Slanje PDF verzije rukopisa") {
             history.push('/writer-upload-document');
+        }else if (properties.row.name === "Odaberite beta-citaoce") {
+            history.push('/editor-choose-beta-readers');
         }
 
     }
