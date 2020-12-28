@@ -90,6 +90,7 @@ const CustomToolbar = (props) => {
                     Payment Gateway
                 </Typography>
                 <Button className={classes.button} color="inherit" onClick={() => redirect('/add-payment-method')}>Add payment method</Button>
+                <Button className={classes.button} color="inherit" onClick={() => redirect('/add-company')}>Add company</Button>
 
                 {checkRole(roleAdmin) ? <AdminToolbar /> : null}
                 {nonAuthenticated}
