@@ -15,6 +15,7 @@ import NonAuthorized from './components/Authentication/Error/NonAuthorized';
 import CustomToolbar from './components/Navigation/Toolbar/Toolbar';
 import { GuardProvider, GuardedRoute } from 'react-router-guards';
 import Logout from './components/Authentication/SignIn/Logout';
+import AddCompanySuccess from './components/CompanyManagement/AddCompany/AddCompanySuccess';
 
 const App = (props) => {
   const { onTryAutoSignUp } = props;
@@ -52,6 +53,7 @@ const App = (props) => {
       <Route path="/add-payment-method-success" render={() => <AddPaymentMethodSuccess {...props} />} />
 
       <Route path="/add-company" render={() => <AddCompany {...props} />} />
+      <Route path="/add-company-success" render={() => <AddCompanySuccess {...props} />} />
 
       <Route path="/" render={() => <h1> Welcome, navigate to payment/:id. </h1>} />
     </Switch>
@@ -69,6 +71,7 @@ const App = (props) => {
           <Route path="/add-payment-method-success" render={() => <AddPaymentMethodSuccess {...props} />} />
 
           <Route path="/add-company" render={() => <AddCompany {...props} />} />
+          <Route path="/add-company-success" render={() => <AddCompanySuccess {...props} />} />
 
           <Route path="/error/non-authorized" render={(props) => <NonAuthorized {...props} />} />
 
