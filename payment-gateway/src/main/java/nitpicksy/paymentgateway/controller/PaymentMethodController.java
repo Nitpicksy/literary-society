@@ -1,12 +1,10 @@
 package nitpicksy.paymentgateway.controller;
 
+import nitpicksy.paymentgateway.dto.both.PaymentMethodDTO;
 import nitpicksy.paymentgateway.dto.request.CreatePaymentMethodDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentMethodDataDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentMethodResponseDTO;
-import nitpicksy.paymentgateway.mapper.CreatePaymentMethodMainDataMapper;
-import nitpicksy.paymentgateway.mapper.DataMapper;
-import nitpicksy.paymentgateway.mapper.PaymentMethodDataMapper;
-import nitpicksy.paymentgateway.mapper.PaymentMethodMapper;
+import nitpicksy.paymentgateway.mapper.*;
 import nitpicksy.paymentgateway.model.PaymentMethod;
 import nitpicksy.paymentgateway.service.PaymentMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +42,8 @@ public class PaymentMethodController {
 
     private PaymentMethodDataMapper paymentMethodDataMapper;
 
+    private PaymentMethodDtoMapper paymentMethodDtoMapper;
+
     @GetMapping("/{orderId}")
     public ResponseEntity<List<PaymentMethodResponseDTO>> getPaymentMethodsForMerchant(@PathVariable("orderId") @Positive(message = "Id must be positive.") Long orderId) {
         return new ResponseEntity<>(paymentMethodService.findMerchantPaymentMethods(orderId).stream()
@@ -70,19 +70,27 @@ public class PaymentMethodController {
                 .map(paymentMethod -> paymentMethodDataMapper.toDto(paymentMethod)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/approved")
+    public ResponseEntity<List<PaymentMethodDTO>> findAllApproved() {
+        return new ResponseEntity<>(paymentMethodService.findAllApproved().stream()
+                .map(paymentMethod -> paymentMethodDtoMapper.toDto(paymentMethod)).collect(Collectors.toList()), HttpStatus.OK);
+    }
+
     @PutMapping(value = "/{id}")
     public ResponseEntity<PaymentMethodDataDTO> changePaymentMethodStatus(@PathVariable @Positive Long id,
-                                                                          @RequestParam @Pattern(regexp = "(?i)(approve|reject)$", message = "Status is not valid.")  String status) {
+                                                                          @RequestParam @Pattern(regexp = "(?i)(approve|reject)$", message = "Status is not valid.") String status) {
         return new ResponseEntity<>(paymentMethodDataMapper.toDto(paymentMethodService.changePaymentMethodStatus(id, status)), HttpStatus.OK);
     }
 
     @Autowired
-    public PaymentMethodController(PaymentMethodService paymentMethodService, PaymentMethodMapper paymentMethodMapper,DataMapper dataMapper,
-                                   CreatePaymentMethodMainDataMapper mainDataMapper,PaymentMethodDataMapper paymentMethodDataMapper) {
+    public PaymentMethodController(PaymentMethodService paymentMethodService, PaymentMethodMapper paymentMethodMapper, DataMapper dataMapper,
+                                   CreatePaymentMethodMainDataMapper mainDataMapper, PaymentMethodDataMapper paymentMethodDataMapper,
+                                   PaymentMethodDtoMapper paymentMethodDtoMapper) {
         this.paymentMethodService = paymentMethodService;
         this.paymentMethodMapper = paymentMethodMapper;
         this.dataMapper = dataMapper;
-        this.mainDataMapper=mainDataMapper;
+        this.mainDataMapper = mainDataMapper;
         this.paymentMethodDataMapper = paymentMethodDataMapper;
+        this.paymentMethodDtoMapper = paymentMethodDtoMapper;
     }
 }

@@ -52,9 +52,9 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     @Override
     public PaymentMethod registerPaymentMethod(PaymentMethod paymentMethod, Set<Data> listData) {
-        if((paymentMethodRepository.findByName(paymentMethod.getName())!= null) ||
-                (paymentMethodRepository.findByCommonName(paymentMethod.getCommonName()) != null)){
-            throw new InvalidDataException("Payment method with same name already exist", HttpStatus.BAD_REQUEST);
+        if ((paymentMethodRepository.findByName(paymentMethod.getName()) != null) ||
+                (paymentMethodRepository.findByCommonName(paymentMethod.getCommonName()) != null)) {
+            throw new InvalidDataException("Payment method with the same name already exists.", HttpStatus.BAD_REQUEST);
         }
         Set<Data> createdData = dataService.create(listData);
         paymentMethod.setData(createdData);
@@ -68,15 +68,26 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     @Override
+    public List<PaymentMethod> findAllApproved() {
+        return paymentMethodRepository.findByStatus(PaymentMethodStatus.APPROVED);
+    }
+
+    @Override
+    public List<PaymentMethod> findByIds(List<Long> ids) {
+        return paymentMethodRepository.findByIdIn(ids);
+    }
+
+
+    @Override
     public PaymentMethod changePaymentMethodStatus(Long id, String status) {
-        Optional<PaymentMethod> optionalPaymentMethod =  paymentMethodRepository.findById(id);
-        if(optionalPaymentMethod.isPresent()){
+        Optional<PaymentMethod> optionalPaymentMethod = paymentMethodRepository.findById(id);
+        if (optionalPaymentMethod.isPresent()) {
             PaymentMethod paymentMethod = optionalPaymentMethod.get();
-            if(status.equals("approve")){
+            if (status.equals("approve")) {
                 //add certificate in truststore
                 paymentMethod.setStatus(PaymentMethodStatus.APPROVED);
                 composeAndSendEmailApprovedRequest(paymentMethod.getEmail());
-            }else {
+            } else {
                 paymentMethod.setStatus(PaymentMethodStatus.REJECTED);
                 composeAndSendRejectionEmail(paymentMethod.getEmail());
             }
@@ -105,7 +116,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     @Autowired
     public PaymentMethodServiceImpl(OrderService orderService, PaymentMethodRepository paymentMethodRepository,
-                                    DataService dataService,EmailNotificationService emailNotificationService) {
+                                    DataService dataService, EmailNotificationService emailNotificationService) {
         this.orderService = orderService;
         this.paymentMethodRepository = paymentMethodRepository;
         this.dataService = dataService;

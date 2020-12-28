@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const instance = axios.create({
   // baseURL: "https://localhost:8080/payment-gateway/api",
-  baseURL: "https://localhost:50292/api",
+  baseURL: "https://localhost:57490/api",
   orders: "/orders",
   payments: "/payments",
 });

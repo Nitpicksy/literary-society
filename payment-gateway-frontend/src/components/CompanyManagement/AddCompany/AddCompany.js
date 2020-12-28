@@ -37,23 +37,21 @@ const AddCompany = (props) => {
 
     const onSubmit = (companyData) => {
         if (!certificate) {
-            toastr.error("Add Company", "You need to upload your certificate.");
+            toastr.warning("Add Company", "You need to upload your certificate.");
             return;
         }
 
         if (!(supportedPaymentMethods && Array.isArray(supportedPaymentMethods) && supportedPaymentMethods.length)) {
-            toastr.error("Add Company", "You need to support at least one payment method.");
+            toastr.warning("Add Company", "You need to support at least one payment method.");
             return;
         }
 
         const certFormData = new FormData();
         certFormData.append('certificate', certificate);
+        certFormData.append('companyData', new Blob([JSON.stringify(companyData)], { type: "application/json" }));
+        certFormData.append('supportedPaymentMethods', new Blob([JSON.stringify(supportedPaymentMethods)], { type: "application/json" }));
 
-        props.onAddCompany({
-            companyData,
-            certFormData,
-            supportedPaymentMethods
-        }, history);
+        props.onAddCompany(certFormData, history);
     };
 
     const createTextField = (name, label) => {
@@ -79,7 +77,7 @@ const AddCompany = (props) => {
                         message: label + ' is required'
                     },
                     pattern: {
-                        value: new RegExp('^(http(s)?:\\/\\/)?((www\\.)|(localhost:))[(\\/)?a-zA-Z0-9@:%._\\+~#=-]{1,256}$'),
+                        value: new RegExp('((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+(:[0-9]+)?|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)'),
                         message: 'Invalid URL address'
                     }
                 })} />

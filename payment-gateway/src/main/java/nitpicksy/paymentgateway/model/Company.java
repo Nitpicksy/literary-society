@@ -45,8 +45,11 @@ public class Company implements UserDetails {
     @Column(name = "error_url", nullable = false)
     private String errorURL;
 
-    @Column(name ="failed_url", nullable = false)
+    @Column(name = "failed_url", nullable = false)
     private String failedURL;
+
+    @Column(unique = true, nullable = false)
+    private String certificateName;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Role role;
@@ -112,4 +115,5 @@ public class Company implements UserDetails {
     public boolean isEnabled() {
         return (this.getStatus() == CompanyStatus.APPROVED);
     }
+
 }
