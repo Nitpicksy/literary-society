@@ -1,183 +1,172 @@
-import React, { useState } from 'react';
-import { Avatar, Button, CssBaseline, Typography, Container, TextField } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import * as actions from './AddCompanyActions';
+import { Avatar, Button, CssBaseline, Typography, Container, TextField, Grid, Paper, FormControlLabel, Checkbox } from '@material-ui/core';
 import BusinessIcon from '@material-ui/icons/Business';
-import Form from '../../../UI/Form/Form';
 import { useStyles } from './AddCompanyStyles';
 import { connect } from 'react-redux';
-import { Redirect, useHistory } from 'react-router';
+import { useHistory } from 'react-router';
+import { useForm } from "react-hook-form";
+import { toastr } from 'react-redux-toastr';
 
 const AddCompany = (props) => {
+
     const history = useHistory();
-
     const classes = useStyles();
-    const [formIsValid, setFormIsValid] = useState(false);
+    const { register, handleSubmit, errors } = useForm({ mode: 'all' });
+    const { fetchPaymentMethods } = props;
 
-    const [controls, setControls] = useState({
-        name: {
-            elementType: 'input',
-            elementConfig: {
-                label: 'Name'
-            },
-            value: '',
-            validation: {
-                required: true,
-            },
-            valid: false,
-            touched: false,
-            error: false,
-            errorMessage: '',
-        },
-        websiteURL: {
-            elementType: 'input',
-            elementConfig: {
-                label: 'Website URL'
-            },
-            value: '',
-            validation: {
-                required: true,
-                pattern: '^(http(s)?:\\/\\/)?((www\\.)|(localhost:))[(\\/)?a-zA-Z0-9@:%._\\+~#=-]{1,256}$'
-            },
-            valid: false,
-            touched: false,
-            error: false,
-            errorMessage: 'Website URL is not valid',
-        },
-        commonName: {
-            elementType: 'input',
-            elementConfig: {
-                label: 'Common Name'
-            },
-            value: '',
-            validation: {
-                required: true,
-            },
-            valid: false,
-            touched: false,
-            error: false,
-            errorMessage: '',
-        },
-        successURL: {
-            elementType: 'input',
-            elementConfig: {
-                label: 'Success URL'
-            },
-            value: '',
-            validation: {
-                required: true,
-                pattern: '^(http(s)?:\\/\\/)?((www\\.)|(localhost:))[(\\/)?a-zA-Z0-9@:%._\\+~#=-]{1,256}$'
-            },
-            valid: false,
-            touched: false,
-            error: false,
-            errorMessage: 'Success URL is not valid',
-        },
-        failedURL: {
-            elementType: 'input',
-            elementConfig: {
-                label: 'Failed URL'
-            },
-            value: '',
-            validation: {
-                required: true,
-                pattern: '^(http(s)?:\\/\\/)?((www\\.)|(localhost:))[(\\/)?a-zA-Z0-9@:%._\\+~#=-]{1,256}$'
-            },
-            valid: false,
-            touched: false,
-            error: false,
-            errorMessage: 'Failed URL is not valid',
-        },
-        errorURL: {
-            elementType: 'input',
-            elementConfig: {
-                label: 'Error URL'
-            },
-            value: '',
-            validation: {
-                required: true,
-                pattern: '^(http(s)?:\\/\\/)?((www\\.)|(localhost:))[(\\/)?a-zA-Z0-9@:%._\\+~#=-]{1,256}$'
-            },
-            valid: false,
-            touched: false,
-            error: false,
-            errorMessage: 'Error URL is not valid',
-        },
-    });
+    const [certificate, setCertificate] = useState(null);
+    const [supportedPaymentMethods, setSupportedPaymentMethods] = useState([]);
 
-    const textInputChangedHandler = (event) => {
-        let errorMessage;
-        let value = event.target.value;
-        console.log(event)
-        // if (props.controls[controlName].elementType === 'checkbox') {
-        //     value = event.target.checked;
-        // } else {
-        //     if (props.controls[controlName].additionalData) {
-        //         errorMessage = props.controls[controlName].additionalData.errorMessage
-        //     }
-        // }
-        // let controlToValidate = props.controls[controlName];
-        // const validationData = checkValidity(controlToValidate.elementConfig.label, value, controlToValidate.validation, controlToValidate.elementType, errorMessage);
+    useEffect(() => {
+        fetchPaymentMethods();
+    }, [fetchPaymentMethods]);
 
-        // const updatedControls = {
-        //     ...props.controls,
-        //     [controlName]: {
-        //         ...props.controls[controlName],
-        //         value: value,
-        //         error: !validationData.isValid,
-        //         errorMessage: validationData.errorMessage,
-        //         touched: true,
-        //         valid: validationData.isValid
-        //     }
-        // };
-
-        // let formIsValid = true;
-        // for (let inputId in updatedControls) {
-        //     formIsValid = updatedControls[inputId].valid && formIsValid;
-        // }
-        // props.setControls(updatedControls);
-        // props.setFormIsValid(formIsValid);
+    const handleChooseFile = ({ target }) => {
+        setCertificate(target.files[0]);
     }
 
+    const handleChecked = ({ target }) => {
+        if (target.checked) {
+            let paymentMethod = props.paymentMethods.find(method => method.id === parseInt(target.name));
+            setSupportedPaymentMethods(supportedPayments => [...supportedPayments, paymentMethod]);
+        } else {
+            setSupportedPaymentMethods(supportedPayments => supportedPayments.filter(method => method.id !== parseInt(target.name)));
+        }
+    }
 
-    const submitHander = (event) => {
-        event.preventDefault();
-        //proveri da li je uneo barem jedan paymentData
-        //posalji i podatke sa form i sa formData
-        // props.onSignIn(controls.username.value, controls.password.value);
+    const onSubmit = (companyData) => {
+        if (!certificate) {
+            toastr.error("Add Company", "You need to upload your certificate.");
+            return;
+        }
+
+        if (!(supportedPaymentMethods && Array.isArray(supportedPaymentMethods) && supportedPaymentMethods.length)) {
+            toastr.error("Add Company", "You need to support at least one payment method.");
+            return;
+        }
+
+        const certFormData = new FormData();
+        certFormData.append('certificate', certificate);
+
+        props.onAddCompany({
+            companyData,
+            certFormData,
+            supportedPaymentMethods
+        }, history);
+    };
+
+    const createTextField = (name, label) => {
+        const textField =
+            <TextField margin="normal" fullWidth name={name}
+                error={errors[name] ? true : false} helperText={errors[name] ? errors[name].message : ''}
+                label={label} inputRef={register({
+                    required: {
+                        value: true,
+                        message: label + ' is required'
+                    }
+                })} />
+        return textField;
+    }
+
+    const createURLField = (name, label) => {
+        const urlField =
+            <TextField margin="normal" fullWidth name={name}
+                error={errors[name] ? true : false} helperText={errors[name] ? errors[name].message : ''}
+                label={label} inputRef={register({
+                    required: {
+                        value: true,
+                        message: label + ' is required'
+                    },
+                    pattern: {
+                        value: new RegExp('^(http(s)?:\\/\\/)?((www\\.)|(localhost:))[(\\/)?a-zA-Z0-9@:%._\\+~#=-]{1,256}$'),
+                        message: 'Invalid URL address'
+                    }
+                })} />
+        return urlField;
+    }
+
+    let paymentMethodCards = null;
+
+    if (props.paymentMethods && Array.isArray(props.paymentMethods) && props.paymentMethods.length) {
+        paymentMethodCards = props.paymentMethods.map(paymentMethod => {
+            return <Paper key={paymentMethod.id} className={classes.paymentMethodPaper}>
+                <FormControlLabel label={paymentMethod.name} classes={{ label: classes.chkLabel }}
+                    control={
+                        <Checkbox name={'' + paymentMethod.id} onChange={handleChecked} color="primary" />
+                    }
+                />
+            </Paper>;
+        });
+    } else {
+        paymentMethodCards =
+            <Typography component="h3" variant="h6">No available payment methods at the moment.</Typography>;
     }
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container component="main" maxWidth="md">
             <CssBaseline />
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                    <BusinessIcon />
-                </Avatar>
-                <Typography component="h1" variant="h4">Add your Company</Typography>
-                <form className={classes.form} noValidate onSubmit={submitHander}>
-                    {/* <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} /> */}
-                    <TextField margin="normal" fullWidth id='websiteURL'
-                        error={props.error} helperText={props.error ? props.errorMessage : ''}
-                        label='Website URL' onChange={(event) => textInputChangedHandler(event)} />
-                    <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
-                        onClick={submitHander} disabled={!formIsValid}>Submit</Button>
+            <Paper className={classes.mainPaper}>
+                <div className={classes.centered}>
+                    <Avatar className={classes.avatar}>
+                        <BusinessIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h4">Add your Company</Typography>
+                </div>
+                <form className={classes.form} noValidate onSubmit={handleSubmit(onSubmit)}>
+                    <Grid container align="center" spacing={4} justify="center">
+                        <Grid item md={6}>
+                            {createTextField('companyName', 'Company Name')}
+                            {createURLField('websiteURL', 'Website URL')}
+                            {createTextField('commonName', 'Common Name')}
+                            <div className={classes.chooseCertificate}>
+                                <input type="file" accept=".crt, .p12" hidden id="upload-file"
+                                    onChange={handleChooseFile} />
+                                <label htmlFor="upload-file">
+                                    <Grid container>
+                                        <Grid item xs={5}>
+                                            <Button color="primary" variant="contained" component="span" style={{ float: "left" }}>
+                                                Upload certificate
+                                            </Button>
+                                        </Grid>
+                                        <Grid item xs={7} className={classes.fileNameGrid} >
+                                            <Typography component="span" className={classes.fileName}>
+                                                {certificate ? certificate.name : ''}
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                </label>
+                            </div>
+                        </Grid>
+                        <Grid item md={6}>
+                            {createURLField('successURL', 'Success URL')}
+                            {createURLField('failedURL', 'Failed URL')}
+                            {createURLField('errorURL', 'Error URL')}
+                        </Grid>
+                        <Grid item md={12}>
+                            <Typography component="h2" variant="h5">Support payment methods:</Typography>
+                            {paymentMethodCards}
+                        </Grid>
+                    </Grid>
+                    <div className={classes.centered}>
+                        <Button type="submit" color="primary" className={classes.submit} variant="contained">Submit</Button>
+                    </div>
                 </form>
-            </div>
+            </Paper>
         </Container>
     );
 };
 
-// const mapStateToProps = state => {
-//     return {
-//         authRedirectPath: state.signIn.authRedirectPath,
-//     }
-// };
+const mapStateToProps = state => {
+    return {
+        paymentMethods: state.addCompany.paymentMethods
+    }
+};
 
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         onSignIn: (username, password) => dispatch(actions.signIn(username, password)),
-//         onRefreshToken: (history) => dispatch(actions.refreshToken(history))
-//     }
-// };
-
-// export default connect(mapStateToProps, mapDispatchToProps)(SignIn);
-export default AddCompany;
+const mapDispatchToProps = dispatch => {
+    return {
+        fetchPaymentMethods: () => dispatch(actions.fetchPaymentMethods()),
+        onAddCompany: (company, history) => dispatch(actions.addCompany(company, history)),
+    }
+};
+export default connect(mapStateToProps, mapDispatchToProps)(AddCompany);

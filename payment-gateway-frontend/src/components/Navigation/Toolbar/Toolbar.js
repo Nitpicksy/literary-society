@@ -86,7 +86,7 @@ const CustomToolbar = (props) => {
     return (
         <AppBar position="static">
             <Toolbar>
-                <Typography variant="h6" className={classes.title} onClick={() => redirect('/')} style={{ cursor: 'pointer' }}>
+                <Typography variant="h6" className={classes.title} onClick={() => redirect('/')}>
                     Payment Gateway
                 </Typography>
                 <Button className={classes.button} color="inherit" onClick={() => redirect('/add-payment-method')}>Add payment method</Button>

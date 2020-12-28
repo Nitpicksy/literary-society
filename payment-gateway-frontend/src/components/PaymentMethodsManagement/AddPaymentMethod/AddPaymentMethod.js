@@ -6,16 +6,17 @@ import Container from '@material-ui/core/Container';
 import { useStyles } from './AddPaymentMethodStyles';
 import Form from '../../../UI/Form/Form';
 import { connect } from 'react-redux';
-import {  useHistory } from 'react-router';
+import { useHistory } from 'react-router';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { Grid, Paper } from '@material-ui/core';
+import { Avatar, Grid, Paper } from '@material-ui/core';
 import { toastr } from 'react-redux-toastr';
 import * as actions from './AddPaymentMethodExport';
+import PaymentIcon from '@material-ui/icons/Payment';
 
 const AddPaymentMethod = (props) => {
     const history = useHistory();
@@ -161,20 +162,22 @@ const AddPaymentMethod = (props) => {
         //proveri da li je uneo barem jedan paymentData
         //posalji i podatke sa form i sa formData
         //posalji i sertificate
-        if(rows.length === 0){
+        if (rows.length === 0) {
             toastr.error("Register payment method", "You have to enter at least one payment data.");
             return;
         }
 
-        if(!certificate){
+        if (!certificate) {
             toastr.error("Register payment method", "You have to upload your certificate.");
             return;
         }
         const certificateFormData = new FormData();
         certificateFormData.append('certificate', certificate);
         console.log(certificateFormData)
-        props.onRegisterPaymentMethod({'name': controls.name.value, 'api': controls.api.value, 'commonName': controls.commonName.value, 
-        'subscription': controls.subscription.value, 'email':controls.email.value },certificateFormData, rows, history );
+        props.onRegisterPaymentMethod({
+            'name': controls.name.value, 'api': controls.api.value, 'commonName': controls.commonName.value,
+            'subscription': controls.subscription.value, 'email': controls.email.value
+        }, certificateFormData, rows, history);
     }
 
     const submitDataHander = (event) => {
@@ -208,7 +211,12 @@ const AddPaymentMethod = (props) => {
         <Container component="main" maxWidth="md">
             <CssBaseline />
             <Paper className={classes.mainPaper}>
-                <Typography component="h1" variant="h4">Register Payment Method</Typography>
+                <div className={classes.centered}>
+                    <Avatar className={classes.avatar}>
+                        <PaymentIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h4">Register Payment Method</Typography>
+                </div>
                 <Grid container align="center" spacing={4} justify="center" className={classes.gridData}>
                     <Grid item md={6}>
                         <Paper className={classes.mainData}>
@@ -216,25 +224,24 @@ const AddPaymentMethod = (props) => {
                             <form className={classes.form} noValidate onSubmit={submitHander}>
                                 <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} />
                             </form>
-                            <div  className={classes.chooseCertificate}>
+                            <div className={classes.chooseCertificate}>
                                 <input type="file" accept=".crt, .p12" hidden id="upload-file"
                                     onChange={handleChooseFile} />
                                 <label htmlFor="upload-file">
                                     <Grid container>
                                         <Grid item xs={5}>
-                                            <Button color="primary" variant="contained" component="span" style={{float: "left"}}>
-                                                Choose certificate
+                                            <Button color="primary" variant="contained" component="span" style={{ float: "left" }}>
+                                                Upload certificate
                                     </Button>
                                         </Grid>
                                         <Grid item xs={7} className={classes.fileNameGrid} >
-                                            <Typography component="span"  className={classes.fileName}>
+                                            <Typography component="span" className={classes.fileName}>
                                                 {certificate ? certificate.name : ''}
                                             </Typography>
                                         </Grid>
                                     </Grid>
                                 </label>
                             </div>
-
                         </Paper>
                     </Grid>
                     <Grid item md={6}>
@@ -272,7 +279,7 @@ const AddPaymentMethod = (props) => {
                         </TableContainer>
                     </Grid>
                 </Grid>
-                <div className={classes.paper}>
+                <div className={classes.centered}>
                     <Button type="submit" color="primary" className={classes.submitForm} variant="contained"
                         onClick={submitHander} disabled={!formIsValid}>Submit</Button>
                 </div>
@@ -284,7 +291,7 @@ const AddPaymentMethod = (props) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onRegisterPaymentMethod: (mainData, certificateData, paymentData,history) => dispatch(actions.registerPaymentMethod(mainData, certificateData, paymentData,history)),
+        onRegisterPaymentMethod: (mainData, certificateData, paymentData, history) => dispatch(actions.registerPaymentMethod(mainData, certificateData, paymentData, history)),
     }
 };
 export default connect(null, mapDispatchToProps)(AddPaymentMethod);;

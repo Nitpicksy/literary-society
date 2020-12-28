@@ -9,10 +9,9 @@ export const useStyles = makeStyles((theme) => ({
     },
     title: {
         flexGrow: 1,
-    },
-    titleLink: {
         textDecoration: 'none',
-        color: 'white'
+        color: 'white',
+        cursor: 'pointer'
     },
     button:{
         marginRight: theme.spacing(2),

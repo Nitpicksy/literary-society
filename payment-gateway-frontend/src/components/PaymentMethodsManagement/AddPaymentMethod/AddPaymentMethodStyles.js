@@ -1,11 +1,11 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-export const useStyles = makeStyles((theme) => ({
-    paper: {
-        marginTop: theme.spacing(8),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+export const useStyles = makeStyles((theme) => ({    
+    mainPaper: {
+        marginTop:theme.spacing(3),
+        marginBottom:theme.spacing(3),
+        padding: theme.spacing(2),
+        backgroundColor: '#f5f5f5',
     },
     avatar: {
         margin: theme.spacing(1),
@@ -21,16 +21,15 @@ export const useStyles = makeStyles((theme) => ({
         marginTop:  theme.spacing(2),
     },
     submitForm: {
+        marginTop: theme.spacing(6),
         paddingRight: theme.spacing(8),
         paddingLeft: theme.spacing(8)
     },
     table: {
         minWidth: 100,
     },
-    mainPaper: {
-        marginTop:theme.spacing(2),
-        padding: theme.spacing(2),
-        backgroundColor: '#fafafa',
+    tablecell: {
+        fontSize: '13pt'
     },
     paymentData: {
         padding: theme.spacing(2),
@@ -42,13 +41,10 @@ export const useStyles = makeStyles((theme) => ({
     gridData: {
         paddingTop: theme.spacing(3)
     },
-    tablecell: {
-        fontSize: '14pt'
-    },
     fileName: {
         color: '#707070',
-        fontWeight: 700,
-        fontSize: '12px',
+        fontWeight: 600,
+        fontSize: '14px',
     },
     chooseCertificate:{
         minWidth: 555,
@@ -61,5 +57,10 @@ export const useStyles = makeStyles((theme) => ({
         display: 'flex',
         alignItems: 'center',
         paddingLeft: theme.spacing(2),
+    },    
+    centered: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
     },
 }));
