@@ -106,7 +106,7 @@ const App = props => {
           <Route path="/sign-out" render={(props) => <Logout {...props} />} />
           <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
 
-          <Route path="/payment/success" render={(props) => <PaymentSuccess {...props} />} />
+          <Route path="/payment/success/:id" render={(props) => <PaymentSuccess {...props} />} />
           <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
           <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
 
