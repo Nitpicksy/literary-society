@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import { Avatar, Button, CssBaseline, Typography, Container, Paper } from '@material-ui/core';
 import * as actions from './ChangePasswordExport';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
 import { useStyles } from './ChangePasswordStyles';
 import Form from '../../../UI/Form/Form';
 import { connect } from 'react-redux';
@@ -96,23 +92,25 @@ const ChangePassword = (props) => {
     const submitHander = (event) => {
         event.preventDefault();
         props.onChangePassword(controls.username.value, controls.oldPassword.value,
-            controls.newPassword.value,controls.repeatedPassword.value, history);
+            controls.newPassword.value, controls.repeatedPassword.value, history);
     }
 
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                    <VpnKeyIcon />
-                </Avatar>
-                <Typography component="h1" variant="h4">Change password</Typography>
+            <Paper className={classes.mainPaper}>
+                <div className={classes.centered}>
+                    <Avatar className={classes.avatar}>
+                        <VpnKeyIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h4" className={classes.title}>Change password</Typography>
+                </div>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} />
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
                         onClick={submitHander} disabled={!formIsValid}>Save changes</Button>
                 </form>
-            </div>
+            </Paper>
         </Container>
     );
 };
@@ -126,8 +124,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onChangePassword: (username, oldPassword,newPassword,repeatedPassword, history) => 
-            dispatch(actions.changePassword(username, oldPassword,newPassword,repeatedPassword,history))
+        onChangePassword: (username, oldPassword, newPassword, repeatedPassword, history) =>
+            dispatch(actions.changePassword(username, oldPassword, newPassword, repeatedPassword, history))
     }
 };
 

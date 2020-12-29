@@ -1,21 +1,12 @@
 import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
+import { CssBaseline, Button, Typography, Container, Avatar, Grid, Paper } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 import { useStyles } from './AddPaymentMethodStyles';
-import Form from '../../../UI/Form/Form';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import { Avatar, Grid, Paper } from '@material-ui/core';
 import { toastr } from 'react-redux-toastr';
 import * as actions from './AddPaymentMethodExport';
+import Form from '../../../UI/Form/Form';
 import PaymentIcon from '@material-ui/icons/Payment';
 
 const AddPaymentMethod = (props) => {

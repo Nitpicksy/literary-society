@@ -1,23 +1,19 @@
 import React, { useState } from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import {Avatar, Button, CssBaseline, Typography, Container, Paper} from '@material-ui/core';
 import * as actions from './SignInExport';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
 import { useStyles } from './SignInStyles';
 import Form from '../../../UI/Form/Form';
 import { connect } from 'react-redux';
 import { Redirect, useHistory } from 'react-router';
-import {responseInterceptor} from '../../../responseInterceptor';
+import { responseInterceptor } from '../../../responseInterceptor';
 
 const SignIn = (props) => {
     const history = useHistory();
-    responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent,props.onRefreshToken);
-    
+    responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
+
     const classes = useStyles();
-    const [formIsValid,setFormIsValid] = useState(false);
+    const [formIsValid, setFormIsValid] = useState(false);
 
     const [controls, setControls] = useState({
         username: {
@@ -56,7 +52,7 @@ const SignIn = (props) => {
         }
     })
 
-    
+
     const submitHander = (event) => {
         event.preventDefault();
         props.onSignIn(controls.username.value, controls.password.value);
@@ -69,19 +65,21 @@ const SignIn = (props) => {
 
     return (
         <Container component="main" maxWidth="xs">
-            {authredirect}
             <CssBaseline />
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                    <LockOutlinedIcon />
-                </Avatar>
-                <Typography component="h1" variant="h4">Sign in</Typography>
+            {authredirect}
+            <Paper className={classes.mainPaper}>
+                <div className={classes.centered}>
+                    <Avatar className={classes.avatar}>
+                        <LockOutlinedIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h4">Sign in</Typography>
+                </div>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
-                    <Form controls={controls} setControls={setControls} setFormIsValid= {setFormIsValid}/>
+                    <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} />
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
                         onClick={submitHander} disabled={!formIsValid}>Sign In</Button>
                 </form>
-            </div>
+            </Paper>
         </Container>
     );
 };

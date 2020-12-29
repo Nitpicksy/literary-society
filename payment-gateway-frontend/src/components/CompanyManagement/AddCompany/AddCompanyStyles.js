@@ -7,6 +7,11 @@ export const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(2, 3),
         backgroundColor: '#f5f5f5',
     },
+    centered: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
     avatar: {
         margin: theme.spacing(1),
         backgroundColor: theme.palette.secondary.main,
@@ -35,11 +40,6 @@ export const useStyles = makeStyles((theme) => ({
         display: 'flex',
         alignItems: 'center',
         paddingLeft: theme.spacing(2),
-    },
-    centered: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
     },
     paymentMethodPaper: {
         margin: theme.spacing(1.2),
