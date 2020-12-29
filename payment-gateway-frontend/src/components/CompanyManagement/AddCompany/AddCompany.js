@@ -37,12 +37,12 @@ const AddCompany = (props) => {
 
     const onSubmit = (companyData) => {
         if (!certificate) {
-            toastr.warning("Add Company", "You need to upload your certificate.");
+            toastr.info("Add Company", "You need to upload your certificate.");
             return;
         }
 
         if (!(supportedPaymentMethods && Array.isArray(supportedPaymentMethods) && supportedPaymentMethods.length)) {
-            toastr.warning("Add Company", "You need to support at least one payment method.");
+            toastr.info("Add Company", "You need to support at least one payment method.");
             return;
         }
 

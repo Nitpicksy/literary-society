@@ -15,7 +15,8 @@ import paymentMethodListReducer from './components/PaymentMethodsManagement/Paym
 import signInReducer from './components/Authentication/SignIn/SignInReducer';
 import rawTheme from './theme';
 import { MuiThemeProvider } from "@material-ui/core/styles";
-import addCompanyReducer from "./components/CompanyManagement/AddCompany/AddCompanyReducer";
+import addCompanyReducer from './components/CompanyManagement/AddCompany/AddCompanyReducer';
+import companyListReducer from './components/CompanyManagement/CompanyList/CompanyListReducer';
 
 const composeEnhancers =
   process.env.NODE_ENV === "development"
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   paymentMethodList: paymentMethodListReducer,
   signIn: signInReducer,
   addCompany: addCompanyReducer,
+  companyList: companyListReducer,
 });
 
 const store = createStore(

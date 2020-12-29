@@ -34,7 +34,7 @@ export const changePaymentMethodStatus = (id, status) => {
         axios.put(`/payment-methods/${id}?status=${status}`)
             .then(() => {
                 dispatch(fetchPaymentMethods())
-                toastr.success('Payment Methods', 'Successfuly ' + status + 'ed payment method request.');
+                toastr.success('Payment Methods', 'Successfully ' + status + "ed payment method's request.");
             })
             .catch(() => {
                 toastr.error('Payment Methods', 'Something went wrong. Please try again.');

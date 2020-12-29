@@ -2,6 +2,7 @@ package nitpicksy.paymentgateway.serviceimpl;
 
 import nitpicksy.paymentgateway.dto.both.PaymentMethodDTO;
 import nitpicksy.paymentgateway.enumeration.CompanyStatus;
+import nitpicksy.paymentgateway.enumeration.PaymentMethodStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.model.Company;
 import nitpicksy.paymentgateway.model.PaymentMethod;
@@ -41,6 +42,11 @@ public class CompanyServiceImpl implements CompanyService {
         company.setPaymentMethods(new HashSet<>(paymentMethods));
 
         return companyRepository.save(company);
+    }
+
+    @Override
+    public List<Company> findAll() {
+        return companyRepository.findByStatusNot(CompanyStatus.REJECTED);
     }
 
     @Override

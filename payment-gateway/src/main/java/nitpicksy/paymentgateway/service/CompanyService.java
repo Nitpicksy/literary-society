@@ -10,5 +10,7 @@ public interface CompanyService {
 
     Company addCompany(Company company, List<PaymentMethodDTO> paymentMethods);
 
+    List<Company> findAll();
+
     Company findCompanyByCommonName(String commonName);
 }

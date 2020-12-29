@@ -67,7 +67,7 @@ export const signIn = (username, password) => {
                 if (err.response.status === 406) {
                     dispatch(setRedirectPath('/change-password'))
                     dispatch(signInFail("You have to change received generic password on first attempt to login."));
-                    toastr.error('Login','You have to change received generic password on first attempt to login.');
+                    toastr.info('Login','You have to change received generic password on first attempt to login.');
                 } else {
                     toastr.error('Login',err.response.data.message);
                     dispatch(signInFail(err.response.data.message));

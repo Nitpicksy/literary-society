@@ -77,7 +77,7 @@ const PaymentMethodList = (props) => {
         rowsPaymentData = properties.row.listPaymentData;
         setPaymentData(
             <div className={classes.paymentDataTable}>
-                <Typography component="h1" variant="h4">Payment data</Typography>
+                <Typography component="h1" variant="h5">Payment data</Typography>
                 <Grid container className={classes.tablePaymentData}>
                     <DataGrid rows={rowsPaymentData} columns={columnsPaymentData} pageSize={5} autoPageSize />
                 </Grid>

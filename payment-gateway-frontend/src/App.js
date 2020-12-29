@@ -16,6 +16,7 @@ import CustomToolbar from './components/Navigation/Toolbar/Toolbar';
 import { GuardProvider, GuardedRoute } from 'react-router-guards';
 import Logout from './components/Authentication/SignIn/Logout';
 import AddCompanySuccess from './components/CompanyManagement/AddCompany/AddCompanySuccess';
+import CompanyList from './components/CompanyManagement/CompanyList/CompanyList';
 
 const App = (props) => {
   const { onTryAutoSignUp } = props;
@@ -66,6 +67,7 @@ const App = (props) => {
           <Route path="/payment/:id" render={(props) => <PaymentHome {...props} />} />
 
           <GuardedRoute path="/payment-methods" render={() => <PaymentMethodList {...props} />} meta={{ roles: [roleAdmin] }} />
+          <GuardedRoute path="/companies" render={() => <CompanyList {...props} />} meta={{ roles: [roleAdmin] }} />
 
           <Route path="/add-payment-method" render={() => <AddPaymentMethod {...props} />} />
           <Route path="/add-payment-method-success" render={() => <AddPaymentMethodSuccess {...props} />} />

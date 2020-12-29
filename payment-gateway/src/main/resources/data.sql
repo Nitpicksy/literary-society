@@ -1,6 +1,6 @@
-insert into company (uri, common_name, company_name, error_url, failed_url, success_url, certificate_name)
+insert into company (uri, common_name, company_name, error_url, failed_url, success_url, certificate_name, status)
 values ('http://localhost:8090', 'literary-society', 'Nitpicksy LU 1', 'https://localhost:3000/payment/error',
-        'https://localhost:3000/payment/failed', 'https://localhost:3000/payment/success', 'literary.crt');
+        'https://localhost:3000/payment/failed', 'https://localhost:3000/payment/success', 'literary.crt', 'APPROVED');
 
 
 insert into merchant (name, company_id)
