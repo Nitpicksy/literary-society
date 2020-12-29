@@ -9,7 +9,7 @@ import java.net.URISyntaxException;
 
 public interface PDFDocumentService {
 
-    void upload(MultipartFile pdfFile, Book book) throws IOException;
+    PDFDocument upload(MultipartFile pdfFile, Book book) throws IOException;
 
     byte[] download(String name) throws IOException, URISyntaxException;
 

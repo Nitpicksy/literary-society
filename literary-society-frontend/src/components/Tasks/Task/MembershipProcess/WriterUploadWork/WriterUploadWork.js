@@ -5,6 +5,7 @@ import { useStyles } from './WriterUploadWorkStyles';
 import { responseInterceptor } from '../../../../../responseInterceptor';
 import { useHistory } from 'react-router';
 import * as signInActions from '../../../../Authentication/SignIn/SignInExport';
+import * as actions from './WriterUploadWorkExport';
 import PublishIcon from '@material-ui/icons/Publish';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import IconButton from '@material-ui/core/IconButton';
@@ -14,6 +15,8 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 
 
 const WriterUploadWork = props => {
+
+    const { selectedTask } = props;
 
     const classes = useStyles();
     const history = useHistory();
@@ -50,6 +53,21 @@ const WriterUploadWork = props => {
         setDisplayModal(false)
     }
 
+    const handleUpload = () => {
+        if(files.length < 2) {
+            return;
+        }
+
+        let filesFormData = new FormData();
+        files.forEach(file => {
+            filesFormData.append('files', file);
+        })
+            
+        console.log('flesform', filesFormData.getAll('files'))
+        props.onUpload(selectedTask.piId, selectedTask.taskId, filesFormData, history);
+
+    }
+
     let modal = null;
     if(displayModal) {
         modal = <PreviewPDFModal file={currentFile} close={exitPreview}/>
@@ -66,31 +84,30 @@ const WriterUploadWork = props => {
                 </Avatar>
                 <Typography component="h1" variant="h6" className={classes.title}>Add at least 2 of your best work</Typography>
                 <br/>               
-                        <Grid container >
-                                <Grid item  className={classes.fileNameGrid}>
-                                       {files.map((file, index) => {
-                                           return (
-                                            <div key={`index_${index}`}>
-                                           <Typography  variant="body2" component="span" className={classes.fileName}>
-                                                {file.name}
-                                                <IconButton className={classes.closeButton} aria-label="preview"
-                                                onClick={() => previewDocument(file)}
-                                                >
-                                                <VisibilityIcon />
-                                                </IconButton>
+            <Grid container >
+                <Grid item  className={classes.fileNameGrid}>
+                {files.map((file, index) => {
+                    return (
+                    <div key={`index_${index}`}>
+                    <Typography  variant="body2" component="span" className={classes.fileName}>
+                        {file.name}
+                        <IconButton className={classes.closeButton} aria-label="preview"
+                        onClick={() => previewDocument(file)}
+                        >
+                        <VisibilityIcon />
+                        </IconButton>
 
-                                               <IconButton className={classes.closeButton} aria-label="close" 
-                                               onClick={() => handleRemoveDocument(file)}
-                                               >
-                                                <CloseIcon />
-                                                </IconButton>
-                                            </Typography>
-                                            <br/>
-                                            </div>)
-                                       })}
-                                       
-                                </Grid>
-                            </Grid>
+                        <IconButton className={classes.closeButton} aria-label="close" 
+                        onClick={() => handleRemoveDocument(file)}
+                        >
+                        <CloseIcon />
+                        </IconButton>
+                    </Typography>
+                    <br/>
+                    </div>)
+                })}
+                </Grid>
+            </Grid>
             <br/>
 
             <Grid 
@@ -105,33 +122,26 @@ const WriterUploadWork = props => {
                         />
 
                 <label htmlFor="writer-upload-files">
-                        <Grid item  >
-                            <Button color="primary" variant="contained" component="span">
-                                Add file
-                            </Button>
-                        </Grid>
+                <Grid item  >
+                    <Button color="primary" variant="contained" component="span">
+                        Add file
+                    </Button>
+                </Grid>
                 </label>
                 </Grid>
 
                 <Grid item>
                 <Button m={1} color="primary" variant="contained" component="span"
                         startIcon={<PublishIcon />} 
-                        // onClick={handleUpload} 
+                        onClick={handleUpload} 
                          disabled={files.length < 2 ? true : false}
                         >
                         Upload
                     </Button>
                 </Grid>
             </Grid>
-
-
-                <br/>
+            <br/>
             </div>
-
-            <Grid container className={classes.uploadGrid}>
-               
-                </Grid>
-
         </Container>
     )
 }
@@ -148,6 +158,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
+        onUpload: (piId, taskId, files, history) => dispatch(actions.upload(piId, taskId, files, history))
     }
 };
 

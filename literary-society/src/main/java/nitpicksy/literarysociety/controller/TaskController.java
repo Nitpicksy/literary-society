@@ -1,51 +1,32 @@
 package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.camunda.service.CamundaService;
-import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.camunda.TaskDataDTO;
-import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
-import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
 import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.PDFDocument;
 import nitpicksy.literarysociety.model.User;
+import nitpicksy.literarysociety.model.Writer;
 import nitpicksy.literarysociety.service.BookService;
 import nitpicksy.literarysociety.service.PDFDocumentService;
 import nitpicksy.literarysociety.service.UserService;
-import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.rest.dto.task.TaskDto;
-import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Path;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "/api/tasks")
@@ -104,6 +85,32 @@ public class TaskController {
 
         book.setStatus(BookStatus.SENT);
         bookService.save(book);
+
+        camundaService.completeTask(taskId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @PostMapping(value = "{taskId}/writer-membership-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> writerMembershipUpload(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId,
+                                                       @Valid @RequestParam MultipartFile[] files) {
+
+        Writer writer = (Writer) userService.getAuthenticatedUser();
+
+        try {
+            Set<PDFDocument> uploadedPDFDocuments = new HashSet<>();
+
+            for (MultipartFile file : files) {
+                PDFDocument upload = pdfDocumentService.upload(file, null);
+                uploadedPDFDocuments.add(upload);
+            }
+
+            writer.setAttempts(writer.getAttempts() + 1);
+            writer.setDrafts(uploadedPDFDocuments);
+
+        } catch (IOException e) {
+            throw new InvalidDataException("Manuscript could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
+        }
 
         camundaService.completeTask(taskId);
         return new ResponseEntity<>(HttpStatus.OK);

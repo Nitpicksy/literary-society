@@ -10,4 +10,6 @@ import java.util.List;
 public interface PDFDocumentRepository extends JpaRepository<PDFDocument, Long> {
 
     List<PDFDocument> findByBookIdOrderByCreatedDesc(Long id);
+    
+    PDFDocument findByName(String name);
 }

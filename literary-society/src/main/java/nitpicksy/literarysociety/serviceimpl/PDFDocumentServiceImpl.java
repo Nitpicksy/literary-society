@@ -6,7 +6,6 @@ import nitpicksy.literarysociety.repository.PDFDocumentRepository;
 import nitpicksy.literarysociety.service.PDFDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +27,7 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
     private PDFDocumentRepository pdfDocumentRepository;
 
     @Override
-    public void upload(MultipartFile pdfFile, Book book) throws IOException {
+    public PDFDocument upload(MultipartFile pdfFile, Book book) throws IOException {
         if (!pdfFile.isEmpty()) {
             byte[] bytes = pdfFile.getBytes();
 
@@ -40,8 +39,12 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
 
             Path path = Paths.get(BOOKS_PATH + File.separator + pdfName);
             Files.write(path, bytes);
+
+            return pdfDocumentRepository.findByName(pdfName);
         }
+        return null;
     }
+
 
     @Override
     public byte[] download(String name) throws IOException {
