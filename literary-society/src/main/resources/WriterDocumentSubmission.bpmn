@@ -17,12 +17,12 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="WriterDocumentSubmission">
       <bpmndi:BPMNEdge id="Flow_0ahgelm_di" bpmnElement="Flow_0ahgelm">
-        <di:waypoint x="360" y="120" />
+        <di:waypoint x="480" y="120" />
         <di:waypoint x="1102" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1wz7n08_di" bpmnElement="Flow_1wz7n08">
         <di:waypoint x="178" y="120" />
-        <di:waypoint x="260" y="120" />
+        <di:waypoint x="380" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="142" y="102" width="36" height="36" />
@@ -37,7 +37,7 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1xt7mcx_di" bpmnElement="Activity_03m9fx4">
-        <dc:Bounds x="260" y="80" width="100" height="80" />
+        <dc:Bounds x="380" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
