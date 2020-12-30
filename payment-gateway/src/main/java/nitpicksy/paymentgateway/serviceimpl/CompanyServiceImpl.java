@@ -1,21 +1,27 @@
 package nitpicksy.paymentgateway.serviceimpl;
 
+import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.dto.both.PaymentMethodDTO;
 import nitpicksy.paymentgateway.enumeration.CompanyStatus;
 import nitpicksy.paymentgateway.enumeration.PaymentMethodStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.model.Company;
 import nitpicksy.paymentgateway.model.PaymentMethod;
+import nitpicksy.paymentgateway.model.Role;
 import nitpicksy.paymentgateway.repository.CompanyRepository;
 import nitpicksy.paymentgateway.repository.PaymentMethodRepository;
+import nitpicksy.paymentgateway.repository.RoleRepository;
+import nitpicksy.paymentgateway.security.TokenUtils;
 import nitpicksy.paymentgateway.service.CompanyService;
 import nitpicksy.paymentgateway.service.EmailNotificationService;
 import nitpicksy.paymentgateway.service.PaymentMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +30,20 @@ import java.util.stream.Collectors;
 @Service
 public class CompanyServiceImpl implements CompanyService {
 
+    @Value("${API_GATEWAY_URL}")
+    private String apiGatewayURL;
+
     private CompanyRepository companyRepository;
 
     private PaymentMethodRepository paymentMethodRepository;
 
     private EmailNotificationService emailNotificationService;
+
+    private ZuulClient zuulClient;
+
+    private RoleRepository roleRepository;
+
+    public TokenUtils tokenUtils;
 
     @Override
     public Company addCompany(Company company, List<PaymentMethodDTO> paymentMethodDTOs) {
@@ -44,6 +59,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         company.setStatus(CompanyStatus.WAITING_APPROVAL);
         company.setPaymentMethods(new HashSet<>(paymentMethods));
+        company.setRole(roleRepository.findByName("ROLE_COMPANY"));
 
         return companyRepository.save(company);
     }
@@ -54,7 +70,9 @@ public class CompanyServiceImpl implements CompanyService {
         if (company != null) {
             if (status.equals("approve")) {
                 //add certificate in truststore
-                //generate JWT token
+                String jwtToken = tokenUtils.generateToken(company.getCommonName(), company.getRole().getName(),
+                        company.getRole().getPermissions());
+                zuulClient.sendJWTToken(URI.create(apiGatewayURL + '/' + company.getCommonName()), jwtToken);
                 company.setStatus(CompanyStatus.APPROVED);
                 composeAndSendApprovalEmail(company.getEmail());
             } else {
@@ -96,9 +114,13 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     public CompanyServiceImpl(CompanyRepository companyRepository, PaymentMethodRepository paymentMethodRepository,
-                              EmailNotificationService emailNotificationService) {
+                              EmailNotificationService emailNotificationService, ZuulClient zuulClient,
+                              TokenUtils tokenUtils, RoleRepository roleRepository) {
         this.companyRepository = companyRepository;
         this.paymentMethodRepository = paymentMethodRepository;
         this.emailNotificationService = emailNotificationService;
+        this.zuulClient = zuulClient;
+        this.tokenUtils = tokenUtils;
+        this.roleRepository = roleRepository;
     }
 }

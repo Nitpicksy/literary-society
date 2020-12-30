@@ -24,16 +24,26 @@ public class ZuulPreFilter extends ZuulFilter {
 
     @Override
     public boolean shouldFilter() {
-        return true;
+        RequestContext ctx = RequestContext.getCurrentContext();
+        HttpServletRequest request = ctx.getRequest();
+        if (request.getMethod().equals("OPTIONS")) {
+            return false;
+        }
+        String url = request.getRequestURL().toString();
+        return url.contains("api/orders");
     }
 
     @Override
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
-
-        log.info(String.format("%s request to %s", request.getMethod(), request.getRequestURL().toString()));
-
+        String header = request.getHeader("Auth");
+        if (header == null || header.isEmpty() || !header.startsWith("Bearer ")) {
+            ctx.setResponseStatusCode(401);
+            ctx.setSendZuulResponse(false);
+        } else {
+            ctx.addZuulRequestHeader("Auth", header);
+        }
         return null;
     }
 

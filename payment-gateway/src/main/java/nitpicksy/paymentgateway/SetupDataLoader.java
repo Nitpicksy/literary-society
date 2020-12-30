@@ -48,18 +48,19 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         Permission manageEditors = createPermissionIfNotFound("MANAGE_PAYMENT_METHODS");
         Permission manageLecturers = createPermissionIfNotFound("MANAGE_COMPANIES");
+        Permission createOrder = createPermissionIfNotFound("CREATE_ORDER");
 
         Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers));
         createRoleIfNotFound("ROLE_ADMIN", adminPermissions);
 
-        Set<Permission> companyPermissions = new HashSet<>();
+        Set<Permission> companyPermissions = new HashSet<>(Arrays.asList(createOrder));
         createRoleIfNotFound("ROLE_COMPANY", companyPermissions);
 
         RandomPasswordGenerator randomPasswordGenerator = new RandomPasswordGenerator();
         String generatedPassword = randomPasswordGenerator.generatePassword();
 
         //String email, String username, String password, Role role, AdminStatus status
-        Admin admin = new Admin("admin@maildrop.cc","admin",passwordEncoder.encode(generatedPassword), roleRepository.findByName("ROLE_ADMIN"),
+        Admin admin = new Admin("admin@maildrop.cc", "admin", passwordEncoder.encode(generatedPassword), roleRepository.findByName("ROLE_ADMIN"),
                 AdminStatus.NEVER_LOGGED_IN);
 
         if (adminRepository.findByUsername(admin.getUsername()) != null) {

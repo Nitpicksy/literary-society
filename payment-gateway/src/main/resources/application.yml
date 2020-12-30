@@ -26,7 +26,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     show-sql: false
   mail:
     host: smtp.gmail.com
@@ -67,6 +67,6 @@ TOKEN_UTILS_SECRET: Nitpicsky
 TOKEN_UTILS_EXPIRES_IN: 10800000
 # 14 days
 TOKEN_UTILS_REFRESH_TOKEN_EXPIRES_IN: 1209600000
-TOKEN_UTILS_AUTH_HEADER: Authorization
+TOKEN_UTILS_AUTH_HEADER: Auth
 
 LOCALHOST_URL: http://localhost:3003/

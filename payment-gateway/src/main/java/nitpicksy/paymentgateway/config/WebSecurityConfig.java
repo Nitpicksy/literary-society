@@ -50,7 +50,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/api/payment-methods")
                 .hasAuthority("MANAGE_PAYMENT_METHODS").and()
                 .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/payment-methods/{id}")
-                .hasAuthority("MANAGE_PAYMENT_METHODS")
+                .hasAuthority("MANAGE_PAYMENT_METHODS").and()
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/api/orders")
+                .hasAuthority("CREATE_ORDER")
                 .anyRequest().permitAll().and()
                 .cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(jwtUserDetailsService.tokenUtils,
