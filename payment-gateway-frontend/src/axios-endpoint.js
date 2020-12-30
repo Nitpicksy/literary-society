@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const instance = axios.create({
   // baseURL: "https://localhost:8080/payment-gateway/api",
-  baseURL: "https://localhost:52773/api",
+  baseURL: "https://localhost:63636/api",
   orders: "/orders",
   payments: "/payments",
 });
@@ -13,7 +13,7 @@ instance.interceptors.request.use(
       const accessToken = localStorage.getItem("accessToken");
       if(accessToken){
         request.headers = {
-          Authorization: `Bearer ${accessToken}`,
+          Auth: `Bearer ${accessToken}`,
         };
       }
     } else {
@@ -21,7 +21,7 @@ instance.interceptors.request.use(
       if (refreshToken) {
         if (request.url.includes("refresh")) {
           request.headers = {
-            Authorization: `Bearer ${refreshToken}`,
+            Auth: `Bearer ${refreshToken}`,
           };
         }
       }

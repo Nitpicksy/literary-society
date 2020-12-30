@@ -41,18 +41,20 @@ public class CompanyController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CompanyResponseDTO> addCompany(@RequestPart @Valid CompanyDataDTO companyData, @RequestPart @NotNull MultipartFile certificate,
                                                          @RequestPart @NotEmpty(message = "Supported payment methods must not be empty") List<PaymentMethodDTO> supportedPaymentMethods) {
+        Company company = companyDataMapper.toEntity(companyData);
+        company.setCertificateName(certificate.getOriginalFilename());
+
+        Company savedCompany = companyService.addCompany(company, supportedPaymentMethods);
+
         try {
             if (CertificateUtils.saveCertFile(certificate) == null) {
-                throw new InvalidDataException("Certificate already exists. Change your certificate's file name and try again.", HttpStatus.BAD_REQUEST);
+                throw new InvalidDataException("Certificate name already in use. Please try with another one.", HttpStatus.BAD_REQUEST);
             }
         } catch (IOException e) {
             throw new InvalidDataException("Certificate could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
-        Company company = companyDataMapper.toEntity(companyData);
-        company.setCertificateName(certificate.getOriginalFilename());
-
-        return new ResponseEntity<>(companyResponseMapper.toDto(companyService.addCompany(company, supportedPaymentMethods)), HttpStatus.OK);
+        return new ResponseEntity<>(companyResponseMapper.toDto(savedCompany), HttpStatus.OK);
     }
 
     @GetMapping

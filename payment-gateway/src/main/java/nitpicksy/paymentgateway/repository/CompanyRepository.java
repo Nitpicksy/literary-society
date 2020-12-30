@@ -16,6 +16,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     Company findByCommonName(String commonName);
 
+    Company findByCertificateName(String certificateName);
+
     List<Company> findByStatusNot(CompanyStatus status);
 
     Company findOneById(Long id);

@@ -15,6 +15,8 @@ public interface PaymentMethodRepository extends JpaRepository<PaymentMethod, Lo
 
     PaymentMethod findByCommonName(String commonName);
 
+    PaymentMethod findByCertificateName(String certificateName);
+
     List<PaymentMethod> findByStatusNot(PaymentMethodStatus status);
 
     List<PaymentMethod> findByStatus(PaymentMethodStatus status);

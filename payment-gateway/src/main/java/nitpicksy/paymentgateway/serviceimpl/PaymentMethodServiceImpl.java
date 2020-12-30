@@ -5,6 +5,7 @@ import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.model.Data;
 import nitpicksy.paymentgateway.model.PaymentMethod;
 import nitpicksy.paymentgateway.model.Transaction;
+import nitpicksy.paymentgateway.repository.CompanyRepository;
 import nitpicksy.paymentgateway.repository.PaymentMethodRepository;
 import nitpicksy.paymentgateway.service.DataService;
 import nitpicksy.paymentgateway.service.EmailNotificationService;
@@ -38,6 +39,8 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     private EmailNotificationService emailNotificationService;
 
+    private CompanyRepository companyRepository;
+
     public List<PaymentMethod> findMerchantPaymentMethods(Long orderId) {
 
         Transaction order = orderService.findOrder(orderId);
@@ -64,6 +67,11 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
                 (paymentMethodRepository.findByCommonName(paymentMethod.getCommonName()) != null)) {
             throw new InvalidDataException("Payment method with the same name already exists.", HttpStatus.BAD_REQUEST);
         }
+        if (paymentMethodRepository.findByCertificateName(paymentMethod.getCertificateName()) != null
+                || companyRepository.findByCertificateName(paymentMethod.getCertificateName()) != null) {
+            throw new InvalidDataException("Certificate name already in use. Please try with another one.", HttpStatus.BAD_REQUEST);
+        }
+
         Set<Data> createdData = dataService.create(listData);
         paymentMethod.setData(createdData);
 
@@ -85,18 +93,17 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
         return paymentMethodRepository.findByIdIn(ids);
     }
 
-
     @Override
-    public PaymentMethod changePaymentMethodStatus(Long id, String status)  {
+    public PaymentMethod changePaymentMethodStatus(Long id, String status) {
         Optional<PaymentMethod> optionalPaymentMethod = paymentMethodRepository.findById(id);
         if (optionalPaymentMethod.isPresent()) {
             PaymentMethod paymentMethod = optionalPaymentMethod.get();
             if (status.equals("approve")) {
-                try{
+                try {
                     KeyStore trustStore = TrustStoreUtils.loadKeyStore();
                     X509Certificate certificate = CertificateUtils.getCertificate(paymentMethod.getCertificateName());
                     TrustStoreUtils.importCertificateInTrustStore(certificate, paymentMethod.getCommonName(), trustStore);
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
                 paymentMethod.setStatus(PaymentMethodStatus.APPROVED);
@@ -130,10 +137,12 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     @Autowired
     public PaymentMethodServiceImpl(OrderService orderService, PaymentMethodRepository paymentMethodRepository,
-                                    DataService dataService, EmailNotificationService emailNotificationService) {
+                                    DataService dataService, EmailNotificationService emailNotificationService,
+                                    CompanyRepository companyRepository) {
         this.orderService = orderService;
         this.paymentMethodRepository = paymentMethodRepository;
         this.dataService = dataService;
         this.emailNotificationService = emailNotificationService;
+        this.companyRepository = companyRepository;
     }
 }

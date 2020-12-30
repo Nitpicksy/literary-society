@@ -46,11 +46,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             return;
         }
 
-        Permission manageEditors = createPermissionIfNotFound("MANAGE_PAYMENT_METHODS");
-        Permission manageLecturers = createPermissionIfNotFound("MANAGE_COMPANIES");
+        Permission managePaymentMethods = createPermissionIfNotFound("MANAGE_PAYMENT_METHODS");
+        Permission manageCompanies = createPermissionIfNotFound("MANAGE_COMPANIES");
         Permission createOrder = createPermissionIfNotFound("CREATE_ORDER");
 
-        Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers));
+        Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(managePaymentMethods, manageCompanies));
         createRoleIfNotFound("ROLE_ADMIN", adminPermissions);
 
         Set<Permission> companyPermissions = new HashSet<>(Arrays.asList(createOrder));

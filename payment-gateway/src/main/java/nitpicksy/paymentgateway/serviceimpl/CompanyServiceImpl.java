@@ -55,6 +55,11 @@ public class CompanyServiceImpl implements CompanyService {
                 || companyRepository.findByCommonName(company.getCommonName()) != null) {
             throw new InvalidDataException("Company with the same name already exists.", HttpStatus.BAD_REQUEST);
         }
+        if (companyRepository.findByCertificateName(company.getCertificateName()) != null
+                || paymentMethodRepository.findByCertificateName(company.getCertificateName()) != null) {
+            throw new InvalidDataException("Certificate name already in use. Please try with another one.", HttpStatus.BAD_REQUEST);
+        }
+
         List<Long> ids = paymentMethodDTOs.stream().map(PaymentMethodDTO::getId).collect(Collectors.toList());
         List<PaymentMethod> paymentMethods = paymentMethodRepository.findByIdIn(ids);
         if (paymentMethods.isEmpty()) {

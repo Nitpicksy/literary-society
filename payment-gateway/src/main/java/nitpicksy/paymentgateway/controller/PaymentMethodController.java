@@ -63,19 +63,21 @@ public class PaymentMethodController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PaymentMethod> registerPaymentMethod(@RequestPart @Valid CreatePaymentMethodMainDataDTO mainData, @RequestPart @NotNull MultipartFile certificate,
                                                                @RequestPart @NotEmpty(message = "Payment data list must not be empty") List<PaymentDataDTO> paymentDataList) {
+        PaymentMethod paymentMethod = mainDataMapper.toEntity(mainData);
+        paymentMethod.setCertificateName(certificate.getOriginalFilename());
+
+        PaymentMethod savedPaymentMethod = paymentMethodService.registerPaymentMethod(paymentMethod,
+                dataMapper.convertList(paymentDataList));
+
         try {
             if (CertificateUtils.saveCertFile(certificate) == null) {
-                throw new InvalidDataException("Certificate already exists. Change your certificate's file name and try again.", HttpStatus.BAD_REQUEST);
+                throw new InvalidDataException("Certificate name already in use. Please try with another one.", HttpStatus.BAD_REQUEST);
             }
         } catch (IOException e) {
             throw new InvalidDataException("Certificate could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
-        PaymentMethod paymentMethod = mainDataMapper.toEntity(mainData);
-        paymentMethod.setCertificateName(certificate.getOriginalFilename());
-
-        return new ResponseEntity<>(paymentMethodService.registerPaymentMethod(paymentMethod,
-                dataMapper.convertList(paymentDataList)), HttpStatus.OK);
+        return new ResponseEntity<>(savedPaymentMethod, HttpStatus.OK);
     }
 
     @GetMapping
