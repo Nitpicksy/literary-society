@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -8,11 +8,11 @@ import Typography from "../Typography";
 import * as actions from "./PaymentHomeActionsExport";
 import { connect } from "react-redux";
 import PaymentMethod from "./PaymentMethod/PaymentMethod";
+import { Paper } from "@material-ui/core";
 
 const styles = (theme) => ({
   root: {
     display: "flex",
-    backgroundColor: theme.palette.secondary.light,
     overflow: "hidden",
   },
   container: {
@@ -30,7 +30,20 @@ const styles = (theme) => ({
     padding: theme.spacing(0, 5),
   },
   title: {
-    marginBottom: theme.spacing(14),
+    marginBottom: theme.spacing(3)
+  },
+  details: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    marginTop: theme.spacing(3),
+    padding: theme.spacing(2, 3),
+    backgroundColor: '#f5f5f5',
+  },
+  detailsText: {
+    fontSize: 24,
+    fontWeight: 500,
+    marginBottom: theme.spacing(1)
   },
   number: {
     fontSize: 24,
@@ -85,27 +98,19 @@ const PaymentHome = (props) => {
   if (props.paymentMethods) {
     if (props.paymentDetails) {
       details = (
-        <div>
-          <br />
-          <Typography
-            variant="h4"
-            marked="center"
-            className={classes.title}
-            component="h2"
-          >
-            {props.paymentDetails.amount} din.
-            <div className={classes.item}>
-              <Typography variant="h5" align="center">
-                {props.paymentDetails.merchantName} in{" "}
-                {props.paymentDetails.companyName}
-              </Typography>
-            </div>
+        <Paper className={classes.details} variant="outlined">
+          <Typography variant="body1" className={classes.detailsText}>
+            Price: {props.paymentDetails.amount} din.
           </Typography>
-        </div>
+          <Typography variant="body1" className={classes.detailsText}>
+            {props.paymentDetails.merchantName} in{" "}
+            {props.paymentDetails.companyName}
+          </Typography>
+        </Paper>
       );
     }
 
-    const paymentMethod = props.paymentMethods.sort(({id: previousID}, {id: currentID}) => previousID - currentID).map((method, index) => {
+    const paymentMethod = props.paymentMethods.sort(({ id: previousID }, { id: currentID }) => previousID - currentID).map((method, index) => {
       return (
         <PaymentMethod
           key={index}
@@ -118,7 +123,7 @@ const PaymentHome = (props) => {
       );
     })
 
-    paymentMethod.sort(function(a, b) {
+    paymentMethod.sort(function (a, b) {
       if (a.value > b.value) {
         return 1;
       }
@@ -128,12 +133,11 @@ const PaymentHome = (props) => {
       return 0;
     });
 
-    if(!loading) {
+    if (!loading) {
       methods = (
         <Container className={classes.container}>
           <Typography
             variant="h4"
-            marked="center"
             className={classes.title}
             component="h2"
           >
@@ -144,22 +148,22 @@ const PaymentHome = (props) => {
               {paymentMethod}
             </Grid>
           </div>
-  
+
           {details}
         </Container>
       );
     } else {
       methods = <h1> No payment methods found for given literary society.</h1>;
     }
-    }
-    
+  }
+
 
   return <section className={classes.root}>
-    {!loading ? methods : <Typography  variant="h4"
-          marked="center"
-          className={classes.title}
-          component="h2"> Loading... </Typography>}
-    </section>;
+    {!loading ? methods : <Typography variant="h4"
+      marked="center"
+      className={classes.title}
+      component="h2"> Loading... </Typography>}
+  </section>;
 };
 
 PaymentHome.propTypes = {

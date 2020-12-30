@@ -26,16 +26,16 @@ public class ManuscriptIsNotOriginalEmail implements JavaDelegate {
 
         String writerUsername = (String) execution.getVariable("writer");
 
-        User mainEditor = userService.findByUsername(writerUsername);
+        User writer = userService.findByUsername(writerUsername);
 
-        String email = mainEditor.getEmail();
+        String email = writer.getEmail();
         String subject = "Manuscript is nor original";
-        String text = composeEmailToActivate(publicationRequestDTO.getTitle(),(String) execution.getVariable("reason"));
+        String text = composeEmailToActivate(publicationRequestDTO.getTitle(), (String) execution.getVariable("reason"));
 
         emailNotificationService.sendEmail(email, subject, text);
     }
 
-    private String composeEmailToActivate(String title,String reason) {
+    private String composeEmailToActivate(String title, String reason) {
         StringBuilder sb = new StringBuilder();
         sb.append("Manuscript '");
         sb.append(title);

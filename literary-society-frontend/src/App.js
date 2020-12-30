@@ -28,6 +28,8 @@ import PublicationRequest from './components/Tasks/Task/PublicationRequest/Publi
 import DocumentSubmission from './components/WriterPages/DocumentSubmission/DocumentSubmission';
 import BookDetails from './components/BookDetails/BookDetails';
 import { GuardProvider, GuardedRoute } from 'react-router-guards';
+import EditorDownloadDocument from './components/Tasks/Task/EditorDownloadDocument/EditorDownloadDocument';
+import WriterUploadDocument from './components/Tasks/Task/WriterUploadDocument/WriterUploadDocument';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -93,16 +95,18 @@ const App = props => {
         <Switch>
           <GuardedRoute path="/publication-requests" render={(props) => <PublicationRequests {...props} />} meta={{ roles: [roleWriter] }} />
           <GuardedRoute path="/create-publication-request" render={(props) => <CreatePublicationRequest {...props} />} meta={{ roles:  [roleWriter] }} />
+          <Route path="/writer-upload-document" render={(props) => <WriterUploadDocument {...props} />} meta={{ roles: [roleWriter] }} />
         
           <Route path="/publication-request" render={(props) => <PublicationRequest {...props} />} meta={{ roles: [roleEditor] }} />
-          
+          <Route path="/editor-download-document" render={(props) => <EditorDownloadDocument {...props} />} meta={{ roles: [roleEditor] }} />
+
           <Route path="/upload" render={(props) => <DocumentSubmission {...props} />} meta={{ roles:  [roleWriter] }}/>
 
           <Route path="/tasks" render={(props) => <Tasks {...props} />} />
           <Route path="/sign-out" render={(props) => <Logout {...props} />} />
           <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
 
-          <Route path="/payment/success" render={(props) => <PaymentSuccess {...props} />} />
+          <Route path="/payment/success/:id" render={(props) => <PaymentSuccess {...props} />} />
           <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
           <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
 

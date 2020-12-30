@@ -9,7 +9,13 @@ const rawTheme = createMuiTheme({
       dark: "#1e1e1f",
     },
     secondary: {
-      light: "#fff5f8",
+      light: "#ffa040",
+      main: "#ff6f00",
+      dark: "#c43e00",
+      contrastText: "#ffffff",
+    },
+    inherit: {
+      light: "#FF5733",
       main: "#ff3366",
       dark: "#e62958",
     },
@@ -29,12 +35,12 @@ const rawTheme = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: "'Work Sans', sans-serif",
+    fontFamily: "'Exo 2', sans-serif",
     fontSize: 14,
-    fontWeightLight: 300, // Work Sans
+    fontWeightLight: 200, // Work Sans
     fontWeightRegular: 400, // Work Sans
-    fontWeightMedium: 700, // Roboto Condensed
-    fontFamilySecondary: "'Roboto Condensed', sans-serif",
+    fontWeightMedium: 600, // Roboto Condensed
+    fontFamilySecondary: "'Ubuntu', sans-serif",
   },
 });
 
@@ -80,9 +86,9 @@ const theme = {
       fontSize: 36,
     },
     h5: {
-      ...rawTheme.typography.h5,
-      fontSize: 20,
-      fontWeight: rawTheme.typography.fontWeightLight,
+      ...rawTheme.typography.h6,
+      ...fontHeader,
+      fontSize: 24,
     },
     h6: {
       ...rawTheme.typography.h6,

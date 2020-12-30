@@ -7,8 +7,10 @@ import nitpicksy.literarysociety.dto.request.ResetPasswordDTO;
 import nitpicksy.literarysociety.exceptionHandler.BlockedUserException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidUserDataException;
+import nitpicksy.literarysociety.model.JWTToken;
 import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.UserTokenState;
+import nitpicksy.literarysociety.repository.JWTTokenRepository;
 import nitpicksy.literarysociety.security.JwtAuthenticationRequest;
 import nitpicksy.literarysociety.service.AuthenticationService;
 import nitpicksy.literarysociety.service.LogService;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.security.NoSuchAlgorithmException;
 
@@ -47,6 +50,8 @@ public class AuthenticationController {
     private TestServiceImpl testService;
 
     private CamundaService camundaService;
+
+    private JWTTokenRepository jwtTokenRepository;
 
     @PostMapping(value = "/sign-in", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserTokenState> login(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest) {
@@ -98,7 +103,7 @@ public class AuthenticationController {
         try {
             authenticationService.activateAccount(t);
             if (piId != null && !piId.isEmpty()) {
-                camundaService.complete(piId);
+                camundaService.findAndCompleteActiveTask(piId);
             }
         } catch (NoSuchAlgorithmException e) {
             throw new InvalidTokenException("Activation token cannot be checked. Please try again.", HttpStatus.BAD_REQUEST);
@@ -143,6 +148,12 @@ public class AuthenticationController {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(userService.refreshAuthenticationToken(request));
     }
 
+    @PostMapping(value = "/accept-pg-token")
+    public ResponseEntity<Void> acceptPaymentGatewayToken(@NotBlank @RequestBody String jwtToken) {
+        jwtTokenRepository.save(new JWTToken(jwtToken));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/health")
     public ResponseEntity<String> health() {
         System.out.println("Greetings!");
@@ -151,12 +162,14 @@ public class AuthenticationController {
 
     @Autowired
     public AuthenticationController(UserService userService, AuthenticationService authenticationService, LogService logService,
-                                    IPAddressProvider ipAddressProvider, TestServiceImpl testService, CamundaService camundaService) {
+                                    IPAddressProvider ipAddressProvider, TestServiceImpl testService, CamundaService camundaService,
+                                    JWTTokenRepository jwtTokenRepository) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.logService = logService;
         this.ipAddressProvider = ipAddressProvider;
         this.testService = testService;
         this.camundaService = camundaService;
+        this.jwtTokenRepository = jwtTokenRepository;
     }
 }

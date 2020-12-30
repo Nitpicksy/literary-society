@@ -6,23 +6,14 @@ import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
 import nitpicksy.literarysociety.enumeration.TransactionStatus;
 import nitpicksy.literarysociety.enumeration.TransactionType;
 import nitpicksy.literarysociety.exceptionHandler.InvalidUserDataException;
-import nitpicksy.literarysociety.model.Book;
-import nitpicksy.literarysociety.model.Merchant;
-import nitpicksy.literarysociety.model.Transaction;
-import nitpicksy.literarysociety.model.User;
-import nitpicksy.literarysociety.service.MembershipService;
-import nitpicksy.literarysociety.service.MerchantService;
-import nitpicksy.literarysociety.service.PaymentService;
-import nitpicksy.literarysociety.service.TransactionService;
+import nitpicksy.literarysociety.model.*;
+import nitpicksy.literarysociety.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -34,6 +25,8 @@ public class PaymentServiceImpl implements PaymentService {
     private ZuulClient zuulClient;
 
     private MembershipService membershipService;
+
+    private JWTTokenService jwtTokenService;
 
     @Override
     public String proceedToPayment(Set<Book> bookSet, User user) {
@@ -47,7 +40,8 @@ public class PaymentServiceImpl implements PaymentService {
                 new HashSet<>(bookList), merchant);
         try {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            return zuulClient.pay(new PaymentGatewayPayRequestDTO(transaction.getId(), merchant.getName(), amount, timestamp.toString()));
+            // Send JWT token for authentication in Payment Gateway
+            return zuulClient.pay("Bearer " + jwtTokenService.getToken(), new PaymentGatewayPayRequestDTO(transaction.getId(), merchant.getName(), amount, timestamp.toString()));
         } catch (RuntimeException exception) {
             transaction.setStatus(TransactionStatus.ERROR);
             transactionService.save(transaction);
@@ -85,10 +79,11 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     public PaymentServiceImpl(MerchantService merchantService, TransactionService transactionService, ZuulClient zuulClient,
-                              MembershipService membershipService) {
+                              MembershipService membershipService, JWTTokenService jwtTokenService) {
         this.merchantService = merchantService;
         this.transactionService = transactionService;
         this.zuulClient = zuulClient;
         this.membershipService = membershipService;
+        this.jwtTokenService = jwtTokenService;
     }
 }
