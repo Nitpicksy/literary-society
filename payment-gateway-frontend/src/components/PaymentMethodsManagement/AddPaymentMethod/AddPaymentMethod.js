@@ -150,25 +150,31 @@ const AddPaymentMethod = (props) => {
 
     const submitHander = (event) => {
         event.preventDefault();
-        //proveri da li je uneo barem jedan paymentData
-        //posalji i podatke sa form i sa formData
-        //posalji i sertificate
-        if (rows.length === 0) {
-            toastr.error("Register payment method", "You have to enter at least one payment data.");
+
+        if (!(rows && Array.isArray(rows) && rows.length)) {
+            toastr.info("Register payment method", "You need to enter at least one payment data.");
             return;
         }
 
         if (!certificate) {
-            toastr.error("Register payment method", "You have to upload your certificate.");
+            toastr.info("Register payment method", "You need to upload your certificate.");
             return;
         }
-        const certificateFormData = new FormData();
-        certificateFormData.append('certificate', certificate);
-        console.log(certificateFormData)
-        props.onRegisterPaymentMethod({
-            'name': controls.name.value, 'api': controls.api.value, 'commonName': controls.commonName.value,
-            'subscription': controls.subscription.value, 'email': controls.email.value
-        }, certificateFormData, rows, history);
+
+        const mainData = {
+            name: controls.name.value, 
+            api: controls.api.value, 
+            commonName: controls.commonName.value,
+            subscription: controls.subscription.value, 
+            email: controls.email.value
+        }
+
+        const certFormData = new FormData();
+        certFormData.append('certificate', certificate);
+        certFormData.append('mainData', new Blob([JSON.stringify(mainData)], { type: "application/json" }));
+        certFormData.append('paymentDataList', new Blob([JSON.stringify(rows)], { type: "application/json" }));
+
+        props.onRegisterPaymentMethod(certFormData, history);
     }
 
     const submitDataHander = (event) => {
@@ -216,7 +222,7 @@ const AddPaymentMethod = (props) => {
                                 <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} />
                             </form>
                             <div className={classes.chooseCertificate}>
-                                <input type="file" accept=".crt, .p12" hidden id="upload-file"
+                                <input type="file" accept=".crt" hidden id="upload-file"
                                     onChange={handleChooseFile} />
                                 <label htmlFor="upload-file">
                                     <Grid container>
@@ -282,7 +288,7 @@ const AddPaymentMethod = (props) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onRegisterPaymentMethod: (mainData, certificateData, paymentData, history) => dispatch(actions.registerPaymentMethod(mainData, certificateData, paymentData, history)),
+        onRegisterPaymentMethod: (paymentMethod, history) => dispatch(actions.registerPaymentMethod(paymentMethod, history)),
     }
 };
 export default connect(null, mapDispatchToProps)(AddPaymentMethod);;

@@ -79,7 +79,7 @@ const PaymentMethodList = (props) => {
             <div className={classes.paymentDataTable}>
                 <Typography component="h1" variant="h5">Payment data</Typography>
                 <Grid container className={classes.tablePaymentData}>
-                    <DataGrid rows={rowsPaymentData} columns={columnsPaymentData} pageSize={5} autoPageSize />
+                    <DataGrid rows={rowsPaymentData} columns={columnsPaymentData} autoPageSize />
                 </Grid>
             </div>
         );
@@ -110,8 +110,7 @@ const PaymentMethodList = (props) => {
                 })
             }
             data = <Grid container className={classes.table}>
-                <DataGrid rows={rows} columns={columns} pageSize={5} onRowClick={(properties) => selectRow(properties)}
-                    autoPageSize />
+                <DataGrid rows={rows} columns={columns} autoPageSize onRowClick={(properties) => selectRow(properties)} />
             </Grid>;
         }
     } else {

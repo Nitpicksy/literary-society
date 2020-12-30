@@ -1,29 +1,32 @@
 package nitpicksy.paymentgateway.controller;
 
 import nitpicksy.paymentgateway.dto.both.PaymentMethodDTO;
+import nitpicksy.paymentgateway.dto.request.CompanyDataDTO;
 import nitpicksy.paymentgateway.dto.request.CreatePaymentMethodDTO;
+import nitpicksy.paymentgateway.dto.request.CreatePaymentMethodMainDataDTO;
+import nitpicksy.paymentgateway.dto.request.PaymentDataDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentMethodDataDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentMethodResponseDTO;
+import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.mapper.*;
+import nitpicksy.paymentgateway.model.Company;
 import nitpicksy.paymentgateway.model.PaymentMethod;
 import nitpicksy.paymentgateway.service.PaymentMethodService;
+import nitpicksy.paymentgateway.utils.CertificateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,18 +53,22 @@ public class PaymentMethodController {
                 .map(paymentMethod -> paymentMethodMapper.toDto(paymentMethod)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PaymentMethod> registerPaymentMethod(@Valid @RequestBody CreatePaymentMethodDTO createPaymentMethodDTO) {
-        //sacuvaj multipart file i sacuvaj njegov naziv
-//        try {
-//            pdfDocumentService.upload(pdfFile, book);
-//        } catch (IOException e) {
-//            throw new InvalidDataException("Manuscript could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
-//        }
-        PaymentMethod paymentMethod = paymentMethodService.registerPaymentMethod(mainDataMapper.toEntity(createPaymentMethodDTO.getMainData()),
-                dataMapper.convertList(createPaymentMethodDTO.getPaymentData()));
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PaymentMethod> registerPaymentMethod(@RequestPart @Valid CreatePaymentMethodMainDataDTO mainData, @RequestPart @NotNull MultipartFile certificate,
+                                                               @RequestPart @NotEmpty(message = "Payment data list must not be empty") List<PaymentDataDTO> paymentDataList) {
+        try {
+            if (CertificateUtils.saveCertFile(certificate) == null) {
+                throw new InvalidDataException("Certificate already exists. Change your certificate's file name and try again.", HttpStatus.BAD_REQUEST);
+            }
+        } catch (IOException e) {
+            throw new InvalidDataException("Certificate could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
+        }
 
-        return new ResponseEntity<>(paymentMethod, HttpStatus.OK);
+        PaymentMethod paymentMethod = mainDataMapper.toEntity(mainData);
+        paymentMethod.setCertificateName(certificate.getOriginalFilename());
+
+        return new ResponseEntity<>(paymentMethodService.registerPaymentMethod(paymentMethod,
+                dataMapper.convertList(paymentDataList)), HttpStatus.OK);
     }
 
     @GetMapping

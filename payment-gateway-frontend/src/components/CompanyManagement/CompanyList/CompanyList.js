@@ -80,7 +80,7 @@ const CompanyList = (props) => {
                 })
             }
             data = <Grid container className={classes.table}>
-                <DataGrid rows={rows} columns={columns} pageSize={5} autoPageSize />
+                <DataGrid rows={rows} columns={columns} autoPageSize />
             </Grid>;
         }
     } else {

@@ -16,12 +16,17 @@ public class CertificateUtils {
 
     private static String CERTIFICATES_PATH = "payment-gateway/src/main/resources/certificates/";
 
-    public static void saveCertFile(MultipartFile certificate) throws IOException {
+    public static String saveCertFile(MultipartFile certificate) throws IOException {
         if (!certificate.isEmpty()) {
             byte[] bytes = certificate.getBytes();
             Path path = Paths.get(CERTIFICATES_PATH + File.separator + certificate.getOriginalFilename());
+            if (Files.exists(path)) {
+                return null;
+            }
             Files.write(path, bytes);
+            return certificate.getOriginalFilename();
         }
+        return null;
     }
 
     public static byte[] loadCertFile(String name) throws IOException {

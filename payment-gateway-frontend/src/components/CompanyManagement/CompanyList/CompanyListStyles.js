@@ -12,6 +12,6 @@ export const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.secondary.main,
     },
     table: {
-        height: 330,
+        height: 370,
     },
 }));

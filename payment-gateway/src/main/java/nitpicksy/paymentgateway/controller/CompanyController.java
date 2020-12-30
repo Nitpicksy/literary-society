@@ -42,7 +42,9 @@ public class CompanyController {
     public ResponseEntity<CompanyResponseDTO> addCompany(@RequestPart @Valid CompanyDataDTO companyData, @RequestPart @NotNull MultipartFile certificate,
                                                          @RequestPart @NotEmpty(message = "Supported payment methods must not be empty") List<PaymentMethodDTO> supportedPaymentMethods) {
         try {
-            CertificateUtils.saveCertFile(certificate);
+            if (CertificateUtils.saveCertFile(certificate) == null) {
+                throw new InvalidDataException("Certificate already exists. Change your certificate's file name and try again.", HttpStatus.BAD_REQUEST);
+            }
         } catch (IOException e) {
             throw new InvalidDataException("Certificate could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
         }

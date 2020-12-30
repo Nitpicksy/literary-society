@@ -12,14 +12,14 @@ export const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.secondary.main,
     },
     table: {
-        height: 330,
+        height: 370,
         '& .MuiDataGrid-root .MuiDataGrid-row:hover': {
             cursor: 'pointer'
         },
     },
     tablePaymentData: {
         marginTop:  theme.spacing(1),
-        height: 220
+        height: 270
     }, 
     paymentDataTable: {
         paddingTop:  theme.spacing(4),

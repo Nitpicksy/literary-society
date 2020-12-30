@@ -136,7 +136,7 @@ const AddCompany = (props) => {
                             {createURLField('failedURL', 'Failed URL')}
                             {createURLField('errorURL', 'Error URL')}
                             <div className={classes.chooseCertificate}>
-                                <input type="file" accept=".crt, .p12" hidden id="upload-file"
+                                <input type="file" accept=".crt" hidden id="upload-file"
                                     onChange={handleChooseFile} />
                                 <label htmlFor="upload-file">
                                     <Grid container>

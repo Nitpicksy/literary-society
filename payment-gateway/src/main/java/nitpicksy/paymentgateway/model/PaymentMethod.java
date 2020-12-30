@@ -42,7 +42,10 @@ public class PaymentMethod {
     @Column
     private boolean subscription;
 
-    public PaymentMethod(String name, String commonName, String URI, boolean subscription,String email) {
+    @Column(unique = true, nullable = false)
+    private String certificateName;
+
+    public PaymentMethod(String name, String commonName, String URI, boolean subscription, String email) {
         this.name = name;
         this.commonName = commonName;
         this.URI = URI;

@@ -1,23 +1,17 @@
 import axios from '../../../axios-endpoint';
-import {toastr} from 'react-redux-toastr';
+import { toastr } from 'react-redux-toastr';
 
-export const registerPaymentMethod = (mainData, certificateData, paymentData, history) => {
+export const registerPaymentMethod = (paymentMethod, history) => {
     return dispatch => {
-        console.log(certificateData)
-        const data = {
-            mainData: mainData,
-            certificate: certificateData, 
-            paymentData:paymentData
-        };
-        axios.post('/payment-methods', data)
+        axios.post('/payment-methods', paymentMethod)
             .then(response => {
                 if (response.data) {
                     history.push('/add-payment-method-success');
-                    toastr.success('Register payment method', 'Success');
+                    toastr.success('Register payment method', 'Payment method registered successfully.');
                 }
             })
             .catch(err => {
-                toastr.error('Register payment method',err.response.data.message);
+                toastr.error('Register payment method', err.response.data.message);
             })
     };
 };
