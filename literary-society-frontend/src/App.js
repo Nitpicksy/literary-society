@@ -31,6 +31,7 @@ import { GuardProvider, GuardedRoute } from 'react-router-guards';
 import EditorDownloadDocument from './components/Tasks/Task/EditorDownloadDocument/EditorDownloadDocument';
 import WriterUploadDocument from './components/Tasks/Task/WriterUploadDocument/WriterUploadDocument';
 import WriterUploadWork from './components/Tasks/Task/MembershipProcess/WriterUploadWork/WriterUploadWork';
+import CommitteeVoting from './components/Tasks/Task/MembershipProcess/CommitteeVoting/CommitteeVoting';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -43,6 +44,7 @@ const App = props => {
   const roleWriter = "ROLE_WRITER";
   const roleReader = "ROLE_READER";
   const roleEditor ="ROLE_EDITOR";
+  const roleCommitteeMember ="ROLE_COMMITTEE_MEMBER";
   const roleAdmin ="ROLE_ADMIN";
   const roleLecturer="ROLE_LECTURER";
   const roleMerchant ="ROLE_MERCHANT";
@@ -102,6 +104,7 @@ const App = props => {
           <Route path="/editor-download-document" render={(props) => <EditorDownloadDocument {...props} />} meta={{ roles: [roleEditor] }} />
 
           <Route path="/writer-membership-upload" render={(props) => <WriterUploadWork {...props} />} meta={{ roles:  [roleWriter] }}/>
+          <Route path="/voting" render={(props) => <CommitteeVoting {...props} />} meta={{ roles:  [roleWriter] }}/>
 
           <Route path="/tasks" render={(props) => <Tasks {...props} />} />
           <Route path="/sign-out" render={(props) => <Logout {...props} />} />

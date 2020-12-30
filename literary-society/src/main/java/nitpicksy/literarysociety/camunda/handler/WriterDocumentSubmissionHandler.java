@@ -20,7 +20,8 @@ public class WriterDocumentSubmissionHandler implements ExecutionListener {
 
         List<String> committeeMembers = new ArrayList<>();
         List<User> users = userService.findAllWithRole("ROLE_COMMITTEE_MEMBER");
-
+        System.out.println("Username" + execution.getVariable("username"));
+        System.out.println("Writer" + execution.getVariable("writer"));
         users.forEach(user -> committeeMembers.add(user.getUsername()));
         execution.setVariable("committeeMembersList", committeeMembers);
     }

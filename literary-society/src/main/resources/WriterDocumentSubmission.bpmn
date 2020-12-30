@@ -1,28 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0qezoz3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
   <bpmn:process id="WriterDocumentSubmission" isExecutable="true">
+    <bpmn:extensionElements>
+      <camunda:executionListener class="nitpicksy.literarysociety.camunda.handler.WriterDocumentSubmissionHandler" event="start" />
+    </bpmn:extensionElements>
     <bpmn:startEvent id="StartEvent_1" name="Start">
       <bpmn:outgoing>Flow_1wz7n08</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:endEvent id="Event_0rnyu5t" name="End">
-      <bpmn:incoming>Flow_0ahgelm</bpmn:incoming>
+      <bpmn:incoming>Flow_0hyol6u</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1wz7n08" sourceRef="StartEvent_1" targetRef="Activity_03m9fx4" />
     <bpmn:userTask id="Activity_03m9fx4" name="Membership - submit your work" camunda:assignee="${writer}">
       <bpmn:incoming>Flow_1wz7n08</bpmn:incoming>
       <bpmn:outgoing>Flow_0ahgelm</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="Flow_0ahgelm" sourceRef="Activity_03m9fx4" targetRef="Event_0rnyu5t" />
+    <bpmn:sequenceFlow id="Flow_0ahgelm" sourceRef="Activity_03m9fx4" targetRef="Activity_0rz55pm" />
+    <bpmn:sequenceFlow id="Flow_0hyol6u" sourceRef="Activity_0rz55pm" targetRef="Event_0rnyu5t" />
+    <bpmn:userTask id="Activity_0rz55pm" name="Vote on a writer" camunda:assignee="${committeeMember}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="opinion" label="Opinion" type="enum">
+            <camunda:properties>
+              <camunda:property id="multipleSelect" value="false" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="requiredSelect" config="true" />
+            </camunda:validation>
+            <camunda:value id="MEETS_CRITERIA" name="Writer meets membership criteria" />
+            <camunda:value id="DOES_NOT_MEETS_CRITERIA" name="Writer is unfit for membership" />
+            <camunda:value id="MORE_DOCUMENTS" name="Needs more documents" />
+          </camunda:formField>
+          <camunda:formField id="comment" label="Add your comment" type="textarea" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ahgelm</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hyol6u</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="${committeeMembersList}" camunda:elementVariable="committeeMember" />
+    </bpmn:userTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="WriterDocumentSubmission">
-      <bpmndi:BPMNEdge id="Flow_0ahgelm_di" bpmnElement="Flow_0ahgelm">
-        <di:waypoint x="480" y="120" />
+      <bpmndi:BPMNEdge id="Flow_0hyol6u_di" bpmnElement="Flow_0hyol6u">
+        <di:waypoint x="690" y="120" />
         <di:waypoint x="1102" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ahgelm_di" bpmnElement="Flow_0ahgelm">
+        <di:waypoint x="470" y="120" />
+        <di:waypoint x="590" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1wz7n08_di" bpmnElement="Flow_1wz7n08">
         <di:waypoint x="178" y="120" />
-        <di:waypoint x="380" y="120" />
+        <di:waypoint x="370" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="142" y="102" width="36" height="36" />
@@ -37,7 +66,10 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1xt7mcx_di" bpmnElement="Activity_03m9fx4">
-        <dc:Bounds x="380" y="80" width="100" height="80" />
+        <dc:Bounds x="370" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0z88nia_di" bpmnElement="Activity_0rz55pm">
+        <dc:Bounds x="590" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
