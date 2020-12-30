@@ -18,4 +18,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     List<Company> findByStatusNot(CompanyStatus status);
 
+    Company findOneById(Long id);
+
 }

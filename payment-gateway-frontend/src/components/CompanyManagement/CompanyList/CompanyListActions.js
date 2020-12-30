@@ -19,7 +19,7 @@ export const fetchCompanies = () => {
     return dispatch => {
         axios.get('/companies')
             .then(response => {
-                dispatch(fetchCompaniesSuccess(response.data));
+                dispatch(fetchCompaniesSuccess(response.data));                
             })
             .catch(err => {
                 dispatch(fetchCompaniesFail());

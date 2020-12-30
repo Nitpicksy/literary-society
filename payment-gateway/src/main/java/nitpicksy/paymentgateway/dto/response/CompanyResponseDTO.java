@@ -7,6 +7,8 @@ import lombok.Setter;
 import nitpicksy.paymentgateway.dto.both.PaymentMethodDTO;
 import nitpicksy.paymentgateway.enumeration.CompanyStatus;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Getter
@@ -20,6 +22,8 @@ public class CompanyResponseDTO {
     private String companyName;
 
     private String websiteURL;
+
+    private String email;
 
     private List<PaymentMethodDTO> supportedPaymentMethods;
 

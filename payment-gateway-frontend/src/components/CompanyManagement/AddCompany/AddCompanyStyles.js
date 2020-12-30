@@ -30,8 +30,7 @@ export const useStyles = makeStyles((theme) => ({
         fontWeight: 600
     },
     chooseCertificate: {
-        minWidth: 555,
-        marginTop: theme.spacing(2),
+        marginTop: theme.spacing(3.2),
     },
     uploadBtn: {
         textAlign: 'right',

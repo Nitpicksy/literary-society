@@ -44,10 +44,8 @@ export const useStyles = makeStyles((theme) => ({
     fileName: {
         color: '#707070',
         fontWeight: 600,
-        fontSize: '14px',
     },
     chooseCertificate:{
-        minWidth: 555,
         marginTop: theme.spacing(2),
     },
     uploadBtn: {
@@ -56,7 +54,6 @@ export const useStyles = makeStyles((theme) => ({
     fileNameGrid: {
         display: 'flex',
         alignItems: 'center',
-        paddingLeft: theme.spacing(2),
     },    
     centered: {
         display: 'flex',

@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,8 +39,8 @@ public class CompanyController {
     private CompanyResponseMapper companyResponseMapper;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<CompanyDataDTO> addCompany(@RequestPart @Valid CompanyDataDTO companyData, @RequestPart @NotNull MultipartFile certificate,
-                                                     @RequestPart @NotEmpty(message = "Supported payment methods must not be empty") List<PaymentMethodDTO> supportedPaymentMethods) {
+    public ResponseEntity<CompanyResponseDTO> addCompany(@RequestPart @Valid CompanyDataDTO companyData, @RequestPart @NotNull MultipartFile certificate,
+                                                         @RequestPart @NotEmpty(message = "Supported payment methods must not be empty") List<PaymentMethodDTO> supportedPaymentMethods) {
         try {
             CertificateUtils.saveCertFile(certificate);
         } catch (IOException e) {
@@ -48,13 +50,23 @@ public class CompanyController {
         Company company = companyDataMapper.toEntity(companyData);
         company.setCertificateName(certificate.getOriginalFilename());
 
-        return new ResponseEntity<>(companyDataMapper.toDto(companyService.addCompany(company, supportedPaymentMethods)), HttpStatus.OK);
+        return new ResponseEntity<>(companyResponseMapper.toDto(companyService.addCompany(company, supportedPaymentMethods)), HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<List<CompanyResponseDTO>> findAll() {
         return new ResponseEntity<>(companyService.findAll().stream()
                 .map(company -> companyResponseMapper.toDto(company)).collect(Collectors.toList()), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<CompanyResponseDTO> changeStatus(@PathVariable @Positive Long id,
+                                                           @RequestParam @Pattern(regexp = "(?i)(approve|reject)$", message = "Status is not valid.") String status) {
+        Company company = companyService.changeStatus(id, status);
+        if (company == null) {
+            new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(companyResponseMapper.toDto(company), HttpStatus.OK);
     }
 
     @Autowired

@@ -36,6 +36,9 @@ public class Company implements UserDetails {
     @Column(nullable = false)
     private String URI;
 
+    @Column(nullable = false)
+    private String email;
+
     @Column(unique = true, nullable = false)
     private String commonName;
 

@@ -220,12 +220,12 @@ const AddPaymentMethod = (props) => {
                                     onChange={handleChooseFile} />
                                 <label htmlFor="upload-file">
                                     <Grid container>
-                                        <Grid item xs={5}>
+                                        <Grid item xs={6}>
                                             <Button color="primary" variant="contained" component="span" style={{ float: "left" }}>
                                                 Upload certificate
-                                    </Button>
+                                            </Button>
                                         </Grid>
-                                        <Grid item xs={7} className={classes.fileNameGrid} >
+                                        <Grid item xs={6} className={classes.fileNameGrid} >
                                             <Typography component="span" className={classes.fileName}>
                                                 {certificate ? certificate.name : ''}
                                             </Typography>

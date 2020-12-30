@@ -74,7 +74,8 @@ const CompanyList = (props) => {
             for (var i in props.companies) {
                 let supportedPaymentMethodsStr = props.companies[i].supportedPaymentMethods.map(method => method.name).join(', ');
                 rows.push({
-                    "id": props.companies[i].id, "companyName": props.companies[i].companyName, "websiteURL": props.companies[i].websiteURL,
+                    "id": props.companies[i].id, "companyName": props.companies[i].companyName,
+                    "websiteURL": props.companies[i].websiteURL, "email": props.companies[i].email,
                     "supportedPaymentMethods": supportedPaymentMethodsStr, "status": props.companies[i].status
                 })
             }

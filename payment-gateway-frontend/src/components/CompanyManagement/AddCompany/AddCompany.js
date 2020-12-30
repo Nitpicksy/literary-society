@@ -116,7 +116,25 @@ const AddCompany = (props) => {
                         <Grid item md={6}>
                             {createTextField('companyName', 'Company Name')}
                             {createURLField('websiteURL', 'Website URL')}
+                            <TextField margin="normal" fullWidth name='email' type='email'
+                                error={errors.email ? true : false} helperText={errors.email ? errors.email.message : ''}
+                                label='Email Address' inputRef={register({
+                                    required: {
+                                        value: true,
+                                        message: 'Email address is required'
+                                    },
+                                    pattern: {
+                                        value: new RegExp('^[a-zA-Z0-9_+&*-]+(?:.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+.)+[a-zA-Z]{2,7}$'),
+                                        message: 'Invalid email address'
+                                    }
+                                })}
+                            />
                             {createTextField('commonName', 'Common Name')}
+                        </Grid>
+                        <Grid item md={6}>
+                            {createURLField('successURL', 'Success URL')}
+                            {createURLField('failedURL', 'Failed URL')}
+                            {createURLField('errorURL', 'Error URL')}
                             <div className={classes.chooseCertificate}>
                                 <input type="file" accept=".crt, .p12" hidden id="upload-file"
                                     onChange={handleChooseFile} />
@@ -135,11 +153,6 @@ const AddCompany = (props) => {
                                     </Grid>
                                 </label>
                             </div>
-                        </Grid>
-                        <Grid item md={6}>
-                            {createURLField('successURL', 'Success URL')}
-                            {createURLField('failedURL', 'Failed URL')}
-                            {createURLField('errorURL', 'Error URL')}
                         </Grid>
                         <Grid item md={12}>
                             <Typography component="h2" variant="h5">Support payment methods:</Typography>
