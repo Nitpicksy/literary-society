@@ -65,9 +65,8 @@ const CommitteeVoting = (props) => {
                 <Typography component="h1" variant="h4" className={classes.title}>Committee voting</Typography>
                 <br/>
                 <Card className={classes.cardContent}>
-                <Typography component="h5" variant="h5" className={classes.title}>Submitted documents</Typography>
+                <Typography component="h5" variant="h5" className={classes.title}>Submitted documents - {writerUsername}</Typography>
                     <CardContent>
-                    <Typography component="h6" variant="h6" className={classes.title}>{writerUsername}</Typography>
                     {displayDocuments}
                     </CardContent>
                 </Card>

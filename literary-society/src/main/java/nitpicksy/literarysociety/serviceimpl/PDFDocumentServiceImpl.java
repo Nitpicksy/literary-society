@@ -89,8 +89,6 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
                 dtoList.add(new WriterDocumentDTO(encoded,
                         draft.getName(),
                         writer.getAttempts(),
-                        writer.getFirstName(),
-                        writer.getLastName(),
                         writer.getUsername()));
             } catch (IOException e) {
                 throw new InvalidDataException("Unknown exception when reading given draft", HttpStatus.BAD_REQUEST);

@@ -22,12 +22,6 @@ public class WriterDocumentDTO {
     @NotBlank(message = "attempts are empty.")
     Integer attempts;
 
-    @NotBlank(message = "writerFirstName are empty.")
-    String writerFirstname;
-
-    @NotBlank(message = "writerLastname are empty.")
-    String writerLastname;
-
     @NotBlank(message = "writerUsername are empty.")
     String writerUsername;
 

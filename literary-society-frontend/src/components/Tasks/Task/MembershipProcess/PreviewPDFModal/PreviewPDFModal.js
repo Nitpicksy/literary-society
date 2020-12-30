@@ -141,9 +141,6 @@ const PreviewPDFModal = props => {
             </Document>
             </DialogContent>
             <DialogActions>
-              {/* <Button autoFocus onClick={handleClose} color="primary">
-                Save changes
-              </Button> */}
             </DialogActions>
           </Dialog>
         </div>
