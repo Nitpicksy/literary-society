@@ -11,9 +11,6 @@ export const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(1),
         backgroundColor: theme.palette.secondary.main,
     },
-    title: {
-        textAlign: 'center',
-    },
     form: {
         width: '100%',
         marginTop: theme.spacing(1),
@@ -26,4 +23,18 @@ export const useStyles = makeStyles((theme) => ({
         display: 'flex',
         alignItems: 'center',
     },
+    cardContent: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: theme.spacing(2, 4),
+        minWidth: 450
+      },
+      title: {
+        fontFamily: 'Barlow Condensed, Roboto',
+        fontWeight: 500,
+        lineHeight: 'normal',
+        marginBottom: theme.spacing(3),
+        textAlign: 'center',
+      },
 }));

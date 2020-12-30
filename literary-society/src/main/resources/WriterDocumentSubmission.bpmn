@@ -29,7 +29,7 @@
             </camunda:validation>
             <camunda:value id="MEETS_CRITERIA" name="Writer meets membership criteria" />
             <camunda:value id="DOES_NOT_MEETS_CRITERIA" name="Writer is unfit for membership" />
-            <camunda:value id="MORE_DOCUMENTS" name="Needs more documents" />
+            <camunda:value id="MORE_DOCUMENTS" name="Need more documents for a decison" />
           </camunda:formField>
           <camunda:formField id="comment" label="Add your comment" type="textarea" />
         </camunda:formData>

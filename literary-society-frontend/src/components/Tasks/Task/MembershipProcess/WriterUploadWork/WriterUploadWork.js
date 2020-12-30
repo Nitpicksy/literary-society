@@ -48,7 +48,6 @@ const WriterUploadWork = props => {
     }
 
     const exitPreview = () => {
-        console.log('called')
         setCurrentFile(null);
         setDisplayModal(false)
     }

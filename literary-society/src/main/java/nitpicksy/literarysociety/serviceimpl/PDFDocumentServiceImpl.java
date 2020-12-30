@@ -80,7 +80,7 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
         if (writer == null) {
             return null;
         }
-        
+
         Set<PDFDocument> drafts = writer.getDrafts();
 
         for (PDFDocument draft : drafts) {
@@ -88,7 +88,10 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
                 String encoded = Base64.getEncoder().encodeToString(download(draft.getName()));
                 dtoList.add(new WriterDocumentDTO(encoded,
                         draft.getName(),
-                        writer.getAttempts()));
+                        writer.getAttempts(),
+                        writer.getFirstName(),
+                        writer.getLastName(),
+                        writer.getUsername()));
             } catch (IOException e) {
                 throw new InvalidDataException("Unknown exception when reading given draft", HttpStatus.BAD_REQUEST);
             }

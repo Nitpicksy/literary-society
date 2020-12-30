@@ -18,8 +18,18 @@ public class WriterDocumentDTO {
 
     @NotBlank(message = "name is empty.")
     String name;
-    
+
     @NotBlank(message = "attempts are empty.")
     Integer attempts;
+
+    @NotBlank(message = "writerFirstName are empty.")
+    String writerFirstname;
+
+    @NotBlank(message = "writerLastname are empty.")
+    String writerLastname;
+
+    @NotBlank(message = "writerUsername are empty.")
+    String writerUsername;
+
 
 }
