@@ -28,7 +28,9 @@ const AddPaymentMethod = (props) => {
             valid: false,
             touched: false,
             error: false,
-            errorMessage: '',
+            additionalData: {
+                errorMessage:  '',
+            }
         },
         api: {
             elementType: 'input',
@@ -43,7 +45,9 @@ const AddPaymentMethod = (props) => {
             valid: false,
             touched: false,
             error: false,
-            errorMessage: 'API is not valid',
+            additionalData: {
+                errorMessage:  'API is not valid',
+            }
         },
         email: {
             elementType: 'input',
@@ -58,7 +62,9 @@ const AddPaymentMethod = (props) => {
             valid: false,
             touched: false,
             error: false,
-            errorMessage: 'Invalid e-mail address entered.',
+            additionalData: {
+                errorMessage:  'Invalid e-mail address entered.',
+            }
         },
         subscription: {
             elementType: 'checkbox',
@@ -81,7 +87,9 @@ const AddPaymentMethod = (props) => {
             valid: false,
             touched: false,
             error: false,
-            errorMessage: '',
+            additionalData: {
+                errorMessage:  '',
+            }
         },
     })
 
