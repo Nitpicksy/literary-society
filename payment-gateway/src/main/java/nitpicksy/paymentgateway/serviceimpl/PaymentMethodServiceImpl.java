@@ -10,10 +10,18 @@ import nitpicksy.paymentgateway.service.DataService;
 import nitpicksy.paymentgateway.service.EmailNotificationService;
 import nitpicksy.paymentgateway.service.OrderService;
 import nitpicksy.paymentgateway.service.PaymentMethodService;
+import nitpicksy.paymentgateway.utils.CertificateUtils;
+import nitpicksy.paymentgateway.utils.TrustStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,12 +87,18 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
 
     @Override
-    public PaymentMethod changePaymentMethodStatus(Long id, String status) {
+    public PaymentMethod changePaymentMethodStatus(Long id, String status)  {
         Optional<PaymentMethod> optionalPaymentMethod = paymentMethodRepository.findById(id);
         if (optionalPaymentMethod.isPresent()) {
             PaymentMethod paymentMethod = optionalPaymentMethod.get();
             if (status.equals("approve")) {
-                //add certificate in truststore
+                try{
+                    KeyStore trustStore = TrustStoreUtils.loadKeyStore();
+                    X509Certificate certificate = CertificateUtils.getCertificate(paymentMethod.getCertificateName());
+                    TrustStoreUtils.importCertificateInTrustStore(certificate, paymentMethod.getCommonName(), trustStore);
+                }catch (Exception e){
+
+                }
                 paymentMethod.setStatus(PaymentMethodStatus.APPROVED);
                 composeAndSendEmailApprovedRequest(paymentMethod.getEmail());
             } else {

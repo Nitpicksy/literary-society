@@ -1,15 +1,20 @@
 package nitpicksy.paymentgateway.utils;
 
+import org.bouncycastle.jcajce.provider.asymmetric.X509;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 @Component
 public class CertificateUtils {
@@ -36,6 +41,20 @@ public class CertificateUtils {
         File file = resource.getFile();
 
         return Files.readAllBytes(file.toPath());
+    }
+
+    public static X509Certificate  getCertificate(String fileName)
+            throws Exception {
+        String path = CERTIFICATES_PATH + "/"  + fileName;
+        CertificateFactory certificateFactory = CertificateFactory
+                .getInstance("X.509");
+        FileInputStream in = new FileInputStream(path);
+
+        X509Certificate certificate = (X509Certificate) certificateFactory
+                .generateCertificate(in);
+        in.close();
+
+        return certificate;
     }
 
 }

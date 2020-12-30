@@ -11,11 +11,15 @@ import nitpicksy.paymentgateway.repository.PaymentMethodRepository;
 import nitpicksy.paymentgateway.service.CompanyService;
 import nitpicksy.paymentgateway.service.EmailNotificationService;
 import nitpicksy.paymentgateway.service.PaymentMethodService;
+import nitpicksy.paymentgateway.utils.CertificateUtils;
+import nitpicksy.paymentgateway.utils.TrustStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.KeyStore;
+import java.security.cert.X509Certificate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -53,8 +57,13 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = companyRepository.findOneById(id);
         if (company != null) {
             if (status.equals("approve")) {
-                //add certificate in truststore
-                //generate JWT token
+                try{
+                    KeyStore trustStore = TrustStoreUtils.loadKeyStore();
+                    X509Certificate certificate = CertificateUtils.getCertificate(company.getCertificateName());
+                    TrustStoreUtils.importCertificateInTrustStore(certificate, company.getCommonName(), trustStore);
+                }catch (Exception e){
+
+                }
                 company.setStatus(CompanyStatus.APPROVED);
                 composeAndSendApprovalEmail(company.getEmail());
             } else {
