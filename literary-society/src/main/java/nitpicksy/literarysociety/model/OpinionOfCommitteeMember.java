@@ -32,4 +32,11 @@ public class OpinionOfCommitteeMember {
 
     @Enumerated(EnumType.STRING)
     private CommitteeMemberOpinion opinion;
+
+    public OpinionOfCommitteeMember(User committeeMember, Writer writer, String comment, CommitteeMemberOpinion opinion) {
+        this.committeeMember = committeeMember;
+        this.writer = writer;
+        this.comment = comment;
+        this.opinion = opinion;
+    }
 }

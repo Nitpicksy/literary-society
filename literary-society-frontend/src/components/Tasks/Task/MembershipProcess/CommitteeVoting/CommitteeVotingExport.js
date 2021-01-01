@@ -1,3 +1,5 @@
 export {
-    fetchForm
+    fetchForm,
+    confirm,
+    vote
 } from './CommitteeVotingActions';

@@ -24,3 +24,28 @@ export const fetchForm = (piId, taskId) => {
             });
     };
 };
+
+export const confirm = (data, taskId, history) => {
+    return dispatch => {
+        axios.post(`/process/${taskId}`, data)
+            .then(() => {
+                toastr.success('Voting','Success');
+                history.push('/tasks');
+            }).catch(err => {
+                toastr.error('Voting', err.response.data.message);
+                history.push('/tasks');
+            });
+    };
+};
+
+
+export const vote = (data) => {
+    return dispatch => {
+        axios.post(`/committee/vote`, data)
+            .then(() => {
+                toastr.success('Voting','Success');
+            }).catch(err => {
+                toastr.error('Voting', err.response.data.message);
+            });
+    };
+};

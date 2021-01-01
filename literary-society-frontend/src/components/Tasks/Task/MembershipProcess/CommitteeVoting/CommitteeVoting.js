@@ -43,6 +43,26 @@ const CommitteeVoting = (props) => {
 
     const submitHander = (event) => {
         event.preventDefault();
+        let array = [];
+        for (let [key, data] of Object.entries(controls)) {
+            let value = data.value
+            if (Array.isArray(data.value)) {
+                value = data.value.join();
+            }
+            array.push({ fieldId: key, fieldValue: value });
+        }
+
+
+        props.onConfirm(array, selectedTask.taskId, history);
+
+        let voteData = {
+            writer: writerDocuments[0].writerUsername,
+            opinion: array[0].fieldValue,
+            comment: array[1].fieldValue ? array[1].fieldValue : ''
+        }
+
+        console.log('array',voteData)
+        props.onVote(voteData);
     }
 
     if (controls) {
@@ -75,7 +95,7 @@ const CommitteeVoting = (props) => {
                     {form}
                     <Button type="submit" color="primary" className={classes.submit}
                         variant="contained" disabled={!formIsValid} fullWidth>
-                        Confirm
+                        Vote
                     </Button>
                 </form>
             </div>
@@ -96,7 +116,8 @@ const mapDispatchToProps = dispatch => {
     return {
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
         fetchForm: (piId, taskId) => dispatch(actions.fetchForm(piId, taskId)),
-        //TODO
+        onConfirm: (data, taskId, history) => dispatch(actions.confirm(data, taskId, history)),
+        onVote: (data) => dispatch(actions.vote(data))
     }
 };
 
