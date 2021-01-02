@@ -8,8 +8,15 @@ import { applyMiddleware, combineReducers, createStore, compose } from "redux";
 import thunk from "redux-thunk";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
-import ReduxToastr from "react-redux-toastr";
+import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
+import ReduxToastr from 'react-redux-toastr';
 import paymentHomeReducer from "./components/PaymentHome/PaymentHomeReducer";
+import paymentMethodListReducer from './components/PaymentMethodsManagement/PaymentMethodList/PaymentMethodListReducer';
+import signInReducer from './components/Authentication/SignIn/SignInReducer';
+import rawTheme from './theme';
+import { MuiThemeProvider } from "@material-ui/core/styles";
+import addCompanyReducer from './components/CompanyManagement/AddCompany/AddCompanyReducer';
+import companyListReducer from './components/CompanyManagement/CompanyList/CompanyListReducer';
 
 const composeEnhancers =
   process.env.NODE_ENV === "development"
@@ -19,6 +26,10 @@ const composeEnhancers =
 const rootReducer = combineReducers({
   toastr: toastrReducer,
   paymentHome: paymentHomeReducer,
+  paymentMethodList: paymentMethodListReducer,
+  signIn: signInReducer,
+  addCompany: addCompanyReducer,
+  companyList: companyListReducer,
 });
 
 const store = createStore(
@@ -29,7 +40,9 @@ const store = createStore(
 const app = (
   <Provider store={store}>
     <BrowserRouter>
-      <App />
+      <MuiThemeProvider theme={rawTheme}>
+        <App />
+      </MuiThemeProvider>
     </BrowserRouter>
     <ReduxToastr
       timeOut={5000}

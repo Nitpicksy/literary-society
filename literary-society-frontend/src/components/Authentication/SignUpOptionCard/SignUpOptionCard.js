@@ -8,7 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router';
 import { connect } from 'react-redux';
-import * as actions from '../SignUpOptions/SignUpOptionsActions';
+import * as actions from '../SignUpOptions/SignUpOptionsExport';
 
 const useStyles = makeStyles({
     root: {
@@ -23,11 +23,12 @@ const SignUpOptionCard = (props) => {
     const classes = useStyles();
     const history = useHistory();
     const { path } = props;
-    const { setSignUpType } = props;
+    const { setSignUpType, startProcess } = props;
 
     const chooseOptionHandler = (path) => {
         history.push(path);
-        setSignUpType(props.type)
+        setSignUpType(props.type);
+        startProcess();
     }
 
     return (
@@ -48,8 +49,9 @@ const SignUpOptionCard = (props) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setSignUpType: (type) => dispatch(actions.setSignUpType(type))
+        setSignUpType: (type) => dispatch(actions.setSignUpType(type)),
+        startProcess: () => dispatch(actions.startProcess()),
     }
 };
 
-export default connect(null,mapDispatchToProps)(SignUpOptionCard);
+export default connect(null, mapDispatchToProps)(SignUpOptionCard);

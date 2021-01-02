@@ -1,16 +1,20 @@
-import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
+import React, { useEffect } from 'react';
+import * as signInActions from '../SignIn/SignInExport';
+import * as actions from './SignUpOptionsExport';
+import { connect } from 'react-redux';
+import { Avatar, CssBaseline, Typography, Container, Grid } from '@material-ui/core';
 import { useStyles } from './SignUpOptionsStyles';
 import PersonIcon from '@material-ui/icons/Person';
-import Grid from '@material-ui/core/Grid';
 import SignUpOptionCard from '../SignUpOptionCard/SignUpOptionCard';
 
-const SignUpOptions = () => {
+const SignUpOptions = (props) => {
 
     const classes = useStyles();
+    const { clearProcessState } = props;
+
+    useEffect(() => {
+        clearProcessState();
+    }, [clearProcessState]);
 
     return (
         <Container component="main" maxWidth="md">
@@ -38,4 +42,20 @@ const SignUpOptions = () => {
     );
 };
 
-export default SignUpOptions;
+const mapStateToProps = state => {
+    return {
+        signUpType: state.signUpOptions.signUpType,
+        processInstanceId: state.signUpOptions.processInstanceId,
+        taskId: state.signUpOptions.taskId,
+        refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
+    }
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        clearProcessState: () => dispatch(actions.clearProcessState()),
+        onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpOptions);

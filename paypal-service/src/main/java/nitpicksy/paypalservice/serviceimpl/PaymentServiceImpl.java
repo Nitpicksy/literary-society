@@ -130,7 +130,6 @@ public class PaymentServiceImpl implements PaymentService {
             return paymentRequest.getFailedURL();
         }
 
-
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "EXE",
                 String.format("PayPal payment with paymentId=%s successfully executed.", paymentId)));
 

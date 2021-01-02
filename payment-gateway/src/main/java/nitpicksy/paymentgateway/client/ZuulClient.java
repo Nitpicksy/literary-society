@@ -31,9 +31,17 @@ public interface ZuulClient {
      *
      * @param baseUrl: path to API-gateway + path to payment service
      * @param dto
-     * @return URLs
      */
     @RequestMapping(method = RequestMethod.POST, path = "/api/payments/confirm")
     void confirmPaymentToLiterarySociety(URI baseUrl, @RequestBody LiterarySocietyOrderResponseDTO dto);
+
+    /**
+     * Generic request that sends JWT token to added company (literary society).
+     *
+     * @param baseUrl:  path to API-gateway + path to company
+     * @param jwtToken: generated JWT authentication token
+     */
+    @RequestMapping(method = RequestMethod.POST, path = "/api/auth/accept-pg-token")
+    void sendJWTToken(URI baseUrl, @RequestBody String jwtToken);
 
 }
