@@ -23,6 +23,9 @@ public class PaymentMethod {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String email;
+
     @Column(unique = true, nullable = false)
     private String commonName;
 
@@ -38,4 +41,16 @@ public class PaymentMethod {
 
     @Column
     private boolean subscription;
+
+    @Column(unique = true, nullable = false)
+    private String certificateName;
+
+    public PaymentMethod(String name, String commonName, String URI, boolean subscription, String email) {
+        this.name = name;
+        this.commonName = commonName;
+        this.URI = URI;
+        this.status = PaymentMethodStatus.WAITING_APPROVAL;
+        this.subscription = subscription;
+        this.email = email;
+    }
 }

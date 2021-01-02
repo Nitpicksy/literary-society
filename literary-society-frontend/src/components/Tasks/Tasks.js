@@ -59,7 +59,7 @@ const Tasks = (props) => {
             rows = props.tasks;
 
             data = <Grid container className={classes.table}>
-                <DataGrid rows={rows} columns={columns} pageSize={5} onRowClick={(properties) => selectRow(properties)} />
+                <DataGrid rows={rows} columns={columns} pageSize={5} onRowClick={(properties) => selectRow(properties)} autoPageSize/>
             </Grid>;
         }
     } else {

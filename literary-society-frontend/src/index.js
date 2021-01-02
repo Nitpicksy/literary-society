@@ -12,6 +12,7 @@ import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import reportWebVitals from './reportWebVitals';
 import signInReducer from './components/Authentication/SignIn/SignInReducer';
+import signUpOptionsReducer from './components/Authentication/SignUpOptions/SignUpOptionsReducer';
 import signUpReducer from './components/Authentication/SignUp/SignUpReducer';
 import resetPasswordReducer from './components/Authentication/ResetPassword/ResetPasswordReducer';
 import activateAccountReducer from './components/Authentication/ActivateAccount/ActivateAccountReducer';
@@ -25,6 +26,7 @@ import bookReducer from './components/BookDetails/BookDetailsReducer';
 import editorDownloadDocumentReducer from './components/Tasks/Task/EditorDownloadDocument/EditorDownloadDocumentReducer';
 import writerUploadDocumentReducer from './components/Tasks/Task/WriterUploadDocument/WriterUploadDocumentReducer';
 import committeeVotingReducer from './components/Tasks/Task/MembershipProcess/CommitteeVoting/CommitteeVotingReducer';
+import publRequestsReducer from './components/WriterPages/PublicationRequests/PublicationRequestsReducer';
 
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
@@ -32,6 +34,7 @@ const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX
 const rootReducer = combineReducers({
     toastr: toastrReducer,
     signIn: signInReducer,
+    signUpOptions: signUpOptionsReducer,
     signUp: signUpReducer,
     resetPassword: resetPasswordReducer,
     activateAccount: activateAccountReducer,
@@ -44,7 +47,8 @@ const rootReducer = combineReducers({
     book:bookReducer, 
     editorDownloadDocument: editorDownloadDocumentReducer,
     writerUploadDocument: writerUploadDocumentReducer,
-    committeeVoting: committeeVotingReducer
+    committeeVoting: committeeVotingReducer,
+    publRequests: publRequestsReducer,
 });
 
 const store = createStore(rootReducer, composeEnhancers(

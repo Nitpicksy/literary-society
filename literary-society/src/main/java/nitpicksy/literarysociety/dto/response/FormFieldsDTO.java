@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FormFieldsDTO {
 
-    private  String processInstanceId;
+    private String processInstanceId;
 
     private String taskId;
 
