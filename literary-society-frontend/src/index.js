@@ -47,7 +47,7 @@ const rootReducer = combineReducers({
     book:bookReducer, 
     editorDownloadDocument: editorDownloadDocumentReducer,
     writerUploadDocument: writerUploadDocumentReducer,
-    editorChooseBetaReaders:editorChooseBetaReadersReducer
+    editorChooseBetaReaders:editorChooseBetaReadersReducer,
     publRequests: publRequestsReducer,
 });
 

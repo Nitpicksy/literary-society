@@ -35,16 +35,18 @@ const Tasks = (props) => {
     const selectRow = (properties) => {
         props.setSelectedTask(properties.row.processInstanceId, properties.row.id, properties.row.name);
 
-        if (properties.row.name === "Obradite zahtev za izdavanje knjige" ||
-            properties.row.name === "Proverite da li je delo originalno" ||
-            properties.row.name === "Prihvatite ili odbijte rukopis" ||
-            properties.row.name === "Definišite da li se rukopis šalje skupu beta čitaoca") {
+        if (properties.row.name === "Obradite zahtev za izdavanje knjige"
+            || properties.row.name === "Proverite da li je delo originalno"
+            || properties.row.name === "Prihvatite ili odbijte rukopis"
+            || properties.row.name === "Definišite da li se rukopis šalje skupu beta čitaoca"
+            || properties.row.name === "Ostavljanje komentara") {
             history.push('/publication-request');
-        } else if (properties.row.name === "Urednik preuzimanje dokumenta") {
-            history.push('/editor-download-document');
+        } else if (properties.row.name === "Urednik preuzimanje dokumenta"
+            || properties.row.name === "Preuzimanje PDF verzije rukopisa") {
+            history.push('/download-document');
         } else if (properties.row.name === "Slanje PDF verzije rukopisa") {
             history.push('/writer-upload-document');
-        }else if (properties.row.name === "Odaberite beta-citaoce") {
+        } else if (properties.row.name === "Odaberite beta-citaoce") {
             history.push('/editor-choose-beta-readers');
         }
 
@@ -58,7 +60,7 @@ const Tasks = (props) => {
             rows = props.tasks;
 
             data = <Grid container className={classes.table}>
-                <DataGrid rows={rows} columns={columns} pageSize={5} onRowClick={(properties) => selectRow(properties)} autoPageSize/>
+                <DataGrid rows={rows} columns={columns} pageSize={5} onRowClick={(properties) => selectRow(properties)} autoPageSize />
             </Grid>;
         }
     } else {

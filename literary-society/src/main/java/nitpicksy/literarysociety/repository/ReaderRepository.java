@@ -14,4 +14,5 @@ public interface ReaderRepository extends JpaRepository<Reader, Long> {
 
     List<Reader> findByIsBetaReaderAndBetaReaderGenresIdAndStatus(boolean isBetaReader, Long id, UserStatus status);
 
+    List<Reader> findByIdIn(List<Long> ids);
 }

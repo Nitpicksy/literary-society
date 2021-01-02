@@ -54,26 +54,26 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Permission manageLecturers = createPermissionIfNotFound("MANAGE_LECTURER");
 
         Permission manageTasks = createPermissionIfNotFound("MANAGE_TASKS");
-        Permission createPublicationRequest= createPermissionIfNotFound("CREATE_PUBLICATION_REQUEST");
+        Permission createPublicationRequest = createPermissionIfNotFound("CREATE_PUBLICATION_REQUEST");
         Permission downloadBookAndCompleteTask = createPermissionIfNotFound("DOWNLOAD_BOOK_AND_COMPLETE_TASK");
         Permission uploadBookAndCompleteTask = createPermissionIfNotFound("UPLOAD_BOOK_AND_COMPLETE_TASK");
 
         Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers));
         createRoleIfNotFound("ROLE_ADMIN", adminPermissions);
 
-        Set<Permission> readerPermissions = new HashSet<>();
+        Set<Permission> readerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_READER", readerPermissions);
 
-        Set<Permission> writerPermissions = new HashSet<>(Arrays.asList(createPublicationRequest,manageTasks,downloadBookAndCompleteTask,uploadBookAndCompleteTask));
+        Set<Permission> writerPermissions = new HashSet<>(Arrays.asList(createPublicationRequest, manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_WRITER", writerPermissions);
 
-        Set<Permission> committeeMemberPermissions = new HashSet<>(Arrays.asList(manageTasks,downloadBookAndCompleteTask));
+        Set<Permission> committeeMemberPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_COMMITTEE_MEMBER", committeeMemberPermissions);
 
-        Set<Permission> editorPermissions = new HashSet<>(Arrays.asList(manageTasks,downloadBookAndCompleteTask));
+        Set<Permission> editorPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_EDITOR", editorPermissions);
 
-        Set<Permission> lecturerPermissions = new HashSet<>(Arrays.asList(manageTasks,downloadBookAndCompleteTask,uploadBookAndCompleteTask));
+        Set<Permission> lecturerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_LECTURER", lecturerPermissions);
 
         Set<Permission> merchantPermissions = new HashSet<>();
@@ -118,6 +118,23 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         User editor3 = userRepository.findOneById(5L);
         editor3.setRole(roleEditor);
         userRepository.save(editor3);
+
+        Role roleReader = roleRepository.findByName("ROLE_READER");
+        User reader1 = userRepository.findOneById(6L);
+        reader1.setRole(roleReader);
+        userRepository.save(reader1);
+        User reader2 = userRepository.findOneById(7L);
+        reader2.setRole(roleReader);
+        userRepository.save(reader2);
+        User reader3 = userRepository.findOneById(8L);
+        reader3.setRole(roleReader);
+        userRepository.save(reader3);
+        User reader4 = userRepository.findOneById(9L);
+        reader4.setRole(roleReader);
+        userRepository.save(reader4);
+        User reader5 = userRepository.findOneById(10L);
+        reader5.setRole(roleReader);
+        userRepository.save(reader5);
     }
 
     private void composeAndSendEmailToChangePassword(String recipientEmail, String generatedPassword) {

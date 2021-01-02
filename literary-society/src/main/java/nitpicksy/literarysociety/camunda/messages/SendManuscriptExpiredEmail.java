@@ -1,6 +1,5 @@
 package nitpicksy.literarysociety.camunda.messages;
 
-import nitpicksy.literarysociety.dto.camunda.PublicationRequestDTO;
 import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.User;
