@@ -95,8 +95,8 @@ public class TaskController {
             throw new InvalidDataException("Manuscript could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
-        book.setStatus(BookStatus.SENT);
-        bookService.save(book);
+//        book.setStatus(BookStatus.SENT);
+//        bookService.save(book);
 
         camundaService.completeTask(taskId);
         return new ResponseEntity<>(HttpStatus.OK);

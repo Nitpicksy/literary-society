@@ -48,8 +48,9 @@ const Tasks = (props) => {
             history.push('/writer-upload-document');
         } else if (properties.row.name === "Odaberite beta-citaoce") {
             history.push('/editor-choose-beta-readers');
+        } else if (properties.row.name === "Izmena rukopisa prema komentarima") {
+            history.push('/opinions-of-beta-readers');
         }
-
     }
 
     if (!loading) {
