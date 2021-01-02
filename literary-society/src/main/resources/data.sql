@@ -43,15 +43,15 @@ values ('User', 'Oleg', 'Aleksandrov', 'Sankt Petersburg', 'Rusija', 'olega@mail
 -- Committee members
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'Eržebet', 'Guliver', 'Kruševac', 'Srbija', 'communist1@maildrop.cc', 'clan1',
+values ('User', 'Eržebet', 'Guliver', 'Kruševac', 'Srbija', 'communist1@maildrop.cc', 'member1',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'Milovan', 'Ranisavljevic', 'London', 'Ujedinjeno kraljevstvo', 'communist2@maildrop.cc', 'clan2',
+values ('User', 'Milovan', 'Ranisavljevic', 'London', 'Ujedinjeno kraljevstvo', 'communist2@maildrop.cc', 'member2',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'INSANE MAN', 'PUSKIN', 'Sankt Petersburg', 'Rusija', 'communist3@maildrop.cc', 'clan3',
+values ('User', 'INSANE MAN', 'PUSKIN', 'Sankt Petersburg', 'Rusija', 'communist3@maildrop.cc', 'member3',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 
 

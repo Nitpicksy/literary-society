@@ -79,8 +79,7 @@ const WriterUploadWork = props => {
     }
 
     const disableUploadButton = () => {
-        // console.log('d', drafts)
-        if(drafts === undefined || drafts.length === 0) {
+        if(drafts == null || drafts.length == 0) {
             if(files.length < 2) {
                 return true;
             }

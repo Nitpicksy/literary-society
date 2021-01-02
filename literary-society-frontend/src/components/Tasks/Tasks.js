@@ -34,7 +34,6 @@ const Tasks = (props) => {
 
     const selectRow = (properties) => {
         props.setSelectedTask(properties.row.processInstanceId, properties.row.id, properties.row.name);
-
         if (properties.row.name === "Obrada zahteva za izdavanje knjige" ||
             properties.row.name === "Urednik provera da li je delo originalno" ||
             properties.row.name === "Urednik prihvata ili odbija rukopis") {
@@ -43,7 +42,7 @@ const Tasks = (props) => {
             history.push('/editor-download-document');
         } else if (properties.row.name === "Slanje PDF verzije rukopisa") {
             history.push('/writer-upload-document');
-        } else if(properties.row.name === 'Membership - submit your work') {
+        } else if(properties.row.name === 'Membership - submit your work' || properties.row.name === "Membership-more documents needed") {
             history.push('/writer-membership-upload')
         } else if(properties.row.name === 'Vote on a writer') {
             history.push('/voting')

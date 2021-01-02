@@ -120,7 +120,7 @@
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="Flow_0unuqgo" sourceRef="Activity_1b0vh2b" targetRef="Event_12slkhf" />
       <bpmn:sequenceFlow id="Flow_1sgm073" sourceRef="Activity_01l9wkt" targetRef="Event_0ugqfjn" />
-      <bpmn:callActivity id="Activity_01l9wkt" name="Obrada članstva" calledElement="WriterDocumentSubmission">
+      <bpmn:callActivity id="Activity_01l9wkt" name="Obrada članarine" calledElement="WriterDocumentSubmission">
         <bpmn:extensionElements>
           <camunda:in source="username" target="writer" />
         </bpmn:extensionElements>
