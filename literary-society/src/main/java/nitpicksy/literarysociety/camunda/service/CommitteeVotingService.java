@@ -25,31 +25,34 @@ public class CommitteeVotingService implements JavaDelegate {
         Writer writer = writerRepository.findByUsername(username);
         execution.setVariable("attempts", writer.getAttempts());
 
-        List<OpinionOfCommitteeMember> opinionOfCommitteeMembers = committeeOpinionRepository.findOpinionOfCommitteeMemberByWriterUsername(username);
+        List<OpinionOfCommitteeMember> opinionOfCommitteeMembers = committeeOpinionRepository.findOpinionOfCommitteeMemberByWriterUsernameAndReviewed(username, false);
 
         execution.setVariable("moreDocuments", false);
         execution.setVariable("rejected", false);
 
-        opinionOfCommitteeMembers.forEach(opinion -> {
-            if (opinion.getOpinion().equals(CommitteeMemberOpinion.MORE_DOCUMENTS)) {
-                execution.setVariable("moreDocuments", true);
-            }
-        });
-
-        if (isRejected(opinionOfCommitteeMembers)) {
-            execution.setVariable("rejected", true);
-        }
+        handleOpinions(opinionOfCommitteeMembers, execution);
     }
 
-    private Boolean isRejected(List<OpinionOfCommitteeMember> opinionOfCommitteeMembers) {
+    private void handleOpinions(List<OpinionOfCommitteeMember> opinionOfCommitteeMembers, DelegateExecution execution) {
         int counter = 0;
 
         for (OpinionOfCommitteeMember opinionOfCommitteeMember : opinionOfCommitteeMembers) {
+
             if (opinionOfCommitteeMember.getOpinion().equals(CommitteeMemberOpinion.DOES_NOT_MEETS_CRITERIA)) {
                 counter++;
             }
+
+            if (opinionOfCommitteeMember.getOpinion().equals(CommitteeMemberOpinion.MORE_DOCUMENTS)) {
+                execution.setVariable("moreDocuments", true);
+            }
+
+            opinionOfCommitteeMember.setReviewed(true);
+            committeeOpinionRepository.save(opinionOfCommitteeMember);
         }
-        return counter >= Math.round((double) opinionOfCommitteeMembers.size() / 2);
+
+        if (counter >= Math.round((double) opinionOfCommitteeMembers.size() / 2)) {
+            execution.setVariable("rejected", true);
+        }
     }
 
     @Autowired

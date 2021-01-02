@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CommitteeOpinionRepository extends JpaRepository<OpinionOfCommitteeMember, Long> {
-    List<OpinionOfCommitteeMember> findOpinionOfCommitteeMemberByWriterUsername(String username);
+    List<OpinionOfCommitteeMember> findOpinionOfCommitteeMemberByWriterUsernameAndReviewed(String username, boolean reviewed);
 }
