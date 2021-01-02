@@ -153,6 +153,15 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return userRepository.findByUsername(currentUser.getName());
     }
 
+    @Override
+    public Merchant getAuthenticatedMerchant() {
+        User user = getAuthenticatedUser();
+        if(user instanceof Merchant){
+            return (Merchant)user;
+        }
+        return null;
+    }
+
     private void composeAndSendEmail(String recipientEmail) {
         String subject = "Reset your password";
         StringBuilder sb = new StringBuilder();

@@ -30,6 +30,7 @@ import BookDetails from './components/BookDetails/BookDetails';
 import { GuardProvider, GuardedRoute } from 'react-router-guards';
 import EditorDownloadDocument from './components/Tasks/Task/EditorDownloadDocument/EditorDownloadDocument';
 import WriterUploadDocument from './components/Tasks/Task/WriterUploadDocument/WriterUploadDocument';
+import MerchantPaymentData from './components/MerchantPaymentData/MerchantPaymentData';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -96,11 +97,12 @@ const App = props => {
           <GuardedRoute path="/publication-requests" render={(props) => <PublicationRequests {...props} />} meta={{ roles: [roleWriter] }} />
           <GuardedRoute path="/create-publication-request" render={(props) => <CreatePublicationRequest {...props} />} meta={{ roles:  [roleWriter] }} />
           <Route path="/writer-upload-document" render={(props) => <WriterUploadDocument {...props} />} meta={{ roles: [roleWriter] }} />
-        
+          <Route path="/upload" render={(props) => <DocumentSubmission {...props} />} meta={{ roles:  [roleWriter] }}/>
+
           <Route path="/publication-request" render={(props) => <PublicationRequest {...props} />} meta={{ roles: [roleEditor] }} />
           <Route path="/editor-download-document" render={(props) => <EditorDownloadDocument {...props} />} meta={{ roles: [roleEditor] }} />
 
-          <Route path="/upload" render={(props) => <DocumentSubmission {...props} />} meta={{ roles:  [roleWriter] }}/>
+          <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
 
           <Route path="/tasks" render={(props) => <Tasks {...props} />} />
           <Route path="/sign-out" render={(props) => <Logout {...props} />} />

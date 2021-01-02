@@ -55,8 +55,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .hasAuthority("MANAGE_COMPANIES").and()
                 .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/companies/{id}")
                 .hasAuthority("MANAGE_COMPANIES").and()
+
                 .authorizeRequests().antMatchers(HttpMethod.POST, "/api/orders")
+                .hasAuthority("CREATE_ORDER").and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/merchants/{name}/payment-data")
                 .hasAuthority("CREATE_ORDER")
+
                 .anyRequest().permitAll().and()
                 .cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(jwtUserDetailsService.tokenUtils,

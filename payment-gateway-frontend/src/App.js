@@ -17,7 +17,7 @@ import { GuardProvider, GuardedRoute } from 'react-router-guards';
 import Logout from './components/Authentication/SignIn/Logout';
 import AddCompanySuccess from './components/CompanyManagement/AddCompany/AddCompanySuccess';
 import CompanyList from './components/CompanyManagement/CompanyList/CompanyList';
-
+import MerchantSupportPaymentMethods from './components/PaymentMethodsManagement/MerchantSupportPaymentMethods/MerchantSupportPaymentMethods';
 const App = (props) => {
   const { onTryAutoSignUp } = props;
 
@@ -55,6 +55,8 @@ const App = (props) => {
 
       <Route path="/add-company" render={() => <AddCompany {...props} />} />
       <Route path="/add-company-success" render={() => <AddCompanySuccess {...props} />} />
+
+      <Route path="/payment-data" render={(props) => <MerchantSupportPaymentMethods {...props} />} />
 
       <Route path="/" render={() => <h1> Welcome, navigate to payment/:id. </h1>} />
     </Switch>

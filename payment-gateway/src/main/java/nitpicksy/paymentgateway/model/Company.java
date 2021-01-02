@@ -66,8 +66,7 @@ public class Company implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "payment_method_id", referencedColumnName = "id"))
     private Set<PaymentMethod> paymentMethods = new HashSet<>();
 
-    @OneToMany
-    @JoinColumn(name = "company_id")
+    @OneToMany(mappedBy = "company")
     private Set<Merchant> merchant;
 
     @Column

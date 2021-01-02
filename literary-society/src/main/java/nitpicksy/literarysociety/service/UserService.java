@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.service;
 
+import nitpicksy.literarysociety.model.Merchant;
 import nitpicksy.literarysociety.model.Role;
 import nitpicksy.literarysociety.model.User;
 import nitpicksy.literarysociety.model.UserTokenState;
@@ -25,4 +26,6 @@ public interface UserService {
     UserTokenState refreshAuthenticationToken(HttpServletRequest request);
 
     User getAuthenticatedUser();
+
+    Merchant getAuthenticatedMerchant();
 }

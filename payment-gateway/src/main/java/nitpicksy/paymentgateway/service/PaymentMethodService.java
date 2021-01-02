@@ -1,6 +1,8 @@
 package nitpicksy.paymentgateway.service;
 
+import nitpicksy.paymentgateway.dto.request.PaymentDataRequestDTO;
 import nitpicksy.paymentgateway.model.Data;
+import nitpicksy.paymentgateway.model.Merchant;
 import nitpicksy.paymentgateway.model.PaymentMethod;
 
 import java.io.IOException;
@@ -25,4 +27,9 @@ public interface PaymentMethodService {
     List<PaymentMethod> findByIds(List<Long> ids);
 
     PaymentMethod changePaymentMethodStatus(Long id, String status);
+
+    List<PaymentMethod> getPaymentMethodsWithoutDataForPayment(Merchant merchant);
+
+    PaymentMethod findById(Long id);
+
 }

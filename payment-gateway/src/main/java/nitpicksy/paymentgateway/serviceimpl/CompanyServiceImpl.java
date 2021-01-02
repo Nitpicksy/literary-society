@@ -99,6 +99,13 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public String getToken(){
+        Company company = companyRepository.findOneById(1L);
+        String jwtToken = tokenUtils.generateToken(company.getCommonName(), company.getRole().getName(),
+                company.getRole().getPermissions());
+        return jwtToken;
+    }
+    @Override
     public List<Company> findAll() {
         return companyRepository.findByStatusNot(CompanyStatus.REJECTED);
     }

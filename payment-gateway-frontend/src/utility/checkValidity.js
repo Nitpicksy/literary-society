@@ -1,5 +1,4 @@
 export const checkValidity = (name, value, rules, type, patternErrorMessage) => {
-
     if (!rules) {
         return { isValid: true, errorMessage: '' };
     }

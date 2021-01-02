@@ -23,7 +23,12 @@ public class DataMapper implements MapperInterface<Data, PaymentDataDTO> {
 
     @Override
     public PaymentDataDTO toDto(Data entity) {
-        return modelMapper.map(entity, PaymentDataDTO.class);
+        PaymentDataDTO paymentDataDTO = new PaymentDataDTO();
+        paymentDataDTO.setAttributeJSONName(entity.getAttributeJSONName());
+        paymentDataDTO.setAttributeName(entity.getName());
+        paymentDataDTO.setAttributeType(entity.getAttributeType());
+        paymentDataDTO.setId(entity.getId());
+        return paymentDataDTO;
     }
 
     public Set<Data> convertList(List<PaymentDataDTO> paymentDataDTOList){
