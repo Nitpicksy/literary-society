@@ -9,6 +9,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Tooltip from '@material-ui/core/Tooltip';
 import { withStyles } from '@material-ui/core/styles';
 import WriterToolbar from './WriterToolbar';
+import MerchantToolbar from './MerchantToolbar';
 
 const StyledMenu = withStyles({
     paper: {
@@ -80,6 +81,8 @@ const CustomToolbar = (props) => {
                 <Button className={classes.button} color="inherit" onClick={() =>redirect('/tasks') }>Tasks</Button>
                 
                 { checkRole(roleWriter) ? <WriterToolbar /> : null }
+
+                { checkRole(roleMerchant) ? <MerchantToolbar /> : null }
 
                 <Button className={classes.button} color="inherit" onClick={openMenuAccount}> Account </Button>
                 <StyledMenu id="customized-menu" anchorEl={accountEl} keepMounted open={Boolean(accountEl)} onClose={handleCloseAccount}>

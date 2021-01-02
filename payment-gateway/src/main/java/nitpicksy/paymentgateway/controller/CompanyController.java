@@ -8,6 +8,7 @@ import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.mapper.CompanyDataMapper;
 import nitpicksy.paymentgateway.mapper.CompanyResponseMapper;
 import nitpicksy.paymentgateway.model.Company;
+import nitpicksy.paymentgateway.security.TokenUtils;
 import nitpicksy.paymentgateway.service.CompanyService;
 import nitpicksy.paymentgateway.utils.CertificateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,8 @@ public class CompanyController {
     private CompanyDataMapper companyDataMapper;
 
     private CompanyResponseMapper companyResponseMapper;
+
+    private TokenUtils tokenUtils;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CompanyResponseDTO> addCompany(@RequestPart @Valid CompanyDataDTO companyData, @RequestPart @NotNull MultipartFile certificate,
@@ -73,11 +76,17 @@ public class CompanyController {
         return new ResponseEntity<>(companyResponseMapper.toDto(company), HttpStatus.OK);
     }
 
+    @GetMapping(value= "/token")
+    public ResponseEntity<String> getToken() {
+        return new ResponseEntity<>(companyService.getToken(), HttpStatus.OK);
+    }
+
     @Autowired
     public CompanyController(CompanyService companyService, CompanyDataMapper companyDataMapper,
-                             CompanyResponseMapper companyResponseMapper) {
+                             CompanyResponseMapper companyResponseMapper,TokenUtils tokenUtils) {
         this.companyService = companyService;
         this.companyDataMapper = companyDataMapper;
         this.companyResponseMapper = companyResponseMapper;
+        this.tokenUtils=tokenUtils;
     }
 }

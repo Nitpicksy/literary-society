@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface PaymentMethodRepository extends JpaRepository<PaymentMethod, Long> {
@@ -23,4 +24,5 @@ public interface PaymentMethodRepository extends JpaRepository<PaymentMethod, Lo
 
     List<PaymentMethod> findByIdIn(List<Long> ids);
 
+    List<PaymentMethod> findByIdInAndIdNotIn(Set<Long> ids, Set<Long> idNot);
 }

@@ -4,9 +4,11 @@ import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
 import nitpicksy.paymentgateway.dto.response.LiterarySocietyOrderResponseDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.net.URI;
 
@@ -44,4 +46,7 @@ public interface ZuulClient {
     @RequestMapping(method = RequestMethod.POST, path = "/api/auth/accept-pg-token")
     void sendJWTToken(URI baseUrl, @RequestBody String jwtToken);
 
+
+    @RequestMapping(method = RequestMethod.POST, path="/api/merchants/{name}/payment-data")
+    String supportPaymentMethods(URI baseUrl, @PathVariable String name);
 }

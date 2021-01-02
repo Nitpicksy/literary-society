@@ -16,4 +16,6 @@ public interface CompanyService {
 
     Company findCompanyByCommonName(String commonName);
 
+    String getToken();
+
 }

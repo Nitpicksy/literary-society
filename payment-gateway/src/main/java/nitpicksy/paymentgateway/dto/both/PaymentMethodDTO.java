@@ -9,6 +9,7 @@ import nitpicksy.paymentgateway.enumeration.PaymentMethodStatus;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @Getter
@@ -18,6 +19,7 @@ import java.util.List;
 public class PaymentMethodDTO {
 
     @NotNull(message = "Id is null")
+    @Positive
     private Long id;
 
     @NotBlank(message = "Name is empty")

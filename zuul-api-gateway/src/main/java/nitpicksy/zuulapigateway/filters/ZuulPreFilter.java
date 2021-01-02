@@ -30,7 +30,10 @@ public class ZuulPreFilter extends ZuulFilter {
             return false;
         }
         String url = request.getRequestURL().toString();
-        return url.contains("api/orders");
+        if(url.contains("api/orders")){
+            return true;
+        }
+        return url.contains("payment-data") && url.contains("payment-gateway");
     }
 
     @Override

@@ -13,6 +13,7 @@ values ('Poezija');
 insert into genre (name)
 values ('Putopisi');
 
+insert into jwttoken (token) values ('eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJsaXRlcmFyeS1zb2NpZXR5Iiwic3ViIjoibGl0ZXJhcnktc29jaWV0eSIsImF1ZCI6IndlYiIsImlhdCI6MTYwOTU4OTU2MCwiZXhwIjoxNjEwNzk5MTYwLCJyb2xlIjoiUk9MRV9DT01QQU5ZIiwicGVybWlzc2lvbnMiOlt7ImlkIjozLCJuYW1lIjoiQ1JFQVRFX09SREVSIn1dfQ.maf-whUBxv2Sl8LcAIq0mykJcbnclTsZUSQofTiYle1QuGC8lkLHHkSK-S-DKMkaFBC5el-0PrZtUWXmtoXwVg');
 
 -- Writers
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
@@ -53,6 +54,9 @@ insert into users (type, name, city, country, email, username, password, status,
 values ('MERCHANT', 'Vulkan', 'Novi Sad', 'Srbija', 'vulkan@maildrop.cc', 'vulkan',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true);
 
+insert into users (type, name, city, country, email, username, password, status, enabled, supports_payment_methods)
+values ('MERCHANT', 'Amazon', 'Novi Sad', 'Srbija', 'amazon@maildrop.cc', 'amazon',
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, false);
 
 -- Images
 insert into image (data)
