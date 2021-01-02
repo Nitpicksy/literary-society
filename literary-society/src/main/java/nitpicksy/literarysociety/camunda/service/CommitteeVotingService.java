@@ -24,16 +24,15 @@ public class CommitteeVotingService implements JavaDelegate {
         String username = (String) execution.getVariable("writer");
         Writer writer = writerRepository.findByUsername(username);
         execution.setVariable("attempts", writer.getAttempts());
-
-        List<OpinionOfCommitteeMember> opinionOfCommitteeMembers = committeeOpinionRepository.findOpinionOfCommitteeMemberByWriterUsernameAndReviewed(username, false);
-
         execution.setVariable("moreDocuments", false);
         execution.setVariable("rejected", false);
 
-        handleOpinions(opinionOfCommitteeMembers, execution);
+        List<OpinionOfCommitteeMember> opinionOfCommitteeMembers = committeeOpinionRepository.findOpinionOfCommitteeMemberByWriterUsernameAndReviewed(username, false);
+        
+        handleOpinions(opinionOfCommitteeMembers, execution, writer.getAttempts());
     }
 
-    private void handleOpinions(List<OpinionOfCommitteeMember> opinionOfCommitteeMembers, DelegateExecution execution) {
+    private void handleOpinions(List<OpinionOfCommitteeMember> opinionOfCommitteeMembers, DelegateExecution execution, Integer attempts) {
         int counter = 0;
 
         for (OpinionOfCommitteeMember opinionOfCommitteeMember : opinionOfCommitteeMembers) {
@@ -43,7 +42,11 @@ public class CommitteeVotingService implements JavaDelegate {
             }
 
             if (opinionOfCommitteeMember.getOpinion().equals(CommitteeMemberOpinion.MORE_DOCUMENTS)) {
-                execution.setVariable("moreDocuments", true);
+                if (attempts >= 4) {
+                    execution.setVariable("rejected", true);
+                } else {
+                    execution.setVariable("moreDocuments", true);
+                }
             }
 
             opinionOfCommitteeMember.setReviewed(true);

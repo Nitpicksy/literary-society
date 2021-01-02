@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Typography, Container, Avatar, CssBaseline, Button, Grid } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import { Typography, Container, Avatar, CssBaseline, Button, Grid} from '@material-ui/core';
 import { connect } from 'react-redux';
 import { useStyles } from './WriterUploadWorkStyles';
 import { responseInterceptor } from '../../../../../responseInterceptor';
@@ -12,11 +12,15 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import PreviewPDFModal from '../PreviewPDFModal/PreviewPDFModal';
 import VisibilityIcon from '@material-ui/icons/Visibility';
+import DisplayPDFDocuments from '../DisplayPDFDocuments/DisplayPDFDocuments';
+import CommitteeComments from '../CommitteeComments/CommitteeComments';
 
 
 const WriterUploadWork = props => {
 
     const { selectedTask } = props;
+    const { fetchDrafts, drafts } = props;
+    const { fetchComments, comments } = props;
 
     const classes = useStyles();
     const history = useHistory();
@@ -27,6 +31,9 @@ const WriterUploadWork = props => {
 
     responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
 
+    let displayDocuments = null;
+    let modal = null;
+
     const handleChooseFile = ({ target }) => {
         const file = files.filter(item => item.name === target.files[0].name) //if you're readding the same file, return
         if(file.length !== 0) {
@@ -35,6 +42,14 @@ const WriterUploadWork = props => {
 
         setFiles(prevFiles => [...prevFiles, target.files[0]]); //otherwise append it to the array
     }
+
+    useEffect(() => {
+        fetchDrafts();
+    }, [fetchDrafts]);
+
+    useEffect(() => {
+        fetchComments();
+    }, [fetchComments]);
 
     const handleRemoveDocument = (file) => {
         setFiles(files.filter(item => item.name !== file.name));
@@ -53,21 +68,43 @@ const WriterUploadWork = props => {
     }
 
     const handleUpload = () => {
-        if(files.length < 2) {
-            return;
-        }
 
         let filesFormData = new FormData();
         files.forEach(file => {
             filesFormData.append('files', file);
         })
-            
-        console.log('flesform', filesFormData.getAll('files'))
+
         props.onUpload(selectedTask.piId, selectedTask.taskId, filesFormData, history);
 
     }
 
-    let modal = null;
+    const disableUploadButton = () => {
+        // console.log('d', drafts)
+        if(drafts === undefined || drafts.length === 0) {
+            if(files.length < 2) {
+                return true;
+            }
+
+            return false;
+        }
+
+        if(drafts.length > 0) {
+
+            if(files.length < 1) {
+                return true;
+            }
+
+            return false;
+        }
+
+        return false;
+        // (files.length < 2 && (drafts === undefined || drafts.length === 0)) || ((files.length < 1 && (drafts !== undefined && drafts.length > 0)) ) ? true : false
+    }
+
+    if(drafts) {
+        displayDocuments = <DisplayPDFDocuments files = {drafts} />
+    }
+
     if(displayModal) {
         modal = <PreviewPDFModal file={currentFile} close={exitPreview}/>
     }
@@ -81,9 +118,18 @@ const WriterUploadWork = props => {
                 <Avatar className={classes.avatar}>
                     <PictureAsPdfIcon />
                 </Avatar>
-                <Typography component="h1" variant="h6" className={classes.title}>Add at least 2 of your best work</Typography>
-                <br/>               
-            <Grid container >
+
+                {(comments && comments.length > 0)   ? 
+                <CommitteeComments comments={comments} /> : <Typography component="h1" variant="h6" className={classes.title}>Upload at least two of your best pieces of writing</Typography>
+                } 
+                <br/>           
+                <br/>
+                  
+            <Grid container           
+                alignItems="center"
+                justify="center" 
+                spacing={2} >
+                {displayDocuments}
                 <Grid item  className={classes.fileNameGrid}>
                 {files.map((file, index) => {
                     return (
@@ -133,7 +179,7 @@ const WriterUploadWork = props => {
                 <Button m={1} color="primary" variant="contained" component="span"
                         startIcon={<PublishIcon />} 
                         onClick={handleUpload} 
-                         disabled={files.length < 2 ? true : false}
+                         disabled={disableUploadButton()}
                         >
                         Upload
                     </Button>
@@ -150,14 +196,19 @@ const WriterUploadWork = props => {
 const mapStateToProps = state => {
     return {
         selectedTask: state.tasks.selectedTask,
-        refreshTokenRequestSent: state.signIn.refreshTokenRequestSent
+        refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
+        committeeComments: state.writerUploadWork.committeeComments,
+        drafts: state.writerUploadWork.drafts,
+        comments: state.writerUploadWork.comments
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
-        onUpload: (piId, taskId, files, history) => dispatch(actions.upload(piId, taskId, files, history))
+        onUpload: (piId, taskId, files, history) => dispatch(actions.upload(piId, taskId, files, history)),
+        fetchDrafts: () => dispatch(actions.fetchDrafts()),
+        fetchComments: () => dispatch(actions.fetchComments())
     }
 };
 

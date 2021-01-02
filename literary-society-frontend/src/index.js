@@ -27,6 +27,7 @@ import editorDownloadDocumentReducer from './components/Tasks/Task/EditorDownloa
 import writerUploadDocumentReducer from './components/Tasks/Task/WriterUploadDocument/WriterUploadDocumentReducer';
 import committeeVotingReducer from './components/Tasks/Task/MembershipProcess/CommitteeVoting/CommitteeVotingReducer';
 import publRequestsReducer from './components/WriterPages/PublicationRequests/PublicationRequestsReducer';
+import writerUploadWorkReducer from './components/Tasks/Task/MembershipProcess/WriterUploadWork/WriterUploadWorkReducer';
 
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
@@ -49,6 +50,7 @@ const rootReducer = combineReducers({
     writerUploadDocument: writerUploadDocumentReducer,
     committeeVoting: committeeVotingReducer,
     publRequests: publRequestsReducer,
+    writerUploadWork: writerUploadWorkReducer
 });
 
 const store = createStore(rootReducer, composeEnhancers(

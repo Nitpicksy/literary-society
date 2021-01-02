@@ -1,4 +1,4 @@
-package nitpicksy.literarysociety.dto.request;
+package nitpicksy.literarysociety.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,13 +11,11 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommitteeOpinionDTO {
+public class CommentsDTO {
 
-    @NotBlank
-    private String writer;
+    @NotBlank(message = "Username is null")
+    private String committeeUsername;
 
-    @NotBlank
-    private String opinion;
-
+    @NotBlank(message = "Comment is null")
     private String comment;
 }

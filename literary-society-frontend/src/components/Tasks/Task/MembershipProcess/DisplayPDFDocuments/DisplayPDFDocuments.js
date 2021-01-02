@@ -31,9 +31,12 @@ const DisplayPDFDocuments = (props) => {
     }
 
     return (
-        <Grid container >
+        <Grid container
+        alignItems="center"
+        justify="center" 
+        spacing={2} >
         {modal}
-        <Grid item  className={classes.fileNameGrid}>
+        <Grid item className={classes.fileNameGrid}>
         {files.map((file, index) => {
             return (
             <div key={`index_${index}`}>

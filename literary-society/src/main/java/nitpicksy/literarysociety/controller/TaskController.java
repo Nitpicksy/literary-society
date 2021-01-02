@@ -54,14 +54,6 @@ public class TaskController {
         return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
     }
 
-    @GetMapping(value = "{taskId}/committee", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TaskDataDTO> getTaskDataCommittee(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
-        TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.getFormFields(piId, taskId),
-                pdfDocumentService.getDraftsByWriter(camundaService.getProcessVariable(piId, "writer")));
-
-        return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
-    }
-
     @PutMapping(value = "{taskId}/complete-and-download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> completeTaskAndDownloadBook(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
         PDFDocument pdfDocument = pdfDocumentService.findByBookId(Long.valueOf(camundaService.getProcessVariable(piId, "bookId")));
@@ -114,14 +106,22 @@ public class TaskController {
             }
 
             writer.setAttempts(writer.getAttempts() + 1);
-            writer.setDrafts(uploadedPDFDocuments);
+            writer.getDrafts().addAll(uploadedPDFDocuments);
 
         } catch (IOException e) {
-            throw new InvalidDataException("Writer documents could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
+            throw new InvalidDataException("Writer documents could not be uploaded. Please try again.", HttpStatus.BAD_REQUEST);
         }
 
         camundaService.completeTask(taskId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "{taskId}/committee", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TaskDataDTO> getTaskDataCommittee(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
+        TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.getFormFields(piId, taskId),
+                pdfDocumentService.getDraftsByWriter(camundaService.getProcessVariable(piId, "writer")));
+
+        return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
     }
 
     @PostMapping(value = "upload-proba",

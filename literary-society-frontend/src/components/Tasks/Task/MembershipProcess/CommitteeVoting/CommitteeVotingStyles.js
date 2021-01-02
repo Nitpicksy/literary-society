@@ -30,11 +30,11 @@ export const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(2, 4),
         minWidth: 450
       },
-      title: {
+    title: {
         fontFamily: 'Barlow Condensed, Roboto',
         fontWeight: 500,
         lineHeight: 'normal',
         marginBottom: theme.spacing(3),
         textAlign: 'center',
-      },
+    },
 }));

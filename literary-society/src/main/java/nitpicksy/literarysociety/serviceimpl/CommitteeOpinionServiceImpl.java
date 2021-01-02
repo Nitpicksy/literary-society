@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.serviceimpl;
 
 import nitpicksy.literarysociety.dto.request.CommitteeOpinionDTO;
+import nitpicksy.literarysociety.dto.response.CommentsDTO;
 import nitpicksy.literarysociety.enumeration.CommitteeMemberOpinion;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.OpinionOfCommitteeMember;
@@ -13,6 +14,9 @@ import nitpicksy.literarysociety.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CommitteeOpinionServiceImpl implements CommitteeOpinionService {
@@ -32,9 +36,24 @@ public class CommitteeOpinionServiceImpl implements CommitteeOpinionService {
         OpinionOfCommitteeMember opinion = new OpinionOfCommitteeMember(
                 authenticated,
                 writer,
-                dto.getComment(),
+                dto.getComment() != null ? dto.getComment() : "",
                 CommitteeMemberOpinion.valueOf(dto.getOpinion()));
         committeeOpinionRepository.save(opinion);
+    }
+
+    @Override
+    public List<CommentsDTO> getWriterComments() {
+        User user = userService.getAuthenticatedUser();
+        List<CommentsDTO> commentsDTOS = new ArrayList<>();
+        List<OpinionOfCommitteeMember> opinions = committeeOpinionRepository.findOpinionOfCommitteeMemberByWriterUsernameAndReviewed(user.getUsername(), true);
+
+        for (OpinionOfCommitteeMember opinion : opinions) {
+            commentsDTOS.add(new CommentsDTO(
+                    opinion.getCommitteeMember().getUsername(),
+                    opinion.getComment()
+            ));
+        }
+        return commentsDTOS;
     }
 
     @Autowired

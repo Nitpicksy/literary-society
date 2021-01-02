@@ -61,7 +61,6 @@ const CommitteeVoting = (props) => {
             comment: array[1].fieldValue ? array[1].fieldValue : ''
         }
 
-        console.log('array',voteData)
         props.onVote(voteData);
     }
 
