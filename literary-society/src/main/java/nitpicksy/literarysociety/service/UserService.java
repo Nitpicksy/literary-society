@@ -28,4 +28,6 @@ public interface UserService {
     User getAuthenticatedUser();
 
     Merchant getAuthenticatedMerchant();
+
+    User signUp(User user) throws NoSuchAlgorithmException;
 }

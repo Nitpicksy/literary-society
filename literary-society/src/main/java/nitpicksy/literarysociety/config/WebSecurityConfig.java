@@ -61,6 +61,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/api/merchants/payment-data")
                 .hasAuthority("SUPPORT_PAYMENT_METHODS")
+                .and()
+
+                .authorizeRequests().antMatchers(HttpMethod.POST,"/api/users").permitAll()
 
                 .anyRequest().authenticated().and()
                 .cors().and()
