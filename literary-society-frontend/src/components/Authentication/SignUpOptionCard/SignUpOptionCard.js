@@ -28,7 +28,9 @@ const SignUpOptionCard = (props) => {
     const chooseOptionHandler = (path) => {
         history.push(path);
         setSignUpType(props.type);
-        startProcess();
+        if(props.type === "readers" || props.type === "writers"){
+            startProcess();
+        }
     }
 
     return (

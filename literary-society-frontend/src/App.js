@@ -31,7 +31,8 @@ import { GuardProvider, GuardedRoute } from 'react-router-guards';
 import EditorDownloadDocument from './components/Tasks/Task/EditorDownloadDocument/EditorDownloadDocument';
 import WriterUploadDocument from './components/Tasks/Task/WriterUploadDocument/WriterUploadDocument';
 import MerchantPaymentData from './components/MerchantPaymentData/MerchantPaymentData';
-
+import LecturerAndEditorSignUp from './components/Authentication/LecturerAndEditorSignUp/LecturerAndEditorSignUp';
+import ManageLecturersAndEditors from './components/Authentication/ManageLecturersAndEditors/ManageLecturersAndEditors';
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
 // });
@@ -70,6 +71,10 @@ const App = props => {
       <Route path="/sign-up-options" render={(props) => <SignUpOptions {...props} />} />
       <Route path="/sign-up" render={(props) => <SignUp {...props} />} />
       <Route path="/sign-up-finished" render={(props) => <SignUpFinished {...props} />} />
+
+      <Route path="/editor/sign-up" render={(props) => <LecturerAndEditorSignUp {...props} />} />
+      <Route path="/lecturer/sign-up" render={(props) => <LecturerAndEditorSignUp {...props} />} />
+
       <Route path="/choose-genres" render={(props) => <BetaReaderGenres {...props} />} />
 
       <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
@@ -103,6 +108,8 @@ const App = props => {
           <Route path="/editor-download-document" render={(props) => <EditorDownloadDocument {...props} />} meta={{ roles: [roleEditor] }} />
 
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
+
+          <GuardedRoute path="/manage-users" render={(props) => <ManageLecturersAndEditors {...props} />} meta={{ roles: [roleAdmin] }} />
 
           <Route path="/tasks" render={(props) => <Tasks {...props} />} />
           <Route path="/sign-out" render={(props) => <Logout {...props} />} />

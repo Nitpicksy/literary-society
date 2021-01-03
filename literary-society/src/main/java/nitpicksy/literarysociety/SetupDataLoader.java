@@ -51,7 +51,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         }
 
         Permission manageEditors = createPermissionIfNotFound("MANAGE_EDITORS");
-        Permission manageLecturers = createPermissionIfNotFound("MANAGE_LECTURER");
+        Permission manageLecturers = createPermissionIfNotFound("MANAGE_LECTURERS");
         Permission supportPaymentMethods = createPermissionIfNotFound("SUPPORT_PAYMENT_METHODS");
 
         Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers));

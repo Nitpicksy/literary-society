@@ -30,9 +30,9 @@ const SignUpOptions = (props) => {
                         description="Readers can purchase and download books. Additionally, beta-readers can review writers' manuscripts." />
                     <SignUpOptionCard title="Writer" path="/sign-up" type="writers" smColumns={4} xsColumns={12}
                         description="Writers can upload their manuscripts to get a review. Manuscripts with positive reviews can be published." />
-                    <SignUpOptionCard title="Editor" smColumns={4} xsColumns={12}
+                    <SignUpOptionCard title="Editor"  type="editors" path="/editor/sign-up"  smColumns={4} xsColumns={12}
                         description="Editors can review writers' manuscripts. They can ask writers to improve their manuscripts if it is necessary." />
-                    <SignUpOptionCard title="Lecturer" smColumns={6} xsColumns={12}
+                    <SignUpOptionCard title="Lecturer" type="lecturers" path="/lecturer/sign-up" smColumns={6} xsColumns={12}
                         description="Lecturers can download manuscripts to review and mark lexical errors made by writers and then upload them back." />
                     <SignUpOptionCard title="Merchant" smColumns={6} xsColumns={12}
                         description="Merchants can advertise books they sell and receive online payments for sold books." />

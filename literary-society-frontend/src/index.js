@@ -26,6 +26,7 @@ import bookReducer from './components/BookDetails/BookDetailsReducer';
 import editorDownloadDocumentReducer from './components/Tasks/Task/EditorDownloadDocument/EditorDownloadDocumentReducer';
 import writerUploadDocumentReducer from './components/Tasks/Task/WriterUploadDocument/WriterUploadDocumentReducer';
 import publRequestsReducer from './components/WriterPages/PublicationRequests/PublicationRequestsReducer';
+import userListReducer from './components/Authentication/ManageLecturersAndEditors/ManageLecturersAndEditorsReducer';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
@@ -46,6 +47,7 @@ const rootReducer = combineReducers({
     editorDownloadDocument: editorDownloadDocumentReducer,
     writerUploadDocument: writerUploadDocumentReducer,
     publRequests: publRequestsReducer,
+    userList:userListReducer
 });
 
 const store = createStore(rootReducer, composeEnhancers(
