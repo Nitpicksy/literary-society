@@ -27,7 +27,7 @@ public class TransactionController {
 
     private TransactionDtoMapper transactionDtoMapper;
 
-    @GetMapping(value = "{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TransactionDTO> getTransaction(@Positive @PathVariable Long id) {
         return new ResponseEntity<>(transactionDtoMapper.toDto(transactionService.findById(id)), HttpStatus.OK);
     }

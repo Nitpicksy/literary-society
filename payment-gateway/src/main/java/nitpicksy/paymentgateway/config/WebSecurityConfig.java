@@ -47,19 +47,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
 
-                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/payment-methods")
-                .hasAuthority("MANAGE_PAYMENT_METHODS").and()
-                .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/payment-methods/{id}")
-                .hasAuthority("MANAGE_PAYMENT_METHODS").and()
-                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/companies")
-                .hasAuthority("MANAGE_COMPANIES").and()
-                .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/companies/{id}")
-                .hasAuthority("MANAGE_COMPANIES").and()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/api/payment-methods").hasAuthority("MANAGE_PAYMENT_METHODS")
+                .antMatchers(HttpMethod.PUT, "/api/payment-methods/{id}").hasAuthority("MANAGE_PAYMENT_METHODS")
 
-                .authorizeRequests().antMatchers(HttpMethod.POST, "/api/orders")
-                .hasAuthority("CREATE_ORDER").and()
-                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/merchants/{name}/payment-data")
-                .hasAuthority("CREATE_ORDER")
+                .antMatchers(HttpMethod.GET, "/api/companies").hasAuthority("MANAGE_COMPANIES")
+                .antMatchers(HttpMethod.PUT, "/api/companies/{id}").hasAuthority("MANAGE_COMPANIES")
+                
+                .antMatchers(HttpMethod.POST, "/api/orders").hasAuthority("CREATE_ORDER")
+                .antMatchers(HttpMethod.GET, "/api/merchants/{name}/payment-data").hasAuthority("CREATE_ORDER")
 
                 .anyRequest().permitAll().and()
                 .cors().and()

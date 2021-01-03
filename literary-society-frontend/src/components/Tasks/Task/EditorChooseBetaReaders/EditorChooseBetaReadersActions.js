@@ -1,6 +1,6 @@
 import axios from '../../../../axios-endpoint';
 import { toastr } from 'react-redux-toastr';
-import * as actionTypes from './PublicationRequestActionTypes';
+import * as actionTypes from './EditorChooseBetaReadersActionTypes';
 
 export const fetchFormSuccess = (formFields, processInstanceId, taskId,publicationRequest) => {
     return {

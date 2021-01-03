@@ -7,7 +7,7 @@
     <bpmn:endEvent id="Event_0vzsuma" name="Success">
       <bpmn:incoming>Flow_16qqizw</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:userTask id="Activity_1w9x7ix" name="Urednik prihvata ili odbija rukopis" camunda:assignee="${mainEditor}">
+    <bpmn:userTask id="Activity_1w9x7ix" name="Prihvatite ili odbijte rukopis" camunda:assignee="${mainEditor}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="decision" label="Decision" type="enum">
@@ -61,24 +61,9 @@
   <bpmn:error id="Error_1dlvfm5" name="greskaOdbijanje" errorCode="greskaOdbijanje" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="EditorAcceptOrRejectManuscript">
-      <bpmndi:BPMNEdge id="Flow_1hrtkb4_di" bpmnElement="Flow_1hrtkb4">
-        <di:waypoint x="188" y="280" />
-        <di:waypoint x="230" y="280" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0tozc9v_di" bpmnElement="Flow_0tozc9v">
-        <di:waypoint x="330" y="280" />
-        <di:waypoint x="380" y="280" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_15y1z8z_di" bpmnElement="Flow_15y1z8z">
-        <di:waypoint x="480" y="280" />
-        <di:waypoint x="525" y="280" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_16qqizw_di" bpmnElement="Flow_16qqizw">
-        <di:waypoint x="575" y="280" />
-        <di:waypoint x="852" y="280" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="564" y="298" width="55" height="27" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_1pk2u9p_di" bpmnElement="Flow_1pk2u9p">
+        <di:waypoint x="740" y="130" />
+        <di:waypoint x="852" y="130" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1srp8jb_di" bpmnElement="Flow_1srp8jb">
         <di:waypoint x="550" y="255" />
@@ -88,9 +73,24 @@
           <dc:Bounds x="515" y="103" width="90" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1pk2u9p_di" bpmnElement="Flow_1pk2u9p">
-        <di:waypoint x="740" y="130" />
-        <di:waypoint x="852" y="130" />
+      <bpmndi:BPMNEdge id="Flow_16qqizw_di" bpmnElement="Flow_16qqizw">
+        <di:waypoint x="575" y="280" />
+        <di:waypoint x="852" y="280" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="564" y="298" width="55" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15y1z8z_di" bpmnElement="Flow_15y1z8z">
+        <di:waypoint x="480" y="280" />
+        <di:waypoint x="525" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tozc9v_di" bpmnElement="Flow_0tozc9v">
+        <di:waypoint x="330" y="280" />
+        <di:waypoint x="380" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hrtkb4_di" bpmnElement="Flow_1hrtkb4">
+        <di:waypoint x="188" y="280" />
+        <di:waypoint x="230" y="280" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_0gezpvf_di" bpmnElement="Event_0gezpvf">
         <dc:Bounds x="152" y="262" width="36" height="36" />

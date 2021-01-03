@@ -46,29 +46,40 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
 
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .and()
-                .authorizeRequests().antMatchers("/api/readers/**").permitAll()
-                .and()
-                .authorizeRequests().antMatchers("/api/writers/**").permitAll()
-                .and()
-                .authorizeRequests().antMatchers("/api/process/**").permitAll()
-                .and()
-                .authorizeRequests().antMatchers("/api/books/**").permitAll()
-                .and()
-                .authorizeRequests().antMatchers("/api/payments/confirm").permitAll()
-                .and()
-                .authorizeRequests().antMatchers(HttpMethod.POST,"/api/merchants/{name}/payment-data").permitAll()
-                .and()
-                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/merchants/payment-data")
-                .hasAuthority("SUPPORT_PAYMENT_METHODS")
-                .and()
-                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/users")
-                .hasAnyAuthority("MANAGE_EDITORS","MANAGE_LECTURERS")
-                .and()
-                .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/users/{id}")
-                .hasAnyAuthority("MANAGE_EDITORS","MANAGE_LECTURERS")
-                .and()
-                .authorizeRequests().antMatchers(HttpMethod.POST,"/api/users").permitAll()
+
+                .antMatchers(HttpMethod.POST,"/api/merchants/{name}/payment-data").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/merchants/payment-data").hasAuthority("SUPPORT_PAYMENT_METHODS")
+                
+                .antMatchers(HttpMethod.GET, "/api/users").hasAnyAuthority("MANAGE_EDITORS","MANAGE_LECTURERS")
+                .antMatchers(HttpMethod.PUT, "/api/users/{id}").hasAnyAuthority("MANAGE_EDITORS","MANAGE_LECTURERS")
+                .antMatchers(HttpMethod.POST,"/api/users").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/books").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/books/{id}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/books/start-publishing").hasAuthority("CREATE_PUBLICATION_REQUEST")
+                .antMatchers(HttpMethod.GET, "/api/books/publication-request-form").hasAuthority("CREATE_PUBLICATION_REQUEST")
+                .antMatchers(HttpMethod.GET, "/api/books/{id}/opinions-of-beta-readers").hasAuthority("CREATE_PUBLICATION_REQUEST")
+
+                .antMatchers(HttpMethod.POST, "/api/process/{taskId}").permitAll()
+
+                .antMatchers(HttpMethod.POST, "/api/genres").permitAll()
+
+                .antMatchers(HttpMethod.POST, "/api/payments/pay").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/payments/confirm").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/readers/start-registration").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/readers/registration-form").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/readers/beta/choose-genres").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/tasks").hasAuthority("MANAGE_TASKS")
+                .antMatchers(HttpMethod.GET, "/api/tasks/{taskId}").hasAuthority("MANAGE_TASKS")
+                .antMatchers(HttpMethod.GET, "/api/tasks/{taskId}/complete-and-download").hasAuthority("DOWNLOAD_BOOK_AND_COMPLETE_TASK")
+                .antMatchers(HttpMethod.GET, "/api/tasks/{taskId}/complete-and-upload").hasAuthority("UPLOAD_BOOK_AND_COMPLETE_TASK")
+
+                .antMatchers(HttpMethod.GET, "/api/transactions/{id}").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/writers/start-registration").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/writers/registration-form").permitAll()
 
                 .anyRequest().authenticated().and()
                 .cors().and()

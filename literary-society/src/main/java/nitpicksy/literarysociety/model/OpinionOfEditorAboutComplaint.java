@@ -29,7 +29,7 @@ public class OpinionOfEditorAboutComplaint {
     @ManyToOne(fetch = FetchType.EAGER)
     private User editor;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String comment;
 
     @PrimaryKeyJoinColumn

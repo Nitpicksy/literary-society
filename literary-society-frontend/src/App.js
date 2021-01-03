@@ -33,6 +33,9 @@ import WriterUploadDocument from './components/Tasks/Task/WriterUploadDocument/W
 import MerchantPaymentData from './components/MerchantPaymentData/MerchantPaymentData';
 import LecturerAndEditorSignUp from './components/Authentication/LecturerAndEditorSignUp/LecturerAndEditorSignUp';
 import ManageLecturersAndEditors from './components/Authentication/ManageLecturersAndEditors/ManageLecturersAndEditors';
+import EditorChooseBetaReaders from './components/Tasks/Task/EditorChooseBetaReaders/EditorChooseBetaReaders';
+import OpinionsOfBetaReaders from './components/Tasks/Task/OpinionsOfBetaReaders/OpinionsOfBetaReaders';
+
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
 // });
@@ -103,9 +106,11 @@ const App = props => {
           <GuardedRoute path="/create-publication-request" render={(props) => <CreatePublicationRequest {...props} />} meta={{ roles:  [roleWriter] }} />
           <Route path="/writer-upload-document" render={(props) => <WriterUploadDocument {...props} />} meta={{ roles: [roleWriter] }} />
           <Route path="/upload" render={(props) => <DocumentSubmission {...props} />} meta={{ roles:  [roleWriter] }}/>
-
+          <Route path="/opinions-of-beta-readers" render={(props) => <OpinionsOfBetaReaders {...props} />} meta={{ roles: [roleWriter] }} />
+          
           <Route path="/publication-request" render={(props) => <PublicationRequest {...props} />} meta={{ roles: [roleEditor] }} />
-          <Route path="/editor-download-document" render={(props) => <EditorDownloadDocument {...props} />} meta={{ roles: [roleEditor] }} />
+          <Route path="/download-document" render={(props) => <EditorDownloadDocument {...props} />} meta={{ roles: [roleEditor, roleReader] }} />
+          <Route path="/editor-choose-beta-readers" render={(props) => <EditorChooseBetaReaders {...props} />} meta={{ roles: [roleEditor] }} />
 
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
 
@@ -131,13 +136,9 @@ const App = props => {
     );
   }
 
-  let toolbar = null;
-  if (props.isAuthenticated) {
-    toolbar = <CustomToolbar role={props.role} />;
-  }
   return (
     <div>
-      {toolbar}
+      <CustomToolbar role={props.role} isAuthenticated = {props.isAuthenticated}/>
       <Suspense fallback={<p>Loading...</p>}>{routes}</Suspense>
       <main>
         {props.children}

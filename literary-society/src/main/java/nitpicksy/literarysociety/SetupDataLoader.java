@@ -53,23 +53,27 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Permission manageEditors = createPermissionIfNotFound("MANAGE_EDITORS");
         Permission manageLecturers = createPermissionIfNotFound("MANAGE_LECTURERS");
         Permission supportPaymentMethods = createPermissionIfNotFound("SUPPORT_PAYMENT_METHODS");
+        Permission manageTasks = createPermissionIfNotFound("MANAGE_TASKS");
+        Permission createPublicationRequest = createPermissionIfNotFound("CREATE_PUBLICATION_REQUEST");
+        Permission downloadBookAndCompleteTask = createPermissionIfNotFound("DOWNLOAD_BOOK_AND_COMPLETE_TASK");
+        Permission uploadBookAndCompleteTask = createPermissionIfNotFound("UPLOAD_BOOK_AND_COMPLETE_TASK");
 
         Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers));
         createRoleIfNotFound("ROLE_ADMIN", adminPermissions);
 
-        Set<Permission> readerPermissions = new HashSet<>();
+        Set<Permission> readerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_READER", readerPermissions);
 
-        Set<Permission> writerPermissions = new HashSet<>();
+        Set<Permission> writerPermissions = new HashSet<>(Arrays.asList(createPublicationRequest, manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_WRITER", writerPermissions);
 
-        Set<Permission> committeeMemberPermissions = new HashSet<>();
+        Set<Permission> committeeMemberPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_COMMITTEE_MEMBER", committeeMemberPermissions);
 
-        Set<Permission> editorPermissions = new HashSet<>();
+        Set<Permission> editorPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_EDITOR", editorPermissions);
 
-        Set<Permission> lecturerPermissions = new HashSet<>();
+        Set<Permission> lecturerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_LECTURER", lecturerPermissions);
 
         Set<Permission> merchantPermissions = new HashSet<>(Arrays.asList(supportPaymentMethods));
@@ -115,16 +119,31 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         editor3.setRole(roleEditor);
         userRepository.save(editor3);
 
+        Role roleReader = roleRepository.findByName("ROLE_READER");
+        User reader1 = userRepository.findOneById(6L);
+        reader1.setRole(roleReader);
+        userRepository.save(reader1);
+        User reader2 = userRepository.findOneById(7L);
+        reader2.setRole(roleReader);
+        userRepository.save(reader2);
+        User reader3 = userRepository.findOneById(8L);
+        reader3.setRole(roleReader);
+        userRepository.save(reader3);
+        User reader4 = userRepository.findOneById(9L);
+        reader4.setRole(roleReader);
+        userRepository.save(reader4);
+        User reader5 = userRepository.findOneById(10L);
+        reader5.setRole(roleReader);
+        userRepository.save(reader5);
+
         Role roleMerchant = roleRepository.findByName("ROLE_MERCHANT");
-        User merchant1 = userRepository.findOneById(6L);
+        User merchant1 = userRepository.findOneById(11L);
         merchant1.setRole(roleMerchant);
         userRepository.save(merchant1);
-
-        User merchant2 = userRepository.findOneById(7L);
+        User merchant2 = userRepository.findOneById(12L);
         merchant2.setRole(roleMerchant);
         userRepository.save(merchant2);
-
-        User merchant3 = userRepository.findOneById(8L);
+        User merchant3 = userRepository.findOneById(13L);
         merchant3.setRole(roleMerchant);
         userRepository.save(merchant3);
     }

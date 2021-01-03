@@ -22,11 +22,14 @@ import transactionReducer from './components/Payment/Transaction/TransactionRedu
 import createPublicationRequestReducer from './components/WriterPages/CreatePublicationRequest/CreatePublicationRequestReducer';
 import tasksReducer from './components/Tasks/TasksReducer';
 import publicationRequestReducer from './components/Tasks/Task/PublicationRequest/PublicationRequestReducer';
+import editorChooseBetaReadersReducer from './components/Tasks/Task/EditorChooseBetaReaders/EditorChooseBetaReadersReducer';
 import bookReducer from './components/BookDetails/BookDetailsReducer';
 import editorDownloadDocumentReducer from './components/Tasks/Task/EditorDownloadDocument/EditorDownloadDocumentReducer';
 import writerUploadDocumentReducer from './components/Tasks/Task/WriterUploadDocument/WriterUploadDocumentReducer';
 import publRequestsReducer from './components/WriterPages/PublicationRequests/PublicationRequestsReducer';
 import userListReducer from './components/Authentication/ManageLecturersAndEditors/ManageLecturersAndEditorsReducer';
+import opinionsOfBetaReadersReducer from './components/Tasks/Task/OpinionsOfBetaReaders/OpinionsOfBetaReadersReducer';
+
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
@@ -46,8 +49,10 @@ const rootReducer = combineReducers({
     book:bookReducer, 
     editorDownloadDocument: editorDownloadDocumentReducer,
     writerUploadDocument: writerUploadDocumentReducer,
+    editorChooseBetaReaders:editorChooseBetaReadersReducer,
     publRequests: publRequestsReducer,
-    userList:userListReducer
+    userList:userListReducer,
+    opinionsOfBetaReaders: opinionsOfBetaReadersReducer,
 });
 
 const store = createStore(rootReducer, composeEnhancers(

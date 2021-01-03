@@ -1,6 +1,5 @@
 package nitpicksy.literarysociety.camunda.messages;
 
-import nitpicksy.literarysociety.dto.camunda.PublicationRequestDTO;
 import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.User;
@@ -25,8 +24,8 @@ public class SendManuscriptExpiredEmail implements JavaDelegate {
     public void execute(DelegateExecution execution) {
         Long bookId = Long.valueOf((String) execution.getVariable("bookId"));
         Book book = bookService.findById(bookId);
-        book.setStatus(BookStatus.NOT_SENT);
-        bookService.save(book);
+//        book.setStatus(BookStatus.NOT_SENT);
+//        bookService.save(book);
 
         String writerUsername = (String) execution.getVariable("writer");
 

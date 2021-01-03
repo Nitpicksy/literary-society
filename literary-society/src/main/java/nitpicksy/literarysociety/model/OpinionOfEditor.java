@@ -33,6 +33,6 @@ public class OpinionOfEditor {
     @ManyToOne(fetch = FetchType.EAGER)
     private PDFDocument downloadedPDFDocument;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String comment;
 }

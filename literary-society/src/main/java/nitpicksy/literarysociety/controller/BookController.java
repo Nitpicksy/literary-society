@@ -2,15 +2,14 @@ package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.constants.CamundaConstants;
-import nitpicksy.literarysociety.dto.response.BookDTO;
-import nitpicksy.literarysociety.dto.response.BookDetailsDTO;
-import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
-import nitpicksy.literarysociety.dto.response.ProcessDataDTO;
+import nitpicksy.literarysociety.dto.response.*;
 import nitpicksy.literarysociety.mapper.BookDetailsDtoMapper;
 import nitpicksy.literarysociety.mapper.BookDtoMapper;
+import nitpicksy.literarysociety.mapper.OpinionOfBetaReaderDtoMapper;
 import nitpicksy.literarysociety.model.Book;
+import nitpicksy.literarysociety.model.OpinionOfBetaReader;
 import nitpicksy.literarysociety.service.BookService;
-import org.camunda.bpm.engine.TaskService;
+import nitpicksy.literarysociety.service.OpinionOfBetaReaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,13 +27,15 @@ public class BookController {
 
     private BookService bookService;
 
-    private BookDtoMapper bookDtoMapper;
+    private OpinionOfBetaReaderService opinionOfBetaReaderService;
 
     private CamundaService camundaService;
 
-    private TaskService taskService;
+    private BookDtoMapper bookDtoMapper;
 
     private BookDetailsDtoMapper bookDetailsDtoMapper;
+
+    private OpinionOfBetaReaderDtoMapper opinionOfBetaReaderDtoMapper;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookDTO>> getAllForSale() {
@@ -54,19 +55,27 @@ public class BookController {
         return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
     }
 
-    @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookDetailsDTO> getAllForSale(@Positive @PathVariable Long id) {
         Book book = bookService.findById(id);
         return new ResponseEntity<>(bookDetailsDtoMapper.toDto(book), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/{id}/opinions-of-beta-readers", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<OpinionOfBetaReaderDTO>> getOpinionsOfBetaReaders(@Positive @PathVariable Long id) {
+        return new ResponseEntity<>(opinionOfBetaReaderService.findByBookId(id).stream()
+                .map(opinion -> opinionOfBetaReaderDtoMapper.toDto(opinion)).collect(Collectors.toList()), HttpStatus.OK);
+    }
+
     @Autowired
-    public BookController(BookService bookService, BookDtoMapper bookDtoMapper, CamundaService camundaService, TaskService taskService,
-                          BookDetailsDtoMapper bookDetailsDtoMapper) {
+    public BookController(BookService bookService, OpinionOfBetaReaderService opinionOfBetaReaderService,
+                          CamundaService camundaService, BookDtoMapper bookDtoMapper, BookDetailsDtoMapper bookDetailsDtoMapper,
+                          OpinionOfBetaReaderDtoMapper opinionOfBetaReaderDtoMapper) {
         this.bookService = bookService;
-        this.bookDtoMapper = bookDtoMapper;
+        this.opinionOfBetaReaderService = opinionOfBetaReaderService;
         this.camundaService = camundaService;
-        this.taskService = taskService;
+        this.bookDtoMapper = bookDtoMapper;
         this.bookDetailsDtoMapper = bookDetailsDtoMapper;
+        this.opinionOfBetaReaderDtoMapper = opinionOfBetaReaderDtoMapper;
     }
 }

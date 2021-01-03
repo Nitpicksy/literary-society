@@ -57,15 +57,16 @@ public class TaskController {
         return new ResponseEntity<>(camundaService.getTasksByAssignee(user.getId()), HttpStatus.OK);
     }
 
-    @GetMapping(value = "{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskDataDTO> getTaskData(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
-        TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.getFormFields(piId, taskId),
+
+        TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.setEnumValues(camundaService.getFormFields(piId, taskId)),
                 bookService.getPublicationRequest(Long.valueOf(camundaService.getProcessVariable(piId, "bookId"))));
 
         return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
     }
 
-    @PutMapping(value = "{taskId}/complete-and-download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PutMapping(value = "/{taskId}/complete-and-download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> completeTaskAndDownloadBook(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
         PDFDocument pdfDocument = pdfDocumentService.findByBookId(Long.valueOf(camundaService.getProcessVariable(piId, "bookId")));
 
@@ -83,7 +84,7 @@ public class TaskController {
         }
     }
 
-    @PostMapping(value = "{taskId}/complete-and-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{taskId}/complete-and-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> completeTaskAndUploadBook(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId,
                                                           @Valid @RequestParam MultipartFile pdfFile) {
         Book book = bookService.findById(Long.valueOf(camundaService.getProcessVariable(piId, "bookId")));
@@ -94,37 +95,11 @@ public class TaskController {
             throw new InvalidDataException("Manuscript could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
-        book.setStatus(BookStatus.SENT);
-        bookService.save(book);
+//        book.setStatus(BookStatus.SENT);
+//        bookService.save(book);
 
         camundaService.completeTask(taskId);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping(value = "upload-proba",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> uploadProba(@Valid @RequestParam MultipartFile pdfFile) {
-        try {
-            pdfDocumentService.upload(pdfFile, null);
-        } catch (IOException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PutMapping(value = "proba/{name}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<byte[]> proba(@PathVariable String name) {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-
-        try {
-            byte[] content = pdfDocumentService.download(name);
-            return new ResponseEntity<>(content, headers, HttpStatus.OK);
-        } catch (IOException | URISyntaxException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
     }
 
     @Autowired
