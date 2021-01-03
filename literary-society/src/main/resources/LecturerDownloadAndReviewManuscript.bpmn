@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1423re7" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:process id="LecturerDownloadAndReviewManuscript" isExecutable="true">
+    <bpmn:startEvent id="Event_0m0ilpo" name="Start">
+      <bpmn:outgoing>Flow_0ev0lu6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0fo41x9" name="Success">
+      <bpmn:incoming>Flow_1cew0gb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_1xugypo" name="Preuzimanje PDF verzije rukopisa" camunda:assignee="${lecturer}">
+      <bpmn:incoming>Flow_0ev0lu6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1h1r25x</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_1amw054" name="Fail">
+      <bpmn:incoming>Flow_1g473rw</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_04ijiyn" errorRef="Error_11q9xgf" />
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Event_0adx0td" name="GRESKA: Rukopis ne postoji" attachedToRef="Activity_1xugypo">
+      <bpmn:outgoing>Flow_1g473rw</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1vv01io" errorRef="Error_0njygfp" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1g473rw" sourceRef="Event_0adx0td" targetRef="Event_1amw054" />
+    <bpmn:sequenceFlow id="Flow_0ev0lu6" sourceRef="Event_0m0ilpo" targetRef="Activity_1xugypo" />
+    <bpmn:sequenceFlow id="Flow_1h1r25x" sourceRef="Activity_1xugypo" targetRef="Activity_15q8l1f" />
+    <bpmn:userTask id="Activity_15q8l1f" name="Slanje PDF verzije rukopisa" camunda:assignee="${lecturer}">
+      <bpmn:incoming>Flow_1h1r25x</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cew0gb</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1cew0gb" sourceRef="Activity_15q8l1f" targetRef="Event_0fo41x9" />
+  </bpmn:process>
+  <bpmn:error id="Error_0f83q5p" name="greskaRukopisNijeDostavljen" errorCode="greskaRukopisNijeDostavljen" />
+  <bpmn:error id="Error_1k7yaap" name="greskaRukopisNijeDostavljen" errorCode="greskaRukopisNijeDostavljen" />
+  <bpmn:error id="Error_11q9xgf" name="greskaRukopisNePostoji" errorCode="greskaRukopisNePostoji" />
+  <bpmn:error id="Error_0njygfp" name="greskaRukopisNePostoji" errorCode="greskaRukopisNePostoji" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="LecturerDownloadAndReviewManuscript">
+      <bpmndi:BPMNEdge id="Flow_1g473rw_di" bpmnElement="Flow_1g473rw">
+        <di:waypoint x="370" y="178" />
+        <di:waypoint x="370" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ev0lu6_di" bpmnElement="Flow_0ev0lu6">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="290" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1h1r25x_di" bpmnElement="Flow_1h1r25x">
+        <di:waypoint x="390" y="120" />
+        <di:waypoint x="500" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cew0gb_di" bpmnElement="Flow_1cew0gb">
+        <di:waypoint x="600" y="120" />
+        <di:waypoint x="722" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1xugypo_di" bpmnElement="Activity_1xugypo">
+        <dc:Bounds x="290" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1amw054_di" bpmnElement="Event_1amw054">
+        <dc:Bounds x="352" y="237" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="363" y="280" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15q8l1f_di" bpmnElement="Activity_15q8l1f">
+        <dc:Bounds x="500" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0fo41x9_di" bpmnElement="Event_0fo41x9">
+        <dc:Bounds x="722" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="721" y="145" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0m0ilpo_di" bpmnElement="Event_0m0ilpo">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="145" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0adx0td_di" bpmnElement="Event_0adx0td">
+        <dc:Bounds x="352" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="292" y="191" width="56" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

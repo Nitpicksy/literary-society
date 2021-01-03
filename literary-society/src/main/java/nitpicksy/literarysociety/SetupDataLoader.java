@@ -146,6 +146,15 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         User merchant3 = userRepository.findOneById(13L);
         merchant3.setRole(roleMerchant);
         userRepository.save(merchant3);
+
+        Role roleLecturer = roleRepository.findByName("ROLE_LECTURER");
+        User lecturer1 = userRepository.findOneById(14L);
+        lecturer1.setRole(roleLecturer);
+        userRepository.save(lecturer1);
+
+        User lecturer2 = userRepository.findOneById(15L);
+        lecturer2.setRole(roleLecturer);
+        userRepository.save(lecturer2);
     }
 
     private void composeAndSendEmailToChangePassword(String recipientEmail, String generatedPassword) {

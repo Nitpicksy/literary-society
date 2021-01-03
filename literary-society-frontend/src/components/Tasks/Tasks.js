@@ -39,10 +39,14 @@ const Tasks = (props) => {
             || properties.row.name === "Proverite da li je delo originalno"
             || properties.row.name === "Prihvatite ili odbijte rukopis"
             || properties.row.name === "Definišite da li se rukopis šalje skupu beta čitaoca"
-            || properties.row.name === "Ostavljanje komentara") {
+            || properties.row.name === "Ostavljanje komentara" 
+            || properties.row.name === "Definišite da li se rukopis šalje lektoru ili treba još nešto da se izmeni"
+            || properties.row.name === "Definisite da li je potrebno izmeniti rukopis") {
             history.push('/publication-request');
         } else if (properties.row.name === "Urednik preuzimanje dokumenta"
-            || properties.row.name === "Preuzimanje PDF verzije rukopisa") {
+            || properties.row.name === "Preuzimanje PDF verzije rukopisa"
+            || properties.row.name === "Preuzimanje dokumenta" 
+            || properties.row.name === "Preuzimanje PDF verzije rukopisa sa lektorovim izmenama") {
             history.push('/download-document');
         } else if (properties.row.name === "Slanje PDF verzije rukopisa") {
             history.push('/writer-upload-document');
