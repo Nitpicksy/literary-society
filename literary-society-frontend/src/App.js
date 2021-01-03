@@ -25,13 +25,13 @@ import PublicationRequests from './components/WriterPages/PublicationRequests/Pu
 import CreatePublicationRequest from './components/WriterPages/CreatePublicationRequest/CreatePublicationRequest';
 import Tasks from './components/Tasks/Tasks';
 import PublicationRequest from './components/Tasks/Task/PublicationRequest/PublicationRequest';
-import DocumentSubmission from './components/WriterPages/DocumentSubmission/DocumentSubmission';
 import BookDetails from './components/BookDetails/BookDetails';
 import { GuardProvider, GuardedRoute } from 'react-router-guards';
 import EditorDownloadDocument from './components/Tasks/Task/EditorDownloadDocument/EditorDownloadDocument';
 import WriterUploadDocument from './components/Tasks/Task/WriterUploadDocument/WriterUploadDocument';
 import WriterUploadWork from './components/Tasks/Task/MembershipProcess/WriterUploadWork/WriterUploadWork';
 import CommitteeVoting from './components/Tasks/Task/MembershipProcess/CommitteeVoting/CommitteeVoting';
+import Membership from './components/Membership/Membership';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -105,6 +105,7 @@ const App = props => {
 
           <Route path="/writer-membership-upload" render={(props) => <WriterUploadWork {...props} />} meta={{ roles:  [roleWriter] }}/>
           <Route path="/voting" render={(props) => <CommitteeVoting {...props} />} meta={{ roles:  [roleWriter] }}/>
+          <Route path="/membership" render={(props) => <Membership {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
 
           <Route path="/tasks" render={(props) => <Tasks {...props} />} />
           <Route path="/sign-out" render={(props) => <Logout {...props} />} />

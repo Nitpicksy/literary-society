@@ -79,6 +79,7 @@ const WriterUploadWork = props => {
     }
 
     const disableUploadButton = () => {
+        // eslint-disable-next-line
         if(drafts == null || drafts.length == 0) {
             if(files.length < 2) {
                 return true;

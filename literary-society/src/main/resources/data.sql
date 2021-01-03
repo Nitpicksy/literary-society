@@ -149,3 +149,11 @@ insert into publishing_info(isbn, number_of_pages, publisher_city, publication_d
                             book_id, merchant_id)
 values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 890.00, 5, 8, 9);
 
+
+insert into price_list (start_date, membership_for_reader, membership_for_writer)
+values ('2021-01-01', 500, 2000);
+insert into price_list (start_date, membership_for_reader, membership_for_writer)
+values ('2021-01-10', 600, 2100);
+insert into price_list (start_date, membership_for_reader, membership_for_writer)
+values ('2021-03-10', 700, 2200);
+

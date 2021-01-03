@@ -46,6 +46,8 @@ const Tasks = (props) => {
             history.push('/writer-membership-upload')
         } else if(properties.row.name === 'Vote on a writer') {
             history.push('/voting')
+        } else if(properties.row.name === 'Pay your membership') {
+            history.push('/membership')
         }
 
     }
