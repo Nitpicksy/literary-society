@@ -41,7 +41,8 @@ const Tasks = (props) => {
             || properties.row.name === "Definišite da li se rukopis šalje skupu beta čitaoca"
             || properties.row.name === "Ostavljanje komentara" 
             || properties.row.name === "Definišite da li se rukopis šalje lektoru ili treba još nešto da se izmeni"
-            || properties.row.name === "Definisite da li je potrebno izmeniti rukopis") {
+            || properties.row.name === "Definisite da li je potrebno izmeniti rukopis"
+            || properties.row.name === "Posaljite knjigu na stampu ili dajte sugestije za izmenu") {
             history.push('/publication-request');
         } else if (properties.row.name === "Urednik preuzimanje dokumenta"
             || properties.row.name === "Preuzimanje PDF verzije rukopisa"
@@ -54,6 +55,8 @@ const Tasks = (props) => {
             history.push('/editor-choose-beta-readers');
         } else if (properties.row.name === "Izmena rukopisa prema komentarima") {
             history.push('/opinions-of-beta-readers');
+        } else if (properties.row.name === "Definisite informacije o knjizi koja je poslata na stampu") {
+            history.push('/publishing-info');
         }
     }
 

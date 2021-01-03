@@ -35,6 +35,7 @@ import LecturerAndEditorSignUp from './components/Authentication/LecturerAndEdit
 import ManageLecturersAndEditors from './components/Authentication/ManageLecturersAndEditors/ManageLecturersAndEditors';
 import EditorChooseBetaReaders from './components/Tasks/Task/EditorChooseBetaReaders/EditorChooseBetaReaders';
 import OpinionsOfBetaReaders from './components/Tasks/Task/OpinionsOfBetaReaders/OpinionsOfBetaReaders';
+import PublishingInfo from './components/Tasks/Task/PublishingInfo/PublishingInfo';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -111,6 +112,7 @@ const App = props => {
           <Route path="/publication-request" render={(props) => <PublicationRequest {...props} />} meta={{ roles: [roleEditor] }} />
           <Route path="/download-document" render={(props) => <EditorDownloadDocument {...props} />} meta={{ roles: [roleEditor, roleReader] }} />
           <Route path="/editor-choose-beta-readers" render={(props) => <EditorChooseBetaReaders {...props} />} meta={{ roles: [roleEditor] }} />
+          <Route path="/publishing-info" render={(props) => <PublishingInfo {...props} />} meta={{ roles: [roleEditor] }} />
 
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
 

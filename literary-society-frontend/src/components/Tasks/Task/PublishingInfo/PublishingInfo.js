@@ -1,22 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
 import ListIcon from '@material-ui/icons/List';
-import Avatar from '@material-ui/core/Avatar';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import { connect } from 'react-redux';
-import { useStyles } from './PublicationRequestStyles';
-import * as actions from './PublicationRequestExport';
+import { useStyles } from './PublishingInfoStyles';
+import * as actions from './PublishingInfoExport';
 import * as signInActions from '../../../Authentication/SignIn/SignInExport';
 import { responseInterceptor } from '../../../../responseInterceptor';
 import { useHistory } from 'react-router';
 import Form from '../../../../UI/Form/Form';
 import { extractControls } from '../../../../utility/extractControls';
-import Button from '@material-ui/core/Button';
-import PublicationRequestCard from './PublicationRequestCard/PublicationRequestCard';
+import PublicationRequestCard from '../PublicationRequest/PublicationRequestCard/PublicationRequestCard';
+import { Typography, Container, Avatar, CssBaseline, Button, Grid } from '@material-ui/core';
 import { toastr } from 'react-redux-toastr';
 
-const PublicationRequest = (props) => {
+const PublishingInfo = (props) => {
     const history = useHistory();
     responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
     const classes = useStyles();
@@ -24,6 +20,7 @@ const PublicationRequest = (props) => {
     const { selectedTask } = props;
     const { formFields, fetchForm } = props;
     const { publicationRequest } = props;
+    const [image, setImage] = useState(null);
 
     let [controls, setControls] = useState(null);
     const [formIsValid, setFormIsValid] = useState(false);
@@ -44,6 +41,11 @@ const PublicationRequest = (props) => {
 
     const submitHander = (event) => {
         event.preventDefault();
+        if (!image) {
+            toastr.warning('Publishing Info', 'Please choose image file.');
+            return;
+        } 
+
         let array = [];
         for (let [key, data] of Object.entries(controls)) {
             let value = data.value
@@ -52,29 +54,15 @@ const PublicationRequest = (props) => {
             }
             array.push({ fieldId: key, fieldValue: value });
         }
+        const formData = new FormData();
+        formData.append('image', image);
+        formData.append('formDTOList', new Blob([JSON.stringify(array)], { type: "application/json" }));
+      
+        props.onConfirm(formData, selectedTask.taskId, history);
+    }
 
-        if (array[0].fieldValue === 'REQUEST_REJECTED') {
-            console.log('REQUEST_REJECTED');
-            if (!array[1].fieldValue) {
-                toastr.error('Reject Publication Request', 'You have to write a reason for rejecting.');
-                return;
-            }
-        }
-
-        if (array[0].fieldValue === 'NOT_ORIGINAL') {
-            if (!array[1].fieldValue) {
-                toastr.error('Manuscript', 'You have to write a reason why the manuscript is not original.');
-                return;
-            }
-        }
-
-        if (array[0].fieldValue === 'TO_BE_EDITED' && array[1]) {
-            if (!array[1].fieldValue) {
-                toastr.error('Manuscript', 'You have to explain what writers need to change.');
-                return;
-            }
-        }
-        props.onConfirm(array, selectedTask.taskId, history);
+    const handleChooseFile = ({ target }) => {
+        setImage(target.files[0]);
     }
 
     if (controls) {
@@ -98,6 +86,25 @@ const PublicationRequest = (props) => {
                 </div>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
+                    <Grid item xs={12} >
+                        <input type="file" accept="image/*" hidden id="upload-file"
+                            onChange={handleChooseFile} 
+                        />
+                        <label htmlFor="upload-file">
+                            <Grid container >
+                                <Grid item xs={4} >
+                                    <Button color="primary" variant="contained" component="span">
+                                        Choose file
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={8} className={classes.fileNameGrid}>
+                                    <Typography variant="body2" component="span" className={classes.fileName}>
+                                        {image ? image.name : ''}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </label>
+                    </Grid>
                     <Button type="submit" color="primary" className={classes.submit}
                         variant="contained" disabled={!formIsValid} fullWidth>
                         Confirm
@@ -108,13 +115,12 @@ const PublicationRequest = (props) => {
     );
 };
 
-
 const mapStateToProps = state => {
     return {
         selectedTask: state.tasks.selectedTask,
         refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
-        formFields: state.publicationRequest.formFields,
-        publicationRequest: state.publicationRequest.publicationRequest,
+        formFields: state.publishingInfo.formFields,
+        publicationRequest: state.publishingInfo.publicationRequest,
     }
 };
 
@@ -122,8 +128,8 @@ const mapDispatchToProps = dispatch => {
     return {
         fetchForm: (piId, taskId) => dispatch(actions.fetchForm(piId, taskId)),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
-        onConfirm: (data, taskId, history) => dispatch(actions.confirm(data, taskId, history)),
+        onConfirm: (formData, taskId, history) => dispatch(actions.confirm(formData, taskId, history)),
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PublicationRequest);
+export default connect(mapStateToProps, mapDispatchToProps)(PublishingInfo);

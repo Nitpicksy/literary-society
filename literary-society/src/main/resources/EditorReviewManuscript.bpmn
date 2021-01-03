@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_03u162t" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:process id="EditorReviewManuscript" isExecutable="true">
+    <bpmn:startEvent id="Event_04ntma4" name="Start">
+      <bpmn:outgoing>Flow_0e7ctk8</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0jyxz5y" name="Success">
+      <bpmn:incoming>Flow_0rcf1z5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_0t7m9h8" name="Posaljite knjigu na stampu ili dajte sugestije za izmenu" camunda:assignee="${mainEditor}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="decision" label="Decision" type="enum">
+            <camunda:properties>
+              <camunda:property id="multipleSelect" value="false" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="requiredSelect" config="true" />
+            </camunda:validation>
+            <camunda:value id="TO_BE_EDITED" name="I think that manuscript needs more changes" />
+            <camunda:value id="SENT_TO_PRINT" name="I want to send the book to the print" />
+          </camunda:formField>
+          <camunda:formField id="reason" label="If manuscript needs more changes, elaborate why" type="textarea">
+            <camunda:properties>
+              <camunda:property id="rows" value="3" />
+            </camunda:properties>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0e7ctk8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jgy6pz</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_0krlwwk">
+      <bpmn:incoming>Flow_0rznrv8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fd9bu9</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1nbwxaw</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0e7ctk8" sourceRef="Event_04ntma4" targetRef="Activity_0t7m9h8" />
+    <bpmn:sequenceFlow id="Flow_0fd9bu9" name="Rukopis se salje na stampu" sourceRef="Gateway_0krlwwk" targetRef="Activity_0yukmex">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision == "SENT_TO_PRINT"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0jgy6pz" sourceRef="Activity_0t7m9h8" targetRef="Activity_0mcohwf" />
+    <bpmn:endEvent id="Event_1pb8rz3" name="Success">
+      <bpmn:incoming>Flow_1jvfuvu</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1nbwxaw" name="Rukopis treba jos izmena" sourceRef="Gateway_0krlwwk" targetRef="Activity_1y26vxk">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision != "SENT_TO_PRINT"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_0mcohwf" name="Promena statusa knjige" camunda:class="nitpicksy.literarysociety.camunda.service.PublicationRequestService">
+      <bpmn:incoming>Flow_0jgy6pz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rznrv8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1jvfuvu" sourceRef="Activity_1y26vxk" targetRef="Event_1pb8rz3" />
+    <bpmn:serviceTask id="Activity_1y26vxk" name="Sacuvaj urednikovo misljenje" camunda:class="nitpicksy.literarysociety.camunda.service.OpinionOfEditorService">
+      <bpmn:incoming>Flow_1nbwxaw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jvfuvu</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0rznrv8" sourceRef="Activity_0mcohwf" targetRef="Gateway_0krlwwk" />
+    <bpmn:userTask id="Activity_0yukmex" name="Definisite informacije o knjizi koja je poslata na stampu" camunda:assignee="${mainEditor}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="numberOfPages" label="Number of pages" type="string">
+            <camunda:properties>
+              <camunda:property id="errorMessage" value="Number of pages is not valid." />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="pattern" config="^\d+?$" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="publisherCity" label="Publisher Cuty" type="string">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="price" label="Price" type="string">
+            <camunda:properties>
+              <camunda:property id="errorMessage" value="Price is not valid" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="pattern" config="^\d+(.\d{1,2})?$" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="discount" label="Discount" type="string">
+            <camunda:properties>
+              <camunda:property id="errorMessage" value="Discount is not valid" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="pattern" config="^(100|[1-9]{1,2}){1}$" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0fd9bu9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0aau5x7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0aau5x7" sourceRef="Activity_0yukmex" targetRef="Activity_07ym64z" />
+    <bpmn:sequenceFlow id="Flow_0rcf1z5" sourceRef="Activity_07ym64z" targetRef="Event_0jyxz5y" />
+    <bpmn:serviceTask id="Activity_07ym64z" name="Sacuvaj informacije o knjizi" camunda:class="nitpicksy.literarysociety.camunda.service.PublishingInfoService">
+      <bpmn:incoming>Flow_0aau5x7</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rcf1z5</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmn:error id="Error_1gnrpmn" name="greskaOdbijanje" errorCode="greskaOdbijanje" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="EditorReviewManuscript">
+      <bpmndi:BPMNEdge id="Flow_0e7ctk8_di" bpmnElement="Flow_0e7ctk8">
+        <di:waypoint x="228" y="250" />
+        <di:waypoint x="270" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fd9bu9_di" bpmnElement="Flow_0fd9bu9">
+        <di:waypoint x="615" y="250" />
+        <di:waypoint x="820" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="600" y="268" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jgy6pz_di" bpmnElement="Flow_0jgy6pz">
+        <di:waypoint x="370" y="250" />
+        <di:waypoint x="420" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nbwxaw_di" bpmnElement="Flow_1nbwxaw">
+        <di:waypoint x="590" y="225" />
+        <di:waypoint x="590" y="100" />
+        <di:waypoint x="700" y="100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="497" y="159" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jvfuvu_di" bpmnElement="Flow_1jvfuvu">
+        <di:waypoint x="800" y="100" />
+        <di:waypoint x="992" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rznrv8_di" bpmnElement="Flow_0rznrv8">
+        <di:waypoint x="520" y="250" />
+        <di:waypoint x="565" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aau5x7_di" bpmnElement="Flow_0aau5x7">
+        <di:waypoint x="920" y="250" />
+        <di:waypoint x="1030" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rcf1z5_di" bpmnElement="Flow_0rcf1z5">
+        <di:waypoint x="1130" y="250" />
+        <di:waypoint x="1242" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_04ntma4_di" bpmnElement="Event_04ntma4">
+        <dc:Bounds x="192" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="200" y="275" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0t7m9h8_di" bpmnElement="Activity_0t7m9h8">
+        <dc:Bounds x="270" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0krlwwk_di" bpmnElement="Gateway_0krlwwk" isMarkerVisible="true">
+        <dc:Bounds x="565" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1pb8rz3_di" bpmnElement="Event_1pb8rz3">
+        <dc:Bounds x="992" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="989" y="125" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mcohwf_di" bpmnElement="Activity_0mcohwf">
+        <dc:Bounds x="420" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xiifk2_di" bpmnElement="Activity_1y26vxk">
+        <dc:Bounds x="700" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yukmex_di" bpmnElement="Activity_0yukmex">
+        <dc:Bounds x="820" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0jyxz5y_di" bpmnElement="Event_0jyxz5y">
+        <dc:Bounds x="1242" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1240" y="275" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nerlsq_di" bpmnElement="Activity_07ym64z">
+        <dc:Bounds x="1030" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

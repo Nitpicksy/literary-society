@@ -14,5 +14,6 @@ public enum BookStatus {
     TO_BE_EDITED,
     SENT_TO_LECTURER,
     LECTURER_REVIEWED,
+    SENT_TO_PRINT,
     IN_STORES
 }

@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -47,4 +48,15 @@ public class PublishingInfo {
     @ManyToOne(fetch = FetchType.EAGER)
     private Merchant merchant;
 
+    public PublishingInfo(Integer numberOfPages, String publisherCity, String publisher, Double price, Integer discount, Book book, Merchant merchant) {
+        this.numberOfPages = numberOfPages;
+        this.publisherCity = publisherCity;
+        this.publisher = publisher;
+        this.price = price;
+        this.discount = discount;
+        this.book = book;
+        this.merchant = merchant;
+        this.publicationDate = LocalDate.now();
+        this.ISBN = UUID.randomUUID().toString();
+    }
 }
