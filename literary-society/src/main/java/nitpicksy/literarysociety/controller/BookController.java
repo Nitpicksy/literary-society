@@ -55,13 +55,13 @@ public class BookController {
         return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
     }
 
-    @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookDetailsDTO> getAllForSale(@Positive @PathVariable Long id) {
         Book book = bookService.findById(id);
         return new ResponseEntity<>(bookDetailsDtoMapper.toDto(book), HttpStatus.OK);
     }
 
-    @GetMapping(value = "{id}/opinions-of-beta-readers", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}/opinions-of-beta-readers", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<OpinionOfBetaReaderDTO>> getOpinionsOfBetaReaders(@Positive @PathVariable Long id) {
         return new ResponseEntity<>(opinionOfBetaReaderService.findByBookId(id).stream()
                 .map(opinion -> opinionOfBetaReaderDtoMapper.toDto(opinion)).collect(Collectors.toList()), HttpStatus.OK);

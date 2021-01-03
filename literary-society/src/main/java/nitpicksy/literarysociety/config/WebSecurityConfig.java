@@ -50,13 +50,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/books").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/books/{id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/books/start-publishing").hasAuthority("CREATE_PUBLICATION_REQUEST")
+                .antMatchers(HttpMethod.GET, "/api/books/publication-request-form").hasAuthority("CREATE_PUBLICATION_REQUEST")
+                .antMatchers(HttpMethod.GET, "/api/books/{id}/opinions-of-beta-readers").hasAuthority("CREATE_PUBLICATION_REQUEST")
 
                 .antMatchers(HttpMethod.POST, "/api/process/{taskId}").permitAll()
 
+                .antMatchers(HttpMethod.POST, "/api/genres").permitAll()
+
                 .antMatchers(HttpMethod.POST, "/api/payments/pay").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/payments/confirm").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/payments/confirm").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/readers/start-registration").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/readers/registration-form").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/readers/beta/choose-genres").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/tasks").hasAuthority("MANAGE_TASKS")
@@ -67,6 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/transactions/{id}").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/writers/start-registration").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/writers/registration-form").permitAll()
 
                 .anyRequest().authenticated().and()
                 .cors().and()

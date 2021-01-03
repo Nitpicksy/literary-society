@@ -57,7 +57,7 @@ public class TaskController {
         return new ResponseEntity<>(camundaService.getTasksByAssignee(user.getId()), HttpStatus.OK);
     }
 
-    @GetMapping(value = "{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskDataDTO> getTaskData(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
 
         TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.setEnumValues(camundaService.getFormFields(piId, taskId)),
@@ -66,7 +66,7 @@ public class TaskController {
         return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
     }
 
-    @PutMapping(value = "{taskId}/complete-and-download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PutMapping(value = "/{taskId}/complete-and-download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> completeTaskAndDownloadBook(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
         PDFDocument pdfDocument = pdfDocumentService.findByBookId(Long.valueOf(camundaService.getProcessVariable(piId, "bookId")));
 
@@ -84,7 +84,7 @@ public class TaskController {
         }
     }
 
-    @PostMapping(value = "{taskId}/complete-and-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{taskId}/complete-and-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> completeTaskAndUploadBook(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId,
                                                           @Valid @RequestParam MultipartFile pdfFile) {
         Book book = bookService.findById(Long.valueOf(camundaService.getProcessVariable(piId, "bookId")));
