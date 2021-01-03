@@ -47,8 +47,6 @@ public class ImageServiceImpl implements ImageService {
             Path filePath = fileStorageLocation.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             File file = resource.getFile();
-//
-//            File resource = new ClassPathResource(IMAGES_PATH + fileName).getFile();
             byte[] fileContent = Files.readAllBytes(file.toPath());
             String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
             String encodedImage = Base64.getEncoder().encodeToString(fileContent);

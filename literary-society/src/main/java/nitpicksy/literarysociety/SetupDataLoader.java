@@ -57,6 +57,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Permission createPublicationRequest = createPermissionIfNotFound("CREATE_PUBLICATION_REQUEST");
         Permission downloadBookAndCompleteTask = createPermissionIfNotFound("DOWNLOAD_BOOK_AND_COMPLETE_TASK");
         Permission uploadBookAndCompleteTask = createPermissionIfNotFound("UPLOAD_BOOK_AND_COMPLETE_TASK");
+        Permission submitFormAndUploadImage = createPermissionIfNotFound("SUBMIT_FORM_AND_UPLOAD_IMAGE");
 
         Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers));
         createRoleIfNotFound("ROLE_ADMIN", adminPermissions);
@@ -70,7 +71,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Set<Permission> committeeMemberPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_COMMITTEE_MEMBER", committeeMemberPermissions);
 
-        Set<Permission> editorPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
+        Set<Permission> editorPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask,submitFormAndUploadImage));
         createRoleIfNotFound("ROLE_EDITOR", editorPermissions);
 
         Set<Permission> lecturerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask));
