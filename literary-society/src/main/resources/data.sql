@@ -56,6 +56,10 @@ values ('User', 'INSANE MAN', 'PUSKIN', 'Sankt Petersburg', 'Rusija', 'communist
 
 
 -- Merchants
+-- default LU merchant, TODO: add clientId and clientSecret
+insert into users (type, name, city, country, email, username, password, status, enabled, supports_payment_methods)
+values ('MERCHANT', 'Literary Society 1', 'Beograd', 'Srbija', 'lu1@maildrop.cc', 'literary-society-1',
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true);
 
 -- Client Id: ARPDqaQtYU6ilCpwG0IXT35OMXGTjsA3K-QFYLItx5oRcJUOqZ527Z7BfNs6sS3yu45kdINghGRLR8vV
 -- Client Secret: ECBW7VI6Tzi23LnYdLEvnvEW5fm7drD6kvgVRMD2hnTOk9f9AJSqJaD-8p0aLrOWMBdoKGM9wIoPby4j

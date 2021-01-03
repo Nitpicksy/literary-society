@@ -31,6 +31,7 @@ public class MembershipDTO {
     @NotBlank
     private boolean isSubscribed;
 
-    @NotBlank(message = "Merchant's name is empty.")
+    @NotBlank(message = "merchantName is empty.")
     private String merchantName;
+
 }

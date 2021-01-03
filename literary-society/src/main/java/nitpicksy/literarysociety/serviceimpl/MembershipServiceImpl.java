@@ -15,13 +15,14 @@ public class MembershipServiceImpl implements MembershipService {
     private MembershipRepository membershipRepository;
 
     @Override
-    public Membership findByUserId(Long id) {
-        return membershipRepository.findByUserId(id);
+    public Membership findLatestUserMembership(User user) {
+        Membership membership = membershipRepository.findByUserIdAndExpirationDateGreaterThanEqual(user.getUserId(), LocalDate.now());
+        return membership;
     }
 
     @Override
     public boolean checkIfUserMembershipIsValid(Long id) {
-        if(membershipRepository.findByUserIdAndExpirationDateGreaterThanEqual(id, LocalDate.now()) != null){
+        if (membershipRepository.findByUserIdAndExpirationDateGreaterThanEqual(id, LocalDate.now()) != null) {
             return true;
         }
         return false;

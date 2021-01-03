@@ -13,13 +13,16 @@ import Avatar from '@material-ui/core/Avatar';
 import AddIcon from '@material-ui/icons/Add';
 import { responseInterceptor } from '../../responseInterceptor';
 import * as signInActions from '../Authentication/SignIn/SignInActions';
+import MembershipDetails from './MembershipDetails/MembershipDetails';
 
 const Membership = (props) => {
 
     const history = useHistory();
+    const classes = useStyles();
+    
     const [loading, setLoading] = useState(true);
     const [displayPrice, setDisplayPrice] = useState(false);
-    const classes = useStyles();
+
     const { fetchMembership, membership } = props;
     const { fetchPriceList, priceList } = props;
     const { selectedTask } = props;
@@ -48,6 +51,8 @@ const Membership = (props) => {
         
     }
 
+    console.log('m', membership)
+
     if(membership == null) {
         buttons = (
             <Fragment> 
@@ -73,10 +78,41 @@ const Membership = (props) => {
                </Grid>
                {buttons}
           </Grid>) 
+    } else {
+
+        let expirationDate = new Date(membership.expirationDate);
+        let now = new Date();
+
+        buttons = (
+            <Fragment>
+                <Grid container
+            alignItems="center"
+            justify="center" 
+            spacing={3} align="center">   
+              <Grid item xs={2}>
+               <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => handlePay()}>
+                   Purchase
+               </Button>
+             </Grid> 
+            </Grid>
+            </Fragment>
+        )
+
+        if(now > expirationDate) {
+            data = (<Fragment> 
+                <MembershipDetails user={membership}/>
+                {buttons}
+                </Fragment>
+                )
+        } else {
+            data = (<Fragment> 
+                <MembershipDetails user={membership}/>
+                </Fragment>
+                )
+        }
     }
 
     if(priceList) {
-
         let displayPrice = 0;
 
         if(props.role === 'ROLE_WRITER') {
@@ -101,7 +137,7 @@ const Membership = (props) => {
             <Fragment> 
             <Grid item xs={2}>
                <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => handlePay()}>
-                   Pay
+                   Purchase
                </Button>
              </Grid>
             </Fragment>
