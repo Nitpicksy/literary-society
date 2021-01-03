@@ -1,4 +1,4 @@
-package nitpicksy.literarysociety.dto;
+package nitpicksy.literarysociety.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,7 @@ import javax.validation.constraints.Pattern;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserDTO {
+public class UserRequestDTO {
     @NotBlank(message = "First Name is empty.")
     private String firstName;
 

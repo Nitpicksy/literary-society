@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.service;
 
+import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.model.Merchant;
 import nitpicksy.literarysociety.model.Role;
 import nitpicksy.literarysociety.model.User;
@@ -30,4 +31,8 @@ public interface UserService {
     Merchant getAuthenticatedMerchant();
 
     User signUp(User user) throws NoSuchAlgorithmException;
+
+    List<User> findByRoleNameAndStatusOrRoleNameAndStatus(String roleName1, UserStatus status1, String roleName2, UserStatus status2);
+
+    User changeUserStatus(Long id, String status);
 }

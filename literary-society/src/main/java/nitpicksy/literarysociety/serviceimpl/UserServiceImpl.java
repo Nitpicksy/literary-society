@@ -30,9 +30,12 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
+import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -60,6 +63,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public RoleRepository roleRepository;
 
     private VerificationService verificationService;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -176,11 +180,35 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         if (findByEmail(user.getEmail()) != null) {
             throw new InvalidDataException("User with same email already exist",HttpStatus.BAD_REQUEST);
         }
+        String password = user.getPassword();
         user.setStatus(UserStatus.NON_VERIFIED);
         User savedReader = userRepository.save(user);
         String nonHashedToken = verificationService.generateToken(savedReader);
         composeEmailToActivate(nonHashedToken,user.getEmail());
         return savedReader;
+    }
+
+    @Override
+    public List<User> findByRoleNameAndStatusOrRoleNameAndStatus(String roleName1, UserStatus status1, String roleName2, UserStatus status2) {
+        return userRepository.findByRoleNameAndStatusOrRoleNameAndStatus(roleName1, status1, roleName2,status2);
+    }
+
+    @Override
+    public User changeUserStatus(Long id, String status) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (status.equals("approve")) {
+
+                user.setStatus(UserStatus.ACTIVE);
+                composeAndSendEmailApprovedRequest(user.getEmail());
+            } else {
+                user.setStatus(UserStatus.REJECTED);
+                composeAndSendRejectionEmail(user.getEmail());
+            }
+            return userRepository.save(user);
+        }
+        return null;
     }
 
     private void composeAndSendEmail(String recipientEmail) {
@@ -237,6 +265,25 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         sb.append("When you activate your account you will be notified when the admins approves your request.");
         emailNotificationService.sendEmail(email, "Activate account", sb.toString());
     }
+
+    private void composeAndSendRejectionEmail(String recipientEmail) {
+        String subject = "Request to register rejected";
+        StringBuilder sb = new StringBuilder();
+        sb.append("Your request to register is rejected by a Literary Society administrator.");
+        sb.append(System.lineSeparator());
+        String text = sb.toString();
+        emailNotificationService.sendEmail(recipientEmail, subject, text);
+    }
+
+    private void composeAndSendEmailApprovedRequest(String recipientEmail) {
+        String subject = "Request to register accepted";
+        StringBuilder sb = new StringBuilder();
+        sb.append("Your request to register is accepted by a Literary Society administrator.");
+        sb.append(System.lineSeparator());
+        String text = sb.toString();
+        emailNotificationService.sendEmail(recipientEmail, subject, text);
+    }
+
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, LoginAttemptService loginAttemptService,
