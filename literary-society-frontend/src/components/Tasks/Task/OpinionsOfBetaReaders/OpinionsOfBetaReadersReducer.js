@@ -24,6 +24,15 @@ const reducer = (state = initialState, action) => {
                 opinions: action.opinions,
                 error: null
             };
+        case actionTypes.CLEAR_STATE:
+            return {
+                ...state,
+                opinions: [],
+                processInstanceId: null,
+                taskId: null,
+                publicationRequest: null,
+                error: null
+            };
         default:
             return state;
     }

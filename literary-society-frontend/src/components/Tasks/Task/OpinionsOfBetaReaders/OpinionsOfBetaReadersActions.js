@@ -43,11 +43,18 @@ export const fetchOpinions = (bookId) => {
     };
 };
 
+export const clearState = () => {
+    return {
+        type: actionTypes.CLEAR_STATE,
+    };
+};
+
 export const upload = (piId, taskId, pdfFormData, history) => {
     return dispatch => {
         axios.post(`/tasks/${taskId}/complete-and-upload?piId=${piId}`, pdfFormData)
         .then(response => {
             toastr.success('Upload edited manuscript', 'Edited manuscript uploaded successfully.');
+            dispatch(clearState());
             history.push('/tasks');
         }).catch(err => {
             toastr.error('Upload edited manuscript', err.response.data.message);

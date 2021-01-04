@@ -25,11 +25,18 @@ export const fetchForm = (piId, taskId) => {
     };
 };
 
+export const clearState = () => {
+    return {
+        type: actionTypes.CLEAR_STATE,
+    };
+};
+
 export const confirm = (formData, taskId, history) => {
     return dispatch => {
         axios.post(`/tasks/${taskId}/submit-form-and-upload-image`, formData)
             .then(() => {
                 toastr.success('Publishing Info','Success');
+                dispatch(clearState());
                 history.push('/tasks');
             }).catch(err => {
                 toastr.error('Publishing Info', err.response.data.message);

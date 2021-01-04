@@ -2,8 +2,8 @@ import * as actionTypes from './EditorDownloadDocumentActionTypes';
 
 const initialState = {
     processInstanceId: null,
-    taskId: null, 
-    publicationRequest:null,
+    taskId: null,
+    publicationRequest: null,
     error: ''
 }
 
@@ -14,7 +14,15 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 processInstanceId: action.processInstanceId,
                 taskId: action.taskId,
-                publicationRequest:action.publicationRequest,
+                publicationRequest: action.publicationRequest,
+                error: null
+            };
+        case actionTypes.CLEAR_STATE:
+            return {
+                ...state,
+                processInstanceId: null,
+                taskId: null,
+                publicationRequest: null,
                 error: null
             };
         default:

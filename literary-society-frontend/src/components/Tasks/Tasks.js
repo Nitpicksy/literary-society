@@ -57,6 +57,8 @@ const Tasks = (props) => {
             history.push('/opinions-of-beta-readers');
         } else if (properties.row.name === "Definisite informacije o knjizi koja je poslata na stampu") {
             history.push('/publishing-info');
+        }else if (properties.row.name === "Unos podataka o rukopisu") {
+            history.push('/create-publication-request');
         }
     }
 

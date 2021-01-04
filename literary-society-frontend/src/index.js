@@ -30,6 +30,9 @@ import publRequestsReducer from './components/WriterPages/PublicationRequests/Pu
 import userListReducer from './components/Authentication/ManageLecturersAndEditors/ManageLecturersAndEditorsReducer';
 import opinionsOfBetaReadersReducer from './components/Tasks/Task/OpinionsOfBetaReaders/OpinionsOfBetaReadersReducer';
 import publishingInfoReducer from './components/Tasks/Task/PublishingInfo/PublishingInfoReducer';
+import storage from 'redux-persist/lib/storage';
+import { persistStore, persistReducer } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
@@ -42,40 +45,52 @@ const rootReducer = combineReducers({
     activateAccount: activateAccountReducer,
     betaReaderGenres: betaReaderGenresReducer,
     homePage: homePageReducer,
-    transaction:transactionReducer,
+    transaction: transactionReducer,
     createPublicationRequest: createPublicationRequestReducer,
     tasks: tasksReducer,
-    publicationRequest:publicationRequestReducer, 
-    book:bookReducer, 
+    publicationRequest: publicationRequestReducer,
+    book: bookReducer,
     editorDownloadDocument: editorDownloadDocumentReducer,
     writerUploadDocument: writerUploadDocumentReducer,
-    editorChooseBetaReaders:editorChooseBetaReadersReducer,
+    editorChooseBetaReaders: editorChooseBetaReadersReducer,
     publRequests: publRequestsReducer,
-    userList:userListReducer,
+    userList: userListReducer,
     opinionsOfBetaReaders: opinionsOfBetaReadersReducer,
-    publishingInfo:publishingInfoReducer
+    publishingInfo: publishingInfoReducer
 });
 
-const store = createStore(rootReducer, composeEnhancers(
+const persistConfig = {
+    key: 'root',
+    storage,
+};
+
+const pReducer = persistReducer(persistConfig, rootReducer);
+const store = createStore(pReducer, composeEnhancers(
     applyMiddleware(thunk)
 ));
+const persistor = persistStore(store);
 
+// const store = createStore(rootReducer, composeEnhancers(
+//     applyMiddleware(thunk)
+// ));
 
 const app = (
     <Provider store={store}>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
-        <ReduxToastr
-            timeOut={5000}
-            newestOnTop={false}
-            preventDuplicates
-            position="top-right"
-            getState={(state) => state.toastr} // This is the default
-            transitionIn="fadeIn"
-            transitionOut="fadeOut"
-            progressBar
-            closeOnToastrClick />
+        <PersistGate loading={null} persistor={persistor}>
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+            <ReduxToastr
+                timeOut={5000}
+                newestOnTop={false}
+                preventDuplicates
+                position="top-right"
+                getState={(state) => state.toastr} // This is the default
+                transitionIn="fadeIn"
+                transitionOut="fadeOut"
+                progressBar
+                closeOnToastrClick />
+        </PersistGate>
     </Provider>
 
 );
