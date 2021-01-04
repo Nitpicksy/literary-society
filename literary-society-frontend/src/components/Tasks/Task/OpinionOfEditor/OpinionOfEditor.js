@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Container, Avatar, CssBaseline, Button, Grid, Paper, Divider, List, ListItem, ListItemText } from '@material-ui/core';
+import { Typography, Container, Avatar, CssBaseline, Button, Grid, Paper, List, ListItem, ListItemText } from '@material-ui/core';
 import ListIcon from '@material-ui/icons/List';
 import PublishIcon from '@material-ui/icons/Publish';
 import { connect } from 'react-redux';
-import { useStyles } from './OpinionsOfBetaReadersStyles';
+import { useStyles } from './OpinionOfEditorStyles';
 import * as signInActions from '../../../Authentication/SignIn/SignInExport';
 import { responseInterceptor } from '../../../../responseInterceptor';
 import { useHistory } from 'react-router';
 import PublicationRequestCard from '../PublicationRequest/PublicationRequestCard/PublicationRequestCard';
-import * as actions from './OpinionsOfBetaReadersExport';
+import * as actions from './OpinionOfEditorExport';
 import { toastr } from 'react-redux-toastr';
 
-const OpinionsOfBetaReaders = (props) => {
+const OpinionOfEditor = (props) => {
 
     const [pdfFile, setPdfFile] = useState(null);
     const history = useHistory();
@@ -19,11 +19,11 @@ const OpinionsOfBetaReaders = (props) => {
     const classes = useStyles();
 
     const { selectedTask } = props;
-    const { fetchForm, fetchOpinions } = props;
+    const { fetchForm, fetchOpinion } = props;
     const { publicationRequest } = props;
 
     let publicationRequestCard = null;
-    let opinionItems = null;
+    let opinionItem = null;
 
     useEffect(() => {
         fetchForm(selectedTask.piId, selectedTask.taskId);
@@ -31,9 +31,9 @@ const OpinionsOfBetaReaders = (props) => {
 
     useEffect(() => {
         if (publicationRequest) {
-            fetchOpinions(publicationRequest.id)
+            fetchOpinion(publicationRequest.id)
         }
-    }, [publicationRequest, fetchOpinions])
+    }, [publicationRequest, fetchOpinion])
 
     const handleChooseFile = ({ target }) => {
         setPdfFile(target.files[0]);
@@ -53,15 +53,11 @@ const OpinionsOfBetaReaders = (props) => {
         publicationRequestCard = <PublicationRequestCard book={publicationRequest} />
     }
 
-    if (props.opinions && Array.isArray(props.opinions) && props.opinions.length) {
-        opinionItems = props.opinions.map(opinion => {
-            return <React.Fragment key={opinion.id}>
-                <ListItem alignItems="flex-start">
-                    <ListItemText primary={opinion.comment} secondary={<i>by {opinion.commenterName}</i>}/>
-                </ListItem>
-                <Divider variant="fullWidth" component="li" />
-            </React.Fragment>
-        });
+    if (props.opinion) {
+        opinionItem =
+            <ListItem alignItems="flex-start">
+                <ListItemText primary={props.opinion.comment} secondary={<i>by editor {props.opinion.commenterName}</i>} />
+            </ListItem>;
     }
 
     return (
@@ -78,9 +74,9 @@ const OpinionsOfBetaReaders = (props) => {
                 </div>
 
                 <Paper justify="center" className={classes.opinionsPaper}>
-                    <Typography component="h1" variant="h5" className={classes.title}>Opinions of Beta-readers</Typography>
+                    <Typography component="h1" variant="h5" className={classes.title}>Opinion of Editor</Typography>
                     <List>
-                        {opinionItems}
+                        {opinionItem}
                     </List>
                 </Paper>
 
@@ -122,8 +118,8 @@ const mapStateToProps = state => {
     return {
         selectedTask: state.tasks.selectedTask,
         refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
-        publicationRequest: state.opinionsOfBetaReaders.publicationRequest,
-        opinions: state.opinionsOfBetaReaders.opinions
+        publicationRequest: state.opinionOfEditor.publicationRequest,
+        opinion: state.opinionOfEditor.opinion
     }
 };
 
@@ -131,9 +127,9 @@ const mapDispatchToProps = dispatch => {
     return {
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
         fetchForm: (piId, taskId) => dispatch(actions.fetchForm(piId, taskId)),
-        fetchOpinions: (bookId) => dispatch(actions.fetchOpinions(bookId)),
+        fetchOpinion: (bookId) => dispatch(actions.fetchOpinion(bookId)),
         onUpload: (piId, taskId, pdfFormData, history) => dispatch(actions.upload(piId, taskId, pdfFormData, history)),
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(OpinionsOfBetaReaders);
+export default connect(mapStateToProps, mapDispatchToProps)(OpinionOfEditor);

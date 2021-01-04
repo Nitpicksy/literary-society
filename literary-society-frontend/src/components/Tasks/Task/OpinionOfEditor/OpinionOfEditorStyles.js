@@ -14,21 +14,21 @@ export const useStyles = makeStyles((theme) => ({
     title: {
         textAlign: 'center',
     },
-    form: {
-        width: '100%',
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(3),
-    },
     submit: {
         marginTop: theme.spacing(2),
+        marginLeft: theme.spacing(56),
     },
     card: {
-        marginTop: theme.spacing(1),
+        marginTop: theme.spacing(2),
         display: 'flex',
         alignItems: 'center',
     },
-    upload: {
-        margin: theme.spacing(1, 0),
+    uploadGrid: {
+        minWidth: 555,
+        marginBottom: theme.spacing(2)
+    },
+    uploadBtn: {
+        textAlign: 'right',
     },
     fileNameGrid: {
         display: 'flex',
@@ -37,6 +37,10 @@ export const useStyles = makeStyles((theme) => ({
     fileName: {
         color: '#707070',
         fontWeight: 500,
-        marginLeft: theme.spacing(1)
+    },
+    opinionsPaper: {
+        margin: theme.spacing(2, 0),
+        padding: theme.spacing(3, 2, 1),
+        minWidth: 555,
     }
 }));

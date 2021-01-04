@@ -14,6 +14,7 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.core.env.Environment;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,13 +40,15 @@ public class PublishingInfoService implements JavaDelegate {
 
         Book book = bookRepository.findOneById(bookId);
         book.setStatus(BookStatus.IN_STORES);
-        Book savedBook  = bookRepository.save(book);
+        Book savedBook = bookRepository.save(book);
 
         Integer numberOfPages = Integer.valueOf(map.get("numberOfPages"));
         Double price = Double.valueOf(map.get("price"));
         Integer discount = Integer.valueOf(map.get("discount"));
-        PublishingInfo publishingInfo = new PublishingInfo(numberOfPages,map.get("publisherCity"), getPublisher(),price,discount,savedBook, merchantRepository.findAll().get(0));
+        PublishingInfo publishingInfo = new PublishingInfo(numberOfPages, map.get("publisherCity"), getPublisher(), price, discount, savedBook, merchantRepository.findAll().get(0));
         publishingInfoRepository.save(publishingInfo);
+
+        System.out.println("*** Kraj procesa izdavanja knjige ***");
     }
 
     private String getPublisher() {

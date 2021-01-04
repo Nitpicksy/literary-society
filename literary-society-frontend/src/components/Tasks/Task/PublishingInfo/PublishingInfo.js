@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ListIcon from '@material-ui/icons/List';
+import PublishIcon from '@material-ui/icons/Publish';
 import { connect } from 'react-redux';
 import { useStyles } from './PublishingInfoStyles';
 import * as actions from './PublishingInfoExport';
@@ -42,7 +43,7 @@ const PublishingInfo = (props) => {
     const submitHander = (event) => {
         event.preventDefault();
         if (!image) {
-            toastr.warning('Publishing Info', 'Please choose image file.');
+            toastr.warning('Publishing Info', "Please upload book's image.");
             return;
         } 
 
@@ -86,18 +87,19 @@ const PublishingInfo = (props) => {
                 </div>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
-                    <Grid item xs={12} >
-                        <input type="file" accept="image/*" hidden id="upload-file"
+                    <Grid item xs={12} className={classes.upload}>
+                        <input type="file" accept="image/jpeg, image/png" hidden id="upload-file"
                             onChange={handleChooseFile} 
                         />
                         <label htmlFor="upload-file">
-                            <Grid container >
-                                <Grid item xs={4} >
-                                    <Button color="primary" variant="contained" component="span">
-                                        Choose file
+                            <Grid container>
+                                <Grid item xs={5} >
+                                    <Button color="primary" variant="contained" component="span"
+                                        startIcon={<PublishIcon />}>
+                                        Upload image
                                     </Button>
                                 </Grid>
-                                <Grid item xs={8} className={classes.fileNameGrid}>
+                                <Grid item xs={7} className={classes.fileNameGrid}>
                                     <Typography variant="body2" component="span" className={classes.fileName}>
                                         {image ? image.name : ''}
                                     </Typography>

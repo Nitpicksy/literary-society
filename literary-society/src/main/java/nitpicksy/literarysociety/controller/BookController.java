@@ -6,10 +6,11 @@ import nitpicksy.literarysociety.dto.response.*;
 import nitpicksy.literarysociety.mapper.BookDetailsDtoMapper;
 import nitpicksy.literarysociety.mapper.BookDtoMapper;
 import nitpicksy.literarysociety.mapper.OpinionOfBetaReaderDtoMapper;
+import nitpicksy.literarysociety.mapper.OpinionOfEditorDtoMapper;
 import nitpicksy.literarysociety.model.Book;
-import nitpicksy.literarysociety.model.OpinionOfBetaReader;
 import nitpicksy.literarysociety.service.BookService;
 import nitpicksy.literarysociety.service.OpinionOfBetaReaderService;
+import nitpicksy.literarysociety.service.OpinionOfEditorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,6 +30,8 @@ public class BookController {
 
     private OpinionOfBetaReaderService opinionOfBetaReaderService;
 
+    private OpinionOfEditorService opinionOfEditorService;
+
     private CamundaService camundaService;
 
     private BookDtoMapper bookDtoMapper;
@@ -36,6 +39,8 @@ public class BookController {
     private BookDetailsDtoMapper bookDetailsDtoMapper;
 
     private OpinionOfBetaReaderDtoMapper opinionOfBetaReaderDtoMapper;
+
+    private OpinionOfEditorDtoMapper opinionOfEditorDtoMapper;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookDTO>> getAllForSale() {
@@ -62,20 +67,29 @@ public class BookController {
     }
 
     @GetMapping(value = "/{id}/opinions-of-beta-readers", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<OpinionOfBetaReaderDTO>> getOpinionsOfBetaReaders(@Positive @PathVariable Long id) {
+    public ResponseEntity<List<OpinionDTO>> getOpinionsOfBetaReaders(@Positive @PathVariable Long id) {
         return new ResponseEntity<>(opinionOfBetaReaderService.findByBookId(id).stream()
                 .map(opinion -> opinionOfBetaReaderDtoMapper.toDto(opinion)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/{id}/opinion-of-editor", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<OpinionDTO> getOpinionOfEditor(@Positive @PathVariable Long id) {
+        return new ResponseEntity<>(opinionOfEditorDtoMapper.toDto(opinionOfEditorService.findNewestByBookId(id)), HttpStatus.OK);
+    }
+
     @Autowired
+
     public BookController(BookService bookService, OpinionOfBetaReaderService opinionOfBetaReaderService,
-                          CamundaService camundaService, BookDtoMapper bookDtoMapper, BookDetailsDtoMapper bookDetailsDtoMapper,
-                          OpinionOfBetaReaderDtoMapper opinionOfBetaReaderDtoMapper) {
+                          OpinionOfEditorService opinionOfEditorService, CamundaService camundaService, BookDtoMapper bookDtoMapper,
+                          BookDetailsDtoMapper bookDetailsDtoMapper, OpinionOfBetaReaderDtoMapper opinionOfBetaReaderDtoMapper,
+                          OpinionOfEditorDtoMapper opinionOfEditorDtoMapper) {
         this.bookService = bookService;
         this.opinionOfBetaReaderService = opinionOfBetaReaderService;
+        this.opinionOfEditorService = opinionOfEditorService;
         this.camundaService = camundaService;
         this.bookDtoMapper = bookDtoMapper;
         this.bookDetailsDtoMapper = bookDetailsDtoMapper;
         this.opinionOfBetaReaderDtoMapper = opinionOfBetaReaderDtoMapper;
+        this.opinionOfEditorDtoMapper = opinionOfEditorDtoMapper;
     }
 }

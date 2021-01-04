@@ -64,8 +64,8 @@ public class ImageServiceImpl implements ImageService {
         Image image = imageRepository
                 .saveAndFlush(new Image(saveOnDisk(multipartFile, path, book.getId())));
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PDB",
-                String.format("Picture %s successfully saved in DB", image.getId())));
-        return  image;
+                String.format("Image %s successfully saved in DB", image.getId())));
+        return image;
     }
 
     private String saveOnDisk(MultipartFile image, String path, Long id) {

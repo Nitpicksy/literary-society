@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.text.RandomStringGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -57,6 +58,12 @@ public class PublishingInfo {
         this.book = book;
         this.merchant = merchant;
         this.publicationDate = LocalDate.now();
-        this.ISBN = UUID.randomUUID().toString();
+        this.ISBN = generateISBN();
+    }
+
+    private String generateISBN() {
+        RandomStringGenerator generator = new RandomStringGenerator.Builder()
+                .withinRange('0', '9').build();
+        return generator.generate(13);
     }
 }

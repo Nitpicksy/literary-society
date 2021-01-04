@@ -29,6 +29,7 @@ import writerUploadDocumentReducer from './components/Tasks/Task/WriterUploadDoc
 import publRequestsReducer from './components/WriterPages/PublicationRequests/PublicationRequestsReducer';
 import userListReducer from './components/Authentication/ManageLecturersAndEditors/ManageLecturersAndEditorsReducer';
 import opinionsOfBetaReadersReducer from './components/Tasks/Task/OpinionsOfBetaReaders/OpinionsOfBetaReadersReducer';
+import opinionOfEditorReducer from './components/Tasks/Task/OpinionOfEditor/OpinionOfEditorReducer';
 import publishingInfoReducer from './components/Tasks/Task/PublishingInfo/PublishingInfoReducer';
 import storage from 'redux-persist/lib/storage';
 import { persistStore, persistReducer } from 'redux-persist';
@@ -56,6 +57,7 @@ const rootReducer = combineReducers({
     publRequests: publRequestsReducer,
     userList: userListReducer,
     opinionsOfBetaReaders: opinionsOfBetaReadersReducer,
+    opinionOfEditor: opinionOfEditorReducer,
     publishingInfo: publishingInfoReducer
 });
 
