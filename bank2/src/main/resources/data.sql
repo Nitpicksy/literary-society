@@ -4,7 +4,9 @@ insert into account (first_name, last_name, city, country, email, balance) value
 
 --PAN broj je: 5123457252525252, securityCode je 256, card holder name je PERA SIMIC
 insert into credit_card (pan, security_code, card_holder_name, expiration_date,account_id)
-values ('4bae9c68115e485421f998a878b0119219801a6904eefd2a7b56a668ae1c376e3e2113f10a3ee63c0a689d6cdde95b8605ca6842ff837f437c8673665f8e4312', '$2a$12$73hN9XaqJ707.kf2Raba7.CCG6PsGBzIRxAqzQVO8/y1rWh.qN6eO', '5f2b90178624a73e6c02180ff842c3dcff3cbee52b1b6665006443947d2f6e6dedd3d788f2693b0231b7af11596eddf017d73f0cdf247376405c59cb31584124', '2023-12-25',1);
+values ('4bae9c68115e485421f998a878b0119219801a6904eefd2a7b56a668ae1c376e3e2113f10a3ee63c0a689d6cdde95b8605ca6842ff837f437c8673665f8e4312',
+ '$2a$12$73hN9XaqJ707.kf2Raba7.CCG6PsGBzIRxAqzQVO8/y1rWh.qN6eO', '5f2b90178624a73e6c02180ff842c3dcff3cbee52b1b6665006443947d2f6e6dedd3d788f2693b0231b7af11596eddf017d73f0cdf247376405c59cb31584124',
+  '2023-12-25',1);
 
 --PAN broj je: 7123457777777777, securityCode je 456, card holder name je TAMARA SIMIC
 insert into credit_card (pan, security_code, card_holder_name, expiration_date,account_id)
