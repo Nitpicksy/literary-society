@@ -117,9 +117,6 @@ public class TaskController {
             throw new InvalidDataException("Manuscript could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
-//        book.setStatus(BookStatus.SENT);
-//        bookService.save(book);
-
         camundaService.completeTask(taskId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -136,7 +133,7 @@ public class TaskController {
         String processInstanceId = task.getProcessInstanceId();
 
         Book book = bookService.findById(Long.valueOf(camundaService.getProcessVariable(processInstanceId, "bookId")));
-        Image savedImage = imageService.saveImage(image,IMAGES_PATH,book);
+        Image savedImage = imageService.saveImage(image, IMAGES_PATH, book);
         book.setImage(savedImage);
         bookService.save(book);
 
@@ -149,7 +146,7 @@ public class TaskController {
 
     @Autowired
     public TaskController(UserService userService, CamundaService camundaService, BookService bookService,
-                          PDFDocumentService pdfDocumentService,TaskService taskService,RuntimeService runtimeService, FormService formService,
+                          PDFDocumentService pdfDocumentService, TaskService taskService, RuntimeService runtimeService, FormService formService,
                           ImageService imageService) {
         this.userService = userService;
         this.camundaService = camundaService;
