@@ -70,10 +70,6 @@ const store = createStore(pReducer, composeEnhancers(
 ));
 const persistor = persistStore(store);
 
-// const store = createStore(rootReducer, composeEnhancers(
-//     applyMiddleware(thunk)
-// ));
-
 const app = (
     <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
