@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 @Service
 public class MerchantServiceImpl implements MerchantService {
@@ -37,6 +38,11 @@ public class MerchantServiceImpl implements MerchantService {
         Merchant merchant = merchantRepository.findByMerchantId(merchantId);
         merchant.setBalance(merchant.getBalance() + amount);
         merchantRepository.save(merchant);
+    }
+
+    @Override
+    public List<Merchant> findAll() {
+        return merchantRepository.findAll();
     }
 
     @Autowired

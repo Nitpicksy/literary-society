@@ -1,19 +1,24 @@
 import { Redirect, Route, Switch, withRouter} from 'react-router-dom';
 import './App.css';
 import EnterCreditData from './components/EnterCreditCardData/EnterCreditCardData';
+import MerchantAccountList from './components/MerchantAccount/MerchantAccountList/MerchantAccountList';
+import CustomToolbar from './Navigation/Toolbar';
+import React, { Suspense } from 'react';
 
 const App = props => {
 
   let routes = (
     <Switch>
       <Route path="/payment/confirm/:id" render={(props) => <EnterCreditData {...props} />} />
+      <Route path="/merchants" render={(props) => <MerchantAccountList {...props} />} />
       <Redirect to="/" />
     </Switch>
   );
 
   return (
-    <div className="App">
-      {routes}
+    <div>
+      <CustomToolbar />
+      <Suspense fallback={<p>Loading...</p>}>{routes}</Suspense>
       <main>
           {props.children}
         </main>
