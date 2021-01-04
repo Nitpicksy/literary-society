@@ -47,18 +47,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
 
-                .antMatchers(HttpMethod.POST,"/api/merchants/{name}/payment-data").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/merchants/{name}/payment-data").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/merchants/payment-data").hasAuthority("SUPPORT_PAYMENT_METHODS")
-                
-                .antMatchers(HttpMethod.GET, "/api/users").hasAnyAuthority("MANAGE_EDITORS","MANAGE_LECTURERS")
-                .antMatchers(HttpMethod.PUT, "/api/users/{id}").hasAnyAuthority("MANAGE_EDITORS","MANAGE_LECTURERS")
-                .antMatchers(HttpMethod.POST,"/api/users").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/users").hasAnyAuthority("MANAGE_EDITORS", "MANAGE_LECTURERS")
+                .antMatchers(HttpMethod.PUT, "/api/users/{id}").hasAnyAuthority("MANAGE_EDITORS", "MANAGE_LECTURERS")
+                .antMatchers(HttpMethod.POST, "/api/users").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/books").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/books/{id}").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/books/start-publishing").hasAuthority("CREATE_PUBLICATION_REQUEST")
-                .antMatchers(HttpMethod.GET, "/api/books/publication-request-form").hasAuthority("CREATE_PUBLICATION_REQUEST")
-                .antMatchers(HttpMethod.GET, "/api/books/{id}/opinions-of-beta-readers").hasAuthority("CREATE_PUBLICATION_REQUEST")
+                .antMatchers(HttpMethod.GET, "/api/books/start-publishing").hasAuthority("MANAGE_PUBLICATION_REQUESTS")
+                .antMatchers(HttpMethod.GET, "/api/books/publication-request-form").hasAuthority("MANAGE_PUBLICATION_REQUESTS")
+                .antMatchers(HttpMethod.GET, "/api/books/{id}/opinions-of-beta-readers").hasAuthority("MANAGE_PUBLICATION_REQUESTS")
+                .antMatchers(HttpMethod.GET, "/api/books/publication-requests").hasAuthority("MANAGE_PUBLICATION_REQUESTS")
 
                 .antMatchers(HttpMethod.POST, "/api/process/{taskId}").permitAll()
 

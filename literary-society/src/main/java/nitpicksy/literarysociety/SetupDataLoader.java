@@ -54,7 +54,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Permission manageLecturers = createPermissionIfNotFound("MANAGE_LECTURERS");
         Permission supportPaymentMethods = createPermissionIfNotFound("SUPPORT_PAYMENT_METHODS");
         Permission manageTasks = createPermissionIfNotFound("MANAGE_TASKS");
-        Permission createPublicationRequest = createPermissionIfNotFound("CREATE_PUBLICATION_REQUEST");
+        Permission managePublicationRequests = createPermissionIfNotFound("MANAGE_PUBLICATION_REQUESTS");
         Permission downloadBookAndCompleteTask = createPermissionIfNotFound("DOWNLOAD_BOOK_AND_COMPLETE_TASK");
         Permission uploadBookAndCompleteTask = createPermissionIfNotFound("UPLOAD_BOOK_AND_COMPLETE_TASK");
         Permission submitFormAndUploadImage = createPermissionIfNotFound("SUBMIT_FORM_AND_UPLOAD_IMAGE");
@@ -65,13 +65,14 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Set<Permission> readerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_READER", readerPermissions);
 
-        Set<Permission> writerPermissions = new HashSet<>(Arrays.asList(createPublicationRequest, manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask));
+        Set<Permission> writerPermissions = new HashSet<>(Arrays.asList(managePublicationRequests,
+                manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_WRITER", writerPermissions);
 
         Set<Permission> committeeMemberPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_COMMITTEE_MEMBER", committeeMemberPermissions);
 
-        Set<Permission> editorPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask,submitFormAndUploadImage));
+        Set<Permission> editorPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask, submitFormAndUploadImage));
         createRoleIfNotFound("ROLE_EDITOR", editorPermissions);
 
         Set<Permission> lecturerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask));

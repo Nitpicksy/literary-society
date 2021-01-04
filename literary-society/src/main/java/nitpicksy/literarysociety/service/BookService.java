@@ -17,4 +17,7 @@ public interface BookService {
     PublicationRequestDTO getPublicationRequest(Long id);
 
     Book findById(Long id);
+
+    List<Book> findPublicationRequestsForWriter();
+
 }
