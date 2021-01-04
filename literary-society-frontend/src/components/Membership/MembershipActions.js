@@ -51,7 +51,6 @@ export const fetchPriceList = () => {
         axios.get(`/price-lists/latest`)
             .then(response => {
                 dispatch(fetchPriceListSuccess(response.data));
-                console.log('RES', response)
             })
             .catch(err => {
                 if (err.response) {
@@ -63,4 +62,21 @@ export const fetchPriceList = () => {
                 // history.push('/');
             });
     };
+};
+
+
+export const onPay = (selectedTask) => {
+    return dispatch => {
+        console.log('selt', selectedTask)
+        if(selectedTask) {
+            axios.put(`/tasks/${selectedTask.taskId}/membership?piId=${selectedTask.piId}`)
+            .then(response => {
+                toastr.success("aw","yesah")
+                console.log('RES', response)
+            })
+            .catch(err => {
+            });
+    };
+        }
+
 };

@@ -124,6 +124,13 @@ public class TaskController {
         return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
     }
 
+    @PutMapping(value = "{taskId}/membership")
+    public ResponseEntity<Void> payMembership(@RequestParam(required = false) String piId, @NotNull @PathVariable String taskId) {
+        camundaService.completeTask(taskId);
+//        camundaService.findAndCompleteActiveTask(piId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping(value = "upload-proba",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> uploadProba(@Valid @RequestParam MultipartFile pdfFile) {
@@ -135,6 +142,7 @@ public class TaskController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
     @PutMapping(value = "proba/{name}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> proba(@PathVariable String name) {
