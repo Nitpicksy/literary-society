@@ -80,7 +80,7 @@ const App = (props) => {
           <Route path="/error/non-authorized" render={(props) => <NonAuthorized {...props} />} />
 
           <Route path="/sign-out" render={(props) => <Logout {...props} />} />
-          <Route path="/" render={() => <h1> Welcome, navigate to payment/:id. </h1>} />
+          <Route path="/" render={() => <h1> Welcome </h1>} />
         </Switch>
       </GuardProvider>
     );

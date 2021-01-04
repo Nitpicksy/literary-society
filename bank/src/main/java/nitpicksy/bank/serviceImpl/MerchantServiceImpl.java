@@ -37,8 +37,7 @@ public class MerchantServiceImpl implements MerchantService {
         if(merchant == null){
             throw new InvalidDataException("Invalid merchant id or password. Please try again.", HttpStatus.BAD_REQUEST);
         }
-
-        if(!merchantPassword.equals(merchant.getMerchantPassword())){
+        if(!merchant.getMerchantPassword().equals(merchantPassword)){
             throw new InvalidDataException("Invalid merchant id or password. Please try again.", HttpStatus.BAD_REQUEST);
         }
         return merchant;
@@ -69,7 +68,7 @@ public class MerchantServiceImpl implements MerchantService {
             merchantId = generateMerchantId();
         }
         merchant.setMerchantId(hashValueServiceImpl.getHashValue(merchantId));
-        merchant.setMerchantPassword(hashValueServiceImpl.bcryptHash(merchant.getMerchantPassword()));
+        merchant.setMerchantPassword(hashValueServiceImpl.getHashValue(merchant.getMerchantPassword()));
         composeAndSendEmail(merchant.getEmail(),merchantId);
         Merchant savedMerchant = merchantRepository.save(merchant);
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MERCHANTA", String.format("Merchant account %s is created.", savedMerchant.getId())));
