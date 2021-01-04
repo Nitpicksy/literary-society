@@ -57,6 +57,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Permission createPublicationRequest = createPermissionIfNotFound("CREATE_PUBLICATION_REQUEST");
         Permission downloadBookAndCompleteTask = createPermissionIfNotFound("DOWNLOAD_BOOK_AND_COMPLETE_TASK");
         Permission uploadBookAndCompleteTask = createPermissionIfNotFound("UPLOAD_BOOK_AND_COMPLETE_TASK");
+        Permission submitFormAndUploadImage = createPermissionIfNotFound("SUBMIT_FORM_AND_UPLOAD_IMAGE");
 
         Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers));
         createRoleIfNotFound("ROLE_ADMIN", adminPermissions);
@@ -70,7 +71,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Set<Permission> committeeMemberPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_COMMITTEE_MEMBER", committeeMemberPermissions);
 
-        Set<Permission> editorPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
+        Set<Permission> editorPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask,submitFormAndUploadImage));
         createRoleIfNotFound("ROLE_EDITOR", editorPermissions);
 
         Set<Permission> lecturerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask));
@@ -146,6 +147,15 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         User merchant3 = userRepository.findOneById(13L);
         merchant3.setRole(roleMerchant);
         userRepository.save(merchant3);
+
+        Role roleLecturer = roleRepository.findByName("ROLE_LECTURER");
+        User lecturer1 = userRepository.findOneById(14L);
+        lecturer1.setRole(roleLecturer);
+        userRepository.save(lecturer1);
+
+        User lecturer2 = userRepository.findOneById(15L);
+        lecturer2.setRole(roleLecturer);
+        userRepository.save(lecturer2);
     }
 
     private void composeAndSendEmailToChangePassword(String recipientEmail, String generatedPassword) {

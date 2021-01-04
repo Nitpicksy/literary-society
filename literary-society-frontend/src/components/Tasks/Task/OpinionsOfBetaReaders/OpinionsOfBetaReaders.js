@@ -57,7 +57,7 @@ const OpinionsOfBetaReaders = (props) => {
         opinionItems = props.opinions.map(opinion => {
             return <React.Fragment key={opinion.id}>
                 <ListItem alignItems="flex-start">
-                    <ListItemText primary={opinion.comment} secondary={<i>by {opinion.betaReadersName}</i>}/>
+                    <ListItemText primary={opinion.comment} secondary={<i>by {opinion.commenterName}</i>}/>
                 </ListItem>
                 <Divider variant="fullWidth" component="li" />
             </React.Fragment>
@@ -79,7 +79,7 @@ const OpinionsOfBetaReaders = (props) => {
 
                 <Paper justify="center" className={classes.opinionsPaper}>
                     <Typography component="h1" variant="h5" className={classes.title}>Opinions of Beta-readers</Typography>
-                    <List className={classes.root}>
+                    <List>
                         {opinionItems}
                     </List>
                 </Paper>

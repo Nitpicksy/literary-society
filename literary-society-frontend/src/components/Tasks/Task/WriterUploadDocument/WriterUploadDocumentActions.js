@@ -24,11 +24,19 @@ export const fetchForm = (piId, taskId) => {
     };
 };
 
+export const clearState = () => {
+    return {
+        type: actionTypes.CLEAR_STATE,
+    };
+};
+
+
 export const upload = (piId, taskId, pdfFormData, history) => {
     return dispatch => {
         axios.post(`/tasks/${taskId}/complete-and-upload?piId=${piId}`, pdfFormData)
         .then(response => {
             toastr.success('Upload manuscript', 'Manuscript uploaded successfully.');
+            dispatch(clearState());
             history.push('/tasks');
         }).catch(err => {
             toastr.error('Upload manuscript', err.response.data.message);

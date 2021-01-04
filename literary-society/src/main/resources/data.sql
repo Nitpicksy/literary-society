@@ -97,6 +97,16 @@ insert into users (type, name, city, country, email, username, password, status,
 values ('MERCHANT', 'Amazon', 'Novi Sad', 'Srbija', 'amazon@maildrop.cc', 'amazon',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, false);
 
+-- LECTURERS
+insert into users (type, first_name, last_name, city, country, email, username, password, status,
+                   enabled)
+values ('User', 'Milica', 'Todorovic', 'Kragujevac', 'Srbija', 'milicat@maildrop.cc', 'milicat',
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
+insert into users (type, first_name, last_name, city, country, email, username, password, status,
+                   enabled, is_beta_reader, penalty)
+values ('User', 'John', 'John', 'London', 'Ujedinjeno kraljevstvo', 'johnJohn1@maildrop.cc', 'johnJohn1',
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true, 0);
+
 -- Images
 insert into image (data)
 values ('na-drini-cuprija.jpg');

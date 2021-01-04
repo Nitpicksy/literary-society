@@ -12,6 +12,12 @@ export const fetchFormSuccess = (formFields, processInstanceId, taskId,publicati
     };
 };
 
+export const clearState = () => {
+    return {
+        type: actionTypes.CLEAR_STATE,
+    };
+};
+
 export const fetchForm = (piId, taskId) => {
     return dispatch => {
         axios.get(`/tasks/${taskId}?piId=${piId}`)
@@ -30,6 +36,7 @@ export const confirm = (data, taskId, history) => {
         axios.post(`/process/${taskId}`, data)
             .then(() => {
                 toastr.success('Publication Request','Success');
+                dispatch(clearState());
                 history.push('/tasks');
             }).catch(err => {
                 toastr.error('Publication Request', err.response.data.message);

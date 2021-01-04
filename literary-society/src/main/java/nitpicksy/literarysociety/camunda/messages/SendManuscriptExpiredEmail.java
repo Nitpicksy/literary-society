@@ -24,8 +24,6 @@ public class SendManuscriptExpiredEmail implements JavaDelegate {
     public void execute(DelegateExecution execution) {
         Long bookId = Long.valueOf((String) execution.getVariable("bookId"));
         Book book = bookService.findById(bookId);
-//        book.setStatus(BookStatus.NOT_SENT);
-//        bookService.save(book);
 
         String writerUsername = (String) execution.getVariable("writer");
 

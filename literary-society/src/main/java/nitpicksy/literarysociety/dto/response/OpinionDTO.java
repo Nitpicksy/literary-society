@@ -9,12 +9,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OpinionOfBetaReaderDTO {
+public class OpinionDTO {
 
     private Long id;
 
     private String comment;
 
-    private String betaReadersName;
+    private String commenterName;
 
 }
