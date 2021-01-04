@@ -29,6 +29,9 @@ const MerchantAccountList = (props) => {
         setLoading(false);
     }, [fetchMerchants]);
 
+    const create = () => {
+        history.push('/add-merchant');
+    }
 
     if (!loading) {
         if (props.merchants) {
@@ -53,6 +56,10 @@ const MerchantAccountList = (props) => {
             <div className={classes.paper}>
                 <Typography component="h1" variant="h4">Merchants</Typography>
             </div>
+            <Button color="primary" className={classes.submit} variant="contained"
+                onClick={create}>
+                Create
+                </Button>
             {data}
         </Container>
     );

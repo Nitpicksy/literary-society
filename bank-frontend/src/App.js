@@ -4,6 +4,7 @@ import EnterCreditData from './components/EnterCreditCardData/EnterCreditCardDat
 import MerchantAccountList from './components/MerchantAccount/MerchantAccountList/MerchantAccountList';
 import CustomToolbar from './Navigation/Toolbar';
 import React, { Suspense } from 'react';
+import AddMerchantAccount from './components/MerchantAccount/AddMerchantAccount/AddMerchantAccount';
 
 const App = props => {
 
@@ -11,6 +12,7 @@ const App = props => {
     <Switch>
       <Route path="/payment/confirm/:id" render={(props) => <EnterCreditData {...props} />} />
       <Route path="/merchants" render={(props) => <MerchantAccountList {...props} />} />
+      <Route path="/add-merchant" render={(props) => <AddMerchantAccount {...props} />} />
       <Redirect to="/" />
     </Switch>
   );

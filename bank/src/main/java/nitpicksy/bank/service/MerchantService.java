@@ -12,4 +12,6 @@ public interface MerchantService {
     void transferMoneyToMerchant(String merchantId, Double amount) throws NoSuchAlgorithmException;
 
     List<Merchant> findAll();
+
+    Merchant save(Merchant merchant) throws NoSuchAlgorithmException;
 }

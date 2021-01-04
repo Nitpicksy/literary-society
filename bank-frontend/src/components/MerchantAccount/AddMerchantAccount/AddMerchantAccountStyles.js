@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme) => ({
     paper: {
-        margin: theme.spacing(3, 0),
+        marginTop: theme.spacing(8),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -11,12 +11,12 @@ export const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(1),
         backgroundColor: theme.palette.secondary.main,
     },
-    table: {
-        height: 370,
+    form: {
+        width: '100%',
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(3),
     },
     submit: {
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2),
-        marginLeft: theme.spacing(103),
+        margin: theme.spacing(3, 0, 2),
     },
 }));

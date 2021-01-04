@@ -28,6 +28,7 @@ const AddPaymentMethod = (props) => {
             valid: false,
             touched: false,
             error: false,
+            errorMessage: '',
             additionalData: {
                 errorMessage:  '',
             }
@@ -45,6 +46,7 @@ const AddPaymentMethod = (props) => {
             valid: false,
             touched: false,
             error: false,
+            errorMessage: '',
             additionalData: {
                 errorMessage:  'API is not valid',
             }
@@ -62,6 +64,7 @@ const AddPaymentMethod = (props) => {
             valid: false,
             touched: false,
             error: false,
+            errorMessage: '',
             additionalData: {
                 errorMessage:  'Invalid e-mail address entered.',
             }
@@ -87,6 +90,7 @@ const AddPaymentMethod = (props) => {
             valid: false,
             touched: false,
             error: false,
+            errorMessage: '',
             additionalData: {
                 errorMessage:  '',
             }
