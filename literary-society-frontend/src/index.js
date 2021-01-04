@@ -22,6 +22,7 @@ import transactionReducer from './components/Payment/Transaction/TransactionRedu
 import createPublicationRequestReducer from './components/WriterPages/CreatePublicationRequest/CreatePublicationRequestReducer';
 import tasksReducer from './components/Tasks/TasksReducer';
 import publicationRequestReducer from './components/Tasks/Task/PublicationRequest/PublicationRequestReducer';
+import editorChooseBetaReadersReducer from './components/Tasks/Task/EditorChooseBetaReaders/EditorChooseBetaReadersReducer';
 import bookReducer from './components/BookDetails/BookDetailsReducer';
 import editorDownloadDocumentReducer from './components/Tasks/Task/EditorDownloadDocument/EditorDownloadDocumentReducer';
 import writerUploadDocumentReducer from './components/Tasks/Task/WriterUploadDocument/WriterUploadDocumentReducer';
@@ -29,7 +30,13 @@ import committeeVotingReducer from './components/Tasks/Task/MembershipProcess/Co
 import publRequestsReducer from './components/WriterPages/PublicationRequests/PublicationRequestsReducer';
 import writerUploadWorkReducer from './components/Tasks/Task/MembershipProcess/WriterUploadWork/WriterUploadWorkReducer';
 import membershipReducer from './components/Membership/MembershipReducer';
-
+import userListReducer from './components/Authentication/ManageLecturersAndEditors/ManageLecturersAndEditorsReducer';
+import opinionsOfBetaReadersReducer from './components/Tasks/Task/OpinionsOfBetaReaders/OpinionsOfBetaReadersReducer';
+import opinionOfEditorReducer from './components/Tasks/Task/OpinionOfEditor/OpinionOfEditorReducer';
+import publishingInfoReducer from './components/Tasks/Task/PublishingInfo/PublishingInfoReducer';
+import storage from 'redux-persist/lib/storage';
+import { persistStore, persistReducer } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
@@ -42,39 +49,53 @@ const rootReducer = combineReducers({
     activateAccount: activateAccountReducer,
     betaReaderGenres: betaReaderGenresReducer,
     homePage: homePageReducer,
-    transaction:transactionReducer,
+    transaction: transactionReducer,
     createPublicationRequest: createPublicationRequestReducer,
     tasks: tasksReducer,
-    publicationRequest:publicationRequestReducer, 
-    book:bookReducer, 
+    publicationRequest: publicationRequestReducer,
+    book: bookReducer,
     editorDownloadDocument: editorDownloadDocumentReducer,
     writerUploadDocument: writerUploadDocumentReducer,
     committeeVoting: committeeVotingReducer,
     publRequests: publRequestsReducer,
     writerUploadWork: writerUploadWorkReducer,
-    memberships: membershipReducer
+    memberships: membershipReducer,
+    editorChooseBetaReaders: editorChooseBetaReadersReducer,
+    publRequests: publRequestsReducer,
+    userList: userListReducer,
+    opinionsOfBetaReaders: opinionsOfBetaReadersReducer,
+    opinionOfEditor: opinionOfEditorReducer,
+    publishingInfo: publishingInfoReducer
 });
 
-const store = createStore(rootReducer, composeEnhancers(
+const persistConfig = {
+    key: 'root',
+    storage,
+};
+
+const pReducer = persistReducer(persistConfig, rootReducer);
+const store = createStore(pReducer, composeEnhancers(
     applyMiddleware(thunk)
 ));
-
+const persistor = persistStore(store);
 
 const app = (
     <Provider store={store}>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
-        <ReduxToastr
-            timeOut={5000}
-            newestOnTop={false}
-            preventDuplicates
-            position="top-right"
-            getState={(state) => state.toastr} // This is the default
-            transitionIn="fadeIn"
-            transitionOut="fadeOut"
-            progressBar
-            closeOnToastrClick />
+        <PersistGate loading={null} persistor={persistor}>
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+            <ReduxToastr
+                timeOut={5000}
+                newestOnTop={false}
+                preventDuplicates
+                position="top-right"
+                getState={(state) => state.toastr} // This is the default
+                transitionIn="fadeIn"
+                transitionOut="fadeOut"
+                progressBar
+                closeOnToastrClick />
+        </PersistGate>
     </Provider>
 
 );

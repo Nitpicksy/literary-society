@@ -7,7 +7,7 @@
     <bpmn:endEvent id="Event_1v2q3be" name="Success">
       <bpmn:incoming>Flow_1hxyfvb</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:userTask id="Activity_1wm1e2u" name="Urednik provera da li je delo originalno" camunda:assignee="${mainEditor}">
+    <bpmn:userTask id="Activity_1wm1e2u" name="Proverite da li je delo originalno" camunda:assignee="${mainEditor}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="decision" label="My opinion is" type="enum">

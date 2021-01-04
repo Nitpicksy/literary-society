@@ -103,7 +103,7 @@ public class AuthenticationController {
     public ResponseEntity<Void> activateAccount(@RequestParam(required = false) String piId, @RequestParam String t) {
         try {
             authenticationService.activateAccount(t);
-            if (piId != null && !piId.isEmpty()) {
+            if (piId != null && !piId.isEmpty() && !piId.equals("null")) {
                 camundaService.findAndCompleteActiveTask(piId);
             }
         } catch (NoSuchAlgorithmException e) {

@@ -10,7 +10,7 @@
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.5.0",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "file-saver": "^2.0.5",
     "jwt-decode": "^3.1.2",
     "material-ui-image": "^3.3.1",
@@ -24,6 +24,7 @@
     "react-router-guards": "^1.0.2",
     "react-scripts": "4.0.1",
     "redux": "^4.0.5",
+    "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
     "typeface-roboto": "^1.1.13",
     "web-vitals": "^0.2.4"

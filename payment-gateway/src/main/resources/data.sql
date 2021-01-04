@@ -3,8 +3,6 @@ insert into company (uri, common_name, company_name, email, error_url, failed_ur
 values ('http://localhost:8090', 'literary-society', 'Nitpicksy LU 1', 'literary@maildrop.cc',
         'https://localhost:3000/payment/error', 'https://localhost:3000/payment/failed',
         'https://localhost:3000/payment/success', 'literary.crt', 'APPROVED', true);
--- eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJsaXRlcmFyeS1zb2NpZXR5Iiwic3ViIjoibGl0ZXJhcnktc29jaWV0eSIsImF1ZCI6IndlYiIsImlhdCI6MTYwOTM1NTIwMCwiZXhwIjoxNjA5MzY2MDAwLCJyb2xlIjoiUk9MRV9DT01QQU5ZIiwicGVybWlzc2lvbnMiOlt7ImlkIjozLCJuYW1lIjoiQ1JFQVRFX09SREVSIn1dfQ.TK_TSW8Mt6kgktlk7DuCI6TD2HBQu2mnwbRnyIYp1iR_-gFQbDNH6WCUImuCaxYkxqFwfDTWfS3d5MeUK-mGag
-
 
 insert into merchant (name, company_id)
 values ('Vulkan', 1);
@@ -18,6 +16,8 @@ values ('Lom', 1);
 insert into merchant (name, company_id)
 values ('Logos', 1);
 
+insert into merchant (name, company_id)
+values ('Amazon', 1);
 
 insert into payment_method (common_name, name, subscription, status, uri, email, certificate_name)
 values ('bank', 'Credit Card', false, 'APPROVED', 'https://localhost:8090/api', 'bank@maildrop.cc', 'bank.crt');
@@ -38,6 +38,25 @@ values (1, 2);
 insert into company_payment_methods (company_id, payment_method_id)
 values (1, 3);
 
+
+--DATA
+--Bank
+insert into data (attribute_json_name,name, attribute_type, payment_method_id)
+values ('merchantId','Merchant Id', 'text', 1);
+insert into data (attribute_json_name,name, attribute_type, payment_method_id)
+values ('merchantPassword','Merchant Password', 'password', 1);
+
+--PayPal
+insert into data (attribute_json_name,name, attribute_type, payment_method_id)
+values ('merchantClientId','Merchant client Id', 'text', 2);
+insert into data (attribute_json_name,name, attribute_type, payment_method_id)
+values ('merchantClientSecret','Merchant Client Secret', 'password', 2);
+
+--Bitcoin
+insert into data (attribute_json_name,name, attribute_type, payment_method_id)
+values ('clientId','Client Id', 'text', 3);
+insert into data (attribute_json_name,name, attribute_type, payment_method_id)
+values ('clientSecret','Client Secret', 'password', 3);
 
 -- Vulkan
 -- For Bank: merchantId and merchantPassword

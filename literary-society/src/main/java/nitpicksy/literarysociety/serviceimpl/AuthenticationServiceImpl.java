@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.serviceimpl;
 
+import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.request.ChangePasswordDTO;
 import nitpicksy.literarysociety.dto.request.ResetPasswordDTO;
 import nitpicksy.literarysociety.enumeration.UserStatus;
@@ -136,7 +137,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = token.getUser();
         user.setEnabled(true);
 
-        user.setStatus(UserStatus.ACTIVE);
+        if (user.getRole().getName().equals(RoleConstants.ROLE_EDITOR)) {
+            user.setStatus(UserStatus.WAITING_APPROVAL);
+        } else if (user.getRole().getName().equals(RoleConstants.ROLE_LECTURER)) {
+            user.setStatus(UserStatus.WAITING_APPROVAL);
+        } else {
+            user.setStatus(UserStatus.ACTIVE);
+        }
 
         verificationService.invalidateToken(token.getId());
         userRepository.save(user);

@@ -7,5 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MerchantRepository extends JpaRepository<Merchant, Long> {
 
-    Merchant findByName(String name);
+    Merchant findByNameAndCompanyId(String name, Long id);
+
+    Merchant findByIdAndCompanyId(Long id, Long companyId);
 }

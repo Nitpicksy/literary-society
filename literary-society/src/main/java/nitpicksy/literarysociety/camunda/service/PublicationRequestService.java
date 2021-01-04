@@ -19,18 +19,10 @@ import java.util.stream.Collectors;
 @Service
 public class PublicationRequestService implements JavaDelegate {
 
-    private CamundaService camundaService;
-
-    private GenreService genreService;
-
-    private WriterService writerService;
-
-    private UserService userService;
-
     private BookRepository bookRepository;
 
     @Override
-    public void execute(DelegateExecution execution)  {
+    public void execute(DelegateExecution execution) {
         List<FormSubmissionDTO> formData = (List<FormSubmissionDTO>) execution.getVariable("formData");
         Map<String, String> map = formData.stream().collect(Collectors.toMap(FormSubmissionDTO::getFieldId, FormSubmissionDTO::getFieldValue));
         Long bookId = Long.valueOf((String) execution.getVariable("bookId"));
@@ -40,35 +32,41 @@ public class PublicationRequestService implements JavaDelegate {
         BookStatus bookStatus = book.getStatus();
         bookRepository.save(book);
 
-        if(bookStatus.equals(BookStatus.TO_BE_SENT)){
-            execution.setVariable("rejected",false);
+        if (bookStatus.equals(BookStatus.TO_BE_SENT)) {
+            execution.setVariable("rejected", false);
         }
-        if(bookStatus.equals(BookStatus.REQUEST_REJECTED)){
-            execution.setVariable("rejected",true);
-        }
-
-        if(bookStatus.equals(BookStatus.ORIGINAL)){
-            execution.setVariable("original",true);
-        }
-        if(bookStatus.equals(BookStatus.NOT_ORIGINAL)){
-            execution.setVariable("original",false);
+        if (bookStatus.equals(BookStatus.REQUEST_REJECTED)) {
+            execution.setVariable("rejected", true);
         }
 
-        if(bookStatus.equals(BookStatus.ACCEPTED)){
-            execution.setVariable("rejected",false);
+        if (bookStatus.equals(BookStatus.ORIGINAL)) {
+            execution.setVariable("original", true);
         }
-        if(bookStatus.equals(BookStatus.REQUEST_REJECTED)){
-            execution.setVariable("rejected",true);
+        if (bookStatus.equals(BookStatus.NOT_ORIGINAL)) {
+            execution.setVariable("original", false);
+        }
+
+        if (bookStatus.equals(BookStatus.ACCEPTED)) {
+            execution.setVariable("rejected", false);
+        }
+        if (bookStatus.equals(BookStatus.REQUEST_REJECTED)) {
+            execution.setVariable("rejected", true);
+        }
+
+        if (bookStatus.equals(BookStatus.TO_BE_EDITED)) {
+            execution.setVariable("needToBeEdited", true);
+        }
+        if (bookStatus.equals(BookStatus.LECTURER_REVIEWED)) {
+            execution.setVariable("needToBeEdited", false);
+        }
+
+        if (bookStatus.equals(BookStatus.SENT_TO_PRINT)) {
+            execution.setVariable("needToBeEdited", false);
         }
     }
 
     @Autowired
-    public PublicationRequestService(CamundaService camundaService, GenreService genreService, WriterService writerService,
-                                           UserService userService, BookRepository bookRepository) {
-        this.camundaService = camundaService;
-        this.genreService = genreService;
-        this.writerService = writerService;
-        this.userService = userService;
+    public PublicationRequestService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 }

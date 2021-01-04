@@ -10,6 +10,8 @@ import nitpicksy.literarysociety.service.ImageService;
 import nitpicksy.literarysociety.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -29,7 +31,7 @@ import java.util.Objects;
 @Service
 public class ImageServiceImpl implements ImageService {
 
-    private final String IMAGES_PATH = "images/";
+    private static String IMAGES_PATH = "literary-society/src/main/resources/images/";
 
     private final String CLASS_PATH = this.getClass().getCanonicalName();
     private final String CLASS_NAME = this.getClass().getSimpleName();
@@ -41,8 +43,11 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public String loadImageAsBase64(String fileName) {
         try {
-            File resource = new ClassPathResource(IMAGES_PATH + fileName).getFile();
-            byte[] fileContent = Files.readAllBytes(resource.toPath());
+            Path fileStorageLocation = Paths.get(IMAGES_PATH);
+            Path filePath = fileStorageLocation.resolve(fileName).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            File file = resource.getFile();
+            byte[] fileContent = Files.readAllBytes(file.toPath());
             String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
             String encodedImage = Base64.getEncoder().encodeToString(fileContent);
             return String.format("data:image/%s;base64,%s", extension, encodedImage);
@@ -55,11 +60,12 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     @Transactional(readOnly = false, propagation = Propagation.MANDATORY)
-    public void saveImage(MultipartFile multipartFile, String path, Book book) {
+    public Image saveImage(MultipartFile multipartFile, String path, Book book) {
         Image image = imageRepository
                 .saveAndFlush(new Image(saveOnDisk(multipartFile, path, book.getId())));
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PDB",
-                String.format("Picture %s successfully saved in DB", image.getId())));
+                String.format("Image %s successfully saved in DB", image.getId())));
+        return image;
     }
 
     private String saveOnDisk(MultipartFile image, String path, Long id) {

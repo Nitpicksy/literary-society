@@ -51,28 +51,34 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         }
 
         Permission manageEditors = createPermissionIfNotFound("MANAGE_EDITORS");
-        Permission manageLecturers = createPermissionIfNotFound("MANAGE_LECTURER");
-
+        Permission manageLecturers = createPermissionIfNotFound("MANAGE_LECTURERS");
+        Permission supportPaymentMethods = createPermissionIfNotFound("SUPPORT_PAYMENT_METHODS");
+        Permission manageTasks = createPermissionIfNotFound("MANAGE_TASKS");
+        Permission managePublicationRequests = createPermissionIfNotFound("MANAGE_PUBLICATION_REQUESTS");
+        Permission downloadBookAndCompleteTask = createPermissionIfNotFound("DOWNLOAD_BOOK_AND_COMPLETE_TASK");
+        Permission uploadBookAndCompleteTask = createPermissionIfNotFound("UPLOAD_BOOK_AND_COMPLETE_TASK");
+        Permission submitFormAndUploadImage = createPermissionIfNotFound("SUBMIT_FORM_AND_UPLOAD_IMAGE");
 
         Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers));
         createRoleIfNotFound("ROLE_ADMIN", adminPermissions);
 
-        Set<Permission> readerPermissions = new HashSet<>();
+        Set<Permission> readerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_READER", readerPermissions);
 
-        Set<Permission> writerPermissions = new HashSet<>();
+        Set<Permission> writerPermissions = new HashSet<>(Arrays.asList(managePublicationRequests,
+                manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_WRITER", writerPermissions);
 
-        Set<Permission> committeeMemberPermissions = new HashSet<>();
+        Set<Permission> committeeMemberPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_COMMITTEE_MEMBER", committeeMemberPermissions);
 
-        Set<Permission> editorPermissions = new HashSet<>();
+        Set<Permission> editorPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask, submitFormAndUploadImage));
         createRoleIfNotFound("ROLE_EDITOR", editorPermissions);
 
-        Set<Permission> lecturerPermissions = new HashSet<>();
+        Set<Permission> lecturerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_LECTURER", lecturerPermissions);
 
-        Set<Permission> merchantPermissions = new HashSet<>();
+        Set<Permission> merchantPermissions = new HashSet<>(Arrays.asList(supportPaymentMethods));
         createRoleIfNotFound("ROLE_MERCHANT", merchantPermissions);
 
         RandomPasswordGenerator randomPasswordGenerator = new RandomPasswordGenerator();
@@ -115,21 +121,56 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         editor3.setRole(roleEditor);
         userRepository.save(editor3);
 
-        Role roleCommitteeMember = roleRepository.findByName("ROLE_COMMITTEE_MEMBER");
-        User member1 = userRepository.findOneById(6L);
-        member1.setRole(roleCommitteeMember);
-        userRepository.save(member1);
-        User member2 = userRepository.findOneById(7L);
-        member2.setRole(roleCommitteeMember);
-        userRepository.save(member2);
-        User member3 = userRepository.findOneById(8L);
-        member3.setRole(roleCommitteeMember);
-        userRepository.save(member3);
+        Role roleReader = roleRepository.findByName("ROLE_READER");
+        User reader1 = userRepository.findOneById(6L);
+        reader1.setRole(roleReader);
+        userRepository.save(reader1);
+        User reader2 = userRepository.findOneById(7L);
+        reader2.setRole(roleReader);
+        userRepository.save(reader2);
+        User reader3 = userRepository.findOneById(8L);
+        reader3.setRole(roleReader);
+        userRepository.save(reader3);
+        User reader4 = userRepository.findOneById(9L);
+        reader4.setRole(roleReader);
+        userRepository.save(reader4);
+        User reader5 = userRepository.findOneById(10L);
+        reader5.setRole(roleReader);
+        userRepository.save(reader5);
 
         Role roleMerchant = roleRepository.findByName("ROLE_MERCHANT");
-        User defaultMerchant = userRepository.findOneById(9L);
-        defaultMerchant.setRole(roleMerchant);
-        userRepository.save(defaultMerchant);
+        User merchant1 = userRepository.findOneById(11L);
+        merchant1.setRole(roleMerchant);
+        userRepository.save(merchant1);
+        User merchant2 = userRepository.findOneById(12L);
+        merchant2.setRole(roleMerchant);
+        userRepository.save(merchant2);
+        User merchant3 = userRepository.findOneById(13L);
+        merchant3.setRole(roleMerchant);
+        userRepository.save(merchant3);
+        User merchant4 = userRepository.findOneById(14L);
+        merchant4.setRole(roleMerchant);
+        userRepository.save(merchant4);
+
+        Role roleLecturer = roleRepository.findByName("ROLE_LECTURER");
+        User lecturer1 = userRepository.findOneById(15L);
+        lecturer1.setRole(roleLecturer);
+        userRepository.save(lecturer1);
+
+        User lecturer2 = userRepository.findOneById(16L);
+        lecturer2.setRole(roleLecturer);
+        userRepository.save(lecturer2);
+
+        Role roleCommitteeMember = roleRepository.findByName("ROLE_COMMITTEE_MEMBER");
+        User member1 = userRepository.findOneById(17L);
+        member1.setRole(roleCommitteeMember);
+        userRepository.save(member1);
+        User member2 = userRepository.findOneById(18L);
+        member2.setRole(roleCommitteeMember);
+        userRepository.save(member2);
+        User member3 = userRepository.findOneById(19L);
+        member3.setRole(roleCommitteeMember);
+        userRepository.save(member3);
     }
 
     private void composeAndSendEmailToChangePassword(String recipientEmail, String generatedPassword) {

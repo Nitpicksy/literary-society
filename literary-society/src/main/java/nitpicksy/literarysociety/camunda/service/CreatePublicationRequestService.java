@@ -57,7 +57,7 @@ public class CreatePublicationRequestService implements JavaDelegate {
         execution.setVariable("mainEditor", mainEditor.getUsername());
         execution.setVariable("bookId", savedBook.getId().toString());
 
-        System.out.println(mainEditor.getUsername());
+        System.out.println("Main editor: " + mainEditor.getUsername());
 
     }
 

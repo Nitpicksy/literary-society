@@ -11,4 +11,10 @@ export const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(1),
         backgroundColor: theme.palette.secondary.main,
     },
+    title: {
+        marginBottom: theme.spacing(2),
+    },
+    table: {
+        height: 370,
+    },
 }));

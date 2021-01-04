@@ -2,16 +2,18 @@ package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.dto.camunda.TaskDataDTO;
-import nitpicksy.literarysociety.enumeration.BookStatus;
+import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
-import nitpicksy.literarysociety.model.Book;
-import nitpicksy.literarysociety.model.PDFDocument;
-import nitpicksy.literarysociety.model.User;
-import nitpicksy.literarysociety.model.Writer;
+import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.service.BookService;
+import nitpicksy.literarysociety.service.ImageService;
 import nitpicksy.literarysociety.service.PDFDocumentService;
 import nitpicksy.literarysociety.service.UserService;
+import org.camunda.bpm.engine.FormService;
+import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.rest.dto.task.TaskDto;
+import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,13 +22,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/tasks")
@@ -40,21 +45,32 @@ public class TaskController {
 
     private PDFDocumentService pdfDocumentService;
 
+    private TaskService taskService;
+
+    private RuntimeService runtimeService;
+
+    private FormService formService;
+
+    private ImageService imageService;
+
+    private static String IMAGES_PATH = "literary-society/src/main/resources/images/";
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TaskDto>> getTasksForAssignee() {
         User user = userService.getAuthenticatedUser();
         return new ResponseEntity<>(camundaService.getTasksByAssignee(user.getId()), HttpStatus.OK);
     }
 
-    @GetMapping(value = "{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskDataDTO> getTaskData(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
-        TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.getFormFields(piId, taskId),
+
+        TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.setEnumValues(camundaService.getFormFields(piId, taskId)),
                 bookService.getPublicationRequest(Long.valueOf(camundaService.getProcessVariable(piId, "bookId"))));
 
         return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
     }
 
-    @PutMapping(value = "{taskId}/complete-and-download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PutMapping(value = "/{taskId}/complete-and-download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> completeTaskAndDownloadBook(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
         PDFDocument pdfDocument = pdfDocumentService.findByBookId(Long.valueOf(camundaService.getProcessVariable(piId, "bookId")));
 
@@ -72,7 +88,7 @@ public class TaskController {
         }
     }
 
-    @PostMapping(value = "{taskId}/complete-and-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{taskId}/complete-and-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> completeTaskAndUploadBook(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId,
                                                           @Valid @RequestParam MultipartFile pdfFile) {
         Book book = bookService.findById(Long.valueOf(camundaService.getProcessVariable(piId, "bookId")));
@@ -82,9 +98,6 @@ public class TaskController {
         } catch (IOException e) {
             throw new InvalidDataException("Manuscript could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
         }
-
-        book.setStatus(BookStatus.SENT);
-        bookService.save(book);
 
         camundaService.completeTask(taskId);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -131,39 +144,40 @@ public class TaskController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping(value = "upload-proba",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> uploadProba(@Valid @RequestParam MultipartFile pdfFile) {
-        try {
-            pdfDocumentService.upload(pdfFile, null);
-        } catch (IOException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @PostMapping(path = "/{taskId}/submit-form-and-upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Transactional
+    public ResponseEntity<Void> submitFormAndUploadImage(@PathVariable String taskId,
+                                                         @RequestPart @Valid List<FormSubmissionDTO> formDTOList, @RequestPart @NotNull MultipartFile image) {
+
+        Map<String, Object> fieldsMap = formDTOList.stream()
+                .collect(Collectors.toMap(FormSubmissionDTO::getFieldId, FormSubmissionDTO::getFieldValue));
+
+        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+        String processInstanceId = task.getProcessInstanceId();
+
+        Book book = bookService.findById(Long.valueOf(camundaService.getProcessVariable(processInstanceId, "bookId")));
+        Image savedImage = imageService.saveImage(image, IMAGES_PATH, book);
+        book.setImage(savedImage);
+        bookService.save(book);
+
+        runtimeService.setVariable(processInstanceId, "formData", formDTOList);
+        formService.submitTaskForm(taskId, fieldsMap);
+
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-    @PutMapping(value = "proba/{name}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<byte[]> proba(@PathVariable String name) {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-
-        try {
-            byte[] content = pdfDocumentService.download(name);
-            return new ResponseEntity<>(content, headers, HttpStatus.OK);
-        } catch (IOException | URISyntaxException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @Autowired
     public TaskController(UserService userService, CamundaService camundaService, BookService bookService,
-                          PDFDocumentService pdfDocumentService) {
+                          PDFDocumentService pdfDocumentService, TaskService taskService, RuntimeService runtimeService, FormService formService,
+                          ImageService imageService) {
         this.userService = userService;
         this.camundaService = camundaService;
         this.bookService = bookService;
         this.pdfDocumentService = pdfDocumentService;
+        this.taskService = taskService;
+        this.runtimeService = runtimeService;
+        this.formService = formService;
+        this.imageService = imageService;
     }
 }

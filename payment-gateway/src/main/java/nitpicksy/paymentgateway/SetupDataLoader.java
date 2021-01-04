@@ -3,9 +3,11 @@ package nitpicksy.paymentgateway;
 import nitpicksy.paymentgateway.common.RandomPasswordGenerator;
 import nitpicksy.paymentgateway.enumeration.AdminStatus;
 import nitpicksy.paymentgateway.model.Admin;
+import nitpicksy.paymentgateway.model.Company;
 import nitpicksy.paymentgateway.model.Permission;
 import nitpicksy.paymentgateway.model.Role;
 import nitpicksy.paymentgateway.repository.AdminRepository;
+import nitpicksy.paymentgateway.repository.CompanyRepository;
 import nitpicksy.paymentgateway.repository.PermissionRepository;
 import nitpicksy.paymentgateway.repository.RoleRepository;
 import nitpicksy.paymentgateway.service.EmailNotificationService;
@@ -37,6 +39,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private final EmailNotificationService emailNotificationService;
 
     private final Environment environment;
+
+    private final CompanyRepository companyRepository;
 
     @Override
     @Transactional
@@ -70,9 +74,16 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         adminRepository.save(admin);
         composeAndSendEmailToChangePassword(admin.getEmail(), generatedPassword);
 
+        assignRoles();
         alreadySetup = true;
     }
 
+    private void assignRoles() {
+        Role roleCompany = roleRepository.findByName("ROLE_COMPANY");
+        Company company = companyRepository.findOneById(1L);
+        company.setRole(roleCompany);
+        companyRepository.save(company);
+    }
 
     private void composeAndSendEmailToChangePassword(String recipientEmail, String generatedPassword) {
         String subject = "Activate account";
@@ -124,12 +135,13 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Autowired
     public SetupDataLoader(RoleRepository roleRepository, PermissionRepository permissionRepository, AdminRepository adminRepository,
                            PasswordEncoder passwordEncoder, EmailNotificationService emailNotificationService,
-                           Environment environment) {
+                           Environment environment,CompanyRepository companyRepository) {
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailNotificationService = emailNotificationService;
         this.environment = environment;
+        this.companyRepository = companyRepository;
     }
 }

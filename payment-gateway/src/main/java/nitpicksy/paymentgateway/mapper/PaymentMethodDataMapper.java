@@ -1,8 +1,6 @@
 package nitpicksy.paymentgateway.mapper;
 
-import nitpicksy.paymentgateway.dto.request.PaymentDataDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentMethodDataDTO;
-import nitpicksy.paymentgateway.model.Data;
 import nitpicksy.paymentgateway.model.PaymentMethod;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

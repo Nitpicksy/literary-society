@@ -31,8 +31,8 @@ spring:
     show-sql: false
   mail:
     host: smtp.gmail.com
-    username: ${MAIL_USERNAME:no.reply.wroom@gmail.com}
-    password: ${MAIL_PASSWORD:sfwqelhzwkeqhgje}
+    username: konstrukcijaitestsoftvera2020@gmail.com
+    password: KTS2020Projekat
     port: 587
     properties:
       mail:
@@ -72,3 +72,4 @@ TOKEN_UTILS_AUTH_HEADER: Authorization
 # Localhost
 LOCALHOST_URL: https://localhost:3000/
 
+PUBLISHER: Literary Society

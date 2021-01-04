@@ -62,9 +62,15 @@ const PublicationRequest = (props) => {
         }
 
         if (array[0].fieldValue === 'NOT_ORIGINAL') {
-            console.log('NOT_ORIGINAL');
             if (!array[1].fieldValue) {
                 toastr.error('Manuscript', 'You have to write a reason why the manuscript is not original.');
+                return;
+            }
+        }
+
+        if (array[0].fieldValue === 'TO_BE_EDITED' && array[1]) {
+            if (!array[1].fieldValue) {
+                toastr.error('Manuscript', 'You have to explain what writers need to change.');
                 return;
             }
         }

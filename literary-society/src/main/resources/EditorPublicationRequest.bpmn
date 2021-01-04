@@ -7,7 +7,7 @@
     <bpmn:endEvent id="Event_0sn6vry" name="Success">
       <bpmn:incoming>Flow_0qk9h5w</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:userTask id="Activity_01h8vb9" name="Obrada zahteva za izdavanje knjige" camunda:assignee="${mainEditor}">
+    <bpmn:userTask id="Activity_01h8vb9" name="Obradite zahtev za izdavanje knjige" camunda:assignee="${mainEditor}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="decision" label="Decision" type="enum">

@@ -23,6 +23,11 @@ public class DataServiceImpl implements DataService {
         return createdData;
     }
 
+    @Override
+    public Data findById(Long id) {
+        return dataRepository.findById(id).get();
+    }
+
     public DataServiceImpl(DataRepository dataRepository) {
         this.dataRepository = dataRepository;
     }

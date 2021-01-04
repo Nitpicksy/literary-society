@@ -27,7 +27,7 @@ public class OpinionOfCommitteeMember {
     @ManyToOne(fetch = FetchType.EAGER)
     private Writer writer;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String comment;
 
     @Enumerated(EnumType.STRING)

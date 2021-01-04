@@ -25,6 +25,12 @@ export const fetchForm = (piId, taskId) => {
     };
 };
 
+export const clearState = () => {
+    return {
+        type: actionTypes.CLEAR_STATE,
+    };
+};
+
 export const download = (piId, taskId, title, history) => {
     return dispatch => {
         axios(`/tasks/${taskId}/complete-and-download?piId=${piId}`, {
@@ -33,6 +39,7 @@ export const download = (piId, taskId, title, history) => {
         }).then((response) => {
             const blob = new Blob([response.data], { type: 'application/pdf' });
             saveAs(blob, title);
+            dispatch(clearState());
             history.push('/tasks');
         }).catch(err => {
             toastr.error('Publication Request', 'Something went wrong.Please try again.');

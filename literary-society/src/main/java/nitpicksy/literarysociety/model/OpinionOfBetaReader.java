@@ -27,6 +27,6 @@ public class OpinionOfBetaReader {
     @ManyToOne(fetch = FetchType.EAGER)
     private Book book;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String comment;
 }

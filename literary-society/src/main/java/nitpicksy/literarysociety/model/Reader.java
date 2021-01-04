@@ -19,7 +19,7 @@ public class Reader extends User {
     private boolean isBetaReader;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "pucrhased_books",
+    @JoinTable(name = "purchased_books",
             joinColumns = @JoinColumn(name = "reader_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id"))
     private Set<Book> purchasedBooks = new HashSet<>();
