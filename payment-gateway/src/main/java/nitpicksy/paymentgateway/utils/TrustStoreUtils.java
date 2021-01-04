@@ -1,11 +1,8 @@
 package nitpicksy.paymentgateway.utils;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.swing.tree.ExpandVetoException;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.KeyStore;
@@ -17,9 +14,9 @@ import java.security.cert.X509Certificate;
 @Component
 public class TrustStoreUtils {
     //change this
-    private static String TRUST_STORE_PATH = "payment-gateway/src/main/resources/truststore.p12";
+    private static String TRUST_STORE_PATH = "payment-gateway/src/main/resources/gateway.truststore.p12";
     //change this
-    private static String password = "cinema";
+    private static String password = "password";
 
     public static KeyStore loadKeyStore() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
         char[] keyStorePassArray = password.toCharArray();
