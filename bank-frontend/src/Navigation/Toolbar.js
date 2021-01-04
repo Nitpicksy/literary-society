@@ -2,8 +2,6 @@ import { AppBar, Button, Toolbar, Typography } from '@material-ui/core';
 import React from 'react';
 import { useStyles } from './ToolbarStyles';
 import { useHistory } from 'react-router-dom';
-import Menu from '@material-ui/core/Menu';
-import { withStyles } from '@material-ui/core/styles';
 
 const CustomToolbar = () => {
     const classes = useStyles();
@@ -20,6 +18,7 @@ const CustomToolbar = () => {
                     Bank
                 </Typography>
                 <Button className={classes.button} color="inherit" onClick={() => redirect('/merchants')}>Merchants</Button>
+                <Button className={classes.button} color="inherit" onClick={() => redirect('/clients')}>Clients</Button>
             </Toolbar>
         </AppBar>
     );

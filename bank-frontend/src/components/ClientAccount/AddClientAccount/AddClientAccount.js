@@ -2,26 +2,26 @@ import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import * as actions from './AddMerchantAccountExport';
+import * as actions from './AddClientAccountExport';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import { useStyles } from './AddMerchantAccountStyles';
+import { useStyles } from './AddClientAccountStyles';
 import Form from '../../../UI/Form/Form';
 import { connect } from 'react-redux';
 import {  useHistory } from 'react-router';
 
-const AddMerchantAccount = (props) => {
+const AddClientAccount = (props) => {
     const history = useHistory();
 
     const classes = useStyles();
     const [formIsValid, setFormIsValid] = useState(false);
 
     const [controls, setControls] = useState({
-        name: {
+        firstName: {
             elementType: 'input',
             elementConfig: {
-                label: 'Name'
+                label: 'First Name'
             },
             value: '',
             validation: {
@@ -32,24 +32,19 @@ const AddMerchantAccount = (props) => {
             error: false,
             errorMessage: '',
         },
-        merchantPassword: {
+        lastName: {
             elementType: 'input',
             elementConfig: {
-                type: 'password',
-                label: 'Merchant password'
+                label: 'Last Name'
             },
             value: '',
             validation: {
                 required: true,
-                pattern: '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[_#?!@$%^&*-.,:;]).{10,64}$'
             },
             valid: false,
             touched: false,
             error: false,
             errorMessage: '',
-            additionalData: {
-                errorMessage: 'Password should contain between 10 and 64 characters including 1 number, 1 special character, 1 lowercase and 1 uppercase letter.'
-            }
         },
         city: {
             elementType: 'input',
@@ -119,7 +114,7 @@ const AddMerchantAccount = (props) => {
 
     const submitHander = (event) => {
         event.preventDefault();
-        props.onAddMerchant(controls.name.value, controls.merchantPassword.value,
+        props.onAddClient(controls.firstName.value, controls.lastName.value,
             controls.city.value,controls.country.value,
             controls.email.value,controls.balance.value,history);
     }
@@ -131,7 +126,7 @@ const AddMerchantAccount = (props) => {
                 <Avatar className={classes.avatar}>
                     <LockOutlinedIcon />
                 </Avatar>
-                <Typography component="h1" variant="h4">Create merchant</Typography>
+                <Typography component="h1" variant="h4">Create client account</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} />
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
@@ -145,9 +140,9 @@ const AddMerchantAccount = (props) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onAddMerchant: (name, merchantPassword,city,country,email,balance,history) => 
-        dispatch(actions.addMerchant(name, merchantPassword,city,country,email,balance,history)),
+        onAddClient: (firstName, lastName,city,country,email,balance,history) => 
+        dispatch(actions.addClient(firstName, lastName,city,country,email,balance,history)),
     }
 };
 
-export default connect(null, mapDispatchToProps)(AddMerchantAccount);
+export default connect(null, mapDispatchToProps)(AddClientAccount);

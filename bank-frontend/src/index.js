@@ -11,12 +11,14 @@ import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
 import { reducer as toastrReducer } from 'react-redux-toastr';
 import ReduxToastr from 'react-redux-toastr';
 import merchantListReducer from './components/MerchantAccount/MerchantAccountList/MerchantAccountListReducer';
+import clientListReducer from './components/ClientAccount/ClientAccountList/ClientAccountListReducer';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
 const rootReducer = combineReducers({
     toastr: toastrReducer, 
-    merchantList:merchantListReducer
+    merchantList:merchantListReducer, 
+    clientList: clientListReducer
 });
 
 const store = createStore(rootReducer, composeEnhancers(

@@ -8,13 +8,10 @@ import nitpicksy.bank.service.MerchantService;
 import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class MerchantServiceImpl implements MerchantService {
@@ -40,7 +37,7 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Override
-    public void transferMoneyToMerchant(String merchantId, Double amount) throws NoSuchAlgorithmException {
+    public void transferMoneyToMerchant(String merchantId, Double amount)  {
         Merchant merchant = merchantRepository.findByMerchantId(merchantId);
         merchant.setBalance(merchant.getBalance() + amount);
         merchantRepository.save(merchant);
@@ -53,11 +50,14 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public Merchant save(Merchant merchant) throws NoSuchAlgorithmException {
+        if(merchantRepository.findByEmail(merchant.getEmail()) != null){
+            throw new InvalidDataException("Client with same email address already exist.", HttpStatus.BAD_REQUEST);
+        }
+
         String merchantId = generateMerchantId();
 
         System.out.println(merchantId);
         while(merchantRepository.findByMerchantId(hashValueServiceImpl.getHashValue(merchantId)) != null){
-            System.out.println("Genrate new value");
             merchantId = generateMerchantId();
         }
         merchant.setMerchantId(hashValueServiceImpl.getHashValue(merchantId));
