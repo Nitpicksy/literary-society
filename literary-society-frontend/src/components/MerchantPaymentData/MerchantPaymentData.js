@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import * as actions from './MerchantPaymentDataExport';
 import Typography from '@material-ui/core/Typography';

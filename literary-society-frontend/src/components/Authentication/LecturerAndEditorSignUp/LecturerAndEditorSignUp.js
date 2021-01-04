@@ -155,7 +155,7 @@ const LecturerAndEditorSignUp = (props) => {
         if (props.signUpType === "readers") {
             history.push("/sign-up-options")
         }
-    }, [props.signUpType]);
+    }, [props.signUpType, history]);
     
     const submitHander = (event) => {
         event.preventDefault();
