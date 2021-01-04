@@ -1,9 +1,11 @@
 package nitpicksy.bank.serviceImpl;
 
 import nitpicksy.bank.exceptionHandler.InvalidDataException;
+import nitpicksy.bank.model.Log;
 import nitpicksy.bank.model.Merchant;
 import nitpicksy.bank.repository.MerchantRepository;
 import nitpicksy.bank.service.EmailNotificationService;
+import nitpicksy.bank.service.LogService;
 import nitpicksy.bank.service.MerchantService;
 import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,12 @@ public class MerchantServiceImpl implements MerchantService {
     private HashValueServiceImpl hashValueServiceImpl;
 
     private EmailNotificationService emailNotificationService;
+
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
+    private LogService logService;
 
     @Override
     public Merchant findByMerchantIdAndPassword(String merchantId, String merchantPassword) {
@@ -63,7 +71,9 @@ public class MerchantServiceImpl implements MerchantService {
         merchant.setMerchantId(hashValueServiceImpl.getHashValue(merchantId));
         merchant.setMerchantPassword(hashValueServiceImpl.bcryptHash(merchant.getMerchantPassword()));
         composeAndSendEmail(merchant.getEmail(),merchantId);
-        return merchantRepository.save(merchant);
+        Merchant savedMerchant = merchantRepository.save(merchant);
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MERCHANTA", String.format("Merchant account %s is created.", savedMerchant.getId())));
+        return savedMerchant;
     }
 
     private String generateMerchantId(){
@@ -73,7 +83,7 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     private void composeAndSendEmail(String recipientEmail, String merchantId) {
-        String subject = "Crate merchant account";
+        String subject = "Create merchant account";
         StringBuilder sb = new StringBuilder();
         sb.append("An account for you on Bank website has been created.");
         sb.append(System.lineSeparator());
@@ -86,9 +96,11 @@ public class MerchantServiceImpl implements MerchantService {
         emailNotificationService.sendEmail(recipientEmail, subject, text);
     }
     @Autowired
-    public MerchantServiceImpl(MerchantRepository merchantRepository, HashValueServiceImpl hashValueServiceImpl,EmailNotificationService emailNotificationService) {
+    public MerchantServiceImpl(MerchantRepository merchantRepository, HashValueServiceImpl hashValueServiceImpl,EmailNotificationService emailNotificationService,
+                               LogService logService) {
         this.merchantRepository = merchantRepository;
         this.hashValueServiceImpl = hashValueServiceImpl;
         this.emailNotificationService = emailNotificationService;
+        this.logService = logService;
     }
 }

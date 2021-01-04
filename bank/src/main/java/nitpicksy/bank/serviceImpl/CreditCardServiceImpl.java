@@ -115,7 +115,7 @@ public class CreditCardServiceImpl implements CreditCardService {
     }
 
     private void composeAndSendEmail(String recipientEmail, String pan, String securityCode, String cardHolderName) {
-        String subject = "Crate client account";
+        String subject = "Create client account";
         StringBuilder sb = new StringBuilder();
         sb.append("An account for you on Bank website has been created.");
         sb.append(System.lineSeparator());
