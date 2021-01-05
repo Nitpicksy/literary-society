@@ -21,6 +21,7 @@ import org.springframework.web.context.request.RequestContextListener;
 @EnableTransactionManagement
 @EnableJpaRepositories(repositoryBaseClass = RefreshMethodRepositoryImpl.class)
 @EnableAsync
+@EnableDiscoveryClient
 public class LiterarySocietyApplication {
 
     public static void main(String[] args) {

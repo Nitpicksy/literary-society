@@ -14,7 +14,7 @@ import java.security.cert.X509Certificate;
 @Component
 public class TrustStoreUtils {
     //change this
-    private static String TRUST_STORE_PATH = "payment-gateway/src/main/resources/gateway.truststore.p12";
+    private static String TRUST_STORE_PATH = "zuul-api-gateway/src/main/resources/gateway.truststore.p12";
     //change this
     private static String password = "password";
 

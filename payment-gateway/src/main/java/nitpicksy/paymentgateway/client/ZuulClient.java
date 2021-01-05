@@ -1,5 +1,6 @@
 package nitpicksy.paymentgateway.client;
 
+import nitpicksy.paymentgateway.config.FeignClientConfiguration;
 import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
 import nitpicksy.paymentgateway.dto.response.LiterarySocietyOrderResponseDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentResponseDTO;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.net.URI;
 
-@FeignClient(name = "zuul")
+@FeignClient(name = "zuul",configuration = FeignClientConfiguration.class)
 public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.GET, path = "/test/health")
