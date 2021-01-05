@@ -22,7 +22,14 @@ public class ZuulApiGatewayApplication {
         SpringApplication.run(ZuulApiGatewayApplication.class, args);
     }
 
+    @Bean
+    public ServletWebServerFactory servletContainer() {
 
+        TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
+        // --- CUSTOMIZE SSL PORT IN ORDER TO BE ABLE TO RELOAD THE SSL HOST CONFIG
+        tomcat.addConnectorCustomizers(new DefaultSSLConnectorCustomizer());
+        return tomcat;
+    }
 }
 
 

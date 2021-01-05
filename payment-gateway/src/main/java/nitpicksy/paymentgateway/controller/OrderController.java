@@ -5,6 +5,7 @@ import nitpicksy.paymentgateway.dto.request.PaymentRequestDTO;
 import nitpicksy.paymentgateway.dto.response.OrderDetailsDTO;
 import nitpicksy.paymentgateway.mapper.TransactionMapper;
 import nitpicksy.paymentgateway.service.OrderService;
+import nitpicksy.paymentgateway.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
