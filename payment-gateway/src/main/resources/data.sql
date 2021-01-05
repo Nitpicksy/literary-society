@@ -5,6 +5,9 @@ values ('http://localhost:8090', 'literary-society', 'Nitpicksy LU 1', 'literary
         'https://localhost:3000/payment/success', 'literary.crt', 'APPROVED', true);
 
 insert into merchant (name, company_id)
+values ('Society Merchant', 1);
+
+insert into merchant (name, company_id)
 values ('Vulkan', 1);
 
 insert into merchant (name, company_id)
@@ -18,6 +21,7 @@ values ('Logos', 1);
 
 insert into merchant (name, company_id)
 values ('Amazon', 1);
+
 
 insert into payment_method (common_name, name, subscription, status, uri, email, certificate_name)
 values ('bank', 'Credit Card', false, 'APPROVED', 'https://localhost:8090/api', 'bank@maildrop.cc', 'bank.crt');
@@ -41,22 +45,22 @@ values (1, 3);
 
 --DATA
 --Bank
-insert into data (attribute_json_name,name, attribute_type, payment_method_id)
-values ('merchantId','Merchant Id', 'text', 1);
-insert into data (attribute_json_name,name, attribute_type, payment_method_id)
-values ('merchantPassword','Merchant Password', 'password', 1);
+insert into data (attribute_json_name, name, attribute_type, payment_method_id)
+values ('merchantId', 'Merchant Id', 'text', 1);
+insert into data (attribute_json_name, name, attribute_type, payment_method_id)
+values ('merchantPassword', 'Merchant Password', 'password', 1);
 
 --PayPal
-insert into data (attribute_json_name,name, attribute_type, payment_method_id)
-values ('merchantClientId','Merchant client Id', 'text', 2);
-insert into data (attribute_json_name,name, attribute_type, payment_method_id)
-values ('merchantClientSecret','Merchant Client Secret', 'password', 2);
+insert into data (attribute_json_name, name, attribute_type, payment_method_id)
+values ('merchantClientId', 'Merchant client Id', 'text', 2);
+insert into data (attribute_json_name, name, attribute_type, payment_method_id)
+values ('merchantClientSecret', 'Merchant Client Secret', 'password', 2);
 
 --Bitcoin
-insert into data (attribute_json_name,name, attribute_type, payment_method_id)
-values ('clientId','Client Id', 'text', 3);
-insert into data (attribute_json_name,name, attribute_type, payment_method_id)
-values ('clientSecret','Client Secret', 'password', 3);
+insert into data (attribute_json_name, name, attribute_type, payment_method_id)
+values ('clientId', 'Client Id', 'text', 3);
+insert into data (attribute_json_name, name, attribute_type, payment_method_id)
+values ('clientSecret', 'Client Secret', 'password', 3);
 
 -- Vulkan
 -- For Bank: merchantId and merchantPassword

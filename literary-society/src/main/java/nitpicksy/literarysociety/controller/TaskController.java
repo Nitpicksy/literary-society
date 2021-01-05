@@ -3,12 +3,8 @@ package nitpicksy.literarysociety.controller;
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.dto.camunda.TaskDataDTO;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
-import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
-import nitpicksy.literarysociety.model.Book;
-import nitpicksy.literarysociety.model.Image;
-import nitpicksy.literarysociety.model.PDFDocument;
-import nitpicksy.literarysociety.model.User;
+import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.service.BookService;
 import nitpicksy.literarysociety.service.ImageService;
 import nitpicksy.literarysociety.service.PDFDocumentService;
@@ -23,32 +19,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import javax.validation.Path;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -117,6 +99,46 @@ public class TaskController {
             throw new InvalidDataException("Manuscript could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
+        camundaService.completeTask(taskId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @PostMapping(value = "{taskId}/writer-membership-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> writerMembershipUpload(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId,
+                                                       @Valid @RequestParam MultipartFile[] files) {
+
+        Writer writer = (Writer) userService.getAuthenticatedUser();
+
+        try {
+            Set<PDFDocument> uploadedPDFDocuments = new HashSet<>();
+
+            for (MultipartFile file : files) {
+                PDFDocument upload = pdfDocumentService.upload(file, null);
+                uploadedPDFDocuments.add(upload);
+            }
+
+            writer.setAttempts(writer.getAttempts() + 1);
+            writer.getDrafts().addAll(uploadedPDFDocuments);
+
+        } catch (IOException e) {
+            throw new InvalidDataException("Writer documents could not be uploaded. Please try again.", HttpStatus.BAD_REQUEST);
+        }
+
+        camundaService.completeTask(taskId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "{taskId}/committee", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TaskDataDTO> getTaskDataCommittee(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
+        TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.getFormFields(piId, taskId),
+                pdfDocumentService.getDraftsByWriter(camundaService.getProcessVariable(piId, "writer")));
+
+        return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "{taskId}/membership")
+    public ResponseEntity<Void> payMembership(@RequestParam(required = false) String piId, @NotNull @PathVariable String taskId) {
         camundaService.completeTask(taskId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -13,7 +13,8 @@ values ('Poezija');
 insert into genre (name)
 values ('Putopisi');
 
-insert into jwttoken (token) values ('eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJsaXRlcmFyeS1zb2NpZXR5Iiwic3ViIjoibGl0ZXJhcnktc29jaWV0eSIsImF1ZCI6IndlYiIsImlhdCI6MTYwOTU4OTU2MCwiZXhwIjoxNjEwNzk5MTYwLCJyb2xlIjoiUk9MRV9DT01QQU5ZIiwicGVybWlzc2lvbnMiOlt7ImlkIjozLCJuYW1lIjoiQ1JFQVRFX09SREVSIn1dfQ.maf-whUBxv2Sl8LcAIq0mykJcbnclTsZUSQofTiYle1QuGC8lkLHHkSK-S-DKMkaFBC5el-0PrZtUWXmtoXwVg');
+insert into jwttoken (token)
+values ('eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJsaXRlcmFyeS1zb2NpZXR5Iiwic3ViIjoibGl0ZXJhcnktc29jaWV0eSIsImF1ZCI6IndlYiIsImlhdCI6MTYwOTU4OTU2MCwiZXhwIjoxNjEwNzk5MTYwLCJyb2xlIjoiUk9MRV9DT01QQU5ZIiwicGVybWlzc2lvbnMiOlt7ImlkIjozLCJuYW1lIjoiQ1JFQVRFX09SREVSIn1dfQ.maf-whUBxv2Sl8LcAIq0mykJcbnclTsZUSQofTiYle1QuGC8lkLHHkSK-S-DKMkaFBC5el-0PrZtUWXmtoXwVg');
 
 -- Writers
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
@@ -70,7 +71,6 @@ insert into beta_reader_genre (beta_reader_id, genre_id)
 values (8, 2);
 insert into beta_reader_genre (beta_reader_id, genre_id)
 values (8, 3);
-
 insert into beta_reader_genre (beta_reader_id, genre_id)
 values (9, 1);
 insert into beta_reader_genre (beta_reader_id, genre_id)
@@ -80,7 +80,12 @@ insert into beta_reader_genre (beta_reader_id, genre_id)
 values (10, 1);
 insert into beta_reader_genre (beta_reader_id, genre_id)
 values (10, 4);
+
 -- Merchants
+-- default LU merchant, TODO: add clientId and clientSecret
+insert into users (type, name, city, country, email, username, password, status, enabled, supports_payment_methods)
+values ('MERCHANT', 'Society Merchant', 'Beograd', 'Srbija', 'lu1@maildrop.cc', 'literary-society-1',
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true);
 
 -- Client Id: ARPDqaQtYU6ilCpwG0IXT35OMXGTjsA3K-QFYLItx5oRcJUOqZ527Z7BfNs6sS3yu45kdINghGRLR8vV
 -- Client Secret: ECBW7VI6Tzi23LnYdLEvnvEW5fm7drD6kvgVRMD2hnTOk9f9AJSqJaD-8p0aLrOWMBdoKGM9wIoPby4j
@@ -106,6 +111,21 @@ insert into users (type, first_name, last_name, city, country, email, username, 
                    enabled, is_beta_reader, penalty)
 values ('User', 'John', 'John', 'London', 'Ujedinjeno kraljevstvo', 'johnJohn1@maildrop.cc', 'johnJohn1',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true, 0);
+
+-- Committee members
+insert into users (type, first_name, last_name, city, country, email, username, password, status,
+                   enabled)
+values ('User', 'Eržebet', 'Guliver', 'Kruševac', 'Srbija', 'communist1@maildrop.cc', 'member1',
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
+insert into users (type, first_name, last_name, city, country, email, username, password, status,
+                   enabled)
+values ('User', 'Milovan', 'Ranisavljevic', 'London', 'Ujedinjeno kraljevstvo', 'communist2@maildrop.cc', 'member2',
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
+insert into users (type, first_name, last_name, city, country, email, username, password, status,
+                   enabled)
+values ('User', 'INSANE MAN', 'PUSKIN', 'Sankt Petersburg', 'Rusija', 'communist3@maildrop.cc', 'member3',
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
+
 
 -- Images
 insert into image (data)
@@ -160,7 +180,6 @@ values ('Na Drini ćuprija', 'Ivo Andrić', 8, 'IN_STORES',
         'Sudbina Mehmed-paše Sokolovića predodredila je da njegov život bude prekinut pre otelotvorenja njegove ideje na javi. On je napustio ovaj svet a veliki most na Drini je ostao kao simbol trajanja. Oko njega će se isplesti bezbroj priča o ljudima, njihovim sudbinama i istorijskim dešavanjima.',
         3);
 
-
 -- Publishing Infos
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
@@ -187,3 +206,10 @@ insert into publishing_info(isbn, number_of_pages, publisher_city, publication_d
                             book_id, merchant_id)
 values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 890.00, 5, 8, 11);
 
+
+insert into price_list (membership_for_reader, membership_for_writer, start_date)
+values (500, 2000, '2021-01-01');
+insert into price_list (membership_for_reader, membership_for_writer, start_date)
+values (600, 2500, '2021-02-02');
+insert into price_list (membership_for_reader, membership_for_writer, start_date)
+values (700, 2700, '2021-03-03');

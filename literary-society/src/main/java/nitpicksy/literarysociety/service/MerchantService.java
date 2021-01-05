@@ -9,4 +9,6 @@ public interface MerchantService {
     String getPaymentData(Merchant merchant);
 
     Merchant save(Merchant merchant);
+
+    Merchant findOurMerchant();
 }

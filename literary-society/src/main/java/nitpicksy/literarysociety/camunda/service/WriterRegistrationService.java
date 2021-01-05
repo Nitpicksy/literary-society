@@ -77,7 +77,6 @@ public class WriterRegistrationService implements JavaDelegate {
         String nonHashedToken = verificationService.generateToken(savedWriter);
 
         execution.setVariable("token", nonHashedToken);
-
         return savedWriter;
     }
 

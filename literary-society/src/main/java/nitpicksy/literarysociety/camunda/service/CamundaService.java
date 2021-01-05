@@ -1,8 +1,6 @@
 package nitpicksy.literarysociety.camunda.service;
 
 import nitpicksy.literarysociety.dto.camunda.EnumKeyValueDTO;
-import nitpicksy.literarysociety.dto.camunda.TaskDataDTO;
-import nitpicksy.literarysociety.dto.response.BookDTO;
 import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
 import nitpicksy.literarysociety.dto.response.ProcessDataDTO;
 import org.camunda.bpm.engine.FormService;
@@ -13,6 +11,7 @@ import org.camunda.bpm.engine.form.TaskFormData;
 import org.camunda.bpm.engine.impl.form.FormFieldImpl;
 import org.camunda.bpm.engine.impl.form.type.EnumFormType;
 import org.camunda.bpm.engine.rest.dto.task.TaskDto;
+import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +127,14 @@ public class CamundaService {
 
     public String getProcessVariable(String piId, String name) {
         return (String) runtimeService.getVariable(piId, name);
+    }
+
+    public void messageEventReceived(String messageName, String user) {
+        Execution execution = runtimeService.createExecutionQuery()
+                .messageEventSubscriptionName(messageName)
+                .processVariableValueEquals("user", user)
+                .singleResult();
+        runtimeService.messageEventReceived(messageName, execution.getId());
     }
 
     @Autowired

@@ -25,11 +25,13 @@ import PublicationRequests from './components/WriterPages/PublicationRequests/Pu
 import CreatePublicationRequest from './components/WriterPages/CreatePublicationRequest/CreatePublicationRequest';
 import Tasks from './components/Tasks/Tasks';
 import PublicationRequest from './components/Tasks/Task/PublicationRequest/PublicationRequest';
-import DocumentSubmission from './components/WriterPages/DocumentSubmission/DocumentSubmission';
 import BookDetails from './components/BookDetails/BookDetails';
 import { GuardProvider, GuardedRoute } from 'react-router-guards';
 import EditorDownloadDocument from './components/Tasks/Task/EditorDownloadDocument/EditorDownloadDocument';
 import WriterUploadDocument from './components/Tasks/Task/WriterUploadDocument/WriterUploadDocument';
+import WriterUploadWork from './components/Tasks/Task/MembershipProcess/WriterUploadWork/WriterUploadWork';
+import CommitteeVoting from './components/Tasks/Task/MembershipProcess/CommitteeVoting/CommitteeVoting';
+import Membership from './components/Membership/Membership';
 import MerchantPaymentData from './components/MerchantPaymentData/MerchantPaymentData';
 import LecturerAndEditorSignUp from './components/Authentication/LecturerAndEditorSignUp/LecturerAndEditorSignUp';
 import ManageLecturersAndEditors from './components/Authentication/ManageLecturersAndEditors/ManageLecturersAndEditors';
@@ -49,6 +51,7 @@ const App = props => {
   const roleWriter = "ROLE_WRITER";
   const roleReader = "ROLE_READER";
   const roleEditor ="ROLE_EDITOR";
+  const roleCommitteeMember ="ROLE_COMMITTEE_MEMBER";
   const roleAdmin ="ROLE_ADMIN";
   const roleLecturer="ROLE_LECTURER";
   const roleMerchant ="ROLE_MERCHANT";
@@ -107,7 +110,6 @@ const App = props => {
           <GuardedRoute path="/publication-requests" render={(props) => <PublicationRequests {...props} />} meta={{ roles: [roleWriter] }} />
           <GuardedRoute path="/create-publication-request" render={(props) => <CreatePublicationRequest {...props} />} meta={{ roles:  [roleWriter] }} />
           <Route path="/writer-upload-document" render={(props) => <WriterUploadDocument {...props} />} meta={{ roles: [roleWriter] }} />
-          <Route path="/upload" render={(props) => <DocumentSubmission {...props} />} meta={{ roles:  [roleWriter] }}/>
           <Route path="/opinions-of-beta-readers" render={(props) => <OpinionsOfBetaReaders {...props} />} meta={{ roles: [roleWriter] }} />
           <Route path="/opinion-of-editor" render={(props) => <OpinionOfEditor {...props} />} meta={{ roles: [roleWriter] }} />
           
@@ -116,6 +118,9 @@ const App = props => {
           <Route path="/editor-choose-beta-readers" render={(props) => <EditorChooseBetaReaders {...props} />} meta={{ roles: [roleEditor] }} />
           <Route path="/publishing-info" render={(props) => <PublishingInfo {...props} />} meta={{ roles: [roleEditor] }} />
 
+          <Route path="/writer-membership-upload" render={(props) => <WriterUploadWork {...props} />} meta={{ roles:  [roleWriter] }}/>
+          <Route path="/voting" render={(props) => <CommitteeVoting {...props} />} meta={{ roles:  [roleWriter] }}/>
+          <Route path="/membership" render={(props) => <Membership {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
 
           <GuardedRoute path="/manage-users" render={(props) => <ManageLecturersAndEditors {...props} />} meta={{ roles: [roleAdmin] }} />

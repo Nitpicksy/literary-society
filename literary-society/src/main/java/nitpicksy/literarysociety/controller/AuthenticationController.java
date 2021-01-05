@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.camunda.service.CamundaService;
+import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.request.ChangePasswordDTO;
 import nitpicksy.literarysociety.dto.request.RequestTokenDTO;
 import nitpicksy.literarysociety.dto.request.ResetPasswordDTO;
@@ -157,7 +158,15 @@ public class AuthenticationController {
     @GetMapping("/health")
     public ResponseEntity<String> health() {
         System.out.println("Greetings!");
-        return new ResponseEntity<>(testService.healthCheck(), HttpStatus.OK);
+        camundaService.messageEventReceived(CamundaConstants.MESSAGE_PAYMENT_SUCCESS, "rascal");
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/health2")
+    public ResponseEntity<String> health2() {
+        System.out.println("Greetings!");
+        camundaService.messageEventReceived(CamundaConstants.MESSAGE_PAYMENT_ERROR, "rascal");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Autowired

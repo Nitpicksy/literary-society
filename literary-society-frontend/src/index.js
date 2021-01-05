@@ -26,7 +26,10 @@ import editorChooseBetaReadersReducer from './components/Tasks/Task/EditorChoose
 import bookReducer from './components/BookDetails/BookDetailsReducer';
 import editorDownloadDocumentReducer from './components/Tasks/Task/EditorDownloadDocument/EditorDownloadDocumentReducer';
 import writerUploadDocumentReducer from './components/Tasks/Task/WriterUploadDocument/WriterUploadDocumentReducer';
+import committeeVotingReducer from './components/Tasks/Task/MembershipProcess/CommitteeVoting/CommitteeVotingReducer';
 import publRequestsReducer from './components/WriterPages/PublicationRequests/PublicationRequestsReducer';
+import writerUploadWorkReducer from './components/Tasks/Task/MembershipProcess/WriterUploadWork/WriterUploadWorkReducer';
+import membershipReducer from './components/Membership/MembershipReducer';
 import userListReducer from './components/Authentication/ManageLecturersAndEditors/ManageLecturersAndEditorsReducer';
 import opinionsOfBetaReadersReducer from './components/Tasks/Task/OpinionsOfBetaReaders/OpinionsOfBetaReadersReducer';
 import opinionOfEditorReducer from './components/Tasks/Task/OpinionOfEditor/OpinionOfEditorReducer';
@@ -53,6 +56,9 @@ const rootReducer = combineReducers({
     book: bookReducer,
     editorDownloadDocument: editorDownloadDocumentReducer,
     writerUploadDocument: writerUploadDocumentReducer,
+    committeeVoting: committeeVotingReducer,
+    writerUploadWork: writerUploadWorkReducer,
+    memberships: membershipReducer,
     editorChooseBetaReaders: editorChooseBetaReadersReducer,
     publRequests: publRequestsReducer,
     userList: userListReducer,
@@ -66,7 +72,20 @@ const persistConfig = {
     storage,
 };
 
-const pReducer = persistReducer(persistConfig, rootReducer);
+//ako vam se camunda logika remeti, zakomentarisite ovo
+//--
+const appReducer = (state, action) => {
+    if (action.type === 'SIGN_OUT') {
+        state = undefined
+      }
+    
+    return rootReducer(state, action)
+}
+const pReducer = persistReducer(persistConfig, appReducer);
+//--
+
+// const pReducer = persistReducer(persistConfig, rootReducer);
+
 const store = createStore(pReducer, composeEnhancers(
     applyMiddleware(thunk)
 ));

@@ -60,7 +60,7 @@ export const signIn = (username, password) => {
                 if (response.data) {
                     dispatch(setRedirectPath('/'))
                     dispatch(signInSuccess(response.data));
-                    toastr.success('Login', 'Success');
+                    // toastr.success('Login', 'Success');
                 }
             })
             .catch(err => {

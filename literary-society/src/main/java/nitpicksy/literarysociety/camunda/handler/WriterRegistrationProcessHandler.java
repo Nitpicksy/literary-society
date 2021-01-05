@@ -2,7 +2,10 @@ package nitpicksy.literarysociety.camunda.handler;
 
 import nitpicksy.literarysociety.dto.camunda.EnumKeyValueDTO;
 import nitpicksy.literarysociety.model.Genre;
+import nitpicksy.literarysociety.model.User;
+import nitpicksy.literarysociety.model.Writer;
 import nitpicksy.literarysociety.service.GenreService;
+import nitpicksy.literarysociety.service.UserService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.ExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,8 @@ public class WriterRegistrationProcessHandler implements ExecutionListener {
 
     private GenreService genreService;
 
+    private UserService userService;
+
     @Override
     public void notify(DelegateExecution execution) throws Exception {
         List<Genre> genresList = genreService.findAll();
@@ -25,10 +30,17 @@ public class WriterRegistrationProcessHandler implements ExecutionListener {
             enumList.add(new EnumKeyValueDTO(key, genre.getName()));
         }
         execution.setVariable("selectGenresList", enumList);
+
+        User user = userService.getAuthenticatedUser();
+        
+        if (user instanceof Writer) {
+            execution.setVariable("writer", user.getUsername());
+        }
     }
 
     @Autowired
-    public WriterRegistrationProcessHandler(GenreService genreService) {
+    public WriterRegistrationProcessHandler(GenreService genreService, UserService userService) {
         this.genreService = genreService;
+        this.userService = userService;
     }
 }

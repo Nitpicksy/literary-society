@@ -35,7 +35,7 @@ const SignUpOptions = (props) => {
                     <SignUpOptionCard title="Lecturer" type="lecturers" path="/lecturer/sign-up" smColumns={6} xsColumns={12}
                         description="Lecturers can download manuscripts to review and mark lexical errors made by writers and then upload them back." />
                     <SignUpOptionCard title="Merchant" smColumns={6} xsColumns={12}
-                        description="Merchants can advertise books they sell and receive online payments for sold books." />
+                        description="Merchants can advertise books they sell and receive online payments for sold books." /> 
                 </Grid>
             </div>
         </Container>

@@ -52,6 +52,12 @@ const Tasks = (props) => {
         } else if (properties.row.name === "Slanje PDF verzije rukopisa"
             || properties.row.name === "Slanje rukopisa sa zabelezenim greskama") {
             history.push('/writer-upload-document');
+        } else if(properties.row.name === 'Membership - submit your work' || properties.row.name === "Membership-more documents needed") {
+            history.push('/writer-membership-upload')
+        } else if(properties.row.name === 'Vote on a writer') {
+            history.push('/voting')
+        } else if(properties.row.name === 'Pay your membership') {
+            history.push('/membership')
         } else if (properties.row.name === "Odaberite beta-citaoce") {
             history.push('/editor-choose-beta-readers');
         } else if (properties.row.name === "Izmena rukopisa prema komentarima beta-citalaca") {
