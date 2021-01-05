@@ -27,6 +27,7 @@ import org.springframework.core.env.Environment;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RestController
@@ -76,7 +77,7 @@ public class MerchantController {
     }
 
     @PostMapping("/payment-data")
-    public ResponseEntity<String> supportPaymentMethods(@Valid @RequestBody List<PaymentDataRequestDTO> listPaymentDataRequestDTO, @RequestParam Long companyId, @RequestParam Long merchantId) {
+    public ResponseEntity<String> supportPaymentMethods(@Valid @RequestBody List<PaymentDataRequestDTO> listPaymentDataRequestDTO, @RequestParam Long companyId, @RequestParam Long merchantId) throws NoSuchAlgorithmException {
         Merchant merchant = merchantService.findByIdAndCompany(merchantId, companyId);
         if(merchant == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

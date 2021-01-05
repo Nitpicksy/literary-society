@@ -67,7 +67,7 @@ const EnterCreditData = (props) => {
             value: '',
             validation: {
                 required: true,
-                pattern: "^([01]?[0-9]?(\/)[0-9]{2})$"
+                pattern: "^([01]?[0-9]?(/)[0-9]{2})$"
             },
             valid: false,
             touched: false,

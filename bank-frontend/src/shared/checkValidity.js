@@ -32,7 +32,7 @@ export const checkValidity = (value, rules, name, patternErrorMessage) => {
         }
     
         if (isValid && rules.isNumeric) {
-            const pattern = /^\d+$/;
+            const pattern = /^\d+(.\d{1,2})?$/;
             isValid = pattern.test(value);
             if (!isValid) {
                 errorMessage = 'Entered data is not a number.';

@@ -1,5 +1,6 @@
 package nitpicksy.bank.client;
 
+import nitpicksy.bank.config.FeignClientConfiguration;
 import nitpicksy.bank.dto.request.PCCRequestDTO;
 import nitpicksy.bank.dto.response.ConfirmPaymentResponseDTO;
 import nitpicksy.bank.dto.response.PCCResponseDTO;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name = "zuul")
+@FeignClient(name = "zuul", configuration = FeignClientConfiguration.class, url = "https://localhost:8080/")
 public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.PUT, path = "/payment-gateway/api/payments/confirm/{merchantOrderId}")

@@ -125,7 +125,8 @@ const App = props => {
 
           <GuardedRoute path="/manage-users" render={(props) => <ManageLecturersAndEditors {...props} />} meta={{ roles: [roleAdmin] }} />
 
-          <Route path="/tasks" render={(props) => <Tasks {...props} />} />
+          <Route path="/tasks" render={(props) => <Tasks {...props} />} meta={{ roles: [roleEditor,roleWriter,roleReader, roleLecturer] }} />
+
           <Route path="/sign-out" render={(props) => <Logout {...props} />} />
           <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
 

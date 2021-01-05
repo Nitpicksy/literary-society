@@ -8,9 +8,11 @@ import nitpicksy.paymentgateway.model.Merchant;
 import nitpicksy.paymentgateway.model.PaymentMethod;
 import nitpicksy.paymentgateway.service.DataService;
 import nitpicksy.paymentgateway.service.PaymentMethodService;
+import nitpicksy.paymentgateway.serviceimpl.HashValueServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +23,9 @@ public class PaymentDataRequestMapper {
 
     private  PaymentMethodService paymentMethodService;
 
-    public  List<DataForPayment> convert(List<PaymentDataRequestDTO> listPaymentDataRequest, Merchant merchant) {
+    private HashValueServiceImpl hashValueService;
+
+    public  List<DataForPayment> convert(List<PaymentDataRequestDTO> listPaymentDataRequest, Merchant merchant) throws NoSuchAlgorithmException {
         List<DataForPayment> dataForPayments = new ArrayList<>();
         for (PaymentDataRequestDTO paymentDataRequestDTO:listPaymentDataRequest) {
             PaymentMethod paymentMethod = paymentMethodService.findById(paymentDataRequestDTO.getPaymentMethod().getId());
@@ -30,13 +34,19 @@ public class PaymentDataRequestMapper {
         return dataForPayments;
     }
 
-    public  List<DataForPayment> convertPaymentData(PaymentMethod paymentMethod, List<DataForPaymentRequestDTO> listDataForPayment, Merchant merchant) {
+    public  List<DataForPayment> convertPaymentData(PaymentMethod paymentMethod, List<DataForPaymentRequestDTO> listDataForPayment, Merchant merchant) throws NoSuchAlgorithmException {
         List<DataForPayment> dataForPayments = new ArrayList<>();
         for (DataForPaymentRequestDTO dataForPaymentRequestDTO:listDataForPayment) {
             DataForPayment dataForPayment = new DataForPayment();
             Data data = dataService.findById(dataForPaymentRequestDTO.getPaymentDataId());
             dataForPayment.setAttributeName(data.getAttributeJSONName());
-            dataForPayment.setAttributeValue(dataForPaymentRequestDTO.getAttributeValue());
+
+            if(paymentMethod.getCommonName().equals("paypal")){
+                dataForPayment.setAttributeValue(dataForPaymentRequestDTO.getAttributeValue());
+            }else{
+                dataForPayment.setAttributeValue(hashValueService.getHashValue(dataForPaymentRequestDTO.getAttributeValue()));
+            }
+
             dataForPayment.setPaymentMethod(paymentMethod);
             dataForPayment.setMerchant(merchant);
             dataForPayment.setData(data);
@@ -46,8 +56,9 @@ public class PaymentDataRequestMapper {
     }
 
     @Autowired
-    public PaymentDataRequestMapper(DataService dataService, PaymentMethodService paymentMethodService) {
+    public PaymentDataRequestMapper(DataService dataService, PaymentMethodService paymentMethodService,HashValueServiceImpl hashValueService) {
         this.dataService = dataService;
         this.paymentMethodService = paymentMethodService;
+        this.hashValueService = hashValueService;
     }
 }

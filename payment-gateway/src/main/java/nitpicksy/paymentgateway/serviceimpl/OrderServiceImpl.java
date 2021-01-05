@@ -18,6 +18,7 @@ import nitpicksy.paymentgateway.repository.TransactionRepository;
 import nitpicksy.paymentgateway.service.CompanyService;
 import nitpicksy.paymentgateway.service.LogService;
 import nitpicksy.paymentgateway.service.OrderService;
+import nitpicksy.paymentgateway.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -47,12 +48,12 @@ public class OrderServiceImpl implements OrderService {
     private DataForPaymentRepository dataForPaymentRepository;
     private ZuulClient zuulClient;
     private LogService logService;
+    private UserService userService;
 
     @Override
     public String createOrder(OrderRequestDTO orderDTO) {
 
-        //TODO: based on certificate? for now we only have 1 literary society
-        Company company = companyService.findCompanyByCommonName("literary-society");
+        Company company = userService.getAuthenticatedCompany();
 
         if (company == null) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", "Company not found"));
@@ -202,7 +203,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Autowired
-    public OrderServiceImpl(LogService logService, TransactionRepository transactionRepository, CompanyService companyService, PaymentMethodRepository paymentMethodRepository, ForwardRequestMapper forwardRequestMapper, DataForPaymentRepository dataForPaymentRepository, ZuulClient zuulClient) {
+    public OrderServiceImpl(LogService logService, TransactionRepository transactionRepository, CompanyService companyService,
+                            PaymentMethodRepository paymentMethodRepository, ForwardRequestMapper forwardRequestMapper,
+                            DataForPaymentRepository dataForPaymentRepository, ZuulClient zuulClient,UserService userService) {
         this.logService = logService;
         this.transactionRepository = transactionRepository;
         this.companyService = companyService;
@@ -210,5 +213,6 @@ public class OrderServiceImpl implements OrderService {
         this.forwardRequestMapper = forwardRequestMapper;
         this.dataForPaymentRepository = dataForPaymentRepository;
         this.zuulClient = zuulClient;
+        this.userService = userService;
     }
 }

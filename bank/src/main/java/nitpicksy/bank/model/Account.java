@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -45,5 +46,5 @@ public class Account {
 
     @OneToMany
     @JoinColumn(name = "account_id")
-    private Set<CreditCard> creditCards;
+    private Set<CreditCard> creditCards = new HashSet<>();
 }
