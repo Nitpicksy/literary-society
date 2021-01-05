@@ -35,4 +35,12 @@ public class Membership {
     @PrimaryKeyJoinColumn
     @ManyToOne(fetch = FetchType.EAGER)
     private Merchant merchant;
+
+    public Membership(User user, Double price, LocalDate expirationDate, boolean isSubscribed, Merchant merchant) {
+        this.user = user;
+        this.price = price;
+        this.expirationDate = expirationDate;
+        this.isSubscribed = isSubscribed;
+        this.merchant = merchant;
+    }
 }

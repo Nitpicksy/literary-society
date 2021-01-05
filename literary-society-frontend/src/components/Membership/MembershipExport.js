@@ -1,4 +1,5 @@
 export {
     fetchMembership,
-    fetchPriceList
+    fetchPriceList,
+    completePayTask
 } from './MembershipActions';

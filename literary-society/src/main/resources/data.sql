@@ -84,7 +84,7 @@ values (10, 4);
 -- Merchants
 -- default LU merchant, TODO: add clientId and clientSecret
 insert into users (type, name, city, country, email, username, password, status, enabled, supports_payment_methods)
-values ('MERCHANT', 'Literary Society 1', 'Beograd', 'Srbija', 'lu1@maildrop.cc', 'literary-society-1',
+values ('MERCHANT', 'Society Merchant', 'Beograd', 'Srbija', 'lu1@maildrop.cc', 'literary-society-1',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true);
 
 -- Client Id: ARPDqaQtYU6ilCpwG0IXT35OMXGTjsA3K-QFYLItx5oRcJUOqZ527Z7BfNs6sS3yu45kdINghGRLR8vV
@@ -208,8 +208,8 @@ values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 890
 
 
 insert into price_list (membership_for_reader, membership_for_writer, start_date)
-values (500, 2000, '2020-01-01');
+values (500, 2000, '2021-01-01');
 insert into price_list (membership_for_reader, membership_for_writer, start_date)
-values (600, 2500, '2020-02-02');
+values (600, 2500, '2021-02-02');
 insert into price_list (membership_for_reader, membership_for_writer, start_date)
-values (700, 2700, '2020-03-03');
+values (700, 2700, '2021-03-03');

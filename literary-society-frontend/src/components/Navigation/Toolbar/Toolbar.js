@@ -11,6 +11,7 @@ import { withStyles } from '@material-ui/core/styles';
 import WriterToolbar from './WriterToolbar';
 import MerchantToolbar from './MerchantToolbar';
 import AdminToolbar from './AdminToolbar';
+import ReaderToolbar from './ReaderToolbar';
 
 const StyledMenu = withStyles({
     paper: {
@@ -90,6 +91,8 @@ const CustomToolbar = (props) => {
                 { checkRole(roleMerchant) ? <MerchantToolbar /> : null }
 
                 { checkRole(roleAdmin) ? <AdminToolbar /> : null }
+
+                { checkRole(roleReader) ? <ReaderToolbar /> : null }
                 
                 <Button className={classes.button} color="inherit" onClick={openMenuAccount}> Account </Button>
                 <StyledMenu id="customized-menu" anchorEl={accountEl} keepMounted open={Boolean(accountEl)} onClose={handleCloseAccount}>

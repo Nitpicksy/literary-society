@@ -26,7 +26,7 @@ const Membership = (props) => {
     const { fetchMembership, membership } = props;
     const { fetchPriceList, priceList } = props;
     const { selectedTask } = props;
-    const { onPay } = props;
+    const { onPay, completePayTask } = props;
 
     responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
 
@@ -49,11 +49,14 @@ const Membership = (props) => {
     }
 
     const handlePay = () => {
-        onPay(selectedTask);
+        onPay();
+        if(selectedTask) {
+            completePayTask(selectedTask);
+        }
     }
 
-    console.log('m', membership)
-    console.log('task', selectedTask)
+    console.log('Current task', selectedTask)
+    console.log('mem', membership)
 
     if(membership == null) {
         buttons = (
@@ -75,13 +78,12 @@ const Membership = (props) => {
             alignItems="center"
             justify="center" 
             spacing={3} align="center">          
-               <Grid item spacing={3} xs={12}>
+               <Grid item xs={12}>
                 <Typography component="h6" variant="h6">No active membership, make one?</Typography>
                </Grid>
                {buttons}
           </Grid>) 
     } else {
-
         let expirationDate = new Date(membership.expirationDate);
         let now = new Date();
 
@@ -187,7 +189,8 @@ const mapDispatchToProps = dispatch => {
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
         fetchMembership: (history) => dispatch(actions.fetchMembership(history)),
         fetchPriceList: () => dispatch(actions.fetchPriceList()),
-        onPay: (selectedTask) => dispatch(actions.onPay(selectedTask))
+        onPay: () => dispatch(actions.onPay()),
+        completePayTask: (selectedTask) => dispatch(actions.completePayTask(selectedTask))
     }
 };
 

@@ -1,16 +1,16 @@
 insert into account (first_name, last_name, city, country, email, balance)
-values ('Petar', 'Simic', 'Novi Sad', 'Serbia', 'petarSimic@maildrop.cc', 2000);
+values ('Petar', 'Simic', 'Novi Sad', 'Serbia', 'petarSimic@maildrop.cc', 4000);
 insert into account (first_name, last_name, city, country, email, balance)
-values ('Petar', 'Peric', 'Novi Sad', 'Serbia', 'petarPeric@maildrop.cc', 2500);
+values ('Petar', 'Peric', 'Novi Sad', 'Serbia', 'petarPeric@maildrop.cc', 5500);
 insert into account (first_name, last_name, city, country, email, balance)
-values ('Sima', 'Simic', 'Novi Sad', 'Serbia', 'simaSimic@maildrop.cc', 500);
+values ('Sima', 'Simic', 'Novi Sad', 'Serbia', 'simaSimic@maildrop.cc', 1500);
 
 --PAN broj je: 5123456252525252, securityCode je 256, card holder name je PERA SIMIC
 insert into credit_card (pan, security_code, card_holder_name, expiration_date, account_id)
 values ('d6b8a4360a29876fa3f32769a5b5682e390f1d8eb0d49f3469d1aa17df9cef0f5a8843464db10e9377f93afc7fb0e99816f9f968941aebdbc279290101b177be',
         '$2y$12$NbNMcl5tspF4..1lUcBk6.rykZihvAViVpqonwQx5AKCGSzh75VLW',
         '5f2b90178624a73e6c02180ff842c3dcff3cbee52b1b6665006443947d2f6e6dedd3d788f2693b0231b7af11596eddf017d73f0cdf247376405c59cb31584124',
-        '2020-12-25', 1);
+        '2021-12-25', 1);
 
 --PAN broj je: 3123456777777777, securityCode je 256, card holder name je PETAR PERIC
 insert into credit_card (pan, security_code, card_holder_name, expiration_date, account_id)

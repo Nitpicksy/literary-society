@@ -8,7 +8,9 @@ import java.util.Set;
 
 public interface PaymentService {
 
-    String proceedToPayment(Set<Book> bookList, User user);
+    String proceedToBookPayment(Set<Book> bookList, User user);
+
+    String proceedToMembershipPayment(User user);
 
     void handlePayment(LiterarySocietyOrderRequestDTO dto);
 }

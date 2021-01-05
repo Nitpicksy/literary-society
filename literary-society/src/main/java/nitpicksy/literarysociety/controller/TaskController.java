@@ -140,7 +140,6 @@ public class TaskController {
     @PutMapping(value = "{taskId}/membership")
     public ResponseEntity<Void> payMembership(@RequestParam(required = false) String piId, @NotNull @PathVariable String taskId) {
         camundaService.completeTask(taskId);
-//        camundaService.findAndCompleteActiveTask(piId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

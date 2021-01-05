@@ -1,11 +1,7 @@
-import React, { useState } from 'react';
-import Container from '@material-ui/core/Container';
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import { useStyles } from './MembershipDetailsStyles';
-import { Button } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
 
 const MembershipDetails = (props) => {
     const classes = useStyles();

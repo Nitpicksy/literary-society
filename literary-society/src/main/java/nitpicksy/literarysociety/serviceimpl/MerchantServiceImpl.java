@@ -1,7 +1,6 @@
 package nitpicksy.literarysociety.serviceimpl;
 
 import nitpicksy.literarysociety.client.ZuulClient;
-import nitpicksy.literarysociety.exceptionHandler.FileNotFoundException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Merchant;
 import nitpicksy.literarysociety.repository.MerchantRepository;
@@ -13,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MerchantServiceImpl implements MerchantService  {
+public class MerchantServiceImpl implements MerchantService {
 
     private MerchantRepository merchantRepository;
 
@@ -29,7 +28,7 @@ public class MerchantServiceImpl implements MerchantService  {
     @Override
     public String getPaymentData(Merchant merchant) {
         ResponseEntity<String> response = zuulClient.getPaymentData("Bearer " + jwtTokenService.getToken(), merchant.getName());
-        if(response.getStatusCode() == HttpStatus.OK){
+        if (response.getStatusCode() == HttpStatus.OK) {
             return response.getBody();
         }
         throw new InvalidDataException("Something went wrong.Please try again.", HttpStatus.BAD_REQUEST);
@@ -40,10 +39,15 @@ public class MerchantServiceImpl implements MerchantService  {
         return merchantRepository.save(merchant);
     }
 
+    @Override
+    public Merchant findOurMerchant() {
+        return merchantRepository.findFirstByOrderByIdAsc();
+    }
+
     @Autowired
-    public MerchantServiceImpl(MerchantRepository merchantRepository, ZuulClient zuulClient,JWTTokenService jwtTokenService) {
+    public MerchantServiceImpl(MerchantRepository merchantRepository, ZuulClient zuulClient, JWTTokenService jwtTokenService) {
         this.merchantRepository = merchantRepository;
         this.zuulClient = zuulClient;
-        this.jwtTokenService=jwtTokenService;
+        this.jwtTokenService = jwtTokenService;
     }
 }

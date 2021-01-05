@@ -37,11 +37,7 @@ export const fetchMembership = (history) => {
             .catch(err => {
                 if (err.response) {
                     dispatch(fetchMembershipFail());
-                    // toastr.error('Membership', err.response.data.message);
-                } else {
-                    // toastr.error('Membership', 'Something went wrong. Please try again.');
-                }
-                // history.push('/');
+                } 
             });
     };
 };
@@ -55,28 +51,40 @@ export const fetchPriceList = () => {
             .catch(err => {
                 if (err.response) {
                     dispatch(fetchPriceListFail());
-                    toastr.error('PriceList', err.response.data.message);
-                } else {
-                    // toastr.error('Membership', 'Something went wrong. Please try again.');
+                    toastr.error('Price list', err.response.data.message);
                 }
-                // history.push('/');
             });
     };
 };
 
 
-export const onPay = (selectedTask) => {
+export const onPay = () => {
+    return dispatch => {
+         axios.post('/payments/pay-membership', {})
+         .then(response => {
+             window.location.href = response.data;
+         })
+         .catch(err => {
+             if (err.response) {
+                 if (err.response.status !== 401) {
+                     toastr.error('Proceed to Payment', err.response.data.message);
+                 }
+             }
+         });
+        }
+};
+
+export const completePayTask = (selectedTask) => {
     return dispatch => {
         console.log('selt', selectedTask)
-        if(selectedTask) {
+        if(selectedTask) { //for writer
             axios.put(`/tasks/${selectedTask.taskId}/membership?piId=${selectedTask.piId}`)
             .then(response => {
-                toastr.success("aw","yesah")
-                console.log('RES', response)
+                console.log('response', response)
             })
             .catch(err => {
-            });
-    };
-        }
 
+            });
+         };
+        }
 };

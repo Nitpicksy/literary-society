@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.service;
 
 import nitpicksy.literarysociety.model.Membership;
+import nitpicksy.literarysociety.model.Merchant;
 import nitpicksy.literarysociety.model.User;
 
 public interface MembershipService {
@@ -8,4 +9,6 @@ public interface MembershipService {
     Membership findLatestUserMembership(User user);
 
     boolean checkIfUserMembershipIsValid(Long id);
+
+    Membership createMembership(User user, Merchant merchant);
 }

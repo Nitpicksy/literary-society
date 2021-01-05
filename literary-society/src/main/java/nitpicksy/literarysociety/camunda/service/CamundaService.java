@@ -134,20 +134,7 @@ public class CamundaService {
                 .messageEventSubscriptionName(messageName)
                 .processVariableValueEquals("user", user)
                 .singleResult();
-//        ExecutionQuery query = runtimeService.createExecutionQuery().processInstanceId(CamundaConstants.PROCESS_MEMBERSHIP_PAYMENT);
-//        Execution ex = query.singleResult();
         runtimeService.messageEventReceived(messageName, execution.getId());
-//        ProcessInstance pi = runtimeService.startProcessInstanceByKey(CamundaConstants.PROCESS_MEMBERSHIP_PAYMENT);
-//
-//        EventSubscription subscription = runtimeService.createEventSubscriptionQuery()
-//                .processInstanceId(pi.getId()).eventType("message").singleResult();
-//
-//        runtimeService.messageEventReceived(subscription.getEventName(), subscription.getExecutionId());
-//        runtimeService
-//                .createSignalEvent(CamundaConstants.MESSAGE_PAYMENT_RECEIVED)
-////                .setVariables(variables) // pass variables (optional)
-//                .send();
-//        runtimeService.signalEventReceived(CamundaConstants.MESSAGE_PAYMENT_RECEIVED);
     }
 
     @Autowired

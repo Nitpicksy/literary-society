@@ -57,7 +57,6 @@ const rootReducer = combineReducers({
     editorDownloadDocument: editorDownloadDocumentReducer,
     writerUploadDocument: writerUploadDocumentReducer,
     committeeVoting: committeeVotingReducer,
-    publRequests: publRequestsReducer,
     writerUploadWork: writerUploadWorkReducer,
     memberships: membershipReducer,
     editorChooseBetaReaders: editorChooseBetaReadersReducer,
@@ -73,7 +72,20 @@ const persistConfig = {
     storage,
 };
 
-const pReducer = persistReducer(persistConfig, rootReducer);
+//ako vam se camunda logika remeti, zakomentarisite ovo
+//--
+const appReducer = (state, action) => {
+    if (action.type === 'SIGN_OUT') {
+        state = undefined
+      }
+    
+    return rootReducer(state, action)
+}
+const pReducer = persistReducer(persistConfig, appReducer);
+//--
+
+// const pReducer = persistReducer(persistConfig, rootReducer);
+
 const store = createStore(pReducer, composeEnhancers(
     applyMiddleware(thunk)
 ));
