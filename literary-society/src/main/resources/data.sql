@@ -82,9 +82,12 @@ insert into beta_reader_genre (beta_reader_id, genre_id)
 values (10, 4);
 
 -- Merchants
--- default LU merchant, TODO: add clientId and clientSecret
+
+-- default LU 1 merchant
+-- Client Id: AYfQea8-7YvonXN8LxkI-jigeTQuw3lg_ixCM3MabqDjGx8egncKmCiIHH05XQ0C1Azev1IlgA86XGwP
+-- Client Secret: EAK4iy7MfWLcw6QE71jlOR4nhm34ylFKlhHuL2CDsC2weGokdaUt54uZSwQO2pVge9ZaQGyOMQ1SktAl
 insert into users (type, name, city, country, email, username, password, status, enabled, supports_payment_methods)
-values ('MERCHANT', 'Society Merchant', 'Beograd', 'Srbija', 'lu1@maildrop.cc', 'literary-society-1',
+values ('MERCHANT', 'LU One Merchant', 'Beograd', 'Srbija', 'lu-1-merchant@maildrop.cc', 'lu-1-merchant',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true);
 
 -- Client Id: ARPDqaQtYU6ilCpwG0IXT35OMXGTjsA3K-QFYLItx5oRcJUOqZ527Z7BfNs6sS3yu45kdINghGRLR8vV
@@ -183,28 +186,28 @@ values ('Na Drini ćuprija', 'Ivo Andrić', 8, 'IN_STORES',
 -- Publishing Infos
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 935.00, 10, 1, 12);
+values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 935.00, 10, 1, 13);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9781847496447', 704, 'London', '2017-05-11', 'Alma Books', 0.00, 0, 2, 12);
+values ('9781847496447', 704, 'London', '2017-05-11', 'Alma Books', 0.00, 0, 2, 13);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9788673105260', 354, 'Subotica', '2018-09-14', 'Kompjuter biblioteka', 1760.00, 20, 3, 11);
+values ('9788673105260', 354, 'Subotica', '2018-09-14', 'Kompjuter biblioteka', 1760.00, 20, 3, 12);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9788842931539', 448, 'Rim', '2019-04-05', 'Editrice Nord', 1170.00, 10, 4, 11);
+values ('9788842931539', 448, 'Rim', '2019-04-05', 'Editrice Nord', 1170.00, 10, 4, 12);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9788652138586', 632, 'Novi Sad', '2018-10-11', 'Laguna', 1530.00, 15, 5, 12);
+values ('9788652138586', 632, 'Novi Sad', '2018-10-11', 'Laguna', 1530.00, 15, 5, 13);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9781847492869', 160, 'Moskva', '2012-07-03', 'Alma Books', 0.00, 0, 6, 12);
+values ('9781847492869', 160, 'Moskva', '2012-07-03', 'Alma Books', 0.00, 0, 6, 13);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9788673105505', 470, 'Subotica', '2020-06-12', 'Kompjuter biblioteka', 2310.00, 20, 7, 11);
+values ('9788673105505', 470, 'Subotica', '2020-06-12', 'Kompjuter biblioteka', 2310.00, 20, 7, 12);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 890.00, 5, 8, 11);
+values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 890.00, 5, 8, 12);
 
 
 insert into price_list (membership_for_reader, membership_for_writer, start_date)

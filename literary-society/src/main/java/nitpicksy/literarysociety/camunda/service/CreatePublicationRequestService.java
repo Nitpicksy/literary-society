@@ -2,6 +2,7 @@ package nitpicksy.literarysociety.camunda.service;
 
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.enumeration.BookStatus;
+import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.Genre;
 import nitpicksy.literarysociety.model.User;
@@ -49,7 +50,7 @@ public class CreatePublicationRequestService implements JavaDelegate {
 
         Book bookRequest = new Book(writer, map.get("title"), map.get("synopsis"), genre, BookStatus.REQUEST_CREATED);
 
-        List<User> editors = userService.findAllWithRole("ROLE_EDITOR");
+        List<User> editors = userService.findAllWithRoleAndStatus("ROLE_EDITOR", UserStatus.ACTIVE);
         User mainEditor = editors.get(new Random().nextInt(editors.size()));
         bookRequest.setEditor(mainEditor);
         Book savedBook = bookRepository.save(bookRequest);

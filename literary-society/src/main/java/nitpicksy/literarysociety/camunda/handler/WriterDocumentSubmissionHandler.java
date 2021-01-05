@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.camunda.handler;
 
+import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.model.User;
 import nitpicksy.literarysociety.service.UserService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -19,7 +20,7 @@ public class WriterDocumentSubmissionHandler implements ExecutionListener {
     public void notify(DelegateExecution execution) throws Exception {
 
         List<String> committeeMembers = new ArrayList<>();
-        List<User> users = userService.findAllWithRole("ROLE_COMMITTEE_MEMBER");
+        List<User> users = userService.findAllWithRoleAndStatus("ROLE_COMMITTEE_MEMBER", UserStatus.ACTIVE);
 
         users.forEach(user -> committeeMembers.add(user.getUsername()));
         execution.setVariable("committeeMembersList", committeeMembers);

@@ -21,6 +21,11 @@ public class MerchantServiceImpl implements MerchantService {
         return merchantRepository.findByIdAndCompanyId(merchantId,companyId);
     }
 
+    @Override
+    public Merchant save(Merchant merchant) {
+        return merchantRepository.save(merchant);
+    }
+
     @Autowired
     public MerchantServiceImpl(MerchantRepository merchantRepository) {
         this.merchantRepository = merchantRepository;

@@ -2,43 +2,29 @@ import React, { useEffect, useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import * as actions from './LecturerAndEditorSignUpExport';
+import * as actions from './MerchantSignUpExport';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import { useStyles } from './LecturerAndEditorSignUpStyles';
+import { useStyles } from './MerchantSignUpStyles';
 import Form from '../../../UI/Form/Form';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 import { toastr } from 'react-redux-toastr';
 import PersonIcon from '@material-ui/icons/Person';
 
-const LecturerAndEditorSignUp = (props) => {
+const MerchantSignUp = (props) => {
     const history = useHistory();
     
     const classes = useStyles();
     const [formIsValid,setFormIsValid] = useState(false);
 
     const [controls, setControls] = useState({
-        firstName: {
+        name: {
             elementType: 'input',
             elementConfig: {
-                label: 'First Name'
-            },
-            value: '',
-            validation: {
-                required: true,
-            },
-            valid: false,
-            touched: false,
-            error: false,
-            errorMessage: '',
-        },
-        lastName: {
-            elementType: 'input',
-            elementConfig: {
-                label: 'Last Name'
+                label: 'Name'
             },
             value: '',
             validation: {
@@ -150,19 +136,13 @@ const LecturerAndEditorSignUp = (props) => {
             }
         }
     })
-
-    useEffect(() => {
-        if (props.signUpType === "readers") {
-            history.push("/sign-up-options")
-        }
-    }, [props.signUpType, history]);
     
     const submitHander = (event) => {
         event.preventDefault();
         if(controls.password.value !== controls.repeatedPassword.value){
             toastr.error("Sign Up","Password and repeated password don't match");
         }else{
-            props.onSignUp(props.signUpType, controls.firstName.value,controls.lastName.value,controls.city.value,controls.country.value,controls.email.value,
+            props.onSignUp(controls.name.value,controls.city.value,controls.country.value,controls.email.value,
                 controls.username.value, controls.password.value,controls.repeatedPassword.value,history);
         }
     }
@@ -174,8 +154,7 @@ const LecturerAndEditorSignUp = (props) => {
                 <Avatar className={classes.avatar}>
                     <PersonIcon />
                 </Avatar>
-                {props.signUpType === "editors" ?  <Typography component="h1" variant="h4">Editor - Sign up</Typography>: 
-                 <Typography component="h1" variant="h4">Lecturer - Sign up</Typography> }
+                <Typography component="h1" variant="h4">Merchant - Sign up</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     <Form controls={controls} setControls={setControls} setFormIsValid= {setFormIsValid}/>
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
@@ -186,17 +165,12 @@ const LecturerAndEditorSignUp = (props) => {
     );
 };
 
-const mapStateToProps = state => {
-    return {
-        signUpType: state.signUpOptions.signUpType,
-    }
-};
 
 const mapDispatchToProps = dispatch => {
     return {
-        onSignUp: (signUpType,firstName,lastName,city,country,email,username, password,repeatedPassword,history) =>
-         dispatch(actions.signUp(signUpType,firstName,lastName,city,country,email,username, password,repeatedPassword,history))
+        onSignUp: (name,city,country,email,username, password,repeatedPassword,history) =>
+         dispatch(actions.signUp(name,city,country,email,username, password,repeatedPassword,history))
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(LecturerAndEditorSignUp);
+export default connect(null, mapDispatchToProps)(MerchantSignUp);

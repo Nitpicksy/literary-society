@@ -7,4 +7,6 @@ public interface MerchantService {
     Merchant findByNameAndCompany(String name, Long companyId);
 
     Merchant findByIdAndCompany(Long merchantId, Long companyId);
+
+    Merchant save(Merchant merchant);
 }
