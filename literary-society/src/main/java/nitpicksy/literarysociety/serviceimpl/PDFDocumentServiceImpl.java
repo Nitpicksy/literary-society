@@ -44,13 +44,11 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
             LocalDateTime created = LocalDateTime.now();
             String pdfName = created.format(FORMATTER) + "_" + pdfFile.getOriginalFilename();
 
-            PDFDocument newPdfDoc = new PDFDocument(pdfName, created, book);
-            pdfDocumentRepository.save(newPdfDoc);
-
             Path path = Paths.get(BOOKS_PATH + File.separator + pdfName);
             Files.write(path, bytes);
 
-            return pdfDocumentRepository.findByName(pdfName);
+            PDFDocument newPdfDoc = new PDFDocument(pdfName, created, book);
+            return pdfDocumentRepository.save(newPdfDoc);
         }
         return null;
     }
