@@ -71,6 +71,10 @@ const CustomToolbar = (props) => {
     const redirect = (path) => {
         history.push(path);
     }
+    let tasks = null;
+    if(props.isAuthenticated && (checkRole(roleWriter) || checkRole(roleEditor) || checkRole(roleReader) || checkRole(roleLecturer))){
+        tasks = <Button className={classes.button} color="inherit" onClick={() => redirect('/tasks')}>Tasks</Button>;
+    }
 
     let toolbarItems = (
         <React.Fragment>
@@ -83,7 +87,7 @@ const CustomToolbar = (props) => {
 
         toolbarItems = (
             <React.Fragment>
-                <Button className={classes.button} color="inherit" onClick={() => redirect('/tasks')}>Tasks</Button>
+                {tasks}
 
                 {checkRole(roleWriter) ? <WriterToolbar /> : null}
 
