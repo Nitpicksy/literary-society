@@ -117,6 +117,11 @@ public class MerchantServiceImpl implements MerchantService {
         String subject = "Request to register accepted";
         StringBuilder sb = new StringBuilder();
         sb.append("Your request to register is accepted by a Literary Society administrator.");
+        sb.append("You have to support all available payment methods before you start to sell books.");
+        sb.append("To support all available payment methods click the following link:");
+        sb.append(System.lineSeparator());
+        sb.append(getLocalhostURL());
+        sb.append(String.format("payment-data"));
         sb.append(System.lineSeparator());
         String text = sb.toString();
         emailNotificationService.sendEmail(recipientEmail, subject, text);
