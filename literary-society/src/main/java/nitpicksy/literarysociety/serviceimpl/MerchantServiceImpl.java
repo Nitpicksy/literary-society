@@ -121,7 +121,7 @@ public class MerchantServiceImpl implements MerchantService {
         sb.append("To support all available payment methods click the following link:");
         sb.append(System.lineSeparator());
         sb.append(getLocalhostURL());
-        sb.append(String.format("payment-data"));
+        sb.append("payment-data");
         sb.append(System.lineSeparator());
         String text = sb.toString();
         emailNotificationService.sendEmail(recipientEmail, subject, text);
