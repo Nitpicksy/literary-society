@@ -26,4 +26,9 @@ public class Merchant {
 
     @ManyToOne
     private Company company;
+
+    public Merchant(String name, Company company) {
+        this.name = name;
+        this.company = company;
+    }
 }

@@ -34,6 +34,7 @@ import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -106,8 +107,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public List<User> findAllWithRole(String roleName) {
-        return userRepository.findByRoleName(roleName);
+    public List<User> findAllWithRoleAndStatus(String roleName, UserStatus status) {
+        return userRepository.findByRoleNameAndStatus(roleName, status);
     }
 
     @Override
@@ -180,7 +181,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         if (findByEmail(user.getEmail()) != null) {
             throw new InvalidDataException("User with same email already exist",HttpStatus.BAD_REQUEST);
         }
-        String password = user.getPassword();
         user.setStatus(UserStatus.NON_VERIFIED);
         User savedReader = userRepository.save(user);
         String nonHashedToken = verificationService.generateToken(savedReader);
@@ -189,8 +189,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public List<User> findByRoleNameAndStatusOrRoleNameAndStatus(String roleName1, UserStatus status1, String roleName2, UserStatus status2) {
-        return userRepository.findByRoleNameAndStatusOrRoleNameAndStatus(roleName1, status1, roleName2,status2);
+    public List<User> findByRoleNameAndStatusInOrRoleNameAndStatusIn(String roleName1, Collection<UserStatus> status1,
+                                                                     String roleName2, Collection<UserStatus> status2){
+        return userRepository.findByRoleNameAndStatusInOrRoleNameAndStatusIn(roleName1, status1, roleName2,status2);
     }
 
     @Override

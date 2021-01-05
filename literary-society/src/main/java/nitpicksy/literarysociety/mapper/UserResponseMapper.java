@@ -1,6 +1,5 @@
 package nitpicksy.literarysociety.mapper;
 
-import nitpicksy.literarysociety.dto.request.UserRequestDTO;
 import nitpicksy.literarysociety.dto.response.UserResponseDTO;
 import nitpicksy.literarysociety.model.User;
 import org.modelmapper.ModelMapper;
@@ -28,8 +27,8 @@ public class UserResponseMapper implements MapperInterface<User, UserResponseDTO
         dto.setLastName(entity.getLastName());
         dto.setEmail(entity.getEmail());
         String roleName = entity.getRole().getName().substring(5);
-        System.out.println(roleName);
         dto.setRole(roleName);
+        dto.setStatus(entity.getStatus().toString());
         return dto;
     }
 

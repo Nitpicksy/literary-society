@@ -23,4 +23,8 @@ public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.GET, path = "payment-gateway/api/merchants/{name}/payment-data")
     ResponseEntity<String> getPaymentData(@RequestHeader(value = "Auth") String authHeader, @PathVariable String name);
+
+    @RequestMapping(method = RequestMethod.POST, path = "payment-gateway/api/merchants")
+    void addMerchant(@RequestHeader(value = "Auth") String authHeader,
+               @RequestBody String merchantName);
 }

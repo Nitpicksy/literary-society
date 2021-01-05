@@ -52,6 +52,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         Permission manageEditors = createPermissionIfNotFound("MANAGE_EDITORS");
         Permission manageLecturers = createPermissionIfNotFound("MANAGE_LECTURERS");
+        Permission manageMerchants = createPermissionIfNotFound("MANAGE_MERCHANTS");
+
         Permission supportPaymentMethods = createPermissionIfNotFound("SUPPORT_PAYMENT_METHODS");
         Permission manageTasks = createPermissionIfNotFound("MANAGE_TASKS");
         Permission managePublicationRequests = createPermissionIfNotFound("MANAGE_PUBLICATION_REQUESTS");
@@ -59,7 +61,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Permission uploadBookAndCompleteTask = createPermissionIfNotFound("UPLOAD_BOOK_AND_COMPLETE_TASK");
         Permission submitFormAndUploadImage = createPermissionIfNotFound("SUBMIT_FORM_AND_UPLOAD_IMAGE");
 
-        Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers));
+        Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers,manageMerchants));
         createRoleIfNotFound("ROLE_ADMIN", adminPermissions);
 
         Set<Permission> readerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));

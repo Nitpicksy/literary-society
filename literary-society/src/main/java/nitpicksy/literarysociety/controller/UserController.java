@@ -27,6 +27,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,8 +61,8 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> findLecturersAndEditors() {
-        return new ResponseEntity<>(userService.findByRoleNameAndStatusOrRoleNameAndStatus(RoleConstants.ROLE_LECTURER,UserStatus.WAITING_APPROVAL,
-                RoleConstants.ROLE_EDITOR,UserStatus.WAITING_APPROVAL).stream()
+        return new ResponseEntity<>(userService.findByRoleNameAndStatusInOrRoleNameAndStatusIn(RoleConstants.ROLE_LECTURER, Arrays.asList(UserStatus.WAITING_APPROVAL,
+                UserStatus.ACTIVE), RoleConstants.ROLE_EDITOR,Arrays.asList(UserStatus.WAITING_APPROVAL, UserStatus.ACTIVE)).stream()
                 .map(user -> userResponseMapper.toDto(user)).collect(Collectors.toList()), HttpStatus.OK);
     }
 

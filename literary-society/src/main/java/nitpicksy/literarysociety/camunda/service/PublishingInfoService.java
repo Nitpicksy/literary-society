@@ -45,7 +45,7 @@ public class PublishingInfoService implements JavaDelegate {
         Integer numberOfPages = Integer.valueOf(map.get("numberOfPages"));
         Double price = Double.valueOf(map.get("price"));
         Integer discount = Integer.valueOf(map.get("discount"));
-        PublishingInfo publishingInfo = new PublishingInfo(numberOfPages, map.get("publisherCity"), getPublisher(), price, discount, savedBook, merchantRepository.findAll().get(0));
+        PublishingInfo publishingInfo = new PublishingInfo(numberOfPages, map.get("publisherCity"), getPublisher(), price, discount, savedBook, merchantRepository.findFirstByOrderByIdAsc());
         publishingInfoRepository.save(publishingInfo);
 
         System.out.println("*** Kraj procesa izdavanja knjige ***");

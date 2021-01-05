@@ -39,6 +39,8 @@ import EditorChooseBetaReaders from './components/Tasks/Task/EditorChooseBetaRea
 import OpinionsOfBetaReaders from './components/Tasks/Task/OpinionsOfBetaReaders/OpinionsOfBetaReaders';
 import OpinionOfEditor from './components/Tasks/Task/OpinionOfEditor/OpinionOfEditor';
 import PublishingInfo from './components/Tasks/Task/PublishingInfo/PublishingInfo';
+import MerchantSignUp from './components/Authentication/MerchantSignUp/MerchantSignUp';
+import ManageMerchants from './components/Authentication/ManageMerchants/ManageMerchants';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -82,6 +84,7 @@ const App = props => {
 
       <Route path="/editor/sign-up" render={(props) => <LecturerAndEditorSignUp {...props} />} />
       <Route path="/lecturer/sign-up" render={(props) => <LecturerAndEditorSignUp {...props} />} />
+      <Route path="/merchant/sign-up" render={(props) => <MerchantSignUp {...props} />} />
 
       <Route path="/choose-genres" render={(props) => <BetaReaderGenres {...props} />} />
 
@@ -124,6 +127,7 @@ const App = props => {
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
 
           <GuardedRoute path="/manage-users" render={(props) => <ManageLecturersAndEditors {...props} />} meta={{ roles: [roleAdmin] }} />
+          <GuardedRoute path="/manage-merchants" render={(props) => <ManageMerchants {...props} />} meta={{ roles: [roleAdmin] }} />
 
           <Route path="/tasks" render={(props) => <Tasks {...props} />} meta={{ roles: [roleEditor,roleWriter,roleReader, roleLecturer] }} />
 

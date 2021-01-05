@@ -47,6 +47,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
 
+                .antMatchers(HttpMethod.POST, "/api/merchants").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/merchants").hasAnyAuthority("MANAGE_MERCHANTS")
+                .antMatchers(HttpMethod.PUT, "/api/merchants/{id}").hasAnyAuthority("MANAGE_MERCHANTS")
                 .antMatchers(HttpMethod.POST, "/api/merchants/{name}/payment-data").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/merchants/payment-data").hasAuthority("SUPPORT_PAYMENT_METHODS")
 

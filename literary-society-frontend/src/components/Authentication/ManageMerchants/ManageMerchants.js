@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Container, LinearProgress, CssBaseline, Button, Grid } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { DataGrid } from '@material-ui/data-grid';
-import { useStyles } from './ManageLecturersAndEditorsStyles';
-import * as actions from './ManageLecturersAndEditorsExport';
+import { useStyles } from './ManageMerchantsStyles';
+import * as actions from './ManageMerchantsExport';
 import * as signInActions from "../../Authentication/SignIn/SignInExport";
 import { responseInterceptor } from "../../../responseInterceptor";
 import { useHistory } from "react-router";
 
-const ManageLecturersAndEditors = (props) => {
+const ManageMerchants = (props) => {
     const history = useHistory();
 
     const [loading, setLoading] = useState(true);
     const classes = useStyles();
-    const { fetchUsers } = props;
+    const { fetchMerchants } = props;
 
     responseInterceptor.setupInterceptor(
         history,
@@ -22,11 +22,10 @@ const ManageLecturersAndEditors = (props) => {
     );
 
     const columns = [
-        { field: 'name', headerName: 'Name', width: 250 },
-        { field: 'city', headerName: 'City', width: 170 },
-        { field: 'country', headerName: 'Country', width: 170 },
-        { field: 'email', headerName: 'Email', width: 250 },
-        { field: 'role', headerName: 'Role', width: 150 },
+        { field: 'name', headerName: 'Name', width: 200 },
+        { field: 'city', headerName: 'City', width: 150 },
+        { field: 'country', headerName: 'Country', width: 150 },
+        { field: 'email', headerName: 'Email', width: 200 },
         {
             field: 'buttons', headerName: " ", width: 190,
             renderCell: (params) => {
@@ -59,25 +58,25 @@ const ManageLecturersAndEditors = (props) => {
     let data = null;
 
     useEffect(() => {
-        fetchUsers();
+        fetchMerchants();
         setLoading(false);
-    }, [fetchUsers]);
+    }, [fetchMerchants]);
 
     const approveHandler = (choosenUser) => {
-        props.changeUserStatus(choosenUser.id, 'approve');
+        props.changeMerchantStatus(choosenUser.id, 'approve');
     }
 
     const rejectHandler = (choosenUser) => {
-        props.changeUserStatus(choosenUser.id, 'reject');
+        props.changeMerchantStatus(choosenUser.id, 'reject');
     }
 
     if (!loading) {
-        if (props.users) {
-            for (var i in props.users) {
+        if (props.merchants) {
+            for (var i in props.merchants) {
                 rows.push({
-                    "id": props.users[i].id, "name": props.users[i].firstName + ' ' + props.users[i].lastName,
-                    "city": props.users[i].city, "country": props.users[i].country, "email": props.users[i].email,
-                    "role": props.users[i].role,"status": props.users[i].status
+                    "id": props.merchants[i].id, "name": props.merchants[i].name,
+                    "city": props.merchants[i].city, "country": props.merchants[i].country,"email": props.merchants[i].email,
+                    "role": props.merchants[i].role,"status": props.merchants[i].status
                 })
             }
             data = <Grid container className={classes.table}>
@@ -89,10 +88,10 @@ const ManageLecturersAndEditors = (props) => {
     }
 
     return (
-        <Container component="main" maxWidth="lg">
+        <Container component="main" maxWidth="md">
             <CssBaseline />
             <div className={classes.paper}>
-                <Typography component="h1" variant="h4">Lecturers and Editors</Typography>
+                <Typography component="h1" variant="h4">Merchants</Typography>
             </div>
             {data}
         </Container>
@@ -101,16 +100,16 @@ const ManageLecturersAndEditors = (props) => {
 
 const mapStateToProps = state => {
     return {
-        users: state.userList.users,
+        merchants: state.merchantList.merchants,
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchUsers: () => dispatch(actions.fetchUsers()),
-        changeUserStatus: (id, status) => dispatch(actions.changeUserStatus(id, status)),
+        fetchMerchants: () => dispatch(actions.fetchMerchants()),
+        changeMerchantStatus: (id, status) => dispatch(actions.changeMerchantStatus(id, status)),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ManageLecturersAndEditors);
+export default connect(mapStateToProps, mapDispatchToProps)(ManageMerchants);
