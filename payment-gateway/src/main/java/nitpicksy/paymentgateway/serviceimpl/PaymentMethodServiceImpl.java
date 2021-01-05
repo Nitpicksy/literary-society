@@ -1,5 +1,6 @@
 package nitpicksy.paymentgateway.serviceimpl;
 
+import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.enumeration.PaymentMethodStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.model.Data;
@@ -18,10 +19,12 @@ import nitpicksy.paymentgateway.service.PaymentMethodService;
 import nitpicksy.paymentgateway.utils.CertificateUtils;
 import nitpicksy.paymentgateway.utils.TrustStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -110,7 +113,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
             PaymentMethod paymentMethod = optionalPaymentMethod.get();
             if (status.equals("approve")) {
                 try {
-                    KeyStore trustStore = TrustStoreUtils.loadKeyStore();
+                    KeyStore  trustStore= TrustStoreUtils.loadKeyStore();
                     X509Certificate certificate = CertificateUtils.getCertificate(paymentMethod.getCertificateName());
                     TrustStoreUtils.importCertificateInTrustStore(certificate, paymentMethod.getCommonName(), trustStore);
                 } catch (Exception e) {

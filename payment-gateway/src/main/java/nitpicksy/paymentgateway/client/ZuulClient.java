@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.security.cert.X509Certificate;
 
 @FeignClient(name = "zuul",configuration = FeignClientConfiguration.class)
 public interface ZuulClient {
@@ -50,4 +54,5 @@ public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.POST, path="/api/merchants/{name}/payment-data")
     String supportPaymentMethods(URI baseUrl, @PathVariable String name);
+
 }
