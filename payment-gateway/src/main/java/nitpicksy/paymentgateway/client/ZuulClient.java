@@ -1,6 +1,8 @@
 package nitpicksy.paymentgateway.client;
 
 import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
+import nitpicksy.paymentgateway.dto.request.SubscriptionPlanDTO;
+import nitpicksy.paymentgateway.dto.request.SubscriptionPlanToPaypalDTO;
 import nitpicksy.paymentgateway.dto.response.LiterarySocietyOrderResponseDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -47,6 +49,11 @@ public interface ZuulClient {
     void sendJWTToken(URI baseUrl, @RequestBody String jwtToken);
 
 
-    @RequestMapping(method = RequestMethod.POST, path="/api/merchants/{name}/payment-data")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/merchants/{name}/payment-data")
     String supportPaymentMethods(URI baseUrl, @PathVariable String name);
+
+
+    @RequestMapping(method = RequestMethod.POST, path = "/api/subscriptions/create-plan")
+    String createSubscriptionPlan(URI baseUrl, @RequestBody SubscriptionPlanToPaypalDTO planToPaypalDTO);
+
 }

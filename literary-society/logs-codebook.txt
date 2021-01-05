@@ -1,0 +1,4 @@
+APP|Aplication startup/shutdown
+REF|Refresh token
+FGN|Feign client exception
+CSP|Create subscription plan

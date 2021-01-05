@@ -7,3 +7,4 @@ ORD|Order
 PAY|Create payment request 
 CONFPAY|Confirm payment
 TRA|Transaction
+CSP|Create subscription plan

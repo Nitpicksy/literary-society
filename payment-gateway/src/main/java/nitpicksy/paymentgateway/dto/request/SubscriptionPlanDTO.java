@@ -1,4 +1,4 @@
-package nitpicksy.paypalservice.dto.request;
+package nitpicksy.paymentgateway.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,12 +12,13 @@ import javax.validation.constraints.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubscriptionPlanDTO {
-    
-    @NotBlank(message = "Client id is empty.")
-    private String merchantClientId;
 
-    @NotBlank(message = "Client secret is empty.")
-    private String merchantClientSecret;
+    @Positive(message = "Id must be positive.")
+    @NotNull(message = "Id is null.")
+    private Long id;
+
+    @NotBlank(message = "Merchant name is empty.")
+    private String merchantName;
 
     @NotBlank(message = "Product name is empty.")
     private String productName;
@@ -41,7 +42,8 @@ public class SubscriptionPlanDTO {
     @NotBlank(message = "Frequency unit is empty.")
     private String frequencyUnit;
 
-    @NotBlank(message = "Frequency count is empty.")
-    private String frequencyCount;
+    @NotNull(message = "Frequency count is null.")
+    @PositiveOrZero(message = "Frequency count is not a positive number.")
+    private Integer frequencyCount;
 
 }

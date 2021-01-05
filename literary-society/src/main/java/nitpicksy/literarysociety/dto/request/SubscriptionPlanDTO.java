@@ -1,23 +1,27 @@
-package nitpicksy.paypalservice.dto.request;
+package nitpicksy.literarysociety.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubscriptionPlanDTO {
-    
-    @NotBlank(message = "Client id is empty.")
-    private String merchantClientId;
 
-    @NotBlank(message = "Client secret is empty.")
-    private String merchantClientSecret;
+    @Positive(message = "Id must be positive.")
+    @NotNull(message = "Id is null.")
+    private Long id;
+
+    // Not validated because it's set on backend, not received from frontend
+    private String merchantName;
 
     @NotBlank(message = "Product name is empty.")
     private String productName;
@@ -41,7 +45,8 @@ public class SubscriptionPlanDTO {
     @NotBlank(message = "Frequency unit is empty.")
     private String frequencyUnit;
 
-    @NotBlank(message = "Frequency count is empty.")
-    private String frequencyCount;
+    @NotNull(message = "Frequency count is null.")
+    @PositiveOrZero(message = "Frequency count is not a positive number.")
+    private Integer frequencyCount;
 
 }

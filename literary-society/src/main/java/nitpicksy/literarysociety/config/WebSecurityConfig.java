@@ -84,6 +84,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/writers/start-registration").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/writers/registration-form").permitAll()
 
+                .antMatchers(HttpMethod.GET, "/api/subscriptions/create-plans").permitAll()
+
                 .anyRequest().authenticated().and()
                 .cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(jwtUserDetailsService.tokenUtils,
