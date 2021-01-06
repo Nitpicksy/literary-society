@@ -58,25 +58,27 @@ values ('merchantClientSecret', 'Merchant Client Secret', 'password', 2);
 
 --Bitcoin
 insert into data (attribute_json_name, name, attribute_type, payment_method_id)
-values ('clientId', 'Client Id', 'text', 3);
-insert into data (attribute_json_name, name, attribute_type, payment_method_id)
-values ('clientSecret', 'Client Secret', 'password', 3);
+values ('merchantToken', 'API Token', 'password', 3);
 
 -- Vulkan
 -- For Bank: merchantId and merchantPassword
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
 values ('merchantId',
         '91f30b2d7007cd72372ba0761549dca5f8c7dc3f6b104cadf1741a467250a9abd8063ba1136e11d13d2f3ceee82c17f2ac41c632d5fb57c9db8d841ba99b63b3',
-        1, 1);
+        2, 1);
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
-values ('merchantPassword', '$2y$12$eXrOWDTddWPKYU77BTZpM.1O0ZYAZ9GgVugZi5yK/5eRUT9EYy0xm', 1, 1);
+values ('merchantPassword', '$2y$12$eXrOWDTddWPKYU77BTZpM.1O0ZYAZ9GgVugZi5yK/5eRUT9EYy0xm', 2, 1);
 
 -- For PayPal: merchantClientId and merchantClientSecret
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
-values ('merchantClientId', 'Af7nTAdvuAjb3_n5gzUTsfQag0ZCkF-qs6ASwFdMfLKzZ_6GWVNCB9TdTpXVAsKZBeYHSVGRqZx1h68R', 1, 2);
+values ('merchantClientId', 'Af7nTAdvuAjb3_n5gzUTsfQag0ZCkF-qs6ASwFdMfLKzZ_6GWVNCB9TdTpXVAsKZBeYHSVGRqZx1h68R', 2, 2);
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
-values ('merchantClientSecret', 'EF60H0GD454RHXIpemtrBAi1w6VmeGjmc_sY7C8aa0YaEwLp_Xv2sJTSIpLkVuqaSXdSAQ72VAWiu3MY', 1,
+values ('merchantClientSecret', 'EF60H0GD454RHXIpemtrBAi1w6VmeGjmc_sY7C8aa0YaEwLp_Xv2sJTSIpLkVuqaSXdSAQ72VAWiu3MY', 2,
         2);
+-- For Bitcoin: merchantToken
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
+values ('merchantToken', 'khBtY7jKzH_uPgGJmoYtLUPqsKx_Wo4Rwd28kv61', 2,
+        3);
 
 -- Laguna
 -- For Bank: merchantId and merchantPassword
@@ -85,11 +87,19 @@ values ('merchantId',
         '1dcae25c2de2bbab00044e500962d7cf40f9c1bbf19d508af0d1a3a9799462573af4b246d5ec3f3d7286b368f5a85b5fbb3db31ded47f3770e1c79fd5b15532',
         2, 1);
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
-values ('merchantPassword', '$2y$12$nUQcibFKSiCXM7o9K3fYLuedSA0how/xjScCGGHpOtjqXNGD1NFc6', 2, 1);
+values ('merchantPassword', '$2y$12$nUQcibFKSiCXM7o9K3fYLuedSA0how/xjScCGGHpOtjqXNGD1NFc6', 3, 1);
 
 -- For PayPal: merchantClientId and merchantClientSecret
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
-values ('merchantClientId', 'ARPDqaQtYU6ilCpwG0IXT35OMXGTjsA3K-QFYLItx5oRcJUOqZ527Z7BfNs6sS3yu45kdINghGRLR8vV', 2, 2);
+values ('merchantClientId', 'ARPDqaQtYU6ilCpwG0IXT35OMXGTjsA3K-QFYLItx5oRcJUOqZ527Z7BfNs6sS3yu45kdINghGRLR8vV', 3, 2);
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
-values ('merchantClientSecret', 'ECBW7VI6Tzi23LnYdLEvnvEW5fm7drD6kvgVRMD2hnTOk9f9AJSqJaD-8p0aLrOWMBdoKGM9wIoPby4j', 2,
+values ('merchantClientSecret', 'ECBW7VI6Tzi23LnYdLEvnvEW5fm7drD6kvgVRMD2hnTOk9f9AJSqJaD-8p0aLrOWMBdoKGM9wIoPby4j', 3,
         2);
+
+-- For Bitcoin: merchantToken
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
+values ('merchantToken', 'Ly7q_R7WyHrpb_KnzNfs-niNTNTzWCxkNi9D_fb1', 3,
+        3);
+
+
+--

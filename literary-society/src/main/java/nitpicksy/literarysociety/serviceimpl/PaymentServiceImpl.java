@@ -105,14 +105,7 @@ public class PaymentServiceImpl implements PaymentService {
                 }
             } else {
                 if (user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
-                    try {
-                        camundaService.messageEventReceived(CamundaConstants.MESSAGE_PAYMENT_SUCCESS, user.getUsername());
-                    } catch (Exception e) {
-                        //not a camunda process, carry on as usual
-                        Merchant merchant = merchantService.findOurMerchant();
-                        Membership membership = membershipService.createMembership(user, merchant);
-                        order.setMembership(membership);
-                    }
+                    notifyCamundaMessageEvent(CamundaConstants.MESSAGE_PAYMENT_SUCCESS, user, order);
                 } else {
                     Merchant merchant = merchantService.findOurMerchant();
                     Membership membership = membershipService.createMembership(user, merchant);
@@ -123,12 +116,26 @@ public class PaymentServiceImpl implements PaymentService {
         } else if (dto.getStatus().equals("ERROR")) {
             order.setStatus(TransactionStatus.ERROR);
             if (user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
-                camundaService.messageEventReceived(CamundaConstants.MESSAGE_PAYMENT_ERROR, user.getUsername());
+                notifyCamundaMessageEvent(CamundaConstants.MESSAGE_PAYMENT_ERROR, user, order);
             }
         } else {
             order.setStatus(TransactionStatus.FAILED);
+            if (user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
+                notifyCamundaMessageEvent(CamundaConstants.MESSAGE_PAYMENT_ERROR, user, order);
+            }
         }
         transactionService.save(order);
+    }
+
+    private void notifyCamundaMessageEvent(String message, User user, Transaction order) {
+        try {
+            camundaService.messageEventReceived(CamundaConstants.MESSAGE_PAYMENT_SUCCESS, user.getUsername());
+        } catch (Exception e) {
+            //not a camunda process, carry on as usual
+            Merchant merchant = merchantService.findOurMerchant();
+            Membership membership = membershipService.createMembership(user, merchant);
+            order.setMembership(membership);
+        }
     }
 
     private double calculatePrice(List<Book> bookList, User user) {
