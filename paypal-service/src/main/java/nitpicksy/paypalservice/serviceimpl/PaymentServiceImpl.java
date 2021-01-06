@@ -85,12 +85,12 @@ public class PaymentServiceImpl implements PaymentService {
         String approvalUrl = getApprovalUrl(approvedPayment);
 
         paymentRequest.setPaymentId(paymentId);
-        paymentRequestRepository.save(paymentRequest);
+        PaymentRequest savedPaymentRequest = paymentRequestRepository.save(paymentRequest);
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CRE",
                 String.format("PayPal payment with paymentId=%s successfully created.", paymentId)));
 
-        return new PaymentResponseDTO(paymentRequest.getId(), approvalUrl);
+        return new PaymentResponseDTO(savedPaymentRequest.getId(), approvalUrl);
     }
 
     @Override

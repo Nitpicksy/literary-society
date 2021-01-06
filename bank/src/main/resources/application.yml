@@ -28,7 +28,17 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: false
-
+  mail:
+    host: smtp.gmail.com
+    username: konstrukcijaitestsoftvera2020@gmail.com
+    password: KTS2020Projekat
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 eureka:
   client:
     service-url:

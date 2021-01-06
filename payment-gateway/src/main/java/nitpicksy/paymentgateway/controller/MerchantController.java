@@ -3,11 +3,14 @@ package nitpicksy.paymentgateway.controller;
 import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.dto.request.PaymentDataRequestDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentDataResponseDTO;
+import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.mapper.PaymentDataRequestMapper;
 import nitpicksy.paymentgateway.mapper.PaymentDataResponseMapper;
 import nitpicksy.paymentgateway.model.Company;
+import nitpicksy.paymentgateway.model.Log;
 import nitpicksy.paymentgateway.model.Merchant;
 import nitpicksy.paymentgateway.service.DataForPaymentService;
+import nitpicksy.paymentgateway.service.LogService;
 import nitpicksy.paymentgateway.service.MerchantService;
 import nitpicksy.paymentgateway.service.PaymentMethodService;
 import nitpicksy.paymentgateway.service.UserService;
@@ -27,6 +30,7 @@ import org.springframework.core.env.Environment;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RestController
@@ -49,8 +53,14 @@ public class MerchantController {
 
     private ZuulClient zuulClient;
 
+    private LogService logService;
+
     @Value("${API_GATEWAY_URL}")
     private String apiGatewayURL;
+
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
 
     @GetMapping("/{name}/payment-data")
     public ResponseEntity<String> getPaymentData(@PathVariable String name) {
@@ -76,7 +86,7 @@ public class MerchantController {
     }
 
     @PostMapping("/payment-data")
-    public ResponseEntity<String> supportPaymentMethods(@Valid @RequestBody List<PaymentDataRequestDTO> listPaymentDataRequestDTO, @RequestParam Long companyId, @RequestParam Long merchantId) {
+    public ResponseEntity<String> supportPaymentMethods(@Valid @RequestBody List<PaymentDataRequestDTO> listPaymentDataRequestDTO, @RequestParam Long companyId, @RequestParam Long merchantId) throws NoSuchAlgorithmException {
         Merchant merchant = merchantService.findByIdAndCompany(merchantId, companyId);
         if(merchant == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -87,6 +97,19 @@ public class MerchantController {
         return new ResponseEntity<>(redirectURL, HttpStatus.OK);
     }
 
+    @PostMapping
+    public ResponseEntity<Void> create(@RequestBody String merchantName)  {
+        Company company = userService.getAuthenticatedCompany();
+        if (company == null) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDM", "Company not found"));
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        if(merchantService.findByNameAndCompany(merchantName,company.getId()) == null){
+            merchantService.save(new Merchant(merchantName,company));
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     private String getLocalhostURL() {
         return environment.getProperty("LOCALHOST_URL");
     }
@@ -94,7 +117,7 @@ public class MerchantController {
     @Autowired
     public MerchantController(MerchantService merchantService, UserService userService,Environment environment,PaymentMethodService paymentMethodService,
                               PaymentDataResponseMapper paymentDataResponseMapper,PaymentDataRequestMapper paymentDataRequestMapper,
-                              DataForPaymentService dataForPaymentService,ZuulClient zuulClient) {
+                              DataForPaymentService dataForPaymentService,ZuulClient zuulClient,LogService logService) {
         this.merchantService = merchantService;
         this.userService = userService;
         this.environment = environment;
@@ -103,5 +126,6 @@ public class MerchantController {
         this.paymentDataRequestMapper = paymentDataRequestMapper;
         this.dataForPaymentService = dataForPaymentService;
         this.zuulClient = zuulClient;
+        this.logService = logService;
     }
 }

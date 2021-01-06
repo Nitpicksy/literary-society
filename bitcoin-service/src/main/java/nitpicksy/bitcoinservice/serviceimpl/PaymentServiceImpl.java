@@ -112,7 +112,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void executePayment(PaymentCallbackDTO callbackDTO) {
-        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Executing CoinGate callback with order id" + callbackDTO.getOrder_id()));
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Executing CoinGate callback with order id: " + callbackDTO.getOrder_id()));
 
         Payment payment = paymentRepository.findById(Long.valueOf(callbackDTO.getOrder_id())).orElse(null);
         if (payment == null) {
@@ -138,6 +138,8 @@ public class PaymentServiceImpl implements PaymentService {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Could not notify Payment Gateway"));
             throw new InvalidDataException("Could not notify Payment Gateway", HttpStatus.BAD_REQUEST);
         }
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Successfully forwarded request with ID: " + callbackDTO.getOrder_id()));
     }
 
     private void notifyPaymentGateway(Long merchantOrderId, ConfirmPaymentResponseDTO confirmPaymentResponseDTO) {
