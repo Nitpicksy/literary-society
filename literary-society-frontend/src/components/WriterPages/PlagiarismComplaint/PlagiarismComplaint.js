@@ -9,6 +9,7 @@ import { useStyles } from './PlagiarismComplaintStyles';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 import { responseInterceptor } from '../../../responseInterceptor';
+import { toastr } from 'react-redux-toastr';
 
 const PlagiarismComplaint = (props) => {
     const history = useHistory();
@@ -18,9 +19,12 @@ const PlagiarismComplaint = (props) => {
         props.onRefreshToken);
     const { formFields, fetchForm } = props;
     const { chosenPlagiarismBook } = props;
+    const { valid } = props;
     let form = null;
     let [controls, setControls] = useState(null);
+    let [array, setArray] = useState(null);
     const [formIsValid, setFormIsValid] = useState(false);
+
 
     useEffect(() => {
         if (props.processInstanceId && props.taskId) {
@@ -35,9 +39,21 @@ const PlagiarismComplaint = (props) => {
         }
     }, [formFields]);
 
+
+    if(valid == false) {
+        toastr.error('Oops', 'Unable to find a book with the given author and title')
+        props.clearValidation();
+    } else if(valid == true) {
+        props.createRequest(array, props.taskId, history)
+    }
+
     const submitHander = (event) => {
         event.preventDefault();
         let array = [];
+
+        let title = '';
+        let writer = '';
+
         for (let [key, data] of Object.entries(controls)) {
             // convert array to comma-separated string
             let value = data.value
@@ -51,9 +67,16 @@ const PlagiarismComplaint = (props) => {
                 array.push({ fieldId: key, fieldValue: value });
             }
 
+            if(key === 'title') {
+                title = value;
+            }
+            if(key === 'writer') {
+                writer = value;
+            }
+
         }
-                console.log('array', array)
-        props.createRequest(array, props.taskId, history);
+        props.validateBook(title, writer);
+        setArray(array)
     }
 
     if (controls) {
@@ -82,11 +105,12 @@ const PlagiarismComplaint = (props) => {
 
 const mapStateToProps = state => {
     return {
-        formFields: state.createPublicationRequest.formFields,
+        formFields: state.plagiarismComplaint.formFields,
         processInstanceId: state.publRequests.plagiarismProcessInstanceId,
         taskId: state.publRequests.plagiarismTaskId,
         refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
         chosenPlagiarismBook: state.publRequests.chosenPlagiarismBook,
+        valid: state.plagiarismComplaint.valid,
     }
 };
 
@@ -95,6 +119,8 @@ const mapDispatchToProps = dispatch => {
         fetchForm: (piId, taskId) => dispatch(actions.fetchForm(piId, taskId)),
         createRequest: (enteredData, taskId, history) => actions.createRequest(enteredData, taskId, history),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
+        validateBook: (bookTitle, writerName) => dispatch(actions.validateBook(bookTitle, writerName)),
+        clearValidation: () => dispatch(actions.clearValidation()),
     }
 };
 

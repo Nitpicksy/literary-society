@@ -4,7 +4,9 @@ const initialState = {
     formFields: null,
     processInstanceId: null,
     taskId: null, 
-    error: null
+    error: null,
+    valid: null,
+    array: null
 }
 
 const reducer = (state = initialState, action) => {
@@ -20,6 +22,21 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 error: action.error
+            };
+        case actionTypes.VALIDATE_SUCCESS:
+            return {
+                ...state,
+                valid: true
+            };
+        case actionTypes.VALIDATE_FAIL:
+            return {
+                ...state,
+                valid: false
+            };
+        case actionTypes.CLEAR_VALIDATION:
+            return {
+                ...state,
+                valid: null
             };
         default:
             return state;

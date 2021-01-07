@@ -71,6 +71,11 @@ public class BookController {
         return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
     }
 
+    @GetMapping("/validate")
+    public ResponseEntity<Boolean> validatePlagiarismRequest(@NotNull @RequestParam String bookTitle, @NotNull @RequestParam String writerName) {
+        return new ResponseEntity<>(bookService.validatePlagiarismRequest(bookTitle, writerName), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<BookDetailsDTO> getBookDetails(@Positive @PathVariable Long id) {
         Book book = bookService.findById(id);

@@ -18,6 +18,19 @@ export const fetchFormFail = (error) => {
     };
 };
 
+export const validateSuccess = () => {
+    return {
+        type: actionTypes.VALIDATE_SUCCESS,
+    };
+};
+
+
+export const validateFail = () => {
+    return {
+        type: actionTypes.VALIDATE_FAIL,
+    };
+};
+
 export const fetchForm = (piId, taskId) => {
     return dispatch => {
         axios.get(`/books/plagiarism-complaint-form?piId=${piId}&taskId=${taskId}`)
@@ -36,8 +49,30 @@ export const fetchForm = (piId, taskId) => {
 };
 
 
+export const validateBook = (bookTitle, writerName) => {
+    return dispatch => {
+        axios.get(`/books/validate?bookTitle=${bookTitle}&writerName=${writerName}`)
+            .then((response) => {
+                if(response.data == true) {
+                    dispatch(validateSuccess())
+                }
+                else {
+                    dispatch(validateFail())
+                }
+
+            }).catch(err => {
+               dispatch(validateFail())
+            });
+    }
+};
+
+export const clearValidation = () => {
+        return {
+            type: actionTypes.CLEAR_VALIDATION,
+        }    
+};
+
 export const createRequest = (data, taskId, history) => {
-        alert('a')
         axios.post(`/process/${taskId}`, data)
             .then(() => {
                 toastr.success('Plagiarism Complaint','Success');
