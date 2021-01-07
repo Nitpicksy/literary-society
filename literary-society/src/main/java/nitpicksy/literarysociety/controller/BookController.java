@@ -65,6 +65,12 @@ public class BookController {
         return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
     }
 
+    @GetMapping("/plagiarism-complaint-form")
+    public ResponseEntity<FormFieldsDTO> getPlagiarismComplaintForm(@NotNull @RequestParam String piId, @NotNull @RequestParam String taskId) {
+        FormFieldsDTO formFieldsDTO = camundaService.getFormFields(piId, taskId);
+        return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<BookDetailsDTO> getBookDetails(@Positive @PathVariable Long id) {
         Book book = bookService.findById(id);

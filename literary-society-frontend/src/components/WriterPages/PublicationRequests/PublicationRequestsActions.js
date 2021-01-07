@@ -36,12 +36,34 @@ export const startProcessSuccess = (processInstanceId, taskId) => {
     };
 };
 
+export const startPlagiarismProcessSuccess = (processInstanceId, taskId) => {
+    return {
+        type: actionTypes.START_PLAGIARISM_PROCESS_SUCCESS,
+        plagiarismProcessInstanceId: processInstanceId,
+        plagiarismTaskId: taskId
+    };
+};
+
 export const startProcessFail = (error) => {
     return {
         type: actionTypes.START_PROCESS_FAIL,
         error: error
     };
 };
+
+export const startPlagiarismProcessFail = (error) => {
+    return {
+        type: actionTypes.START_PLAGIARISM_PROCESS_FAIL,
+        error: error
+    };
+};
+
+export const setChosenPlagiarismBook = (chosenPlagiarismBook) => {
+    return {
+        type: actionTypes.SET_CHOSEN_PLAGIARISM_BOOK,
+        chosenPlagiarismBook: chosenPlagiarismBook
+    }
+}
 
 export const startProcess = () => {
     return (dispatch) => {
@@ -59,6 +81,25 @@ export const startProcess = () => {
             });
     };
 };
+
+export const startPlagiarismProcess = (choosenPublicationRequest) => {
+    return (dispatch) => {
+        axios.get('/writers/start-plagiarism')
+            .then(response => {
+                dispatch(startPlagiarismProcessSuccess(response.data.processInstanceId, response.data.taskId));
+                dispatch(setChosenPlagiarismBook(choosenPublicationRequest));
+            })
+            .catch(err => {
+                if (err.response) {
+                    dispatch(startPlagiarismProcessFail(err.response.data.message));
+                    toastr.error('Create Plagiarism Complaint', err.response.data.message);
+                } else {
+                    toastr.error('Create Plagiarism Complaint', 'Something went wrong');
+                }
+            });
+    };
+};
+
 
 export const clearProcessState = () => {
     return {

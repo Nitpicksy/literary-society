@@ -27,11 +27,11 @@ public class PlagiarismComplaint {
     @Column(nullable = false)
     private String bookTitle;
 
-    @ManyToMany( fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "editor_plagiarism_complaint",
             joinColumns = @JoinColumn(name = "editor_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "plagiarism_complaint_id", referencedColumnName = "id"))
-    private Set<User> editor = new HashSet<>();
+    private Set<User> editors = new HashSet<>();
 
     //Add column - status
 }
