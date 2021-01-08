@@ -22,7 +22,6 @@ export const fetchForm = (piId, taskId) => {
     return dispatch => {
         axios.get(`/tasks/${taskId}/editors?piId=${piId}`)
             .then(response => {
-                console.log('response', response)
                 dispatch(fetchFormSuccess(response.data.formFieldsDTO.formFields, response.data.formFieldsDTO.processInstanceId,
                      response.data.formFieldsDTO.taskId, response.data.plagiarismDetails));
             })

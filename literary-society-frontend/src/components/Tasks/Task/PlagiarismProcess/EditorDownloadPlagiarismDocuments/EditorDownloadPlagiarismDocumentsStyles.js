@@ -2,25 +2,25 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme) => ({
     paper: {
-        marginTop: theme.spacing(3),
+        marginTop: theme.spacing(2),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        padding: '5px'
     },
     avatar: {
-        margin: theme.spacing(2),
+        margin: theme.spacing(1),
         backgroundColor: theme.palette.secondary.main,
     },
     title: {
         textAlign: 'center',
     },
-    cardContent: {
+    submit: {
+        marginTop: theme.spacing(2),
+        marginLeft: theme.spacing(53),
+    },
+    card: {
+        marginTop: theme.spacing(2),
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: theme.spacing(2, 4),
-        minWidth: 450,
-        minHeight: 350
-      },
+        alignItems: 'center',
+    },
 }));

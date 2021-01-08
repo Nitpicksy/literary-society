@@ -89,7 +89,7 @@ const PublicationRequests = (props) => {
                 <Avatar className={classes.avatar}>
                     <DescriptionIcon />
                 </Avatar>
-                <Typography component="h1" variant="h4" className={classes.title}>Publication Requests</Typography>
+                <Typography component="h1" variant="h4" className={classes.title}>Publications</Typography>
                 <Button variant="contained" color="primary"
                     startIcon={<AddIcon />} onClick={showForm}>
                     Create

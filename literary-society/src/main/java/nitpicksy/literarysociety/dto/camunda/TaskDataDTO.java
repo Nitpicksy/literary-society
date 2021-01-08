@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
-import nitpicksy.literarysociety.dto.response.PlagiarismDetailsDTO;
 
 import java.util.ArrayList;
 import java.util.List;

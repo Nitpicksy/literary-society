@@ -70,6 +70,8 @@ const Tasks = (props) => {
             history.push('/create-publication-request');
         } else if (properties.row.name === "Choose plagiarism review board") {
             history.push('/assign-review-board');
+        } else if (properties.row.name === "Download books to submit a report") {
+            history.push('/plagiarism-review-download');
         }
         
     }

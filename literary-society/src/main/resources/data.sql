@@ -19,7 +19,7 @@ values ('eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJsaXRlcmFyeS1zb2NpZXR5Iiwic3ViIjoibGl0ZX
 -- Writers
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('WRITER', 'Ivo', 'Andrić', 'Travnik', 'Bosna i Hercegovina', 'andric@maildrop.cc', 'andric',
+values ('WRITER', 'Ivo', 'Andrić', 'Travnik', 'Bosna i Hercegovina', 'andric@maildrop.cc', 'andric1',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
@@ -30,15 +30,15 @@ values ('WRITER', 'Branisav', 'Nušić', 'Beograd', 'Srbija', 'nusic@maildrop.cc
 -- Editors
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'Jovana', 'Jovanović', 'Kragujevac', 'Srbija', 'jovanaj@maildrop.cc', 'jovanaj',
+values ('User', 'Jovana', 'Jovanović', 'Kragujevac', 'Srbija', 'jovanaj@maildrop.cc', 'jovanaj1',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'John', 'Parker', 'London', 'Ujedinjeno kraljevstvo', 'johnp@maildrop.cc', 'johnp',
+values ('User', 'John', 'Parker', 'London', 'Ujedinjeno kraljevstvo', 'johnp@maildrop.cc', 'johnp1',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'Oleg', 'Aleksandrov', 'Sankt Petersburg', 'Rusija', 'olega@maildrop.cc', 'olega',
+values ('User', 'Oleg', 'Aleksandrov', 'Sankt Petersburg', 'Rusija', 'olega@maildrop.cc', 'olega1',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 
 -- Reader
@@ -216,3 +216,8 @@ insert into price_list (membership_for_reader, membership_for_writer, start_date
 values (600, 2500, '2021-02-02');
 insert into price_list (membership_for_reader, membership_for_writer, start_date)
 values (700, 2700, '2021-03-03');
+
+insert into pdfdocument (created, name, book_id)
+values ('2021-01-01', 'Ivo-Andric-Na-Drini-cuprija.pdf', 1);
+insert into pdfdocument (created, name, book_id)
+values ('2021-01-01', 'Moby Dick.pdf', 2);

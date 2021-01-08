@@ -74,7 +74,7 @@ public class PlagiarismSubmittedService implements JavaDelegate {
         execution.setVariable("writersName", reportedBook.getWritersNames());
 
         PlagiarismComplaint plagiarismComplaint = this.plagiarismComplaintRepository.save(new PlagiarismComplaint(writer, writersBook, reportedBook));
-        execution.setVariable("plagiarismId", plagiarismComplaint.getId());
+        execution.setVariable("plagiarismId", plagiarismComplaint.getId().toString());
     }
 
     @Autowired

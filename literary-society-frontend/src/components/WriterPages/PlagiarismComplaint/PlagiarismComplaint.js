@@ -90,7 +90,7 @@ const PlagiarismComplaint = (props) => {
                 <Avatar className={classes.avatar}>
                     <PolicyIcon />
                 </Avatar>
-                <Typography component="h1" variant="h5" className={classes.title}>Plagiarism complaint</Typography>
+                <Typography component="h1" variant="h5" className={classes.title}>Plagiarism report</Typography>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
                     <Button type="submit" color="primary" className={classes.submit} fullWidth

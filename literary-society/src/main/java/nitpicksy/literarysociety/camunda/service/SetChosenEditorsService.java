@@ -30,7 +30,7 @@ public class SetChosenEditorsService implements JavaDelegate {
         Map<String, String> map = formData.stream().collect(Collectors.toMap(FormSubmissionDTO::getFieldId, FormSubmissionDTO::getFieldValue));
         List<Long> editorIds = camundaService.extractIds(map.get("selectEditors"));
 
-        Long id = (Long) execution.getVariable("plagiarismId");
+        Long id = Long.valueOf((String) execution.getVariable("plagiarismId"));
 
         List<User> editors = userService.findByIds(editorIds);
         List<String> editorsUsernames = editors.stream().map(User::getUsername).collect(Collectors.toList());
