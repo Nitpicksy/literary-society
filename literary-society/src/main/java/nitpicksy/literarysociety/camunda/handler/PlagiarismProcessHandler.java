@@ -17,6 +17,7 @@ public class PlagiarismProcessHandler implements ExecutionListener {
 
         Writer writer = (Writer) userService.getAuthenticatedUser();
         execution.setVariable("writer", writer.getUsername());
+        
     }
 
     @Autowired

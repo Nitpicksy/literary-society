@@ -68,7 +68,10 @@ const Tasks = (props) => {
             history.push('/publishing-info');
         } else if (properties.row.name === "Unos podataka o rukopisu") {
             history.push('/create-publication-request');
+        } else if (properties.row.name === "Choose plagiarism review board") {
+            history.push('/assign-review-board');
         }
+        
     }
 
     if (!loading) {

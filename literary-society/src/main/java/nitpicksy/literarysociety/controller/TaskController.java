@@ -3,6 +3,7 @@ package nitpicksy.literarysociety.controller;
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.dto.camunda.TaskDataDTO;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
+import nitpicksy.literarysociety.dto.response.PlagiarismDetailsDTO;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.service.BookService;
@@ -133,6 +134,17 @@ public class TaskController {
     public ResponseEntity<TaskDataDTO> getTaskDataCommittee(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
         TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.getFormFields(piId, taskId),
                 pdfDocumentService.getDraftsByWriter(camundaService.getProcessVariable(piId, "writer")));
+
+        return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{taskId}/editors", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TaskDataDTO> getTaskDataForMainEditor(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
+
+        TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.setEnumValues(camundaService.getFormFields(piId, taskId)),
+                new PlagiarismDetailsDTO(camundaService.getProcessVariable(piId, "writersName"),
+                        camundaService.getProcessVariable(piId, "title"),
+                        camundaService.getProcessVariable(piId, "mainEditor")));
 
         return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
     }

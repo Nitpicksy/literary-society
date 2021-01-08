@@ -37,4 +37,6 @@ public interface UserService {
                                                               String roleName2, Collection<UserStatus> status2);
 
     User changeUserStatus(Long id, String status);
+
+    List<User> findByIds(List<Long> ids);
 }

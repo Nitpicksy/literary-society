@@ -17,7 +17,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findOneById(Long id);
 
-    List<User> findByRoleNameAndStatus(String roleName,UserStatus status);
+    List<User> findByRoleNameAndStatus(String roleName, UserStatus status);
 
     List<User> findByRoleNameAndStatusInOrRoleNameAndStatusIn(String roleName1, Collection<UserStatus> status1, String roleName2, Collection<UserStatus> status2);
+
+    List<User> findByIdIn(List<Long> ids);
 }

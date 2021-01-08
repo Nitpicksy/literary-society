@@ -39,6 +39,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import merchantListReducer from './components/Authentication/ManageMerchants/ManageMerchantsReducer';
 import plagiarismComplaintReducer from './components/WriterPages/PlagiarismComplaint/PlagiarismComplaintReducer';
+import assignReviewBoardReducer from './components/Tasks/Task/PlagiarismProcess/AssignReviewBoard/AssignReviewBoardReducer';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
@@ -69,6 +70,8 @@ const rootReducer = combineReducers({
     publishingInfo: publishingInfoReducer,
     merchantList: merchantListReducer,
     plagiarismComplaint: plagiarismComplaintReducer,
+    assignReviewBoard: assignReviewBoardReducer,
+
 });
 
 const persistConfig = {

@@ -42,6 +42,7 @@ import PublishingInfo from './components/Tasks/Task/PublishingInfo/PublishingInf
 import MerchantSignUp from './components/Authentication/MerchantSignUp/MerchantSignUp';
 import ManageMerchants from './components/Authentication/ManageMerchants/ManageMerchants';
 import PlagiarismComplaint from './components/WriterPages/PlagiarismComplaint/PlagiarismComplaint';
+import AssignReviewBoard from './components/Tasks/Task/PlagiarismProcess/AssignReviewBoard/AssignReviewBoard';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -127,6 +128,7 @@ const App = props => {
           <Route path="/membership" render={(props) => <Membership {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
 
           <Route path="/plagiarism-complaint" render={(props) => <PlagiarismComplaint {...props} />} meta={{ roles:  [roleWriter] }}/>
+          <Route path="/assign-review-board" render={(props) => <AssignReviewBoard {...props} />} meta={{ roles:  [roleEditor] }}/>
 
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
 
