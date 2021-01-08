@@ -30,15 +30,15 @@ values ('WRITER', 'Branisav', 'Nušić', 'Beograd', 'Srbija', 'nusic@maildrop.cc
 -- Editors
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'Jovana', 'Jovanović', 'Kragujevac', 'Srbija', 'jovanaj@maildrop.cc', 'jovanaj1',
+values ('User', 'Jovana', 'Jovanović', 'Kragujevac', 'Srbija', 'jovanaj@maildrop.cc', 'jovanaj2',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'John', 'Parker', 'London', 'Ujedinjeno kraljevstvo', 'johnp@maildrop.cc', 'johnp1',
+values ('User', 'John', 'Parker', 'London', 'Ujedinjeno kraljevstvo', 'johnp@maildrop.cc', 'johnp2',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'Oleg', 'Aleksandrov', 'Sankt Petersburg', 'Rusija', 'olega@maildrop.cc', 'olega1',
+values ('User', 'Oleg', 'Aleksandrov', 'Sankt Petersburg', 'Rusija', 'olega@maildrop.cc', 'olega2',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 
 -- Reader

@@ -144,15 +144,15 @@
         <dc:Bounds x="310" y="80" width="1490" height="478" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1k8rgmy_di" bpmnElement="Flow_1k8rgmy">
-        <di:waypoint x="1420" y="240" />
+        <di:waypoint x="1430" y="240" />
         <di:waypoint x="1712" y="240" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0sgemt7_di" bpmnElement="Flow_0sgemt7">
         <di:waypoint x="1240" y="240" />
-        <di:waypoint x="1320" y="240" />
+        <di:waypoint x="1330" y="240" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_07y1ga2_di" bpmnElement="Flow_07y1ga2">
-        <di:waypoint x="1080" y="240" />
+        <di:waypoint x="1060" y="240" />
         <di:waypoint x="1140" y="240" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1l6g5xi_di" bpmnElement="Flow_1l6g5xi">
@@ -161,7 +161,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0wt2xiw_di" bpmnElement="Flow_0wt2xiw">
         <di:waypoint x="890" y="240" />
-        <di:waypoint x="980" y="240" />
+        <di:waypoint x="960" y="240" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_05k6mxw_di" bpmnElement="Flow_05k6mxw">
         <di:waypoint x="710" y="240" />
@@ -205,11 +205,11 @@
       <bpmndi:BPMNShape id="Activity_0nvvaq6_di" bpmnElement="Activity_1w7kn95">
         <dc:Bounds x="1140" y="200" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0vzayqq_di" bpmnElement="Activity_0n95ksr">
-        <dc:Bounds x="1320" y="200" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_094be0h_di" bpmnElement="Activity_1y5ilyt">
-        <dc:Bounds x="980" y="200" width="100" height="80" />
+        <dc:Bounds x="960" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vzayqq_di" bpmnElement="Activity_0n95ksr">
+        <dc:Bounds x="1330" y="200" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_095h5zc_di" bpmnElement="Event_17cuxb9">
         <dc:Bounds x="662" y="262" width="36" height="36" />

@@ -129,7 +129,7 @@ const App = props => {
           <Route path="/membership" render={(props) => <Membership {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
 
           <Route path="/plagiarism-complaint" render={(props) => <PlagiarismComplaint {...props} />} meta={{ roles:  [roleWriter] }}/>
-          <Route path="/assign-review-board" render={(props) => <AssignReviewBoard {...props} />} meta={{ roles:  [roleEditor] }}/>
+          <Route path="/plagiarism" render={(props) => <AssignReviewBoard {...props} />} meta={{ roles:  [roleEditor] }}/>
           <Route path="/plagiarism-review-download" render={(props) => <EditorDownloadPlagiarismDocuments {...props} /> } meta={{roles: [roleEditor]}} />
 
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
