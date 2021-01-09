@@ -2,6 +2,7 @@ package nitpicksy.literarysociety.controller;
 import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.request.MerchantRequestDTO;
 import nitpicksy.literarysociety.dto.request.UserRequestDTO;
+import nitpicksy.literarysociety.dto.response.MerchantPaymentGatewayResponseDTO;
 import nitpicksy.literarysociety.dto.response.MerchantResponseDTO;
 import nitpicksy.literarysociety.dto.response.UserResponseDTO;
 import nitpicksy.literarysociety.enumeration.UserStatus;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +35,7 @@ import java.lang.reflect.Array;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,7 +82,7 @@ public class MerchantController {
 
         Merchant merchant = merchantRequestMapper.toEntity(merchantRequestDTO);
         merchant.setRole(userService.findRoleByName(RoleConstants.ROLE_MERCHANT));
-
+        merchant.setSupportsPaymentMethods(false);
         if (userService.findByUsername(merchant.getUsername()) != null) {
             throw new InvalidDataException("User with same username already exist",HttpStatus.BAD_REQUEST);
         }
@@ -99,18 +102,24 @@ public class MerchantController {
                 .map(user -> merchantResponseMapper.toDto(user)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
+    @GetMapping("/active")
+    public ResponseEntity<List<String>> findAllActive() {
+        return new ResponseEntity<>(merchantService.findByStatusIn(Collections.singletonList(UserStatus.ACTIVE)).stream()
+                .map(Merchant::getName).collect(Collectors.toList()), HttpStatus.OK);
+    }
+
     @PutMapping(value = "/{id}")
     public ResponseEntity<MerchantResponseDTO> changeUserStatus(@PathVariable @Positive Long id,
                                                             @RequestParam @Pattern(regexp = "(?i)(approve|reject)$", message = "Status is not valid.") String status) {
         return new ResponseEntity<>(merchantResponseMapper.toDto(merchantService.changeUserStatus(id, status)), HttpStatus.OK);
     }
 
+
     private String getLocalhostURL() {
         return environment.getProperty("LOCALHOST_URL");
     }
 
     @Autowired
-
     public MerchantController(MerchantService merchantService, UserService userService, Environment environment,
                               MerchantRequestMapper merchantRequestMapper, MerchantResponseMapper merchantResponseMapper) {
         this.merchantService = merchantService;

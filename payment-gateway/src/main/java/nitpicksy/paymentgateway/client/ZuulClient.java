@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 @FeignClient(name = "zuul",configuration = FeignClientConfiguration.class)
 public interface ZuulClient {
@@ -54,5 +55,8 @@ public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.POST, path="/api/merchants/{name}/payment-data")
     String supportPaymentMethods(URI baseUrl, @PathVariable String name);
+
+    @RequestMapping(method = RequestMethod.GET, path = "/api/merchants/active")
+    List<String> getAllMerchants(URI baseUrl);
 
 }

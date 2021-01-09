@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.serviceimpl;
 
 import nitpicksy.literarysociety.client.ZuulClient;
+import nitpicksy.literarysociety.dto.response.MerchantPaymentGatewayResponseDTO;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Merchant;
@@ -13,6 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -108,6 +110,25 @@ public class MerchantServiceImpl implements MerchantService {
 
         }
 
+    }
+
+    @Scheduled(cron = "0 10 0 * * ?")
+    @Async
+    @Override
+    public void synchronizeMerchants() {
+        try{
+            List<MerchantPaymentGatewayResponseDTO> merchants = zuulClient.getAllMerchants("Bearer " + jwtTokenService.getToken());
+
+            for(MerchantPaymentGatewayResponseDTO currentMerchant: merchants){
+                Merchant merchant = merchantRepository.findByName(currentMerchant.getName());
+                if (merchant != null) {
+                    merchant.setSupportsPaymentMethods(currentMerchant.isSupportsPaymentMethods());
+                    merchantRepository.save(merchant);
+                }
+
+            }
+        }catch (RuntimeException e){
+        }
     }
 
     private void composeAndSendRejectionEmail(String recipientEmail) {

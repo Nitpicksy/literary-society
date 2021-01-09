@@ -114,6 +114,12 @@ public class CompanyServiceImpl implements CompanyService {
                 company.getRole().getPermissions());
         return jwtToken;
     }
+
+    @Override
+    public List<Company> findAllApproved() {
+        return companyRepository.findByStatus(CompanyStatus.APPROVED);
+    }
+
     @Override
     public List<Company> findAll() {
         return companyRepository.findByStatusNot(CompanyStatus.REJECTED);
