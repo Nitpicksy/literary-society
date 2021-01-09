@@ -13,31 +13,9 @@ import MerchantToolbar from './MerchantToolbar';
 import AdminToolbar from './AdminToolbar';
 import ReaderToolbar from './ReaderToolbar';
 
-const StyledMenu = withStyles({
-    paper: {
-        border: '1px solid #d3d4d5',
-    },
-})((props) => (
-    <Menu
-        elevation={0}
-        getContentAnchorEl={null}
-        anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-        }}
-        transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-        }}
-        {...props}
-    />
-));
-
-
 const CustomToolbar = (props) => {
     const classes = useStyles();
     const history = useHistory();
-    const [accountEl, setAccountEl] = React.useState(null);
 
     const roleWriter = "ROLE_WRITER";
     const roleReader = "ROLE_READER";
@@ -46,17 +24,15 @@ const CustomToolbar = (props) => {
     const roleLecturer = "ROLE_LECTURER";
     const roleMerchant = "ROLE_MERCHANT";
 
-    const openMenuAccount = (event) => {
-        setAccountEl(event.currentTarget);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
     };
 
-    const handleCloseAccount = (path) => {
-        setAccountEl(null);
-        if (path) {
-            history.push(path);
-        }
-
-    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };  
 
     const routeChange = (path) => {
         history.push(path);
@@ -75,8 +51,8 @@ const CustomToolbar = (props) => {
 
     let toolbarItems = (
         <React.Fragment>
-            <Button className={classes.button} color="inherit" onClick={() => redirect('/sign-in')}>Sign in</Button>
-            <Button className={classes.button} color="inherit" onClick={() => redirect('/sign-up-options')}>Sign up</Button>
+            <Button color="inherit" onClick={() => redirect('/sign-in')}>Sign in</Button>
+            <Button color="inherit" onClick={() => redirect('/sign-up-options')}>Sign up</Button>
         </React.Fragment>
     );
 
@@ -88,21 +64,20 @@ const CustomToolbar = (props) => {
 
                 {checkRole(roleWriter) ? <WriterToolbar /> : null}
 
-                { checkRole(roleMerchant) ? <MerchantToolbar /> : null }
+                {checkRole(roleMerchant) ? <MerchantToolbar /> : null}
 
-                { checkRole(roleAdmin) ? <AdminToolbar /> : null }
+                {checkRole(roleAdmin) ? <AdminToolbar /> : null}
 
-                { checkRole(roleReader) ? <ReaderToolbar /> : null }
-                
-                <Button className={classes.button} color="inherit" onClick={openMenuAccount}> Account </Button>
-                <StyledMenu id="customized-menu" anchorEl={accountEl} keepMounted open={Boolean(accountEl)} onClose={handleCloseAccount}>
-                    <MenuItem>
-                        <ListItemText onClick={() => handleCloseAccount("/change-password")} primary="Change password" />
-                    </MenuItem>
-                </StyledMenu>
+                {checkRole(roleReader) ? <ReaderToolbar /> : null}
+
+                <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} className={classes.menuBtn}>Account</Button>
+                <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose} getContentAnchorEl={null}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }} transformOrigin={{ horizontal: "center" }}>
+                    <MenuItem onClick={() => redirect('/change-password')}>Change password</MenuItem>
+                </Menu>
 
                 <Tooltip title="Sign Out">
-                    <IconButton onClick={() => routeChange("/sign-out")} edge="start" className={classes.menuButton} color="inherit" aria-label="sign-out">
+                    <IconButton onClick={() => routeChange("/sign-out")} edge="start" className={classes.signOut} color="inherit" aria-label="sign-out">
                         <PowerSettingsNewIcon />
                     </IconButton>
                 </Tooltip>
