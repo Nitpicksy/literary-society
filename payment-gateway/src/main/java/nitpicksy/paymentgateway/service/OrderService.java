@@ -3,6 +3,7 @@ package nitpicksy.paymentgateway.service;
 import nitpicksy.paymentgateway.dto.request.ConfirmPaymentRequestDTO;
 import nitpicksy.paymentgateway.dto.request.OrderRequestDTO;
 import nitpicksy.paymentgateway.dto.request.PaymentRequestDTO;
+import nitpicksy.paymentgateway.enumeration.TransactionStatus;
 import nitpicksy.paymentgateway.model.Transaction;
 
 public interface OrderService {
@@ -18,4 +19,10 @@ public interface OrderService {
     void setPayment(Long orderId, Long paymentId);
 
     void handleConfirmPayment(Long merchantOrderId, ConfirmPaymentRequestDTO dto);
+
+    void notifyCompany(Transaction order, String status);
+
+    Transaction setTransactionStatus(Transaction transaction, TransactionStatus status);
+
+    void synchronizeTransactions();
 }

@@ -59,6 +59,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/merchants").hasAuthority("CREATE_ORDER")
                 .antMatchers(HttpMethod.GET, "/api/merchants").hasAuthority("CREATE_ORDER")
 
+                .antMatchers(HttpMethod.GET, "/api/transactions").hasAuthority("CREATE_ORDER")
+
                 .anyRequest().permitAll().and()
                 .cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(jwtUserDetailsService.tokenUtils,

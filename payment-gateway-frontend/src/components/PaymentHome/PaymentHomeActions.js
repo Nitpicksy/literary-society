@@ -33,7 +33,9 @@ export const fetchPaymentMethods = (transactionId) => {
     dispatch(fetchPaymentMethodsStart());
     axios.get(`/payment-methods/${transactionId}`).then((response) => {
       dispatch(fetchPaymentMethodSuccess(response.data));
-    });
+    }).catch(err => {
+      toastr.error('Payment Methods',  err.response.data.message);
+  });
   };
 };
 

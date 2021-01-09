@@ -58,5 +58,4 @@ public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.GET, path = "/api/merchants/active")
     List<String> getAllMerchants(URI baseUrl);
-
 }

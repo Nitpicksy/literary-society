@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.client;
 
 import nitpicksy.literarysociety.config.FeignClientConfiguration;
+import nitpicksy.literarysociety.dto.request.LiterarySocietyOrderRequestDTO;
 import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
 import nitpicksy.literarysociety.dto.response.MerchantPaymentGatewayResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -33,4 +34,7 @@ public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.GET, path = "payment-gateway/api/merchants")
     List<MerchantPaymentGatewayResponseDTO> getAllMerchants(@RequestHeader(value = "Auth") String authHeader);
+
+    @RequestMapping(method = RequestMethod.GET, path = "payment-gateway/api/transactions")
+    List<LiterarySocietyOrderRequestDTO> getAllTransactions(@RequestHeader(value = "Auth") String authHeader);
 }

@@ -1,5 +1,6 @@
 package nitpicksy.paymentgateway.serviceimpl;
 import nitpicksy.paymentgateway.enumeration.PaymentMethodStatus;
+import nitpicksy.paymentgateway.enumeration.TransactionStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.model.Data;
 import nitpicksy.paymentgateway.model.DataForPayment;
@@ -50,6 +51,8 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
         List<PaymentMethod> paymentMethods = new ArrayList<>(order.getCompany().getPaymentMethods());
         if (paymentMethods.isEmpty()) {
+            order = orderService.setTransactionStatus(order, TransactionStatus.CANCELED);
+            orderService.notifyCompany(order, "ERROR");
             throw new InvalidDataException("No payment methods registered to order.", HttpStatus.BAD_REQUEST);
         }
 

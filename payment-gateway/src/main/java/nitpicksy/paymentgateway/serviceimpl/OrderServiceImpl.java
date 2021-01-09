@@ -21,11 +21,19 @@ import nitpicksy.paymentgateway.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.sql.Timestamp;
-import java.util.List;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -69,6 +77,8 @@ public class OrderServiceImpl implements OrderService {
 
         Transaction order = createTransaction(orderDTO, orderMerchant, company);
 
+        Instant today = (new Date()).toInstant();
+        executeCancelledTransaction(order.getId(), today.plus(15, ChronoUnit.MINUTES));
 
         String url = gatewayRedirectUrl + "/" + order.getId();
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Order %s is successfully created and redirect url is %s", order.getId(), url)));
@@ -111,7 +121,9 @@ public class OrderServiceImpl implements OrderService {
             responseURL = dto.getPaymentURL();
         } catch (RuntimeException e) {
             //if bank request fails, redirect user to the company failedURL;
-            cancelOrder(paymentRequestDTO.getOrderId());
+            setTransactionStatus(transaction,TransactionStatus.CANCELED);
+            notifyCompany(transaction,"ERROR" );
+
             responseURL = forwardDTO.getFailedURL();
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Order forward has failed and response URL is %s", responseURL)));
         }
@@ -150,20 +162,47 @@ public class OrderServiceImpl implements OrderService {
 
         handleOrder(merchantOrderId, dto.getPaymentId(), dto.getStatus());
 
-        LiterarySocietyOrderResponseDTO responseDTO = new LiterarySocietyOrderResponseDTO(order.getMerchantOrderId(), dto.getStatus());
+        notifyCompany(order, dto.getStatus());
+    }
+
+    @Override
+    public void notifyCompany(Transaction order, String status) {
+        LiterarySocietyOrderResponseDTO responseDTO = new LiterarySocietyOrderResponseDTO(order.getMerchantOrderId(),status);
 
         String companyCommonName = order.getCompany().getCommonName();
 
         try {
-
             zuulClient.confirmPaymentToLiterarySociety(URI.create(apiGatewayURL + '/' + companyCommonName), responseDTO);
-
         } catch (RuntimeException e) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Went wrong when contacting the Literary Society.")));
         }
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Order with id %s is done and payment is successfully forwarded to Literary Society", order.getId())));
+    }
 
+    @Override
+    public Transaction setTransactionStatus(Transaction transaction,TransactionStatus status) {
+        transaction.setStatus(status);
+        return transactionRepository.save(transaction);
+    }
+
+
+    @Async
+    @Override
+    @Scheduled(cron = "0 20 0 * * ?")
+    public void synchronizeTransactions() {
+        //TODO: Implement
+//        try{
+//            List<LiterarySocietyOrderRequestDTO> transactions = zuulClient.getAllTransactions("Bearer " + jwtTokenService.getToken());
+//
+//            for(LiterarySocietyOrderRequestDTO dto: transactions){
+//                Transaction order = transactionService.findById(dto.getMerchantOrderId());
+//                if(order != null && !order.getStatus().equals(TransactionStatus.valueOf(dto.getStatus()))){
+//                    handlePayment(dto);
+//                }
+//            }
+//        }catch (RuntimeException e){
+//        }
     }
 
     private void handleOrder(Long merchantOrderId, Long paymentId, String status) {
@@ -175,6 +214,8 @@ public class OrderServiceImpl implements OrderService {
 
         if (status.equals("SUCCESS")) {
             transaction.setStatus(TransactionStatus.COMPLETED);
+        } else if (status.equals("ERROR")) {
+            transaction.setStatus(TransactionStatus.CANCELED);
         } else {
             transaction.setStatus(TransactionStatus.REJECTED);
         }
@@ -196,6 +237,27 @@ public class OrderServiceImpl implements OrderService {
 
         System.out.println("Transaction - " + transaction);
         return transactionRepository.save(transaction);
+    }
+
+    @Async
+    public void executeCancelledTransaction(Long transactionId, Instant executionMoment) {
+        ScheduledExecutorService localExecutor = Executors.newSingleThreadScheduledExecutor();
+        TaskScheduler scheduler = new ConcurrentTaskScheduler(localExecutor);
+        scheduler.schedule(createRunnable(transactionId), executionMoment);
+    }
+
+    private Runnable createRunnable(final Long transactionId) {
+        return () -> {
+            Transaction transaction = transactionRepository.findOneById(transactionId);
+            if (transaction != null && transaction.getStatus().equals(TransactionStatus.CREATED)) {
+                transaction.setStatus(TransactionStatus.CANCELED);
+                transactionRepository.save(transaction);
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SRQ",
+                        String.format(
+                                "Because 15min from creation have passed, rtransaction %s is automatically CANCELED",
+                                transaction.getId())));
+            }
+        };
     }
 
     @Autowired
