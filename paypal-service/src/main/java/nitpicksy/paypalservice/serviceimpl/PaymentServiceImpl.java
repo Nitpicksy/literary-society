@@ -9,16 +9,20 @@ import com.paypal.base.rest.PayPalRESTException;
 import nitpicksy.paypalservice.client.ZuulClient;
 import nitpicksy.paypalservice.dto.response.ConfirmPaymentResponseDTO;
 import nitpicksy.paypalservice.dto.response.PaymentResponseDTO;
+import nitpicksy.paypalservice.enumeration.TransactionStatus;
 import nitpicksy.paypalservice.exceptionHandler.InvalidDataException;
 import nitpicksy.paypalservice.model.Log;
 import nitpicksy.paypalservice.model.PaymentRequest;
 import nitpicksy.paypalservice.repository.PaymentRequestRepository;
 import nitpicksy.paypalservice.service.LogService;
 import nitpicksy.paypalservice.service.PaymentService;
+import nitpicksy.paypalservice.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -29,8 +33,13 @@ import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -51,6 +60,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private LogService logService;
 
+    private TransactionService transactionService;
     @Override
     public PaymentResponseDTO createPayment(PaymentRequest paymentRequest) {
         Payer payer = new Payer();
@@ -87,6 +97,9 @@ public class PaymentServiceImpl implements PaymentService {
         paymentRequest.setPaymentId(paymentId);
         PaymentRequest savedPaymentRequest = paymentRequestRepository.save(paymentRequest);
 
+        Instant today = (new Date()).toInstant();
+        executeCancelledTransaction(savedPaymentRequest.getId(), today.plus(15, ChronoUnit.MINUTES));
+
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CRE",
                 String.format("PayPal payment with paymentId=%s successfully created.", paymentId)));
 
@@ -120,12 +133,14 @@ public class PaymentServiceImpl implements PaymentService {
                     String.format("PayPal payment for merchantOrderId=%s could not be executed. PayPal error code: %s",
                             paymentRequest.getMerchantOrderId(), e.getDetails().getName())));
             ConfirmPaymentResponseDTO confirmPaymentResponseDTO = new ConfirmPaymentResponseDTO(paymentRequest.getId(), "ERROR");
+            transactionService.create(paymentRequest, TransactionStatus.ERROR);
             sendResponseToPaymentGateway(paymentRequest.getMerchantOrderId(), confirmPaymentResponseDTO);
             return paymentRequest.getErrorURL();
         }
 
         if (!paymentResponse.getState().equals("approved")) {
             ConfirmPaymentResponseDTO confirmPaymentResponseDTO = new ConfirmPaymentResponseDTO(paymentRequest.getId(), "FAILED");
+            transactionService.create(paymentRequest, TransactionStatus.FAILED);
             sendResponseToPaymentGateway(paymentRequest.getMerchantOrderId(), confirmPaymentResponseDTO);
             return paymentRequest.getFailedURL();
         }
@@ -134,18 +149,44 @@ public class PaymentServiceImpl implements PaymentService {
                 String.format("PayPal payment with paymentId=%s successfully executed.", paymentId)));
 
         ConfirmPaymentResponseDTO confirmPaymentResponseDTO = new ConfirmPaymentResponseDTO(paymentRequest.getId(), "SUCCESS");
+        transactionService.create(paymentRequest, TransactionStatus.SUCCESS);
         sendResponseToPaymentGateway(paymentRequest.getMerchantOrderId(), confirmPaymentResponseDTO);
+
         return paymentRequest.getSuccessURL();
     }
 
     @Async
-    public void sendResponseToPaymentGateway(Long merchantOrderId, ConfirmPaymentResponseDTO confirmPaymentResponseDTO) {
+    public void sendResponseToPaymentGateway(String merchantOrderId, ConfirmPaymentResponseDTO confirmPaymentResponseDTO) {
         try{
             zuulClient.confirmPayment(merchantOrderId, confirmPaymentResponseDTO);
         }catch (RuntimeException e){
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Could not notify Payment Gateway"));
         }
 
+    }
+
+    @Async
+    public void executeCancelledTransaction(Long paymentId, Instant executionMoment) {
+        ScheduledExecutorService localExecutor = Executors.newSingleThreadScheduledExecutor();
+        TaskScheduler scheduler = new ConcurrentTaskScheduler(localExecutor);
+        scheduler.schedule(createRunnable(paymentId), executionMoment);
+    }
+
+
+    private Runnable createRunnable(final Long paymentId) {
+        return () -> {
+            nitpicksy.paypalservice.model.Transaction transaction = transactionService.findByPaymentId(paymentId);
+
+            PaymentRequest paymentRequest = paymentRequestRepository.findOneById(paymentId);
+            if (paymentRequest != null && transaction == null) {
+                transaction = transactionService.createErrorTransaction(paymentRequest);
+
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SRQ",
+                        String.format(
+                                "Because 15min from creation have passed, transaction %s is automatically CANCELED",
+                                transaction.getId())));
+            }
+        };
     }
 
     private List<Transaction> getTransactionInformation(Double baseAmount) {
@@ -231,9 +272,11 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Autowired
-    public PaymentServiceImpl(PaymentRequestRepository paymentRequestRepository, ZuulClient zuulClient, LogService logService) {
+    public PaymentServiceImpl(PaymentRequestRepository paymentRequestRepository, ZuulClient zuulClient, LogService logService,
+                              TransactionService transactionService) {
         this.paymentRequestRepository = paymentRequestRepository;
         this.zuulClient = zuulClient;
         this.logService = logService;
+        this.transactionService = transactionService;
     }
 }

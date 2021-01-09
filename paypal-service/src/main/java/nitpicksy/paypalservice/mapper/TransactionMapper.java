@@ -1,8 +1,7 @@
-package nitpicksy.bank.mapper;
+package nitpicksy.paypalservice.mapper;
 
-import nitpicksy.bank.dto.response.TransactionResponseDTO;
-
-import nitpicksy.bank.model.Transaction;
+import nitpicksy.paypalservice.dto.response.TransactionResponseDTO;
+import nitpicksy.paypalservice.model.Transaction;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
