@@ -55,7 +55,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${attempts &lt;= 4 &amp;&amp; rejected == false &amp;&amp; moreDocuments == false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0fkfdzc" name="Jos dokumenata" sourceRef="Gateway_0pc88lr" targetRef="Activity_1w0pqws">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${moreDocuments == true &amp;&amp; attempts &lt; 4}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${moreDocuments == true &amp;&amp; attempts &lt; 4 &amp;&amp; rejected==false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sendTask id="Activity_1w0pqws" name="Notifikacija - Dodaj još radova" camunda:class="nitpicksy.literarysociety.camunda.messages.SubmitMoreDocumentsEmail">
       <bpmn:incoming>Flow_0fkfdzc</bpmn:incoming>
@@ -84,9 +84,9 @@
       <bpmn:outgoing>Flow_080kob3</bpmn:outgoing>
     </bpmn:sendTask>
     <bpmn:sequenceFlow id="Flow_1kbm8f6" sourceRef="Event_1d304fb" targetRef="Activity_0oql7lu" />
-    <bpmn:sequenceFlow id="Flow_080kob3" sourceRef="Activity_0oql7lu" targetRef="Event_0u4fbi9" />
+    <bpmn:sequenceFlow id="Flow_080kob3" sourceRef="Activity_0oql7lu" targetRef="Activity_0z96gya" />
     <bpmn:endEvent id="Event_0u4fbi9" name="Fail">
-      <bpmn:incoming>Flow_080kob3</bpmn:incoming>
+      <bpmn:incoming>Flow_1pq8888</bpmn:incoming>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1bj9aaj" errorRef="Error_09vmmqo" />
     </bpmn:endEvent>
     <bpmn:boundaryEvent id="Event_1d304fb" attachedToRef="Activity_12p0hw3">
@@ -95,23 +95,33 @@
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P10D</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_187us6m" sourceRef="Activity_0tj0jbq" targetRef="Event_1xj3vpr" />
+    <bpmn:sequenceFlow id="Flow_187us6m" sourceRef="Activity_0tj0jbq" targetRef="Activity_0aqm92g" />
     <bpmn:endEvent id="Event_1xj3vpr" name="Fail">
-      <bpmn:incoming>Flow_187us6m</bpmn:incoming>
+      <bpmn:incoming>Flow_17586d0</bpmn:incoming>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1p7pgfe" errorRef="Error_16qaawh" />
     </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1pq8888" sourceRef="Activity_0z96gya" targetRef="Event_0u4fbi9" />
+    <bpmn:serviceTask id="Activity_0z96gya" name="Uništi pisca" camunda:class="nitpicksy.literarysociety.camunda.service.WriterDestructionService">
+      <bpmn:incoming>Flow_080kob3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pq8888</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_17586d0" sourceRef="Activity_0aqm92g" targetRef="Event_1xj3vpr" />
+    <bpmn:serviceTask id="Activity_0aqm92g" name="Uništi pisca" camunda:class="nitpicksy.literarysociety.camunda.service.WriterDestructionService">
+      <bpmn:incoming>Flow_187us6m</bpmn:incoming>
+      <bpmn:outgoing>Flow_17586d0</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmn:error id="Error_09vmmqo" name="greskaNoviRadoviTimeout" errorCode="greskaNoviRadoviTimeout" />
   <bpmn:error id="Error_16qaawh" name="greskaOdbijen" errorCode="greskaOdbijen" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="WriterDocumentSubmission">
       <bpmndi:BPMNEdge id="Flow_187us6m_di" bpmnElement="Flow_187us6m">
-        <di:waypoint x="920" y="120" />
-        <di:waypoint x="972" y="120" />
+        <di:waypoint x="1040" y="120" />
+        <di:waypoint x="1090" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_080kob3_di" bpmnElement="Flow_080kob3">
         <di:waypoint x="540" y="630" />
-        <di:waypoint x="540" y="742" />
+        <di:waypoint x="540" y="670" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1kbm8f6_di" bpmnElement="Flow_1kbm8f6">
         <di:waypoint x="540" y="508" />
@@ -131,9 +141,10 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1lhd7i1_di" bpmnElement="Flow_1lhd7i1">
         <di:waypoint x="870" y="255" />
-        <di:waypoint x="870" y="160" />
+        <di:waypoint x="870" y="120" />
+        <di:waypoint x="940" y="120" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="792" y="185" width="76" height="40" />
+          <dc:Bounds x="782" y="200" width="76" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0fkfdzc_di" bpmnElement="Flow_0fkfdzc">
@@ -141,7 +152,7 @@
         <di:waypoint x="870" y="450" />
         <di:waypoint x="760" y="450" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="789" y="327" width="82" height="14" />
+          <dc:Bounds x="779" y="343" width="82" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0nlt7gn_di" bpmnElement="Flow_0nlt7gn">
@@ -166,6 +177,14 @@
       <bpmndi:BPMNEdge id="Flow_1wz7n08_di" bpmnElement="Flow_1wz7n08">
         <di:waypoint x="188" y="280" />
         <di:waypoint x="280" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pq8888_di" bpmnElement="Flow_1pq8888">
+        <di:waypoint x="540" y="750" />
+        <di:waypoint x="540" y="802" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17586d0_di" bpmnElement="Flow_17586d0">
+        <di:waypoint x="1190" y="120" />
+        <di:waypoint x="1252" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="152" y="262" width="36" height="36" />
@@ -194,29 +213,35 @@
       <bpmndi:BPMNShape id="Activity_0e35roy_di" bpmnElement="Activity_1w0pqws">
         <dc:Bounds x="660" y="410" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0xtye95_di" bpmnElement="Activity_0tj0jbq">
-        <dc:Bounds x="820" y="80" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1igd0nr_di" bpmnElement="Activity_1yq63dn">
         <dc:Bounds x="1030" y="240" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_017e8q1_di" bpmnElement="Activity_12p0hw3">
         <dc:Bounds x="490" y="410" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1kfq9po_di" bpmnElement="Activity_0oql7lu">
-        <dc:Bounds x="490" y="550" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0g2meq1_di" bpmnElement="Event_1xj3vpr">
-        <dc:Bounds x="972" y="102" width="36" height="36" />
+        <dc:Bounds x="1252" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="981" y="145" width="18" height="14" />
+          <dc:Bounds x="1261" y="145" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0z1i059_di" bpmnElement="Event_0u4fbi9">
-        <dc:Bounds x="522" y="742" width="36" height="36" />
+        <dc:Bounds x="522" y="802" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="531" y="788" width="18" height="14" />
+          <dc:Bounds x="531" y="848" width="18" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kfq9po_di" bpmnElement="Activity_0oql7lu">
+        <dc:Bounds x="490" y="550" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rera5k_di" bpmnElement="Activity_0z96gya">
+        <dc:Bounds x="490" y="670" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0xtye95_di" bpmnElement="Activity_0tj0jbq">
+        <dc:Bounds x="940" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16dip8w_di" bpmnElement="Activity_0aqm92g">
+        <dc:Bounds x="1090" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_044ubpe_di" bpmnElement="Event_1d304fb">
         <dc:Bounds x="522" y="472" width="36" height="36" />

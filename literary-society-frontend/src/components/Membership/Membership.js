@@ -50,7 +50,7 @@ const Membership = (props) => {
     }
 
     const handlePay = () => {
-        if(selectedTask) {
+        if(selectedTask.piId != null && selectedTask.taskId != null) {
             completePayTask(selectedTask);
         } else {
             onPay();

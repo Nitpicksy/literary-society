@@ -52,7 +52,7 @@ export const upload = (piId, taskId, files, history) => {
         axios.post(`/tasks/${taskId}/writer-membership-upload?piId=${piId}`, files)
         .then(response => {
             dispatch(uploadSuccess());
-            toastr.success('Document upload', 'Documents uploaded successfully.');
+            toastr.success('Document upload', 'Documents sent to committee for evaluation');
             history.push('/tasks');
         }).catch(err => {
             toastr.error('Document upload', err.response.data.message);
