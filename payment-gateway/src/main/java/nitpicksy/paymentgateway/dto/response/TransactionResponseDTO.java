@@ -1,8 +1,10 @@
-package nitpicksy.bank.dto.response;
+package nitpicksy.paymentgateway.dto.response;
+
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import nitpicksy.bank.enumeration.TransactionStatus;
+import nitpicksy.paymentgateway.enumeration.TransactionStatus;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -32,3 +34,4 @@ public class TransactionResponseDTO {
         this.status = status.toString();
     }
 }
+

@@ -7,6 +7,8 @@ import nitpicksy.paymentgateway.dto.request.OrderRequestDTO;
 import nitpicksy.paymentgateway.dto.request.PaymentRequestDTO;
 import nitpicksy.paymentgateway.dto.response.LiterarySocietyOrderResponseDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentResponseDTO;
+import nitpicksy.paymentgateway.dto.response.TransactionResponseDTO;
+import nitpicksy.paymentgateway.enumeration.PaymentMethodStatus;
 import nitpicksy.paymentgateway.enumeration.TransactionStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.mapper.ForwardRequestMapper;
@@ -192,19 +194,24 @@ public class OrderServiceImpl implements OrderService {
     @Async
     @Override
     @Scheduled(cron = "0 20 0 * * ?")
+//    @Scheduled(cron = "0 */2 * * * *")
     public void synchronizeTransactions() {
-        //TODO: Implement
-//        try{
-//            List<LiterarySocietyOrderRequestDTO> transactions = zuulClient.getAllTransactions("Bearer " + jwtTokenService.getToken());
-//
-//            for(LiterarySocietyOrderRequestDTO dto: transactions){
-//                Transaction order = transactionService.findById(dto.getMerchantOrderId());
-//                if(order != null && !order.getStatus().equals(TransactionStatus.valueOf(dto.getStatus()))){
-//                    handlePayment(dto);
-//                }
-//            }
-//        }catch (RuntimeException e){
-//        }
+        List<PaymentMethod> paymentMethods = paymentMethodRepository.findByStatus(PaymentMethodStatus.APPROVED);
+        for (PaymentMethod paymentMethod:paymentMethods) {
+            try{
+                List<TransactionResponseDTO> transactions = zuulClient.getAllTransactions(URI.create(apiGatewayURL + '/' + paymentMethod.getCommonName()));
+
+                for(TransactionResponseDTO dto: transactions){
+                    Transaction order = transactionRepository.findTransactionByMerchantOrderIdAndPaymentId(dto.getMerchantOrderId(), dto.getPaymentId());
+                    if(order != null){
+                        handleOrder(dto.getMerchantOrderId(), dto.getPaymentId(), dto.getStatus());
+                    }
+                }
+            }catch (RuntimeException e){
+                logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", "Went wrong when contacting the " + paymentMethod.getName()));
+            }
+        }
+
     }
 
     private void handleOrder(String merchantOrderId, Long paymentId, String status) {
@@ -257,7 +264,7 @@ public class OrderServiceImpl implements OrderService {
                 transactionRepository.save(transaction);
                 logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SRQ",
                         String.format(
-                                "Because 15min from creation have passed, rtransaction %s is automatically CANCELED",
+                                "Because 15min from creation have passed, transaction %s is automatically CANCELED",
                                 transaction.getId())));
             }
         };
