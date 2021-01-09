@@ -1,5 +1,4 @@
 package nitpicksy.literarysociety.serviceimpl;
-
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.constants.CamundaConstants;

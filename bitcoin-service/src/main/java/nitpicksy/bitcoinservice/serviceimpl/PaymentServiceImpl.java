@@ -134,9 +134,9 @@ public class PaymentServiceImpl implements PaymentService {
                 notifyPaymentGateway(payment.getMerchantOrderId(), new ConfirmPaymentResponseDTO(payment.getId(), "FAILED"));
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Could not notify Payment Gateway"));
-            throw new InvalidDataException("Could not notify Payment Gateway", HttpStatus.BAD_REQUEST);
+            throw new InvalidDataException("Something went wrong. Please try again.", HttpStatus.BAD_REQUEST);
         }
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Successfully forwarded request with ID: " + callbackDTO.getOrder_id()));
@@ -144,6 +144,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private void notifyPaymentGateway(Long merchantOrderId, ConfirmPaymentResponseDTO confirmPaymentResponseDTO) {
         zuulClient.confirmPayment(merchantOrderId, confirmPaymentResponseDTO);
+
     }
 
 

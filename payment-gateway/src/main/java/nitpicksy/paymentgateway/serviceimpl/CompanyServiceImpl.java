@@ -3,36 +3,37 @@ package nitpicksy.paymentgateway.serviceimpl;
 import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.dto.both.PaymentMethodDTO;
 import nitpicksy.paymentgateway.enumeration.CompanyStatus;
-import nitpicksy.paymentgateway.enumeration.PaymentMethodStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.model.Company;
+import nitpicksy.paymentgateway.model.Log;
 import nitpicksy.paymentgateway.model.PaymentMethod;
-import nitpicksy.paymentgateway.model.Role;
 import nitpicksy.paymentgateway.repository.CompanyRepository;
 import nitpicksy.paymentgateway.repository.PaymentMethodRepository;
 import nitpicksy.paymentgateway.repository.RoleRepository;
 import nitpicksy.paymentgateway.security.TokenUtils;
 import nitpicksy.paymentgateway.service.CompanyService;
 import nitpicksy.paymentgateway.service.EmailNotificationService;
-import nitpicksy.paymentgateway.service.PaymentMethodService;
+import nitpicksy.paymentgateway.service.LogService;
 import nitpicksy.paymentgateway.utils.CertificateUtils;
 import nitpicksy.paymentgateway.utils.TrustStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
+
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
 
     @Value("${API_GATEWAY_URL}")
     private String apiGatewayURL;
@@ -47,7 +48,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     private RoleRepository roleRepository;
 
-    public TokenUtils tokenUtils;
+    private TokenUtils tokenUtils;
+
+    private LogService logService;
 
     @Override
     public Company addCompany(Company company, List<PaymentMethodDTO> paymentMethodDTOs) {
@@ -86,9 +89,15 @@ public class CompanyServiceImpl implements CompanyService {
                 }
                 String jwtToken = tokenUtils.generateToken(company.getCommonName(), company.getRole().getName(),
                         company.getRole().getPermissions());
-                zuulClient.sendJWTToken(URI.create(apiGatewayURL + '/' + company.getCommonName()), jwtToken);
-                company.setStatus(CompanyStatus.APPROVED);
-                composeAndSendApprovalEmail(company.getEmail());
+                try{
+                    zuulClient.sendJWTToken(URI.create(apiGatewayURL + '/' + company.getCommonName()), jwtToken);
+                    company.setStatus(CompanyStatus.APPROVED);
+                    composeAndSendApprovalEmail(company.getEmail());
+                }catch (RuntimeException e){
+                    logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "COMP", "Could not notify " + company.getCompanyName()));
+                }
+
+
             } else {
                 company.setStatus(CompanyStatus.REJECTED);
                 composeAndSendRejectionEmail(company.getEmail());
@@ -136,12 +145,13 @@ public class CompanyServiceImpl implements CompanyService {
     @Autowired
     public CompanyServiceImpl(CompanyRepository companyRepository, PaymentMethodRepository paymentMethodRepository,
                               EmailNotificationService emailNotificationService, ZuulClient zuulClient,
-                              TokenUtils tokenUtils, RoleRepository roleRepository) {
+                              TokenUtils tokenUtils, RoleRepository roleRepository,LogService logService) {
         this.companyRepository = companyRepository;
         this.paymentMethodRepository = paymentMethodRepository;
         this.emailNotificationService = emailNotificationService;
         this.zuulClient = zuulClient;
         this.tokenUtils = tokenUtils;
         this.roleRepository = roleRepository;
+        this.logService = logService;
     }
 }

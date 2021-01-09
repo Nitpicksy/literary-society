@@ -1,6 +1,5 @@
 package nitpicksy.paymentgateway.serviceimpl;
 
-import feign.FeignException;
 import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.dto.request.ConfirmPaymentRequestDTO;
 import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
@@ -110,8 +109,7 @@ public class OrderServiceImpl implements OrderService {
             PaymentResponseDTO dto = zuulClient.forwardPaymentRequest(URI.create(apiGatewayURL + '/' + paymentRequestDTO.getPaymentCommonName()), forwardDTO);
             setPayment(paymentRequestDTO.getOrderId(), dto.getPaymentId());
             responseURL = dto.getPaymentURL();
-        } catch (FeignException.FeignClientException e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
             //if bank request fails, redirect user to the company failedURL;
             cancelOrder(paymentRequestDTO.getOrderId());
             responseURL = forwardDTO.getFailedURL();
@@ -160,10 +158,8 @@ public class OrderServiceImpl implements OrderService {
 
             zuulClient.confirmPaymentToLiterarySociety(URI.create(apiGatewayURL + '/' + companyCommonName), responseDTO);
 
-        } catch (FeignException.FeignClientException e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Went wrong when contacting the Literary Society.")));
-            System.out.println("Went wrong when contacting the Literary Society.");
         }
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Order with id %s is done and payment is successfully forwarded to Literary Society", order.getId())));

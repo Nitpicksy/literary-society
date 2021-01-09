@@ -4,7 +4,6 @@ import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Merchant;
-import nitpicksy.literarysociety.model.User;
 import nitpicksy.literarysociety.repository.MerchantRepository;
 import nitpicksy.literarysociety.service.EmailNotificationService;
 import nitpicksy.literarysociety.service.JWTTokenService;
@@ -36,6 +35,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     private Environment environment;
 
+
     @Override
     public Merchant findByName(String name) {
         return merchantRepository.findByName(name);
@@ -47,6 +47,7 @@ public class MerchantServiceImpl implements MerchantService {
         if (response.getStatusCode() == HttpStatus.OK) {
             return response.getBody();
         }
+
         throw new InvalidDataException("Something went wrong.Please try again.", HttpStatus.BAD_REQUEST);
     }
 
@@ -101,7 +102,12 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Async
     public void addMerchantToPaymentGateway(Merchant merchant){
-        zuulClient.addMerchant("Bearer " + jwtTokenService.getToken(),merchant.getName());
+        try{
+            zuulClient.addMerchant("Bearer " + jwtTokenService.getToken(),merchant.getName());
+        }catch (RuntimeException ex){
+
+        }
+
     }
 
     private void composeAndSendRejectionEmail(String recipientEmail) {

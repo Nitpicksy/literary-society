@@ -3,7 +3,6 @@ package nitpicksy.paymentgateway.controller;
 import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.dto.request.PaymentDataRequestDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentDataResponseDTO;
-import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.mapper.PaymentDataRequestMapper;
 import nitpicksy.paymentgateway.mapper.PaymentDataResponseMapper;
 import nitpicksy.paymentgateway.model.Company;
@@ -92,7 +91,13 @@ public class MerchantController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         dataForPaymentService.save(paymentDataRequestMapper.convert(listPaymentDataRequestDTO, merchant));
-        String redirectURL = zuulClient.supportPaymentMethods(URI.create(apiGatewayURL + '/' + merchant.getCompany().getCommonName()), merchant.getName());
+        String redirectURL = null;
+        try {
+            redirectURL = zuulClient.supportPaymentMethods(URI.create(apiGatewayURL + '/' + merchant.getCompany().getCommonName()), merchant.getName());
+        }catch (RuntimeException e){
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Could not notify " + merchant.getCompany().getCommonName()));
+        }
+
 
         return new ResponseEntity<>(redirectURL, HttpStatus.OK);
     }

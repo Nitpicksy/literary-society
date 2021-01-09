@@ -85,14 +85,21 @@ public class TransactionServiceImpl implements TransactionService {
         transactionRepository.save(transaction);
         try {
             PCCRequestDTO pccRequestDTO = pccRequestMapper.toDTO(transaction, confirmPaymentDTO);
-            PCCResponseDTO response = pccClient.pay(pccRequestDTO);
-            Transaction createdTransaction = setTransactionStatus(transaction,response.getStatus());
-            if(createdTransaction.getStatus().equals(TransactionStatus.SUCCESS)){
-                merchantService.transferMoneyToMerchant(transaction.getMerchantId(),transaction.getAmount());
+            try{
+                PCCResponseDTO response = pccClient.pay(pccRequestDTO);
+                Transaction createdTransaction = setTransactionStatus(transaction,response.getStatus());
+                if(createdTransaction.getStatus().equals(TransactionStatus.SUCCESS)){
+                    merchantService.transferMoneyToMerchant(transaction.getMerchantId(),transaction.getAmount());
+                }
+                confirmPaymentResponseDTO.setAcquirerOrderId(response.getAcquirerOrderId());
+                confirmPaymentResponseDTO.setAcquirerTimestamp(response.getAcquirerTimestamp());
+                confirmPaymentResponseDTO.setStatus(response.getStatus().toString());
+            }catch (RuntimeException e){
+                logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Could not notify PCC"));
+                setTransactionStatus(transaction,TransactionStatus.ERROR);
+                confirmPaymentResponseDTO.setStatus(TransactionStatus.ERROR.toString());
             }
-            confirmPaymentResponseDTO.setAcquirerOrderId(response.getAcquirerOrderId());
-            confirmPaymentResponseDTO.setAcquirerTimestamp(response.getAcquirerTimestamp());
-            confirmPaymentResponseDTO.setStatus(response.getStatus().toString());
+
             return confirmPaymentResponseDTO;
         } catch (NoSuchAlgorithmException | IllegalArgumentException e) {
             setTransactionStatus(transaction, TransactionStatus.ERROR);

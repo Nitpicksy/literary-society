@@ -140,7 +140,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Async
     public void sendResponseToPaymentGateway(Long merchantOrderId, ConfirmPaymentResponseDTO confirmPaymentResponseDTO) {
-        zuulClient.confirmPayment(merchantOrderId, confirmPaymentResponseDTO);
+        try{
+            zuulClient.confirmPayment(merchantOrderId, confirmPaymentResponseDTO);
+        }catch (RuntimeException e){
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Could not notify Payment Gateway"));
+        }
+
     }
 
     private List<Transaction> getTransactionInformation(Double baseAmount) {
