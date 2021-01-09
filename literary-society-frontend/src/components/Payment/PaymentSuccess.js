@@ -34,7 +34,6 @@ const PaymentSuccess = (props) => {
 
     if(props.transaction){
         const params = props.transaction.url.split('?t=');
-        console.log(props.transaction)
         token = params[1];
         if(token){
             download = <Link  to="#" onClick = {onDownload} 
