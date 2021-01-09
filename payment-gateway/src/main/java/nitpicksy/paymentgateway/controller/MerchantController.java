@@ -137,7 +137,7 @@ public class MerchantController {
                 .map(merchantResponseMapper::toDto).collect(Collectors.toList()), HttpStatus.OK);
     }
 
-    @Scheduled(cron = "0 10 0 * * ?")
+    @Scheduled(cron = "0 40 0 * * ?")
     @Async
     public void synchronizeMerchants() {
         List<Company> companyList = companyService.findAllApproved();

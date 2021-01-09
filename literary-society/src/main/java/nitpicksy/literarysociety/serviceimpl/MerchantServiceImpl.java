@@ -112,7 +112,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     }
 
-    @Scheduled(cron = "0 10 0 * * ?")
+    @Scheduled(cron = "0 50 0 * * ?")
     @Async
     @Override
     public void synchronizeMerchants() {
