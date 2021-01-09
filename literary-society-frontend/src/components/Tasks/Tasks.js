@@ -74,6 +74,8 @@ const Tasks = (props) => {
             history.push('/plagiarism');
         } else if (properties.row.name === "Download books to submit a report") {
             history.push('/plagiarism-review-download');
+        } else if(properties.row.name === 'Plagiarism report-cast your vote') {
+            history.push('/plagiarism-vote')
         }
         
     }

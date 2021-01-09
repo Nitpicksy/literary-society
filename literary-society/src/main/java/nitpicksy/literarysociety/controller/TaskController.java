@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.camunda.service.CamundaService;
+import nitpicksy.literarysociety.dto.camunda.EditorsCommentsDTO;
 import nitpicksy.literarysociety.dto.camunda.PlagiarismDetailsDTO;
 import nitpicksy.literarysociety.dto.camunda.PublicationRequestDTO;
 import nitpicksy.literarysociety.dto.camunda.TaskDataDTO;
@@ -26,10 +27,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -53,6 +51,8 @@ public class TaskController {
     private ImageService imageService;
 
     private PlagiarismComplaintService plagiarismComplaintService;
+
+    private OpinionOfEditorAboutComplaintService opinionOfEditorAboutComplaintService;
 
     private static String IMAGES_PATH = "literary-society/src/main/resources/images/";
 
@@ -138,6 +138,7 @@ public class TaskController {
         return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
     }
 
+
     @GetMapping(value = "/{taskId}/editors", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskDataDTO> getTaskDataForEditor(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
 
@@ -150,14 +151,20 @@ public class TaskController {
             plagiarismComplaint = null;
         }
 
+        List<EditorsCommentsDTO> editorsCommentsDTOS = new ArrayList<>();
+        if (plagiarismComplaint != null) {
+            editorsCommentsDTOS = opinionOfEditorAboutComplaintService.findOpinionsByPlagiarismComplaint(plagiarismComplaint.getId());
+        }
+
         TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.setEnumValues(camundaService.getFormFields(piId, taskId)),
                 new PlagiarismDetailsDTO(camundaService.getProcessVariable(piId, "writersName"),
                         camundaService.getProcessVariable(piId, "title"),
                         camundaService.getProcessVariable(piId, "mainEditor"),
-                        plagiarismComplaint != null ? new PublicationRequestDTO(plagiarismComplaint.getWritersBook().getId(),
+                        (plagiarismComplaint != null ? new PublicationRequestDTO(plagiarismComplaint.getWritersBook().getId(),
                                 plagiarismComplaint.getWritersBook().getTitle(),
                                 plagiarismComplaint.getWritersBook().getGenre().getName(),
-                                plagiarismComplaint.getWritersBook().getSynopsis()) : null));
+                                plagiarismComplaint.getWritersBook().getSynopsis()) : null)),
+                editorsCommentsDTOS);
 
         return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
     }
@@ -174,7 +181,7 @@ public class TaskController {
         if (result != null) {
             camundaService.completeTask(taskId);
         }
-       
+
         try {
             Long id = Long.valueOf(camundaService.getProcessVariable(piId, "plagiarismId"));
             plagiarismComplaint = plagiarismComplaintService.findById(id);
@@ -237,7 +244,8 @@ public class TaskController {
     @Autowired
     public TaskController(UserService userService, CamundaService camundaService, BookService bookService,
                           PDFDocumentService pdfDocumentService, TaskService taskService, RuntimeService runtimeService, FormService formService,
-                          ImageService imageService, PlagiarismComplaintService plagiarismComplaintService) {
+                          ImageService imageService, PlagiarismComplaintService plagiarismComplaintService,
+                          OpinionOfEditorAboutComplaintService opinionOfEditorAboutComplaintService) {
         this.userService = userService;
         this.camundaService = camundaService;
         this.bookService = bookService;
@@ -247,5 +255,6 @@ public class TaskController {
         this.formService = formService;
         this.imageService = imageService;
         this.plagiarismComplaintService = plagiarismComplaintService;
+        this.opinionOfEditorAboutComplaintService = opinionOfEditorAboutComplaintService;
     }
 }

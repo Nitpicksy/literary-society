@@ -6,7 +6,6 @@ import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.PlagiarismComplaint;
 import nitpicksy.literarysociety.model.User;
-import nitpicksy.literarysociety.model.Writer;
 import nitpicksy.literarysociety.repository.BookRepository;
 import nitpicksy.literarysociety.repository.PlagiarismComplaintRepository;
 import nitpicksy.literarysociety.service.UserService;
@@ -63,7 +62,6 @@ public class PlagiarismSubmittedService implements JavaDelegate {
         String title = map.get("title");
         String writersName = map.get("writer");
 
-        Writer writer = (Writer) userService.findByUsername((String) execution.getVariable("writer"));
         Book writersBook = bookRepository.findOneById(id);
         Book reportedBook = bookRepository.findFirstByTitleContainingAndWritersNamesContaining(title, writersName);
         if (reportedBook == null) {
@@ -72,8 +70,9 @@ public class PlagiarismSubmittedService implements JavaDelegate {
 
         execution.setVariable("title", reportedBook.getTitle());
         execution.setVariable("writersName", reportedBook.getWritersNames());
+        execution.setVariable("writer", writersBook.getWriter().getUsername());
 
-        PlagiarismComplaint plagiarismComplaint = this.plagiarismComplaintRepository.save(new PlagiarismComplaint(writer, writersBook, reportedBook));
+        PlagiarismComplaint plagiarismComplaint = this.plagiarismComplaintRepository.save(new PlagiarismComplaint(writersBook.getWriter(), writersBook, reportedBook));
         execution.setVariable("plagiarismId", plagiarismComplaint.getId().toString());
     }
 

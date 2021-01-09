@@ -1,38 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-import PolicyIcon from '@material-ui/icons/Policy';
-import Avatar from '@material-ui/core/Avatar';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import React, { useState, useEffect } from 'react';
+import { Typography, Container, Avatar, CssBaseline, Button, Card, CardContent } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { useStyles } from './AssignReviewBoardStyles';
-import * as actions from './AssignReviewBoardExport';
-import * as signInActions from '../../../../Authentication/SignIn/SignInExport';
+import { useStyles } from './CommitteePlagiarismVoteStyles';
 import { responseInterceptor } from '../../../../../responseInterceptor';
 import { useHistory } from 'react-router';
+import * as signInActions from '../../../../Authentication/SignIn/SignInExport';
+import * as actions from './CommitteePlagiarismVoteExport';
 import Form from '../../../../../UI/Form/Form';
 import { extractControls } from '../../../../../utility/extractControls';
-import Button from '@material-ui/core/Button';
+import PeopleIcon from '@material-ui/icons/People';
 import PlagiarismDetailsCard from '../PlagiarismDetailsCard/PlagiarismDetailsCard';
+import EditorComments from '../EditorComments/EditorComments'
 
-const EditorChooseBetaReaders = (props) => {
-    const history = useHistory();
-    responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
-    const classes = useStyles();
+const CommitteePlagiarismVote = (props) => {
 
     const { selectedTask } = props;
     const { formFields, fetchForm } = props;
-    const { plagiarismDetails } = props;
+    const { plagiarismDetails, editorsComments } = props;
+
+    const classes = useStyles();
+    const history = useHistory();
+
+    responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
 
     let [controls, setControls] = useState(null);
     const [formIsValid, setFormIsValid] = useState(false);
 
-    let form = null;
-    let plagiarismDetailsCard = null;
-
     useEffect(() => {
         fetchForm(selectedTask.piId, selectedTask.taskId);
     }, [fetchForm, selectedTask.piId, selectedTask.taskId]);
+
+    let form = null;
+    let displayPlagiarismDetailsCard = null;
+    let displayEditorsComments = null;
 
     useEffect(() => {
         if (formFields) {
@@ -40,6 +40,7 @@ const EditorChooseBetaReaders = (props) => {
             setControls(extractedControls);
         }
     }, [formFields]);
+
 
     const submitHander = (event) => {
         event.preventDefault();
@@ -52,6 +53,7 @@ const EditorChooseBetaReaders = (props) => {
             array.push({ fieldId: key, fieldValue: value });
         }
 
+
         props.onConfirm(array, selectedTask.taskId, history);
     }
 
@@ -59,49 +61,57 @@ const EditorChooseBetaReaders = (props) => {
         form = <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} />;
     }
 
-    if (plagiarismDetails) {
-        plagiarismDetailsCard = <PlagiarismDetailsCard plagiarismDetails={plagiarismDetails} />
+    if(plagiarismDetails) {
+        // displayPlagiarismDetailsCard = <PlagiarismDetailsCard plagiarismDetails={plagiarismDetails} showDownload={false}/>
+    }
+
+    if(editorsComments) {
+        console.log('ed', editorsComments)
+        displayEditorsComments = <EditorComments comments={editorsComments} />
     }
 
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
+            
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
-                    <PolicyIcon />
+                    <PeopleIcon />
                 </Avatar>
-                <Typography component="h1" variant="h4" className={classes.title}>Plagiarism report</Typography>
-                <div className={classes.card} justify="center">
-                    {plagiarismDetailsCard}
-                </div>
+                <Typography component="h1" variant="h4" className={classes.title}>Committee voting</Typography>
+                <br/>
+                <Typography component="h5" variant="h5" className={classes.title}></Typography>
+                {displayPlagiarismDetailsCard}
+                {displayEditorsComments}
+
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
                     <Button type="submit" color="primary" className={classes.submit}
                         variant="contained" disabled={!formIsValid} fullWidth>
-                        Confirm
+                        Vote
                     </Button>
                 </form>
             </div>
         </Container>
-    );
-};
-
+    )
+}
 
 const mapStateToProps = state => {
     return {
         selectedTask: state.tasks.selectedTask,
         refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
-        formFields: state.assignReviewBoard.formFields,
-        plagiarismDetails: state.assignReviewBoard.plagiarismDetails,
+        formFields: state.committeePlagiarismVote.formFields,
+        plagiarismDetails: state.committeePlagiarismVote.plagiarismDetails,
+        editorsComments: state.committeePlagiarismVote.editorsComments
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchForm: (piId, taskId) => dispatch(actions.fetchForm(piId, taskId)),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
+        fetchForm: (piId, taskId) => dispatch(actions.fetchForm(piId, taskId)),
         onConfirm: (data, taskId, history) => dispatch(actions.confirm(data, taskId, history)),
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditorChooseBetaReaders);
+export default connect(mapStateToProps,mapDispatchToProps)(CommitteePlagiarismVote);

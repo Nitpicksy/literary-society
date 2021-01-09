@@ -44,6 +44,7 @@ import ManageMerchants from './components/Authentication/ManageMerchants/ManageM
 import PlagiarismComplaint from './components/WriterPages/PlagiarismComplaint/PlagiarismComplaint';
 import AssignReviewBoard from './components/Tasks/Task/PlagiarismProcess/AssignReviewBoard/AssignReviewBoard';
 import EditorDownloadPlagiarismDocuments from './components/Tasks/Task/PlagiarismProcess/EditorDownloadPlagiarismDocuments/EditorDownloadPlagiarismDocuments';
+import CommitteePlagiarismVote from './components/Tasks/Task/PlagiarismProcess/CommitteePlagiarismVote/CommitteePlagiarismVote';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -131,6 +132,7 @@ const App = props => {
           <Route path="/plagiarism-complaint" render={(props) => <PlagiarismComplaint {...props} />} meta={{ roles:  [roleWriter] }}/>
           <Route path="/plagiarism" render={(props) => <AssignReviewBoard {...props} />} meta={{ roles:  [roleEditor] }}/>
           <Route path="/plagiarism-review-download" render={(props) => <EditorDownloadPlagiarismDocuments {...props} /> } meta={{roles: [roleEditor]}} />
+          <Route path="/plagiarism-vote" render={(props) => <CommitteePlagiarismVote {...props} /> } meta={{roles: [roleCommitteeMember]}} />
 
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
 

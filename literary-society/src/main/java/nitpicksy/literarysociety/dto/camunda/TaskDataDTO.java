@@ -23,6 +23,8 @@ public class TaskDataDTO {
 
     private PlagiarismDetailsDTO plagiarismDetails;
 
+    private List<EditorsCommentsDTO> editorsComments;
+
     public TaskDataDTO(FormFieldsDTO formFieldsDTO, PublicationRequestDTO publicationRequestDTO) {
         this.formFieldsDTO = formFieldsDTO;
         this.publicationRequestDTO = publicationRequestDTO;
@@ -36,5 +38,11 @@ public class TaskDataDTO {
     public TaskDataDTO(FormFieldsDTO formFieldsDTO, PlagiarismDetailsDTO plagiarismDetails) {
         this.formFieldsDTO = formFieldsDTO;
         this.plagiarismDetails = plagiarismDetails;
+    }
+
+    public TaskDataDTO(FormFieldsDTO formFieldsDTO, PlagiarismDetailsDTO plagiarismDetails, List<EditorsCommentsDTO> editorsComments) {
+        this.formFieldsDTO = formFieldsDTO;
+        this.plagiarismDetails = plagiarismDetails;
+        this.editorsComments = editorsComments;
     }
 }
