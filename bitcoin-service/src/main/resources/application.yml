@@ -14,6 +14,18 @@ server:
 spring:
   application:
     name: ${SPRINGBOOT_APP_NAME:bitcoin}
+  datasource:
+    username: ${DATABASE_USERNAME:nitpicksy_user}
+    password: ${DATABASE_PASSWORD:Nitpicksy-2020}
+    url: jdbc:mysql://${DATABASE_DOMAIN:localhost}:${DATABASE_PORT:3306}/${DATABASE_SCHEMA:bitcoin_service}?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
 
 eureka:
   client:
@@ -31,3 +43,9 @@ eureka:
     secureVirtualHostName: ${spring.application.name}
     prefer-ip-address: false
     instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+
+API_KEY: js4zu_8ezKs1wy_wswvrkm8JHm5L-9JBujvKznLE
+SANDBOX_ENVIRONMENT: https://api-sandbox.coingate.com/v2
+TOKEN_UTILS_SECRET: Nitpicsky
+
+CALLBACK_URL: https://d1494439b13a.ngrok.io/api/payments/callback
