@@ -61,6 +61,7 @@ public class PaymentServiceImpl implements PaymentService {
     private LogService logService;
 
     private TransactionService transactionService;
+
     @Override
     public PaymentResponseDTO createPayment(PaymentRequest paymentRequest) {
         Payer payer = new Payer();

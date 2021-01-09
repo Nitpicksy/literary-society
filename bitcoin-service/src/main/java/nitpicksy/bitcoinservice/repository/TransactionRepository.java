@@ -1,6 +1,6 @@
-package nitpicksy.paypalservice.repository;
+package nitpicksy.bitcoinservice.repository;
 
-import nitpicksy.paypalservice.model.Transaction;
+import nitpicksy.bitcoinservice.model.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
