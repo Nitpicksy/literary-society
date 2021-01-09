@@ -9,43 +9,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PlagiarismResultEmail implements JavaDelegate {
-
+public class WriterPaymentRejectionEmail implements JavaDelegate {
 
     private EmailNotificationService emailNotificationService;
     private UserService userService;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-
-        String writerUsername = (String) execution.getVariable("writer");
-
-        Writer writer = (Writer) userService.findByUsername(writerUsername);
-
-        boolean decision = (boolean) execution.getVariable("plagiarism");
-
+        String username = (String) execution.getVariable("user");
+        Writer writer = (Writer) userService.findByUsername(username);
         String email = writer.getEmail();
-        String subject = "Plagiarism report evaluation";
-        String text = composeEmailToActivate(decision);
+        String subject = "Payment request rejected";
+        String text = composeEmailToActivate();
 
         emailNotificationService.sendEmail(email, subject, text);
     }
 
-    private String composeEmailToActivate(boolean decision) {
+    private String composeEmailToActivate() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Your plagiarism complaint has been processed and the book is considered: ");
-        if (decision) {
-            sb.append("PLAGIARISM");
-        } else {
-            sb.append("NOT_PLAGIARISM");
-        }
-        sb.append("Thank you for your complaint.");
-        sb.append(System.lineSeparator());
+        sb.append("Your payment request has been processed and is rejected. A new payment task is assigned to your account. ");
+        sb.append("Please keep in mind that payment time limit is 14 days.");
         return sb.toString();
     }
 
     @Autowired
-    public PlagiarismResultEmail(EmailNotificationService emailNotificationService, UserService userService) {
+    public WriterPaymentRejectionEmail(EmailNotificationService emailNotificationService, UserService userService) {
         this.emailNotificationService = emailNotificationService;
         this.userService = userService;
     }
