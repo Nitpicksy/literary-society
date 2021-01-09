@@ -39,6 +39,8 @@ import EditorChooseBetaReaders from './components/Tasks/Task/EditorChooseBetaRea
 import OpinionsOfBetaReaders from './components/Tasks/Task/OpinionsOfBetaReaders/OpinionsOfBetaReaders';
 import OpinionOfEditor from './components/Tasks/Task/OpinionOfEditor/OpinionOfEditor';
 import PublishingInfo from './components/Tasks/Task/PublishingInfo/PublishingInfo';
+import Subscription from './components/Subscription/Subscription';
+import SubscriptionSuccess from './components/Subscription/SubscriptionSuccess/SubscriptionSuccess';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -46,7 +48,7 @@ import PublishingInfo from './components/Tasks/Task/PublishingInfo/PublishingInf
 
 const App = props => {
 
-  const { onTryAutoSignUp } = props;
+  const { onTryAutoSignUp, role } = props;
 
   const roleWriter = "ROLE_WRITER";
   const roleReader = "ROLE_READER";
@@ -121,6 +123,9 @@ const App = props => {
           <Route path="/writer-membership-upload" render={(props) => <WriterUploadWork {...props} />} meta={{ roles:  [roleWriter] }}/>
           <Route path="/voting" render={(props) => <CommitteeVoting {...props} />} meta={{ roles:  [roleWriter] }}/>
           <Route path="/membership" render={(props) => <Membership {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
+          <Route path="/subscription" render={(props) => <Subscription {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
+          <Route path="/subscription-success" render={(props) => <SubscriptionSuccess {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
+          
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
 
           <GuardedRoute path="/manage-users" render={(props) => <ManageLecturersAndEditors {...props} />} meta={{ roles: [roleAdmin] }} />

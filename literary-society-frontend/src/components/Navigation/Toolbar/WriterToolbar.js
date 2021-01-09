@@ -17,7 +17,8 @@ const WriterToolbar = (props) => {
         setAnchorEl(null);
     };
 
-    const redirect = (path) => {
+    const redirect = (path) => {        
+        setAnchorEl(null);
         history.push(path);
     }
 
@@ -26,7 +27,7 @@ const WriterToolbar = (props) => {
             <Button color="inherit" onClick={() =>redirect('/publication-requests') }>Publication Requests</Button>
             <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} className={classes.menuBtn}>Membership</Button>
             <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose} getContentAnchorEl={null}
-                anchorOrigin={{ vertical: "bottom", horizontal: "center" }} transformOrigin={{ horizontal: "center" }}>
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }} transformOrigin={{ vertical: "top", horizontal: "center" }}>
                 <MenuItem onClick={() => redirect('/membership')}>One time</MenuItem>
                 <MenuItem onClick={() => redirect('/subscription')}>Subscription</MenuItem>
             </Menu>

@@ -106,15 +106,25 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new InvalidDataException("Request to subscribe failed. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
-//        ON REDIRECT LOAD
-//        Merchant ourMerchant = merchantService.findOurMerchant();
-//        membershipService.createSubscriptionMembership(user, ourMerchant);
-
         return redirectURL;
     }
 
-    @Autowired
+    @Override
+    public void createMembership() {
+        User user = userService.getAuthenticatedUser();
 
+        Membership membership = membershipService.findUserSubscription(user.getUserId());
+        if (membership != null) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUB",
+                    "Request to subscribe failed. Already subscribed."));
+            throw new InvalidDataException("You are already subscribed.", HttpStatus.BAD_REQUEST);
+        }
+        
+        Merchant ourMerchant = merchantService.findOurMerchant();
+        membershipService.createSubscriptionMembership(user, ourMerchant);
+    }
+
+    @Autowired
     public SubscriptionServiceImpl(SubscriptionPlanRepository subscriptionPlanRepository, MembershipService membershipService,
                                    MerchantService merchantService, JWTTokenService jwtTokenService, UserService userService,
                                    LogService logService, ZuulClient zuulClient, SubscriptionPlanDtoMapper planDtoMapper) {

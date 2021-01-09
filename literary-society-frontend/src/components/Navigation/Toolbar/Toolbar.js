@@ -1,13 +1,8 @@
-import { AppBar, Button, IconButton, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Button, IconButton, Toolbar, Typography, Menu, MenuItem, Tooltip } from '@material-ui/core';
 import React from 'react';
 import { useStyles } from './ToolbarStyles';
 import { useHistory } from 'react-router-dom';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
-import ListItemText from '@material-ui/core/ListItemText';
-import Tooltip from '@material-ui/core/Tooltip';
-import { withStyles } from '@material-ui/core/styles';
 import WriterToolbar from './WriterToolbar';
 import MerchantToolbar from './MerchantToolbar';
 import AdminToolbar from './AdminToolbar';
@@ -46,6 +41,7 @@ const CustomToolbar = (props) => {
     }
 
     const redirect = (path) => {
+        setAnchorEl(null);
         history.push(path);
     }
 
@@ -72,7 +68,7 @@ const CustomToolbar = (props) => {
 
                 <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} className={classes.menuBtn}>Account</Button>
                 <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose} getContentAnchorEl={null}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }} transformOrigin={{ horizontal: "center" }}>
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }} transformOrigin={{ vertical: "top", horizontal: "center" }}>
                     <MenuItem onClick={() => redirect('/change-password')}>Change password</MenuItem>
                 </Menu>
 

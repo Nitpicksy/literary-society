@@ -40,12 +40,14 @@ public class SubscriptionController {
     }
 
     @PostMapping(value = "/subscribe")
-    public ResponseEntity<Void> subscribe(@NotNull @Positive @RequestParam Long planId) {
-//        subscriptionService.subscribe(planId);
-//        return new ResponseEntity<>(HttpStatus.OK);
-        return ResponseEntity.status(HttpStatus.SEE_OTHER)
-                .location(URI.create(subscriptionService.subscribe(planId)))
-                .build();
+    public ResponseEntity<String> subscribe(@NotNull @Positive @RequestParam Long planId) {
+        return new ResponseEntity<>(subscriptionService.subscribe(planId), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/notify")
+    public ResponseEntity<Void> createMembership() {
+        subscriptionService.createMembership();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/create-plans")

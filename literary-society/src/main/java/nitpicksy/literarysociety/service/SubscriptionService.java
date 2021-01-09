@@ -13,4 +13,6 @@ public interface SubscriptionService {
 
     String subscribe(Long planId);
 
+    void createMembership();
+
 }
