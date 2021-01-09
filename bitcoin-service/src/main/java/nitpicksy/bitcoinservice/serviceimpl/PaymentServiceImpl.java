@@ -57,10 +57,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponseDTO createPayment(Payment paymentRequest) {
 
-        if (paymentRequest == null) {
-            throw new InvalidDataException("Something went wrong with creating a payment request", HttpStatus.BAD_REQUEST);
-        }
-
+        paymentRequest = paymentRepository.save(paymentRequest);
+       
         Double amount = Double.valueOf(currencyService.convertCurrency(paymentRequest.getAmount()));
 
         CreateOrderBTCDTO orderBTCDTO = new CreateOrderBTCDTO(paymentRequest.getId().toString(),
@@ -162,9 +160,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void notifyPaymentGateway(String merchantOrderId, ConfirmPaymentResponseDTO confirmPaymentResponseDTO) {
-        try{
+        try {
             zuulClient.confirmPayment(merchantOrderId, confirmPaymentResponseDTO);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Could not notify Payment Gateway"));
         }
     }
