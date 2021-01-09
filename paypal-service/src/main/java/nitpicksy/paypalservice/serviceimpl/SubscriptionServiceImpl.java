@@ -91,10 +91,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public String createSubscription(SubscriptionDTO dto) {
+    public String subscribe(SubscriptionDTO dto) {
         SubscriptionPlan plan = subscriptionPlanRepository.findOneByPlanId(dto.getPlanId());
         if (plan == null) {
-            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CSU",
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUB",
                     "PayPal subscription creation failed. Invalid plan id sent."));
             throw new InvalidDataException("PayPal subscription could not be created. Invalid plan id provided.", HttpStatus.BAD_REQUEST);
         }
@@ -120,7 +120,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         String redirectUrl = responseJSON.getJSONArray("links").getJSONObject(0).getString("href");
 
-        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CSU",
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUB",
                 String.format("PayPal subscription for plan with planId=%s successfully created.", plan.getPlanId())));
 
         return redirectUrl;
@@ -168,7 +168,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                         String.format("PayPal billing plan '%s' creation failed. Invalid request sent.", body.getString("name"))));
                 throw new InvalidDataException("PayPal subscription plan could not be created. Please try again later.", HttpStatus.BAD_REQUEST);
             } else if (url.endsWith("/subscriptions")) {
-                logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CSU",
+                logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUB",
                         "PayPal subscription creation failed. Invalid request sent."));
                 throw new InvalidDataException("PayPal subscription could not be created. Please try again later.", HttpStatus.BAD_REQUEST);
             } else {

@@ -8,7 +8,11 @@ import java.time.LocalDate;
 
 @Repository
 public interface MembershipRepository extends JpaRepository<Membership, Long> {
-    
+
     Membership findByUserIdAndExpirationDateGreaterThanEqual(Long id, LocalDate localDate);
+
+    Membership findByUserIdAndExpirationDateIsNullAndIsSubscribedIsTrueOrUserIdAndExpirationDateIsNotNullAndExpirationDateGreaterThanEqual(Long id1, Long id2, LocalDate localDate);
+
+    Membership findByUserIdAndExpirationDateIsNullAndIsSubscribedIsTrue(Long id);
 
 }

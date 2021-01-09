@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.client;
 
 import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
+import nitpicksy.literarysociety.dto.request.SubscriptionDTO;
 import nitpicksy.literarysociety.dto.request.SubscriptionPlanDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -29,4 +30,7 @@ public interface ZuulClient {
     String createSubscriptionPlan(@RequestHeader(value = "Auth") String authHeader,
                                   @RequestBody SubscriptionPlanDTO subscriptionPlanDTO);
 
+    @RequestMapping(method = RequestMethod.POST, path = "payment-gateway/api/subscriptions/subscribe")
+    String subscribe(@RequestHeader(value = "Auth") String authHeader,
+                     @RequestBody SubscriptionDTO subscriptionDTO);
 }

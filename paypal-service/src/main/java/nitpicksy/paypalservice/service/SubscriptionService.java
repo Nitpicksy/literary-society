@@ -7,6 +7,6 @@ public interface SubscriptionService {
 
     String createBillingPlan(SubscriptionPlan subscriptionPlan);
 
-    String createSubscription(SubscriptionDTO subscriptionDTO);
+    String subscribe(SubscriptionDTO subscriptionDTO);
 
 }

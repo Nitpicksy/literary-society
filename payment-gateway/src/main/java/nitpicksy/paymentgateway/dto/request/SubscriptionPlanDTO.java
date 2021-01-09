@@ -46,4 +46,10 @@ public class SubscriptionPlanDTO {
     @PositiveOrZero(message = "Frequency count is not a positive number.")
     private Integer frequencyCount;
 
+    @NotBlank(message = "Success URL is empty.")
+    private String successURL;
+
+    @NotBlank(message = "Cancel URL unit is empty.")
+    private String cancelURL;
+
 }

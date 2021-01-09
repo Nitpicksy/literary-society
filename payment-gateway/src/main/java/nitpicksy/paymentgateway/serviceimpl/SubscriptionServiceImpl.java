@@ -1,9 +1,10 @@
 package nitpicksy.paymentgateway.serviceimpl;
 
-import feign.FeignException;
 import nitpicksy.paymentgateway.client.ZuulClient;
+import nitpicksy.paymentgateway.dto.request.SubscriptionDTO;
 import nitpicksy.paymentgateway.dto.request.SubscriptionPlanDTO;
 import nitpicksy.paymentgateway.dto.request.SubscriptionPlanToPaypalDTO;
+import nitpicksy.paymentgateway.dto.request.SubscriptionToPaypalDTO;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.model.*;
 import nitpicksy.paymentgateway.repository.SubscriptionRepository;
@@ -14,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.util.List;
 
 @Service
 public class SubscriptionServiceImpl implements SubscriptionService {
@@ -38,27 +38,19 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private ZuulClient zuulClient;
 
     @Override
-    public String createSubscriptionPlan(SubscriptionPlanDTO subscriptionPlanDTO) {
+    public String createSubscriptionPlan(SubscriptionPlanDTO planDTO) {
         Company company = userService.getAuthenticatedCompany();
-        Merchant merchant = merchantService.findByNameAndCompany(subscriptionPlanDTO.getMerchantName(), company.getId());
+        Merchant merchant = merchantService.findByNameAndCompany(planDTO.getMerchantName(), company.getId());
 
         DataForPayment merchantClientId = dataForPaymentService.findByAttribute(merchant.getId(),
                 "paypal", "merchantClientId");
         DataForPayment merchantClientSecret = dataForPaymentService.findByAttribute(merchant.getId(),
                 "paypal", "merchantClientSecret");
 
-        SubscriptionPlanToPaypalDTO planToPaypalDTO = new SubscriptionPlanToPaypalDTO();
-        planToPaypalDTO.setMerchantClientId(merchantClientId.getAttributeValue());
-        planToPaypalDTO.setMerchantClientSecret(merchantClientSecret.getAttributeValue());
-        planToPaypalDTO.setProductName(subscriptionPlanDTO.getProductName());
-        planToPaypalDTO.setProductType(subscriptionPlanDTO.getProductType());
-        planToPaypalDTO.setProductCategory(subscriptionPlanDTO.getProductCategory());
-        planToPaypalDTO.setPlanName(subscriptionPlanDTO.getPlanName());
-        planToPaypalDTO.setPlanDescription(subscriptionPlanDTO.getPlanDescription());
-        planToPaypalDTO.setPrice(subscriptionPlanDTO.getPrice());
-        planToPaypalDTO.setFrequencyUnit(subscriptionPlanDTO.getFrequencyUnit());
-        planToPaypalDTO.setFrequencyCount(subscriptionPlanDTO.getFrequencyCount());
-
+        SubscriptionPlanToPaypalDTO planToPaypalDTO = new SubscriptionPlanToPaypalDTO(merchantClientId.getAttributeValue(),
+                merchantClientSecret.getAttributeValue(), planDTO.getProductName(), planDTO.getProductType(),
+                planDTO.getProductCategory(), planDTO.getPlanName(), planDTO.getPlanDescription(), planDTO.getPrice(),
+                planDTO.getFrequencyUnit(), planDTO.getFrequencyCount(), planDTO.getSuccessURL(), planDTO.getCancelURL());
 
         String paypalPlanId = null;
         try {
@@ -69,12 +61,30 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new InvalidDataException("Subscription plan creating has failed. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
-        SubscriptionPlan subscriptionPlan = new SubscriptionPlan(null, paypalPlanId, subscriptionPlanDTO.getId(), company.getCommonName());
+        SubscriptionPlan subscriptionPlan = new SubscriptionPlan(null, paypalPlanId, planDTO.getId(), company.getCommonName());
         subscriptionRepository.save(subscriptionPlan);
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CSP", String.format("Subscription plan with paypalPlanId=%s successfully created.", paypalPlanId)));
 
         return paypalPlanId;
+    }
+
+    @Override
+    public String subscribe(SubscriptionDTO subscriptionDTO) {
+        Company company = userService.getAuthenticatedCompany();
+        SubscriptionPlan plan = subscriptionRepository.findByCompanyCommonNameAndCompanyPlanId(company.getCommonName(), subscriptionDTO.getPlanId());
+
+        SubscriptionToPaypalDTO subscriptionToPaypalDTO = new SubscriptionToPaypalDTO(plan.getPaypalPlanId(), subscriptionDTO.getStartDate());
+        String redirectURL = null;
+        try {
+            redirectURL = zuulClient.subscribe(URI.create(apiGatewayURL + "/paypal"), subscriptionToPaypalDTO);
+        } catch (RuntimeException e) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME,
+                    "TRA", "Could not forward request to PayPal service."));
+            throw new InvalidDataException("Request to subscribe has failed. Please try again later.", HttpStatus.BAD_REQUEST);
+        }
+
+        return redirectURL;
     }
 
     @Autowired

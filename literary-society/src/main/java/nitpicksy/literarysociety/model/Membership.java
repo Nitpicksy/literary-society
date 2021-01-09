@@ -26,7 +26,7 @@ public class Membership {
     @Column(nullable = false)
     private Double price;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate expirationDate;
 
     @Column

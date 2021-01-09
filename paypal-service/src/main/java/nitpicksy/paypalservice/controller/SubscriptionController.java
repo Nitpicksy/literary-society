@@ -30,10 +30,8 @@ public class SubscriptionController {
     }
 
     @PostMapping(value = "/subscribe")
-    public ResponseEntity<Void> subscribe(@Valid @RequestBody SubscriptionDTO subscriptionDTO) {
-        return ResponseEntity.status(HttpStatus.SEE_OTHER)
-                .location(URI.create(subscriptionService.createSubscription(subscriptionDTO)))
-                .build();
+    public ResponseEntity<String> subscribe(@Valid @RequestBody SubscriptionDTO subscriptionDTO) {
+        return new ResponseEntity<>(subscriptionService.subscribe(subscriptionDTO), HttpStatus.OK);
     }
 
     @Autowired
