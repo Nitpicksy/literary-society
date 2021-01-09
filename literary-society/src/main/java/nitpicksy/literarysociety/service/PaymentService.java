@@ -13,4 +13,7 @@ public interface PaymentService {
     String proceedToMembershipPayment(User user);
 
     void handlePayment(LiterarySocietyOrderRequestDTO dto);
+
+    void synchronizeTransactions();
+
 }

@@ -1,7 +1,6 @@
 package nitpicksy.paymentgateway.serviceimpl;
-
-import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.enumeration.PaymentMethodStatus;
+import nitpicksy.paymentgateway.enumeration.TransactionStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.model.Data;
 import nitpicksy.paymentgateway.model.DataForPayment;
@@ -9,7 +8,6 @@ import nitpicksy.paymentgateway.model.Merchant;
 import nitpicksy.paymentgateway.model.PaymentMethod;
 import nitpicksy.paymentgateway.model.Transaction;
 import nitpicksy.paymentgateway.repository.CompanyRepository;
-import nitpicksy.paymentgateway.repository.DataForPaymentRepository;
 import nitpicksy.paymentgateway.repository.PaymentMethodRepository;
 import nitpicksy.paymentgateway.service.DataForPaymentService;
 import nitpicksy.paymentgateway.service.DataService;
@@ -19,24 +17,15 @@ import nitpicksy.paymentgateway.service.PaymentMethodService;
 import nitpicksy.paymentgateway.utils.CertificateUtils;
 import nitpicksy.paymentgateway.utils.TrustStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.net.URI;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class PaymentMethodServiceImpl implements PaymentMethodService {
@@ -62,6 +51,8 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
         List<PaymentMethod> paymentMethods = new ArrayList<>(order.getCompany().getPaymentMethods());
         if (paymentMethods.isEmpty()) {
+            order = orderService.setTransactionStatus(order, TransactionStatus.CANCELED);
+            orderService.notifyCompany(order, "ERROR");
             throw new InvalidDataException("No payment methods registered to order.", HttpStatus.BAD_REQUEST);
         }
 
@@ -137,6 +128,213 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
         for (PaymentMethod paymentMethod: companyPaymentMethods){
             companyPaymentMethodsIds.add(paymentMethod.getId());
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         List<DataForPayment> dataForPayments = dataForPaymentService.findDataForPaymentByMerchant(merchant.getId());
         Set<Long> supportedPaymentMethods = new HashSet<>();

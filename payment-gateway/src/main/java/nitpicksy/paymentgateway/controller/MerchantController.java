@@ -2,13 +2,15 @@ package nitpicksy.paymentgateway.controller;
 
 import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.dto.request.PaymentDataRequestDTO;
+import nitpicksy.paymentgateway.dto.response.MerchantResponseDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentDataResponseDTO;
-import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
+import nitpicksy.paymentgateway.mapper.MerchantResponseMapper;
 import nitpicksy.paymentgateway.mapper.PaymentDataRequestMapper;
 import nitpicksy.paymentgateway.mapper.PaymentDataResponseMapper;
 import nitpicksy.paymentgateway.model.Company;
 import nitpicksy.paymentgateway.model.Log;
 import nitpicksy.paymentgateway.model.Merchant;
+import nitpicksy.paymentgateway.service.CompanyService;
 import nitpicksy.paymentgateway.service.DataForPaymentService;
 import nitpicksy.paymentgateway.service.LogService;
 import nitpicksy.paymentgateway.service.MerchantService;
@@ -19,6 +21,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +36,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/merchants", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -58,9 +63,13 @@ public class MerchantController {
     @Value("${API_GATEWAY_URL}")
     private String apiGatewayURL;
 
+    private CompanyService companyService;
+
     private final String CLASS_PATH = this.getClass().getCanonicalName();
 
     private final String CLASS_NAME = this.getClass().getSimpleName();
+
+    private MerchantResponseMapper merchantResponseMapper;
 
     @GetMapping("/{name}/payment-data")
     public ResponseEntity<String> getPaymentData(@PathVariable String name) {
@@ -92,8 +101,15 @@ public class MerchantController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         dataForPaymentService.save(paymentDataRequestMapper.convert(listPaymentDataRequestDTO, merchant));
-        String redirectURL = zuulClient.supportPaymentMethods(URI.create(apiGatewayURL + '/' + merchant.getCompany().getCommonName()), merchant.getName());
+        merchant.setSupportsPaymentMethods(true);
+        merchantService.save(merchant);
 
+        String redirectURL = null;
+        try {
+            redirectURL = zuulClient.supportPaymentMethods(URI.create(apiGatewayURL + '/' + merchant.getCompany().getCommonName()), merchant.getName());
+        }catch (RuntimeException e){
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Could not notify " + merchant.getCompany().getCommonName()));
+        }
         return new ResponseEntity<>(redirectURL, HttpStatus.OK);
     }
 
@@ -110,6 +126,40 @@ public class MerchantController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<List<MerchantResponseDTO>> findAll() {
+        Company company = userService.getAuthenticatedCompany();
+        if (company == null) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "GETM", "Company not found"));
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(merchantService.findByCompany(company.getId()).stream()
+                .map(merchantResponseMapper::toDto).collect(Collectors.toList()), HttpStatus.OK);
+    }
+
+    @Scheduled(cron = "0 40 0 * * ?")
+    @Async
+    public void synchronizeMerchants() {
+        List<Company> companyList = companyService.findAllApproved();
+        for (Company company:companyList) {
+            try{
+                List<String> merchants = zuulClient.getAllMerchants(URI.create(apiGatewayURL + '/' + company.getCommonName()));
+                Long companyId = company.getId();
+                for(String merchantName: merchants){
+                    Merchant merchant =  merchantService.findByNameAndCompany(merchantName,companyId);
+                    if (merchant == null) {
+                        merchantService.save(new Merchant(merchantName,company));
+                    }
+
+                }
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYN",
+                        "Merchants are successfully synchronized - " + company.getCompanyName()));
+            }catch (RuntimeException e){
+                logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC", "Could not notify " +  company.getCompanyName()));
+            }
+        }
+    }
+
     private String getLocalhostURL() {
         return environment.getProperty("LOCALHOST_URL");
     }
@@ -117,7 +167,7 @@ public class MerchantController {
     @Autowired
     public MerchantController(MerchantService merchantService, UserService userService,Environment environment,PaymentMethodService paymentMethodService,
                               PaymentDataResponseMapper paymentDataResponseMapper,PaymentDataRequestMapper paymentDataRequestMapper,
-                              DataForPaymentService dataForPaymentService,ZuulClient zuulClient,LogService logService) {
+                              DataForPaymentService dataForPaymentService,ZuulClient zuulClient,LogService logService,CompanyService companyService,MerchantResponseMapper merchantResponseMapper) {
         this.merchantService = merchantService;
         this.userService = userService;
         this.environment = environment;
@@ -127,5 +177,7 @@ public class MerchantController {
         this.dataForPaymentService = dataForPaymentService;
         this.zuulClient = zuulClient;
         this.logService = logService;
+        this.companyService = companyService;
+        this.merchantResponseMapper = merchantResponseMapper;
     }
 }

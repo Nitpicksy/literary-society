@@ -4,23 +4,23 @@ values ('http://localhost:8090', 'literary-society', 'Nitpicksy LU 1', 'literary
         'https://localhost:3000/payment/error', 'https://localhost:3000/payment/failed',
         'https://localhost:3000/payment/success', 'literary.crt', 'APPROVED', true);
 
-insert into merchant (name, company_id)
-values ('LU One Merchant', 1);
+insert into merchant (name, company_id,supports_payment_methods)
+values ('LU One Merchant', 1, true);
 
-insert into merchant (name, company_id)
-values ('Vulkan', 1);
+insert into merchant (name, company_id,supports_payment_methods)
+values ('Vulkan', 1, true);
 
-insert into merchant (name, company_id)
-values ('Laguna', 1);
+insert into merchant (name, company_id,supports_payment_methods)
+values ('Laguna', 1, true);
 
-insert into merchant (name, company_id)
-values ('Lom', 1);
+insert into merchant (name, company_id,supports_payment_methods)
+values ('Lom', 1, true);
 
-insert into merchant (name, company_id)
-values ('Logos', 1);
+insert into merchant (name, company_id,supports_payment_methods)
+values ('Logos', 1, true);
 
-insert into merchant (name, company_id)
-values ('Amazon', 1);
+insert into merchant (name, company_id,supports_payment_methods)
+values ('Amazon', 1, true);
 
 
 insert into payment_method (common_name, name, subscription, status, uri, email, certificate_name)

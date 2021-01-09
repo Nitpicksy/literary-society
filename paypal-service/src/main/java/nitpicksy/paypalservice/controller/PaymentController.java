@@ -1,6 +1,4 @@
 package nitpicksy.paypalservice.controller;
-
-import com.paypal.base.rest.PayPalRESTException;
 import nitpicksy.paypalservice.dto.request.PaymentRequestDTO;
 import nitpicksy.paypalservice.dto.response.PaymentResponseDTO;
 import nitpicksy.paypalservice.mapper.PaymentRequestMapper;

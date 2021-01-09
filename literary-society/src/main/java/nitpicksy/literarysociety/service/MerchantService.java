@@ -23,4 +23,6 @@ public interface MerchantService {
     List<Merchant> findByStatusIn(Collection<UserStatus> status);
 
     Merchant changeUserStatus(Long id, String status);
+
+    void synchronizeMerchants();
 }

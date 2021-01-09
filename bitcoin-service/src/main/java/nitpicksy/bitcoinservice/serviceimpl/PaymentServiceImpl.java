@@ -7,18 +7,31 @@ import nitpicksy.bitcoinservice.dto.response.ConfirmPaymentResponseDTO;
 import nitpicksy.bitcoinservice.dto.response.CreateOrderResponseBTCDTO;
 import nitpicksy.bitcoinservice.dto.response.PaymentResponseDTO;
 import nitpicksy.bitcoinservice.enumeration.PaymentStatus;
+import nitpicksy.bitcoinservice.enumeration.TransactionStatus;
 import nitpicksy.bitcoinservice.exceptionHandler.InvalidDataException;
 import nitpicksy.bitcoinservice.model.Log;
 import nitpicksy.bitcoinservice.model.Payment;
+import nitpicksy.bitcoinservice.model.Transaction;
 import nitpicksy.bitcoinservice.repository.PaymentRepository;
 import nitpicksy.bitcoinservice.service.CurrencyService;
 import nitpicksy.bitcoinservice.service.LogService;
 import nitpicksy.bitcoinservice.service.PaymentService;
+import nitpicksy.bitcoinservice.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -39,7 +52,7 @@ public class PaymentServiceImpl implements PaymentService {
     private CurrencyService currencyService;
     private PaymentRepository paymentRepository;
     private ZuulClient zuulClient;
-
+    private TransactionService transactionService;
 
     @Override
     public PaymentResponseDTO createPayment(Payment paymentRequest) {
@@ -80,6 +93,9 @@ public class PaymentServiceImpl implements PaymentService {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Transaction save failed"));
             throw new InvalidDataException("Went wrong when saving the payment from CoinGate", HttpStatus.BAD_REQUEST);
         }
+
+        Instant today = (new Date()).toInstant();
+        executeCancelledTransaction(updatedPayment.getId(), today.plus(15, ChronoUnit.MINUTES));
 
         return new PaymentResponseDTO(paymentRequest.getId(), responseObject.getPayment_url());
     }
@@ -122,37 +138,70 @@ public class PaymentServiceImpl implements PaymentService {
 
         payment.setStatus(PaymentStatus.valueOf(callbackDTO.getStatus().toUpperCase()));
         payment.setReceivedAmount(Double.valueOf(callbackDTO.getReceive_amount()));
-        paymentRepository.save(payment);
+        Payment savedPayment = paymentRepository.save(payment);
 
         try {
             if (callbackDTO.getStatus().toUpperCase().equals(PaymentStatus.PAID.toString())) {
+                transactionService.create(savedPayment, TransactionStatus.SUCCESS);
+
                 notifyPaymentGateway(payment.getMerchantOrderId(), new ConfirmPaymentResponseDTO(payment.getId(), "SUCCESS"));
             } else if (callbackDTO.getStatus().toUpperCase().equals(PaymentStatus.CANCELED.toString()) ||
                     callbackDTO.getStatus().toUpperCase().equals(PaymentStatus.EXPIRED.toString()) ||
                     callbackDTO.getStatus().toUpperCase().equals(PaymentStatus.INVALID.toString())
             ) {
+                transactionService.create(savedPayment, TransactionStatus.FAILED);
                 notifyPaymentGateway(payment.getMerchantOrderId(), new ConfirmPaymentResponseDTO(payment.getId(), "FAILED"));
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Could not notify Payment Gateway"));
-            throw new InvalidDataException("Could not notify Payment Gateway", HttpStatus.BAD_REQUEST);
+            throw new InvalidDataException("Something went wrong. Please try again.", HttpStatus.BAD_REQUEST);
         }
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Successfully forwarded request with ID: " + callbackDTO.getOrder_id()));
     }
 
-    private void notifyPaymentGateway(Long merchantOrderId, ConfirmPaymentResponseDTO confirmPaymentResponseDTO) {
-        zuulClient.confirmPayment(merchantOrderId, confirmPaymentResponseDTO);
+    private void notifyPaymentGateway(String merchantOrderId, ConfirmPaymentResponseDTO confirmPaymentResponseDTO) {
+        try{
+            zuulClient.confirmPayment(merchantOrderId, confirmPaymentResponseDTO);
+        }catch (RuntimeException e){
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Could not notify Payment Gateway"));
+        }
+    }
+
+    @Async
+    public void executeCancelledTransaction(Long paymentId, Instant executionMoment) {
+        ScheduledExecutorService localExecutor = Executors.newSingleThreadScheduledExecutor();
+        TaskScheduler scheduler = new ConcurrentTaskScheduler(localExecutor);
+        scheduler.schedule(createRunnable(paymentId), executionMoment);
     }
 
 
+    private Runnable createRunnable(final Long paymentId) {
+        return () -> {
+            Transaction transaction = transactionService.findByPaymentId(paymentId);
+
+            Optional<Payment> optionalPaymentRequest = paymentRepository.findById(paymentId);
+            if (optionalPaymentRequest.isPresent() && transaction == null) {
+                transaction = transactionService.createErrorTransaction(optionalPaymentRequest.get());
+
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SRQ",
+                        String.format(
+                                "Because 15min from creation have passed, transaction %s is automatically CANCELED",
+                                transaction.getId())));
+            }
+        };
+    }
+
     @Autowired
-    public PaymentServiceImpl(LogService logService, RestTemplate restTemplate, CurrencyService currencyService, PaymentRepository paymentRepository, ZuulClient zuulClient) {
+    public PaymentServiceImpl(LogService logService, RestTemplate restTemplate, CurrencyService currencyService,
+                              PaymentRepository paymentRepository, ZuulClient zuulClient,
+                              TransactionService transactionService) {
         this.logService = logService;
         this.restTemplate = restTemplate;
         this.currencyService = currencyService;
         this.paymentRepository = paymentRepository;
         this.zuulClient = zuulClient;
+        this.transactionService = transactionService;
     }
 }

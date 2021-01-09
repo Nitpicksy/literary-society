@@ -15,9 +15,8 @@ import javax.validation.constraints.Positive;
 @NoArgsConstructor
 public class PaymentRequestDTO {
 
-    @NotNull(message = "Merchant order id is empty")
-    @Positive(message = "Merchant order id must be positive.")
-    private Long merchantOrderId;
+    @NotBlank
+    private String merchantOrderId;
 
     private String merchantTimestamp;
 
