@@ -189,7 +189,7 @@ insert into publishing_info(isbn, number_of_pages, publisher_city, publication_d
 values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 935.00, 10, 1, 13);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9781847496447', 704, 'London', '2017-05-11', 'Alma Books', 0.00, 0, 2, 13);
+values ('9781847496447', 704, 'London', '2017-05-11', 'Alma Books', 1000.00, 0, 2, 13);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
 values ('9788673105260', 354, 'Subotica', '2018-09-14', 'Kompjuter biblioteka', 1760.00, 20, 3, 12);
@@ -209,6 +209,11 @@ insert into publishing_info(isbn, number_of_pages, publisher_city, publication_d
                             book_id, merchant_id)
 values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 890.00, 5, 8, 12);
 
+--- pdf documents
+insert into pdfdocument(created,name, book_id)
+values ('2019-04-05 14:05:00', '2019-04-05_14-05-00_Moby Dick.pdf',1);
+insert into pdfdocument(created,name, book_id)
+values ('2019-04-05 14:05:00', '2019-04-05_14-05-00_Na Drini ćuprija.pdf',2);
 
 insert into price_list (membership_for_reader, membership_for_writer, start_date)
 values (500, 2000, '2021-01-01');

@@ -100,7 +100,8 @@ const App = props => {
       <Route path="/payment/success/:id" render={(props) => <PaymentSuccess {...props} />} />
       <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
       <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
-
+      
+      <Route path="/shopping-cart" render={(props) => <ShoppingCart {...props} />} />
       <Route path="/book/:id" exact render={(props) => <BookDetails {...props} />} />
       <Route path="/" exact render={(props) => <HomePage {...props} />} />
     </Switch>

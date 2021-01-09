@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,6 +40,8 @@ public class PaymentServiceImpl implements PaymentService {
     private PriceListService priceListService;
 
     private CamundaService camundaService;
+
+    private BuyerTokenService buyerTokenService;
 
     @Override
     public String proceedToBookPayment(Set<Book> bookSet, User user) {
@@ -93,7 +96,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public void handlePayment(LiterarySocietyOrderRequestDTO dto) {
+    public void handlePayment(LiterarySocietyOrderRequestDTO dto) throws NoSuchAlgorithmException {
         Transaction order = transactionService.findById(dto.getMerchantOrderId());
         User user = order.getBuyer();
 
@@ -104,6 +107,8 @@ public class PaymentServiceImpl implements PaymentService {
                 if (user != null && user.getRole().getName().equals(RoleConstants.ROLE_READER)) {
                     Reader reader = (Reader) user;
                     reader.setPurchasedBooks(order.getOrderedBooks());
+                }else{
+                    buyerTokenService.generateToken(order);
                 }
             } else {
                 if (user != null && user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
@@ -139,10 +144,14 @@ public class PaymentServiceImpl implements PaymentService {
             for(LiterarySocietyOrderRequestDTO dto: transactions){
                 Transaction order = transactionService.findById(dto.getMerchantOrderId());
                 if(order != null && !order.getStatus().equals(TransactionStatus.valueOf(dto.getStatus()))){
-                    handlePayment(dto);
+                    try{
+                        handlePayment(dto);
+                    }catch (NoSuchAlgorithmException e){
+
+                    }
                 }
             }
-        }catch (RuntimeException e){
+        }catch (RuntimeException  e){
         }
     }
 
@@ -174,7 +183,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Autowired
-    public PaymentServiceImpl(MerchantService merchantService, TransactionService transactionService, ZuulClient zuulClient, MembershipService membershipService, JWTTokenService jwtTokenService, PriceListService priceListService, CamundaService camundaService) {
+    public PaymentServiceImpl(MerchantService merchantService, TransactionService transactionService, ZuulClient zuulClient,
+                              MembershipService membershipService, JWTTokenService jwtTokenService, PriceListService priceListService,
+                              CamundaService camundaService, BuyerTokenService buyerTokenService) {
         this.merchantService = merchantService;
         this.transactionService = transactionService;
         this.zuulClient = zuulClient;
@@ -182,5 +193,6 @@ public class PaymentServiceImpl implements PaymentService {
         this.jwtTokenService = jwtTokenService;
         this.priceListService = priceListService;
         this.camundaService = camundaService;
+        this.buyerTokenService = buyerTokenService;
     }
 }

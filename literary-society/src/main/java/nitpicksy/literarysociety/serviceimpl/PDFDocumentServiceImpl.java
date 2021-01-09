@@ -16,7 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,8 +27,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class PDFDocumentServiceImpl implements PDFDocumentService {
@@ -65,9 +72,29 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
     }
 
     @Override
+    public File download(PDFDocument pdfDocument) throws IOException {
+        Path fileStorageLocation = Paths.get(BOOKS_PATH);
+        Path filePath = fileStorageLocation.resolve(pdfDocument.getName()).normalize();
+        Resource resource = new UrlResource(filePath.toUri());
+        File file = resource.getFile();
+
+        return file;
+    }
+
+    @Override
     public PDFDocument findByBookId(Long id) {
         return pdfDocumentRepository.findByBookIdOrderByCreatedDesc(id).get(0);
     }
+
+    @Override
+    public List<PDFDocument> findByBooks(Set<Book> books) {
+        List<PDFDocument> pdfDocumentList = new ArrayList<>();
+        for (Book book:books) {
+            pdfDocumentList.add(findByBookId(book.getId()));
+        }
+        return pdfDocumentList;
+    }
+
 
     @Override
     public List<WriterDocumentDTO> getDraftsByWriter(String writerUsername) {
@@ -96,6 +123,7 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
 
         return dtoList;
     }
+
 
     @Autowired
     public PDFDocumentServiceImpl(PDFDocumentRepository pdfDocumentRepository, WriterRepository writerRepository) {
