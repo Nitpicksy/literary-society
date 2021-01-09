@@ -34,6 +34,6 @@ public class SubscriptionPlanToPaypalDTO {
 
     private String frequencyUnit;
 
-    private String frequencyCount;
+    private Integer frequencyCount;
 
 }

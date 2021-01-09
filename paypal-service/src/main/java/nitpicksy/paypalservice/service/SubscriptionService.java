@@ -1,11 +1,12 @@
 package nitpicksy.paypalservice.service;
 
-import nitpicksy.paypalservice.dto.request.SubscriptionPlanDTO;
+import nitpicksy.paypalservice.dto.request.SubscriptionDTO;
+import nitpicksy.paypalservice.model.SubscriptionPlan;
 
 public interface SubscriptionService {
 
-    String createBillingPlan(SubscriptionPlanDTO subscriptionPlanDTO);
+    String createBillingPlan(SubscriptionPlan subscriptionPlan);
 
-    String createSubscription(String planId);
+    String createSubscription(SubscriptionDTO subscriptionDTO);
 
 }

@@ -9,7 +9,7 @@ export const fetchTransactionStart = () => {
 
 
 export const fetchTransactionSuccess = (transaction) => {
-    if(transaction.orderedBooks.length != 0) {
+    if(transaction.orderedBooks.length !== 0) {
         removeBooksFromLocalStorage(transaction.orderedBooks)
     }
     return {

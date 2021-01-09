@@ -4,3 +4,4 @@ EXE|Execute payment
 CONV|Currency conversion error
 CPR|Create product
 CBP|Create billing plan
+CSU|Create subscription

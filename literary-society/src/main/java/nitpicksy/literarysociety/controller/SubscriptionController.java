@@ -48,9 +48,9 @@ public class SubscriptionController {
             zuulClient.createSubscriptionPlan("Bearer " + jwtToken, writerMembership);
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CSP",
                     String.format("Subscription plan '%s' with id=%s successfully created.", writerMembership.getPlanName(), writerMembership.getId())));
-        } catch (FeignException.FeignClientException e) {
-            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CSP",
-                    String.format("Create subscription plan '%s' forwarding has failed", writerMembership.getPlanName())));
+        } catch (RuntimeException e) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME,
+                    "TRA", "Could not notify Payment Gateway"));
             throw new InvalidDataException("Subscription plan creating has failed. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 

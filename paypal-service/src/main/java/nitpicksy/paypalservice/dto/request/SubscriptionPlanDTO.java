@@ -12,7 +12,7 @@ import javax.validation.constraints.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubscriptionPlanDTO {
-    
+
     @NotBlank(message = "Client id is empty.")
     private String merchantClientId;
 
@@ -41,7 +41,14 @@ public class SubscriptionPlanDTO {
     @NotBlank(message = "Frequency unit is empty.")
     private String frequencyUnit;
 
-    @NotBlank(message = "Frequency count is empty.")
-    private String frequencyCount;
+    @NotNull(message = "Frequency count is null.")
+    @PositiveOrZero(message = "Frequency count is not a positive number.")
+    private Integer frequencyCount;
+
+    @NotBlank(message = "Success URL is empty.")
+    private String successURL;
+
+    @NotBlank(message = "Cancel URL unit is empty.")
+    private String cancelURL;
 
 }

@@ -3,14 +3,12 @@ package nitpicksy.paypalservice.serviceimpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.paypal.api.payments.*;
-import com.paypal.base.rest.APIContext;
-import com.paypal.base.rest.PayPalRESTException;
-import nitpicksy.paypalservice.client.ZuulClient;
+import nitpicksy.paypalservice.dto.request.SubscriptionDTO;
 import nitpicksy.paypalservice.dto.request.SubscriptionPlanDTO;
-import nitpicksy.paypalservice.dto.response.ConfirmPaymentResponseDTO;
 import nitpicksy.paypalservice.exceptionHandler.InvalidDataException;
 import nitpicksy.paypalservice.model.Log;
+import nitpicksy.paypalservice.model.SubscriptionPlan;
+import nitpicksy.paypalservice.repository.SubscriptionPlanRepository;
 import nitpicksy.paypalservice.service.LogService;
 import nitpicksy.paypalservice.service.SubscriptionService;
 import org.apache.commons.codec.binary.Base64;
@@ -18,7 +16,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -26,21 +23,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class SubscriptionServiceImpl implements SubscriptionService {
-
-    private static final String MODE = "sandbox";
-    private static final String CONFIRMATION_URL = "https://localhost:8200/api/payments/confirm";
 
     //API Source: https://exchangerate.host/
     private static final String CURRENCY_CONVERSION_API = "https://api.exchangerate.host/convert";
@@ -49,18 +37,20 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final String CLASS_PATH = this.getClass().getCanonicalName();
     private final String CLASS_NAME = this.getClass().getSimpleName();
 
+    private SubscriptionPlanRepository subscriptionPlanRepository;
+
     private LogService logService;
 
     @Override
-    public String createBillingPlan(SubscriptionPlanDTO dto) {
-        String productId = createProduct(dto);
+    public String createBillingPlan(SubscriptionPlan plan) {
+        String productId = createProduct(plan);
 
         JSONObject freqObj = new JSONObject();
-        freqObj.put("interval_unit", dto.getFrequencyUnit());
-        freqObj.put("interval_count", dto.getFrequencyCount());
+        freqObj.put("interval_unit", plan.getFrequencyUnit());
+        freqObj.put("interval_count", String.valueOf(plan.getFrequencyCount()));
 
         JSONObject priceObj = new JSONObject();
-        priceObj.put("value", convertCurrency(dto.getPrice()));
+        priceObj.put("value", convertCurrency(plan.getPrice()));
         priceObj.put("currency_code", "USD");
 
         JSONObject cyclesObj = new JSONObject();
@@ -80,17 +70,19 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         JSONObject planObj = new JSONObject();
         planObj.put("product_id", productId);
-        planObj.put("name", dto.getPlanName());
-        planObj.put("description", dto.getPlanDescription());
+        planObj.put("name", plan.getPlanName());
+        planObj.put("description", plan.getPlanDescription());
         planObj.put("status", "ACTIVE");
         planObj.put("billing_cycles", cyclesArr);
         planObj.put("payment_preferences", paymentsObj);
 
         String billingPlansAPI = "https://api.sandbox.paypal.com/v1/billing/plans";
         JSONObject responseJSON = sendRequest(billingPlansAPI, planObj,
-                dto.getMerchantClientId(), dto.getMerchantClientSecret());
+                plan.getMerchantClientId(), plan.getMerchantClientSecret());
 
         String planId = responseJSON.getString("id");
+        plan.setPlanId(planId);
+        subscriptionPlanRepository.save(plan);
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CPR",
                 String.format("PayPal billing plan with planId=%s successfully created.", planId)));
@@ -99,19 +91,50 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public String createSubscription(String planId) {
-        return null;
+    public String createSubscription(SubscriptionDTO dto) {
+        SubscriptionPlan plan = subscriptionPlanRepository.findOneByPlanId(dto.getPlanId());
+        if (plan == null) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CSU",
+                    "PayPal subscription creation failed. Invalid plan id sent."));
+            throw new InvalidDataException("PayPal subscription could not be created. Invalid plan id provided.", HttpStatus.BAD_REQUEST);
+        }
+
+        JSONObject contextObj = new JSONObject();
+        contextObj.put("shipping_preference", "NO_SHIPPING");
+        contextObj.put("user_action", "SUBSCRIBE_NOW");
+        contextObj.put("return_url", plan.getSuccessURL());
+        contextObj.put("cancel_url", plan.getCancelURL());
+
+        JSONObject subscriptionObj = new JSONObject();
+        subscriptionObj.put("plan_id", plan.getPlanId());
+        subscriptionObj.put("quantity", "1");
+        subscriptionObj.put("application_context", contextObj);
+        if (dto.getStartDate() != null) {
+            LocalDateTime startDateTime = LocalDateTime.of(dto.getStartDate(), LocalTime.MIDNIGHT);
+            subscriptionObj.put("start_time", startDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "Z");
+        }
+
+        String subscriptionsAPI = "https://api.sandbox.paypal.com/v1/billing/subscriptions";
+        JSONObject responseJSON = sendRequest(subscriptionsAPI, subscriptionObj,
+                plan.getMerchantClientId(), plan.getMerchantClientSecret());
+
+        String redirectUrl = responseJSON.getJSONArray("links").getJSONObject(0).getString("href");
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CSU",
+                String.format("PayPal subscription for plan with planId=%s successfully created.", plan.getPlanId())));
+
+        return redirectUrl;
     }
 
-    private String createProduct(SubscriptionPlanDTO dto) {
+    private String createProduct(SubscriptionPlan plan) {
         JSONObject productObj = new JSONObject();
-        productObj.put("name", dto.getProductName());
-        productObj.put("type", dto.getProductType());
-        productObj.put("category", dto.getProductCategory());
+        productObj.put("name", plan.getProductName());
+        productObj.put("type", plan.getProductType());
+        productObj.put("category", plan.getProductCategory());
 
         String productsAPI = "https://api.sandbox.paypal.com/v1/catalogs/products";
         JSONObject responseJSON = sendRequest(productsAPI, productObj,
-                dto.getMerchantClientId(), dto.getMerchantClientSecret());
+                plan.getMerchantClientId(), plan.getMerchantClientSecret());
 
         String productId = responseJSON.getString("id");
 
@@ -136,18 +159,21 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         try {
             response = restTemplate.postForEntity(url, request, String.class);
         } catch (RestClientException e) {
-            String thing = "";
-            String eventCode = "";
             if (url.endsWith("/products")) {
-                thing = "product";
-                eventCode = "CPR";
+                logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CPR",
+                        String.format("PayPal product '%s' creation failed. Invalid request sent.", body.getString("name"))));
+                throw new InvalidDataException("PayPal subscription plan could not be created. Please try again later.", HttpStatus.BAD_REQUEST);
             } else if (url.endsWith("/plans")) {
-                thing = "billing plan";
-                eventCode = "CBP";
+                logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CBP",
+                        String.format("PayPal billing plan '%s' creation failed. Invalid request sent.", body.getString("name"))));
+                throw new InvalidDataException("PayPal subscription plan could not be created. Please try again later.", HttpStatus.BAD_REQUEST);
+            } else if (url.endsWith("/subscriptions")) {
+                logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CSU",
+                        "PayPal subscription creation failed. Invalid request sent."));
+                throw new InvalidDataException("PayPal subscription could not be created. Please try again later.", HttpStatus.BAD_REQUEST);
+            } else {
+                throw new InvalidDataException("Something went wrong. Please try again later.", HttpStatus.BAD_REQUEST);
             }
-            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, eventCode,
-                    String.format("PayPal %s '%s' creation failed. Invalid request sent.", thing, body.getString("name"))));
-            throw new InvalidDataException("PayPal subscription plan could not be created. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
         return new JSONObject(response.getBody());
@@ -196,7 +222,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Autowired
-    public SubscriptionServiceImpl(LogService logService) {
+    public SubscriptionServiceImpl(SubscriptionPlanRepository subscriptionPlanRepository, LogService logService) {
+        this.subscriptionPlanRepository = subscriptionPlanRepository;
         this.logService = logService;
     }
 }

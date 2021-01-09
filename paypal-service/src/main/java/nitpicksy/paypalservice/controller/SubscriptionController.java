@@ -1,6 +1,8 @@
 package nitpicksy.paypalservice.controller;
 
+import nitpicksy.paypalservice.dto.request.SubscriptionDTO;
 import nitpicksy.paypalservice.dto.request.SubscriptionPlanDTO;
+import nitpicksy.paypalservice.mapper.SubscriptionPlanMapper;
 import nitpicksy.paypalservice.service.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,21 +21,24 @@ public class SubscriptionController {
 
     private SubscriptionService subscriptionService;
 
+    private SubscriptionPlanMapper subscriptionPlanMapper;
+
     @PostMapping(value = "/create-plan", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createSubscriptionPlan(@Valid @RequestBody SubscriptionPlanDTO subscriptionPlanDTO) {
-        return new ResponseEntity<>(subscriptionService.createBillingPlan(subscriptionPlanDTO), HttpStatus.OK);
+        return new ResponseEntity<>(subscriptionService.createBillingPlan(
+                subscriptionPlanMapper.toEntity(subscriptionPlanDTO)), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/subscribe")
-    public ResponseEntity<Void> subscribe(@RequestParam String planId) {
+    @PostMapping(value = "/subscribe")
+    public ResponseEntity<Void> subscribe(@Valid @RequestBody SubscriptionDTO subscriptionDTO) {
         return ResponseEntity.status(HttpStatus.SEE_OTHER)
-                .location(URI.create(subscriptionService.createSubscription(planId)))
+                .location(URI.create(subscriptionService.createSubscription(subscriptionDTO)))
                 .build();
     }
 
     @Autowired
-    public SubscriptionController(SubscriptionService subscriptionService) {
+    public SubscriptionController(SubscriptionService subscriptionService, SubscriptionPlanMapper subscriptionPlanMapper) {
         this.subscriptionService = subscriptionService;
+        this.subscriptionPlanMapper = subscriptionPlanMapper;
     }
-
 }

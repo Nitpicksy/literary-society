@@ -57,15 +57,15 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         planToPaypalDTO.setPlanDescription(subscriptionPlanDTO.getPlanDescription());
         planToPaypalDTO.setPrice(subscriptionPlanDTO.getPrice());
         planToPaypalDTO.setFrequencyUnit(subscriptionPlanDTO.getFrequencyUnit());
-        planToPaypalDTO.setFrequencyCount(String.valueOf(subscriptionPlanDTO.getFrequencyCount()));
+        planToPaypalDTO.setFrequencyCount(subscriptionPlanDTO.getFrequencyCount());
 
 
         String paypalPlanId = null;
         try {
             paypalPlanId = zuulClient.createSubscriptionPlan(URI.create(apiGatewayURL + "/paypal"), planToPaypalDTO);
-        } catch (FeignException.FeignClientException e) {
-            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CSP",
-                    String.format("Create subscription plan '%s' forwarding has failed", planToPaypalDTO.getPlanName())));
+        } catch (RuntimeException e) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME,
+                    "TRA", "Could not forward request to PayPal service."));
             throw new InvalidDataException("Subscription plan creating has failed. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
