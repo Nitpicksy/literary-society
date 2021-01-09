@@ -142,7 +142,7 @@ public class PaymentServiceImpl implements PaymentService {
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Successfully forwarded request with ID: " + callbackDTO.getOrder_id()));
     }
 
-    private void notifyPaymentGateway(Long merchantOrderId, ConfirmPaymentResponseDTO confirmPaymentResponseDTO) {
+    private void notifyPaymentGateway(String merchantOrderId, ConfirmPaymentResponseDTO confirmPaymentResponseDTO) {
         zuulClient.confirmPayment(merchantOrderId, confirmPaymentResponseDTO);
 
     }

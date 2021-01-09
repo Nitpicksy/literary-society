@@ -157,7 +157,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void handleConfirmPayment(Long merchantOrderId, ConfirmPaymentRequestDTO dto) {
+    public void handleConfirmPayment(String merchantOrderId, ConfirmPaymentRequestDTO dto) {
         Transaction order = transactionRepository.findTransactionByMerchantOrderIdAndPaymentId(merchantOrderId, dto.getPaymentId());
 
         handleOrder(merchantOrderId, dto.getPaymentId(), dto.getStatus());
@@ -167,7 +167,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void notifyCompany(Transaction order, String status) {
-        LiterarySocietyOrderResponseDTO responseDTO = new LiterarySocietyOrderResponseDTO(order.getMerchantOrderId(),status);
+        Long merchantOrderId = Long.valueOf( order.getMerchantOrderId().split("::")[1]);
+
+        LiterarySocietyOrderResponseDTO responseDTO = new LiterarySocietyOrderResponseDTO(merchantOrderId,status);
 
         String companyCommonName = order.getCompany().getCommonName();
 
@@ -205,7 +207,7 @@ public class OrderServiceImpl implements OrderService {
 //        }
     }
 
-    private void handleOrder(Long merchantOrderId, Long paymentId, String status) {
+    private void handleOrder(String merchantOrderId, Long paymentId, String status) {
         Transaction transaction = transactionRepository.findTransactionByMerchantOrderIdAndPaymentId(merchantOrderId, paymentId);
 
         if (transaction == null) {
@@ -229,7 +231,8 @@ public class OrderServiceImpl implements OrderService {
         transaction.setCompany(company);
         transaction.setAmount(orderRequestDTO.getAmount());
         transaction.setMerchantTimestamp(Timestamp.valueOf(orderRequestDTO.getTimestamp()));
-        transaction.setMerchantOrderId(orderRequestDTO.getOrderId());
+
+        transaction.setMerchantOrderId(company.getCommonName() + "::" + orderRequestDTO.getOrderId());
         transaction.setStatus(TransactionStatus.CREATED);
         transaction.setMerchant(merchant);
         transaction.setPaymentMethod(null);

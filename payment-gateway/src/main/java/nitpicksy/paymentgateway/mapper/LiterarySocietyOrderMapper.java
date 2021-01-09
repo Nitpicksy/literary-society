@@ -16,7 +16,10 @@ public class LiterarySocietyOrderMapper implements MapperInterface<Transaction, 
     @Override
     public LiterarySocietyOrderResponseDTO toDto(Transaction entity) {
         LiterarySocietyOrderResponseDTO dto = new LiterarySocietyOrderResponseDTO();
-        dto.setMerchantOrderId(entity.getMerchantOrderId());
+
+        Long merchantOrderId = Long.valueOf(entity.getMerchantOrderId().split("::")[1]);
+
+        dto.setMerchantOrderId(merchantOrderId);
         if (entity.getStatus().equals(TransactionStatus.COMPLETED)){
             dto.setStatus("SUCCESS");
         }else if (entity.getStatus().equals(TransactionStatus.REJECTED)){

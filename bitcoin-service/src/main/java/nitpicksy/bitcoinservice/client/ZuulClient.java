@@ -13,6 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.PUT, path = "/payment-gateway/api/payments/confirm/{merchantOrderId}")
-    void confirmPayment(@PathVariable("merchantOrderId") Long merchantOrderId, @RequestBody ConfirmPaymentResponseDTO confirmPaymentResponseDTO);
+    void confirmPayment(@PathVariable("merchantOrderId") String merchantOrderId, @RequestBody ConfirmPaymentResponseDTO confirmPaymentResponseDTO);
 
 }

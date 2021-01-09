@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    Transaction findTransactionByMerchantOrderIdAndPaymentId(Long merchantOrderId, Long paymentId);
+    Transaction findTransactionByMerchantOrderIdAndPaymentId(String merchantOrderId, Long paymentId);
 
     List<Transaction> findByCompanyId(Long id);
 

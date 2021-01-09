@@ -18,7 +18,7 @@ public interface OrderService {
 
     void setPayment(Long orderId, Long paymentId);
 
-    void handleConfirmPayment(Long merchantOrderId, ConfirmPaymentRequestDTO dto);
+    void handleConfirmPayment(String merchantOrderId, ConfirmPaymentRequestDTO dto);
 
     void notifyCompany(Transaction order, String status);
 

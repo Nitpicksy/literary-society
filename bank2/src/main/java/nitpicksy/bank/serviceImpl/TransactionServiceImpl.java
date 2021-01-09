@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -66,7 +67,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction findByMerchantOrderId(Long id) {
+    public Transaction findByMerchantOrderId(String id) {
         return transactionRepository.findByMerchantOrderId(id);
     }
 
@@ -87,6 +88,9 @@ public class TransactionServiceImpl implements TransactionService {
             PCCRequestDTO pccRequestDTO = pccRequestMapper.toDTO(transaction, confirmPaymentDTO);
             try{
                 PCCResponseDTO response = pccClient.pay(pccRequestDTO);
+                transaction.setAcquirerOrderId(response.getAcquirerOrderId());
+                transaction.setAcquirerTimestamp(response.getAcquirerTimestamp());
+
                 Transaction createdTransaction = setTransactionStatus(transaction,response.getStatus());
                 if(createdTransaction.getStatus().equals(TransactionStatus.SUCCESS)){
                     merchantService.transferMoneyToMerchant(transaction.getMerchantId(),transaction.getAmount());
@@ -110,10 +114,27 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction create(Double amount, String merchantId, Long merchantOrderId, Timestamp merchantTimestamp, Long paymentId, String pan, TransactionStatus status) {
+    public Transaction create(Double amount, String merchantId, String merchantOrderId, Timestamp merchantTimestamp, Long paymentId, String pan, TransactionStatus status) {
         Transaction transaction =  new Transaction(amount,merchantId, merchantOrderId,
                 merchantTimestamp,paymentId,pan,status);
         return transactionRepository.save(transaction);
+    }
+
+    @Override
+    public Transaction findByPaymentId(Long id) {
+        return transactionRepository.findByPaymentId(id);
+    }
+
+    @Override
+    public Transaction createErrorTransaction(PaymentRequest paymentRequest)  {
+        Transaction transaction = create(paymentRequest, null);
+        transaction = setTransactionStatus(transaction,TransactionStatus.ERROR);
+        return transaction;
+    }
+
+    @Override
+    public List<Transaction> findAll() {
+        return transactionRepository.findAll();
     }
 
     private Transaction create(PaymentRequest paymentRequest, String pan)  {
@@ -128,6 +149,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
         merchantService.transferMoneyToMerchant(merchantId,amount);
     }
+
 
     private Transaction setTransactionStatus(Transaction transaction, TransactionStatus status){
         transaction.setStatus(status);

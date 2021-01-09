@@ -24,7 +24,7 @@ public class Payment {
     private Long paymentId;
 
     @Column(nullable = false)
-    private Long merchantOrderId;
+    private String merchantOrderId;
 
     @Column(nullable = false)
     private String merchantToken;
