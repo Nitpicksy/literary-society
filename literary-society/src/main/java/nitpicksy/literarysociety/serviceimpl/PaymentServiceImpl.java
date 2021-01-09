@@ -1,11 +1,11 @@
 package nitpicksy.literarysociety.serviceimpl;
-
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.request.LiterarySocietyOrderRequestDTO;
 import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
+import nitpicksy.literarysociety.dto.response.MerchantPaymentGatewayResponseDTO;
 import nitpicksy.literarysociety.enumeration.TransactionStatus;
 import nitpicksy.literarysociety.enumeration.TransactionType;
 import nitpicksy.literarysociety.exceptionHandler.InvalidUserDataException;
@@ -13,6 +13,8 @@ import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -99,12 +101,12 @@ public class PaymentServiceImpl implements PaymentService {
             order.setStatus(TransactionStatus.SUCCESS);
 
             if (order.getType().equals(TransactionType.ORDER)) {
-                if (user.getRole().getName().equals(RoleConstants.ROLE_READER)) {
+                if (user != null && user.getRole().getName().equals(RoleConstants.ROLE_READER)) {
                     Reader reader = (Reader) user;
                     reader.setPurchasedBooks(order.getOrderedBooks());
                 }
             } else {
-                if (user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
+                if (user != null && user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
                     notifyCamundaMessageEvent(CamundaConstants.MESSAGE_PAYMENT_SUCCESS, user, order);
                 } else {
                     Merchant merchant = merchantService.findOurMerchant();
@@ -115,16 +117,33 @@ public class PaymentServiceImpl implements PaymentService {
             }
         } else if (dto.getStatus().equals("ERROR")) {
             order.setStatus(TransactionStatus.ERROR);
-            if (user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
+            if (user != null && user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
                 notifyCamundaMessageEvent(CamundaConstants.MESSAGE_PAYMENT_ERROR, user, order);
             }
         } else {
             order.setStatus(TransactionStatus.FAILED);
-            if (user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
+            if (user != null && user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
                 notifyCamundaMessageEvent(CamundaConstants.MESSAGE_PAYMENT_ERROR, user, order);
             }
         }
         transactionService.save(order);
+    }
+
+    @Async
+    @Override
+    @Scheduled(cron = "0 30 0 * * ?")
+    public void synchronizeTransactions() {
+        try{
+            List<LiterarySocietyOrderRequestDTO> transactions = zuulClient.getAllTransactions("Bearer " + jwtTokenService.getToken());
+
+            for(LiterarySocietyOrderRequestDTO dto: transactions){
+                Transaction order = transactionService.findById(dto.getMerchantOrderId());
+                if(order != null && !order.getStatus().equals(TransactionStatus.valueOf(dto.getStatus()))){
+                    handlePayment(dto);
+                }
+            }
+        }catch (RuntimeException e){
+        }
     }
 
     private void notifyCamundaMessageEvent(String message, User user, Transaction order) {
@@ -139,7 +158,10 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private double calculatePrice(List<Book> bookList, User user) {
-        boolean includeDiscount = membershipService.checkIfUserMembershipIsValid(user.getUserId());
+        boolean includeDiscount = false;
+        if(user != null){
+            includeDiscount = membershipService.checkIfUserMembershipIsValid(user.getUserId());
+        }
         Double amount = 0.0;
         for (Book book : bookList) {
             if (includeDiscount) {

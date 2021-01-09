@@ -10,6 +10,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 
 @Validated
@@ -20,7 +22,7 @@ public class PaymentController {
     private OrderService orderService;
 
     @PutMapping(value = "/confirm/{merchantOrderId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> confirmPayment(@PathVariable @Positive(message = "Id must be positive.") Long merchantOrderId,
+    public ResponseEntity<Void> confirmPayment(@PathVariable @NotBlank String merchantOrderId,
                                                @Valid @RequestBody ConfirmPaymentRequestDTO confirmPaymentRequestDTO) {
         orderService.handleConfirmPayment(merchantOrderId, confirmPaymentRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);

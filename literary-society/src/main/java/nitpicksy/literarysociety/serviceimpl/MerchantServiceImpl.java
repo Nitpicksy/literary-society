@@ -1,10 +1,10 @@
 package nitpicksy.literarysociety.serviceimpl;
 
 import nitpicksy.literarysociety.client.ZuulClient;
+import nitpicksy.literarysociety.dto.response.MerchantPaymentGatewayResponseDTO;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Merchant;
-import nitpicksy.literarysociety.model.User;
 import nitpicksy.literarysociety.repository.MerchantRepository;
 import nitpicksy.literarysociety.service.EmailNotificationService;
 import nitpicksy.literarysociety.service.JWTTokenService;
@@ -14,6 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -36,6 +37,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     private Environment environment;
 
+
     @Override
     public Merchant findByName(String name) {
         return merchantRepository.findByName(name);
@@ -47,6 +49,7 @@ public class MerchantServiceImpl implements MerchantService {
         if (response.getStatusCode() == HttpStatus.OK) {
             return response.getBody();
         }
+
         throw new InvalidDataException("Something went wrong.Please try again.", HttpStatus.BAD_REQUEST);
     }
 
@@ -101,7 +104,31 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Async
     public void addMerchantToPaymentGateway(Merchant merchant){
-        zuulClient.addMerchant("Bearer " + jwtTokenService.getToken(),merchant.getName());
+        try{
+            zuulClient.addMerchant("Bearer " + jwtTokenService.getToken(),merchant.getName());
+        }catch (RuntimeException ex){
+
+        }
+
+    }
+
+    @Scheduled(cron = "0 50 0 * * ?")
+    @Async
+    @Override
+    public void synchronizeMerchants() {
+        try{
+            List<MerchantPaymentGatewayResponseDTO> merchants = zuulClient.getAllMerchants("Bearer " + jwtTokenService.getToken());
+
+            for(MerchantPaymentGatewayResponseDTO currentMerchant: merchants){
+                Merchant merchant = merchantRepository.findByName(currentMerchant.getName());
+                if (merchant != null) {
+                    merchant.setSupportsPaymentMethods(currentMerchant.isSupportsPaymentMethods());
+                    merchantRepository.save(merchant);
+                }
+
+            }
+        }catch (RuntimeException e){
+        }
     }
 
     private void composeAndSendRejectionEmail(String recipientEmail) {

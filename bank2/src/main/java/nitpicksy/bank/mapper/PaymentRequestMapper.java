@@ -21,7 +21,12 @@ public class PaymentRequestMapper implements MapperInterface<PaymentRequest, Pay
 
     @Override
     public PaymentRequest toEntity(PaymentRequestDTO dto) {
-        PaymentRequest request =  modelMapper.map(dto, PaymentRequest.class);
+        PaymentRequest request = new PaymentRequest();
+        request.setMerchantOrderId(dto.getMerchantOrderId());
+        request.setAmount(dto.getAmount());
+        request.setSuccessUrl(dto.getSuccessURL());
+        request.setErrorUrl(dto.getErrorURL());
+        request.setFailedUrl(dto.getFailedURL());
         request.setMerchantTimestamp(Timestamp.valueOf(dto.getMerchantTimestamp()));
         request.setMerchantId(dto.getPaymentDetails().getMerchantId());
         return request;
@@ -29,7 +34,7 @@ public class PaymentRequestMapper implements MapperInterface<PaymentRequest, Pay
 
     @Override
     public PaymentRequestDTO toDto(PaymentRequest entity) {
-        PaymentRequestDTO dto =  modelMapper.map(entity, PaymentRequestDTO.class);
+        PaymentRequestDTO dto = modelMapper.map(entity, PaymentRequestDTO.class);
         dto.setMerchantTimestamp(entity.getMerchantTimestamp().toString());
         return dto;
     }

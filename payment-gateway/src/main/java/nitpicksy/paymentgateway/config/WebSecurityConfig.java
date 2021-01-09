@@ -57,6 +57,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/orders").hasAuthority("CREATE_ORDER")
                 .antMatchers(HttpMethod.GET, "/api/merchants/{name}/payment-data").hasAuthority("CREATE_ORDER")
                 .antMatchers(HttpMethod.POST, "/api/merchants").hasAuthority("CREATE_ORDER")
+                .antMatchers(HttpMethod.GET, "/api/merchants").hasAuthority("CREATE_ORDER")
+
+                .antMatchers(HttpMethod.GET, "/api/transactions").hasAuthority("CREATE_ORDER")
 
                 .anyRequest().permitAll().and()
                 .cors().and()

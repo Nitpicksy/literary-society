@@ -18,7 +18,7 @@ public class ConfirmPaymentRequestDTO {
 
     private Long acquirerOrderId;
 
-    private Long merchantOrderId;
+    private String merchantOrderId;
 
     private Timestamp acquirerTimestamp;
 

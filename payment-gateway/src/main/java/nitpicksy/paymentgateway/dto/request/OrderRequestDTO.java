@@ -13,12 +13,10 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 public class OrderRequestDTO {
 
-    //    type: Number(10)
     @NotNull
     @Digits(integer = 10, fraction = 0)
     private Long orderId;
 
-    //    type: Decimal(10,2)
     @NotNull
     @DecimalMin(value = "0.0", inclusive = false)
     @Digits(integer = 10, fraction = 2)

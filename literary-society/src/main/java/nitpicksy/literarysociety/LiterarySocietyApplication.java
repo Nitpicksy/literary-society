@@ -10,6 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
@@ -22,6 +23,7 @@ import org.springframework.web.context.request.RequestContextListener;
 @EnableJpaRepositories(repositoryBaseClass = RefreshMethodRepositoryImpl.class)
 @EnableAsync
 @EnableDiscoveryClient
+@EnableScheduling
 public class LiterarySocietyApplication {
 
     public static void main(String[] args) {
