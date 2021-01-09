@@ -12,9 +12,10 @@ import { toastr } from 'react-redux-toastr';
 import Chip from '@material-ui/core/Chip';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useHistory } from 'react-router';
+import { connect } from 'react-redux';
+import * as actions from '../BookDetails/BookDetailsActions';
 
-
-export default function BookCard(props) {
+const BookCard = (props) => {
     const classes = useStyles();
     const history = useHistory();
     
@@ -41,6 +42,10 @@ export default function BookCard(props) {
         }
     }
 
+    const download = () => {
+        props.download(props.book.id,props.book.title);
+    }
+
     const redirectToDetailsPage = () => {
         history.push(`/book/${props.book.id}`);
     } 
@@ -57,7 +62,7 @@ export default function BookCard(props) {
         </Typography>;
 
     if (props.book.price <= 0 && !props.forShoppingCart) {
-        button = <Button size="small" color="secondary">Get for free</Button>;
+        button = <Button size="small" color="secondary" onClick={download}>Get for free</Button>;
         price = <Typography className={classes.price}>Free</Typography>;
     }
 
@@ -99,3 +104,11 @@ export default function BookCard(props) {
         </Grid>
     );
 }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        download: (id,title) => dispatch(actions.download(id,title))
+    }
+};
+
+export default connect(null, mapDispatchToProps)(BookCard);

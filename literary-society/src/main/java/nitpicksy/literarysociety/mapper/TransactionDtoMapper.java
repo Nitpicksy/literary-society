@@ -2,9 +2,12 @@ package nitpicksy.literarysociety.mapper;
 
 import nitpicksy.literarysociety.dto.response.BookDTO;
 import nitpicksy.literarysociety.dto.response.TransactionDTO;
+import nitpicksy.literarysociety.model.BuyerToken;
 import nitpicksy.literarysociety.model.Transaction;
+import nitpicksy.literarysociety.service.BuyerTokenService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,9 +16,11 @@ import java.util.stream.Collectors;
 @Component
 public class TransactionDtoMapper  implements MapperInterface<Transaction, TransactionDTO> {
 
-    private ModelMapper modelMapper;
+    private BuyerTokenService buyerTokenService;
 
     private BookDtoMapper bookDtoMapper;
+
+    private Environment environment;
 
     @Override
     public Transaction toEntity(TransactionDTO dto) {
@@ -29,12 +34,24 @@ public class TransactionDtoMapper  implements MapperInterface<Transaction, Trans
         transactionDTO.setAmount(entity.getAmount());
         List<BookDTO> bookDTOS = entity.getOrderedBooks().stream().map(bookDtoMapper::toDto).collect(Collectors.toList());
         transactionDTO.setOrderedBooks(bookDTOS);
+        BuyerToken token =  buyerTokenService.find(entity.getId());
+        if(token != null ){
+            transactionDTO.setUrl("/books/download?t=" + token.getToken());
+        }else{
+            transactionDTO.setUrl("/purchased-books");
+        }
+
         return transactionDTO;
     }
 
+    private String getLocalhostURL() {
+        return environment.getProperty("LOCALHOST_URL");
+    }
+
     @Autowired
-    public TransactionDtoMapper(ModelMapper modelMapper,BookDtoMapper bookDtoMapper) {
-        this.modelMapper = modelMapper;
+    public TransactionDtoMapper(BookDtoMapper bookDtoMapper,BuyerTokenService buyerTokenService,Environment environment) {
+        this.buyerTokenService = buyerTokenService;
         this.bookDtoMapper = bookDtoMapper;
+        this.environment = environment;
     }
 }

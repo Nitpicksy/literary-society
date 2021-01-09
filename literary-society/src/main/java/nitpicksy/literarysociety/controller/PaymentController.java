@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,7 +53,7 @@ public class PaymentController {
 
 
     @PostMapping(value = "/confirm", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> confirmPayment(@Valid @RequestBody LiterarySocietyOrderRequestDTO requestDTO) {
+    public ResponseEntity<Void> confirmPayment(@Valid @RequestBody LiterarySocietyOrderRequestDTO requestDTO) throws NoSuchAlgorithmException {
         paymentService.handlePayment(requestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }

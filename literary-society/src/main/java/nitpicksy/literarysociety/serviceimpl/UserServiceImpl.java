@@ -164,6 +164,15 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public Reader getAuthenticatedReader() {
+        User user = getAuthenticatedUser();
+        if(user instanceof Reader){
+            return (Reader)user;
+        }
+        return null;
+    }
+
+    @Override
     public Merchant getAuthenticatedMerchant() {
         User user = getAuthenticatedUser();
         if(user instanceof Merchant){

@@ -18,9 +18,15 @@ public class ReaderServiceImpl implements ReaderService {
         return readerRepository.findByIdIn(ids);
     }
 
+    @Override
+    public Reader save(Reader reader) {
+        return readerRepository.save(reader);
+    }
+
     @Autowired
     public ReaderServiceImpl(ReaderRepository readerRepository) {
         this.readerRepository = readerRepository;
     }
-    
+
+
 }

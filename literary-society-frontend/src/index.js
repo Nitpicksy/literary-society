@@ -38,6 +38,7 @@ import storage from 'redux-persist/lib/storage';
 import { persistStore, persistReducer } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import merchantListReducer from './components/Authentication/ManageMerchants/ManageMerchantsReducer';
+import purchasedBooksReducer from './components/PurchasedBooks/PurchasedBooksReducer';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
@@ -66,7 +67,8 @@ const rootReducer = combineReducers({
     opinionsOfBetaReaders: opinionsOfBetaReadersReducer,
     opinionOfEditor: opinionOfEditorReducer,
     publishingInfo: publishingInfoReducer,
-    merchantList: merchantListReducer
+    merchantList: merchantListReducer, 
+    purchasedBooks: purchasedBooksReducer
 });
 
 const persistConfig = {
