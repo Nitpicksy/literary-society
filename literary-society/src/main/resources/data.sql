@@ -19,7 +19,7 @@ values ('eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJsaXRlcmFyeS1zb2NpZXR5Iiwic3ViIjoibGl0ZX
 -- Writers
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('WRITER', 'Ivo', 'Andrić', 'Travnik', 'Bosna i Hercegovina', 'andric@maildrop.cc', 'andric1',
+values ('WRITER', 'Ivo', 'Andrić', 'Travnik', 'Bosna i Hercegovina', 'andric@maildrop.cc', 'andric',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
@@ -30,15 +30,15 @@ values ('WRITER', 'Branisav', 'Nušić', 'Beograd', 'Srbija', 'nusic@maildrop.cc
 -- Editors
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'Jovana', 'Jovanović', 'Kragujevac', 'Srbija', 'jovanaj@maildrop.cc', 'jovanaj3',
+values ('User', 'Jovana', 'Jovanović', 'Kragujevac', 'Srbija', 'jovanaj@maildrop.cc', 'jovanaj',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'John', 'Parker', 'London', 'Ujedinjeno kraljevstvo', 'johnp@maildrop.cc', 'johnp3',
+values ('User', 'John', 'Parker', 'London', 'Ujedinjeno kraljevstvo', 'johnp@maildrop.cc', 'johnp',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'Oleg', 'Aleksandrov', 'Sankt Petersburg', 'Rusija', 'olega@maildrop.cc', 'olega3',
+values ('User', 'Oleg', 'Aleksandrov', 'Sankt Petersburg', 'Rusija', 'olega@maildrop.cc', 'olega',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 
 -- Reader

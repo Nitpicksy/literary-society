@@ -52,7 +52,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         CreateOrderBTCDTO orderBTCDTO = new CreateOrderBTCDTO(paymentRequest.getId().toString(),
                 amount, "USD", "BTC", callback,
-                paymentRequest.getErrorURL(), paymentRequest.getSuccessURL(),
+                paymentRequest.getFailedURL(), paymentRequest.getSuccessURL(),
                 paymentRequest.getMerchantToken());
 
         HttpHeaders headers = new HttpHeaders();

@@ -44,8 +44,7 @@ eureka:
     prefer-ip-address: false
     instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
 
-API_KEY: js4zu_8ezKs1wy_wswvrkm8JHm5L-9JBujvKznLE
 SANDBOX_ENVIRONMENT: https://api-sandbox.coingate.com/v2
 TOKEN_UTILS_SECRET: Nitpicsky
 
-CALLBACK_URL: https://d1494439b13a.ngrok.io/api/payments/callback
+CALLBACK_URL: https://113bc014cb86.ngrok.io/api/payments/callback
