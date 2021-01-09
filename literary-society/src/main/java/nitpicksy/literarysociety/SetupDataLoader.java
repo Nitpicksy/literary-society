@@ -61,10 +61,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Permission uploadBookAndCompleteTask = createPermissionIfNotFound("UPLOAD_BOOK_AND_COMPLETE_TASK");
         Permission submitFormAndUploadImage = createPermissionIfNotFound("SUBMIT_FORM_AND_UPLOAD_IMAGE");
 
+        Permission purchaseBooks = createPermissionIfNotFound("PURCHASE_BOOKS");
+
         Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers,manageMerchants));
         createRoleIfNotFound("ROLE_ADMIN", adminPermissions);
 
-        Set<Permission> readerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
+        Set<Permission> readerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask,purchaseBooks));
         createRoleIfNotFound("ROLE_READER", readerPermissions);
 
         Set<Permission> writerPermissions = new HashSet<>(Arrays.asList(managePublicationRequests,

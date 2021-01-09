@@ -34,11 +34,11 @@ public class TransactionDtoMapper  implements MapperInterface<Transaction, Trans
         transactionDTO.setAmount(entity.getAmount());
         List<BookDTO> bookDTOS = entity.getOrderedBooks().stream().map(bookDtoMapper::toDto).collect(Collectors.toList());
         transactionDTO.setOrderedBooks(bookDTOS);
-        if(entity.getBuyer() != null){
-            transactionDTO.setUrl(getLocalhostURL() + "purchased-books");
+        BuyerToken token =  buyerTokenService.find(entity.getId());
+        if(token != null ){
+            transactionDTO.setUrl("/books/download?t=" + token.getToken());
         }else{
-           BuyerToken token =  buyerTokenService.find(entity.getId());
-           transactionDTO.setUrl(getLocalhostURL() + "books/download?t=" + token.getToken());
+            transactionDTO.setUrl("/purchased-books");
         }
 
         return transactionDTO;

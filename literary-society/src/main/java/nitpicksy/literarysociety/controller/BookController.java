@@ -5,6 +5,7 @@ import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.response.*;
 import nitpicksy.literarysociety.enumeration.UserStatus;
+import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.mapper.*;
 import nitpicksy.literarysociety.model.Book;
@@ -179,6 +180,14 @@ public class BookController {
         } catch (IOException | URISyntaxException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping(value = "/purchased", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<BookDTO>> getAllPurchased() {
+
+        Reader reader = userService.getAuthenticatedReader();
+        List<BookDTO> dtoList = reader.getPurchasedBooks().stream().map(bookDtoMapper::toDto).collect(Collectors.toList());
+        return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
 
     @Autowired

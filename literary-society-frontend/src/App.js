@@ -41,6 +41,7 @@ import OpinionOfEditor from './components/Tasks/Task/OpinionOfEditor/OpinionOfEd
 import PublishingInfo from './components/Tasks/Task/PublishingInfo/PublishingInfo';
 import MerchantSignUp from './components/Authentication/MerchantSignUp/MerchantSignUp';
 import ManageMerchants from './components/Authentication/ManageMerchants/ManageMerchants';
+import PurchasedBooks from './components/PurchasedBooks/PurchasedBooks';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -125,6 +126,9 @@ const App = props => {
           <Route path="/writer-membership-upload" render={(props) => <WriterUploadWork {...props} />} meta={{ roles:  [roleWriter] }}/>
           <Route path="/voting" render={(props) => <CommitteeVoting {...props} />} meta={{ roles:  [roleWriter] }}/>
           <Route path="/membership" render={(props) => <Membership {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
+
+          <Route path="/purchased-books" render={(props) => <PurchasedBooks {...props} />} meta={{ roles: [roleReader] }} />
+
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
 
           <GuardedRoute path="/manage-users" render={(props) => <ManageLecturersAndEditors {...props} />} meta={{ roles: [roleAdmin] }} />

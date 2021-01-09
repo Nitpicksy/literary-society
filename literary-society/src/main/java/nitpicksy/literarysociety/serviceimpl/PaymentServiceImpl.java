@@ -43,6 +43,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     private BuyerTokenService buyerTokenService;
 
+    private ReaderService readerService;
+
     @Override
     public String proceedToBookPayment(Set<Book> bookSet, User user) {
         List<Book> bookList = new ArrayList<>(bookSet);
@@ -106,7 +108,8 @@ public class PaymentServiceImpl implements PaymentService {
             if (order.getType().equals(TransactionType.ORDER)) {
                 if (user != null && user.getRole().getName().equals(RoleConstants.ROLE_READER)) {
                     Reader reader = (Reader) user;
-                    reader.setPurchasedBooks(order.getOrderedBooks());
+                    reader.getPurchasedBooks().addAll(order.getOrderedBooks());
+                    readerService.save(reader);
                 }else{
                     buyerTokenService.generateToken(order);
                 }
@@ -185,7 +188,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     public PaymentServiceImpl(MerchantService merchantService, TransactionService transactionService, ZuulClient zuulClient,
                               MembershipService membershipService, JWTTokenService jwtTokenService, PriceListService priceListService,
-                              CamundaService camundaService, BuyerTokenService buyerTokenService) {
+                              CamundaService camundaService, BuyerTokenService buyerTokenService,ReaderService readerService) {
         this.merchantService = merchantService;
         this.transactionService = transactionService;
         this.zuulClient = zuulClient;
@@ -194,5 +197,6 @@ public class PaymentServiceImpl implements PaymentService {
         this.priceListService = priceListService;
         this.camundaService = camundaService;
         this.buyerTokenService = buyerTokenService;
+        this.readerService = readerService;
     }
 }

@@ -13,6 +13,7 @@ const ReaderToolbar = (props) => {
 
     return (
         <React.Fragment>
+            <Button className={classes.button} color="inherit" onClick={() =>redirect('/purchased-books') }> Purchased books </Button>
             <Button className={classes.button} color="inherit" onClick={() =>redirect('/membership') }> Membership </Button>
         </React.Fragment>
     );

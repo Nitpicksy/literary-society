@@ -47,7 +47,6 @@ export const download = (token,history) => {
         }).then((response) => {
             const blob = new Blob([response.data], { type: 'application/zip' });
             saveAs(blob, 'books.zip');
-            history.push('/');
         }).catch(err => {
             toastr.error('Books', 'Something went wrong.Please try again.');
             history.push('/');
