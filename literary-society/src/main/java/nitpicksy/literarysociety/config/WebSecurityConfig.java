@@ -59,6 +59,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/users").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/books").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/books/download").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/books/download/{bookId}").permitAll()
+
                 .antMatchers(HttpMethod.GET, "/api/books/{id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/books/start-publishing").hasAuthority("MANAGE_PUBLICATION_REQUESTS")
                 .antMatchers(HttpMethod.GET, "/api/books/publication-request-form").hasAuthority("MANAGE_PUBLICATION_REQUESTS")

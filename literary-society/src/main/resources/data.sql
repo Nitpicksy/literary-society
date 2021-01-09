@@ -189,7 +189,7 @@ insert into publishing_info(isbn, number_of_pages, publisher_city, publication_d
 values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 935.00, 10, 1, 13);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9781847496447', 704, 'London', '2017-05-11', 'Alma Books', 1000.00, 0, 2, 13);
+values ('9781847496447', 704, 'London', '2017-05-11', 'Alma Books', 0.00, 0, 2, 13);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
 values ('9788673105260', 354, 'Subotica', '2018-09-14', 'Kompjuter biblioteka', 1760.00, 20, 3, 12);

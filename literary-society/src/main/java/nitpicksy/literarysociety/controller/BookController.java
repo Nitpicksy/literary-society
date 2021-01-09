@@ -10,6 +10,7 @@ import nitpicksy.literarysociety.mapper.*;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.BuyerToken;
 import nitpicksy.literarysociety.model.PDFDocument;
+import nitpicksy.literarysociety.model.Reader;
 import nitpicksy.literarysociety.model.Transaction;
 import nitpicksy.literarysociety.model.User;
 import nitpicksy.literarysociety.model.VerificationToken;
@@ -18,12 +19,15 @@ import nitpicksy.literarysociety.service.BuyerTokenService;
 import nitpicksy.literarysociety.service.OpinionOfBetaReaderService;
 import nitpicksy.literarysociety.service.OpinionOfEditorService;
 import nitpicksy.literarysociety.service.PDFDocumentService;
+import nitpicksy.literarysociety.service.ReaderService;
+import nitpicksy.literarysociety.service.UserService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,7 +72,8 @@ public class BookController {
 
     private PDFDocumentService pdfDocumentService;
 
-    private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+    private UserService userService;
+
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookDTO>> getAllForSale() {
@@ -148,12 +153,40 @@ public class BookController {
         buyerTokenService.invalidateToken(buyerToken.getId());
     }
 
+    @GetMapping(value = "/download/{bookId}",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> downloadBook(@NotNull @Positive @PathVariable Long bookId) {
+        Book book = bookService.findById(bookId);
+
+        if(book == null) {
+            throw new InvalidTokenException("This book doesn't exist.", HttpStatus.BAD_REQUEST);
+        }
+
+        if(book.getPublishingInfo().getPrice() != 0){
+            Reader reader = userService.getAuthenticatedReader();
+            if(reader == null || !reader.getPurchasedBooks().contains(book)){
+                throw new InvalidTokenException("This book is not free so you have to buy it.", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        PDFDocument pdfDocument = pdfDocumentService.findByBookId(bookId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+
+        try {
+            headers.setContentDispositionFormData(pdfDocument.getName(), pdfDocument.getName());
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            return new ResponseEntity<>(pdfDocumentService.download(pdfDocument.getName()), headers, HttpStatus.OK);
+        } catch (IOException | URISyntaxException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @Autowired
     public BookController(BookService bookService, OpinionOfBetaReaderService opinionOfBetaReaderService,
                           OpinionOfEditorService opinionOfEditorService, CamundaService camundaService, BookDtoMapper bookDtoMapper,
                           BookDetailsDtoMapper bookDetailsDtoMapper, OpinionOfBetaReaderDtoMapper opinionOfBetaReaderDtoMapper,
                           OpinionOfEditorDtoMapper opinionOfEditorDtoMapper, PublicationRequestResponseDtoMapper publReqResponseDtoMapper,
-                          BuyerTokenService buyerTokenService,PDFDocumentService pdfDocumentService) {
+                          BuyerTokenService buyerTokenService,PDFDocumentService pdfDocumentService,UserService userService) {
         this.bookService = bookService;
         this.opinionOfBetaReaderService = opinionOfBetaReaderService;
         this.opinionOfEditorService = opinionOfEditorService;
@@ -165,5 +198,6 @@ public class BookController {
         this.publReqResponseDtoMapper = publReqResponseDtoMapper;
         this.buyerTokenService = buyerTokenService;
         this.pdfDocumentService = pdfDocumentService;
+        this.userService = userService;
     }
 }
