@@ -1,11 +1,11 @@
 package nitpicksy.literarysociety.serviceimpl;
+
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.request.LiterarySocietyOrderRequestDTO;
 import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
-import nitpicksy.literarysociety.dto.response.MerchantPaymentGatewayResponseDTO;
 import nitpicksy.literarysociety.enumeration.TransactionStatus;
 import nitpicksy.literarysociety.enumeration.TransactionType;
 import nitpicksy.literarysociety.exceptionHandler.InvalidUserDataException;
@@ -133,22 +133,22 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Scheduled(cron = "0 30 0 * * ?")
     public void synchronizeTransactions() {
-        try{
+        try {
             List<LiterarySocietyOrderRequestDTO> transactions = zuulClient.getAllTransactions("Bearer " + jwtTokenService.getToken());
 
-            for(LiterarySocietyOrderRequestDTO dto: transactions){
+            for (LiterarySocietyOrderRequestDTO dto : transactions) {
                 Transaction order = transactionService.findById(dto.getMerchantOrderId());
-                if(order != null && !order.getStatus().equals(TransactionStatus.valueOf(dto.getStatus()))){
+                if (order != null && !order.getStatus().equals(TransactionStatus.valueOf(dto.getStatus()))) {
                     handlePayment(dto);
                 }
             }
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
         }
     }
 
     private void notifyCamundaMessageEvent(String message, User user, Transaction order) {
         try {
-            camundaService.messageEventReceived(CamundaConstants.MESSAGE_PAYMENT_SUCCESS, user.getUsername());
+            camundaService.messageEventReceived(message, user.getUsername());
         } catch (Exception e) {
             //not a camunda process, carry on as usual
             Merchant merchant = merchantService.findOurMerchant();
@@ -159,7 +159,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private double calculatePrice(List<Book> bookList, User user) {
         boolean includeDiscount = false;
-        if(user != null){
+        if (user != null) {
             includeDiscount = membershipService.checkIfUserMembershipIsValid(user.getUserId());
         }
         Double amount = 0.0;
