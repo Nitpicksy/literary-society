@@ -39,3 +39,4 @@ ADDOEC|Add opinion od editor about complaint
 ADDOE|Add opinion od editor
 ADDR|Add reader
 ADDW|Add writer
+ADDB|Add book

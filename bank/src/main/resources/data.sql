@@ -29,7 +29,7 @@ values ('dd642550b81c3e299d759d41a63f3fb22091f155f49dffb133a0695a2991cc6f04bb259
 --sifra je perica1
 insert into merchant (name,city, country, email, balance, merchant_id, merchant_password) values ('Laguna', 'Novi Sad', 'Srbija', 'laguna@maildrop.cc', 100000,
  '1dcae25c2de2bbab00044e500962d7cf40f9c1bbf19d508af0d1a3a9799462573af4b246d5ec3f3d7286b368f5a85b5fbb3db31ded47f3770e1c79fd5b15532',
- '4af7be4654250d64edffba14b763276fe428d9bd718f42c1362d27fd88f5bbd54d93ebc5905b5668a2db2c1c4de9d5c323e845cd60549efb2dd60456b59d5224');
+ '43a718f649b677cbee616b74b4f57e42de51c29e846e68eb339eb1c20cebe96829e73ffa803d4664d6b1d6b2f8d0c35b3f2385ca14ed95118a466b9644d200fe');
 
 --8888888888888889
 --password je perica2
