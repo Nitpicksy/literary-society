@@ -61,7 +61,7 @@ const Subscription = (props) => {
                 </div>;
         } else if (props.subscriptionPlan.membershipStatus === "SUBSCRIBED") {
             button =
-                <Button variant="contained" fullWidthonClick={() => handleUnsubscribe()}>Unsubscribe</Button>;
+                <Button variant="contained" fullWidth onClick={() => handleUnsubscribe()}>Unsubscribe</Button>;
         }
 
         plan =

@@ -24,4 +24,13 @@ export const useStyles = makeStyles((theme) => ({
     priceValue: {
        fontWeight:500
     },
+    card: {
+        marginTop: theme.spacing(4),
+        padding: theme.spacing(1),
+    },
+    cardContent: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
 }));

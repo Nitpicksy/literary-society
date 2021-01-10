@@ -56,7 +56,7 @@ import CommitteePlagiarismVote from './components/Tasks/Task/PlagiarismProcess/C
 
 const App = props => {
 
-  const { onTryAutoSignUp, role } = props;
+  const { onTryAutoSignUp } = props;
 
   const roleWriter = "ROLE_WRITER";
   const roleReader = "ROLE_READER";
