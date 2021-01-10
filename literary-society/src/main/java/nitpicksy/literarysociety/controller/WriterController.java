@@ -44,6 +44,13 @@ public class WriterController {
         return new ResponseEntity<>(pdfDocumentService.getDraftsByWriter(userService.getAuthenticatedUser().getUsername()), HttpStatus.OK);
     }
 
+    @GetMapping("/start-plagiarism")
+    public ResponseEntity<ProcessDataDTO> startPlagiarismProcess() {
+        ProcessDataDTO processDataDTO = camundaService.start(CamundaConstants.PROCESS_PLAGIARISM);
+        return new ResponseEntity<>(processDataDTO, HttpStatus.OK);
+    }
+
+
     @Autowired
     public WriterController(CamundaService camundaService, PDFDocumentService pdfDocumentService, UserService userService) {
         this.camundaService = camundaService;

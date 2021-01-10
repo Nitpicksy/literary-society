@@ -129,6 +129,10 @@ public class CamundaService {
         return (String) runtimeService.getVariable(piId, name);
     }
 
+    public void setProcessVariable(String piId, String variable, Object value) {
+        runtimeService.setVariable(piId, variable, value);
+    }
+
     public void messageEventReceived(String messageName, String user) {
         Execution execution = runtimeService.createExecutionQuery()
                 .messageEventSubscriptionName(messageName)

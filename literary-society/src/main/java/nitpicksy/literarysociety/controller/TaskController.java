@@ -1,14 +1,14 @@
 package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.camunda.service.CamundaService;
+import nitpicksy.literarysociety.dto.camunda.EditorsCommentsDTO;
+import nitpicksy.literarysociety.dto.camunda.PlagiarismDetailsDTO;
+import nitpicksy.literarysociety.dto.camunda.PublicationRequestDTO;
 import nitpicksy.literarysociety.dto.camunda.TaskDataDTO;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.*;
-import nitpicksy.literarysociety.service.BookService;
-import nitpicksy.literarysociety.service.ImageService;
-import nitpicksy.literarysociety.service.PDFDocumentService;
-import nitpicksy.literarysociety.service.UserService;
+import nitpicksy.literarysociety.service.*;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
@@ -27,10 +27,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -52,6 +49,10 @@ public class TaskController {
     private FormService formService;
 
     private ImageService imageService;
+
+    private PlagiarismComplaintService plagiarismComplaintService;
+
+    private OpinionOfEditorAboutComplaintService opinionOfEditorAboutComplaintService;
 
     private static String IMAGES_PATH = "literary-society/src/main/resources/images/";
 
@@ -137,6 +138,80 @@ public class TaskController {
         return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
     }
 
+
+    @GetMapping(value = "/{taskId}/editors", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TaskDataDTO> getTaskDataForEditor(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
+
+        PlagiarismComplaint plagiarismComplaint;
+
+        try {
+            Long id = Long.valueOf(camundaService.getProcessVariable(piId, "plagiarismId"));
+            plagiarismComplaint = plagiarismComplaintService.findById(id);
+        } catch (Exception e) {
+            plagiarismComplaint = null;
+        }
+
+        List<EditorsCommentsDTO> editorsCommentsDTOS = new ArrayList<>();
+        if (plagiarismComplaint != null) {
+            editorsCommentsDTOS = opinionOfEditorAboutComplaintService.findOpinionsByPlagiarismComplaint(plagiarismComplaint.getId());
+        }
+
+        TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.setEnumValues(camundaService.getFormFields(piId, taskId)),
+                new PlagiarismDetailsDTO(camundaService.getProcessVariable(piId, "writersName"),
+                        camundaService.getProcessVariable(piId, "title"),
+                        camundaService.getProcessVariable(piId, "mainEditor"),
+                        (plagiarismComplaint != null ? new PublicationRequestDTO(plagiarismComplaint.getWritersBook().getId(),
+                                plagiarismComplaint.getWritersBook().getTitle(),
+                                plagiarismComplaint.getWritersBook().getGenre().getName(),
+                                plagiarismComplaint.getWritersBook().getSynopsis()) : null)),
+                editorsCommentsDTOS);
+
+        return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/{taskId}/download-plagiarism", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @Transactional
+    public ResponseEntity<byte[]> completeTaskAndDownloadPlagiarismBooks(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId,
+                                                                         @NotNull @RequestParam String type) {
+
+        PlagiarismComplaint plagiarismComplaint;
+        PDFDocument document;
+
+        String result = camundaService.getProcessVariable(piId, "downloaded");
+        if (result != null) {
+            camundaService.completeTask(taskId);
+        }
+
+        try {
+            Long id = Long.valueOf(camundaService.getProcessVariable(piId, "plagiarismId"));
+            plagiarismComplaint = plagiarismComplaintService.findById(id);
+        } catch (Exception e) {
+            plagiarismComplaint = null;
+        }
+
+        if (type.equals("SUBMITTED")) {
+            document = pdfDocumentService.findByBookId(plagiarismComplaint.getWritersBook().getId());
+        } else {
+            document = pdfDocumentService.findByBookId(plagiarismComplaint.getReportedBook().getId());
+        }
+
+        if (document == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        try {
+            headers.setContentDispositionFormData(document.getName(), document.getName());
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            byte[] pdfBytes = pdfDocumentService.download(document.getName());
+            camundaService.setProcessVariable(piId, "downloaded", "true");
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (IOException | URISyntaxException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PutMapping(value = "{taskId}/membership")
     public ResponseEntity<Void> payMembership(@RequestParam(required = false) String piId, @NotNull @PathVariable String taskId) {
         camundaService.completeTask(taskId);
@@ -169,7 +244,8 @@ public class TaskController {
     @Autowired
     public TaskController(UserService userService, CamundaService camundaService, BookService bookService,
                           PDFDocumentService pdfDocumentService, TaskService taskService, RuntimeService runtimeService, FormService formService,
-                          ImageService imageService) {
+                          ImageService imageService, PlagiarismComplaintService plagiarismComplaintService,
+                          OpinionOfEditorAboutComplaintService opinionOfEditorAboutComplaintService) {
         this.userService = userService;
         this.camundaService = camundaService;
         this.bookService = bookService;
@@ -178,5 +254,7 @@ public class TaskController {
         this.runtimeService = runtimeService;
         this.formService = formService;
         this.imageService = imageService;
+        this.plagiarismComplaintService = plagiarismComplaintService;
+        this.opinionOfEditorAboutComplaintService = opinionOfEditorAboutComplaintService;
     }
 }

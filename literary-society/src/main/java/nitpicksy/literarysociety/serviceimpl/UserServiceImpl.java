@@ -13,8 +13,6 @@ import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
 import nitpicksy.literarysociety.service.VerificationService;
 import nitpicksy.literarysociety.utils.IPAddressProvider;
-import org.bouncycastle.crypto.generators.BCrypt;
-import org.camunda.bpm.engine.delegate.BpmnError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -30,10 +28,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
-import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -175,8 +171,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public Merchant getAuthenticatedMerchant() {
         User user = getAuthenticatedUser();
-        if(user instanceof Merchant){
-            return (Merchant)user;
+        if (user instanceof Merchant) {
+            return (Merchant) user;
         }
         return null;
     }
@@ -184,23 +180,23 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public User signUp(User user) throws NoSuchAlgorithmException {
         if (findByUsername(user.getUsername()) != null) {
-            throw new InvalidDataException("User with same username already exist",HttpStatus.BAD_REQUEST);
+            throw new InvalidDataException("User with same username already exist", HttpStatus.BAD_REQUEST);
         }
 
         if (findByEmail(user.getEmail()) != null) {
-            throw new InvalidDataException("User with same email already exist",HttpStatus.BAD_REQUEST);
+            throw new InvalidDataException("User with same email already exist", HttpStatus.BAD_REQUEST);
         }
         user.setStatus(UserStatus.NON_VERIFIED);
         User savedReader = userRepository.save(user);
         String nonHashedToken = verificationService.generateToken(savedReader);
-        composeEmailToActivate(nonHashedToken,user.getEmail());
+        composeEmailToActivate(nonHashedToken, user.getEmail());
         return savedReader;
     }
 
     @Override
     public List<User> findByRoleNameAndStatusInOrRoleNameAndStatusIn(String roleName1, Collection<UserStatus> status1,
-                                                                     String roleName2, Collection<UserStatus> status2){
-        return userRepository.findByRoleNameAndStatusInOrRoleNameAndStatusIn(roleName1, status1, roleName2,status2);
+                                                                     String roleName2, Collection<UserStatus> status2) {
+        return userRepository.findByRoleNameAndStatusInOrRoleNameAndStatusIn(roleName1, status1, roleName2, status2);
     }
 
     @Override
@@ -219,6 +215,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             return userRepository.save(user);
         }
         return null;
+    }
+
+    @Override
+    public List<User> findByIds(List<Long> ids) {
+        return userRepository.findByIdIn(ids);
     }
 
     private void composeAndSendEmail(String recipientEmail) {

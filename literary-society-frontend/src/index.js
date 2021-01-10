@@ -39,6 +39,10 @@ import { persistStore, persistReducer } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import merchantListReducer from './components/Authentication/ManageMerchants/ManageMerchantsReducer';
 import purchasedBooksReducer from './components/PurchasedBooks/PurchasedBooksReducer';
+import plagiarismComplaintReducer from './components/WriterPages/PlagiarismComplaint/PlagiarismComplaintReducer';
+import assignReviewBoardReducer from './components/Tasks/Task/PlagiarismProcess/AssignReviewBoard/AssignReviewBoardReducer';
+import editorsDownloadPlagiarismDocumentsReducer from './components/Tasks/Task/PlagiarismProcess/EditorDownloadPlagiarismDocuments/EditorDownloadPlagiarismDocumentsReducer';
+import committeePlagiarismVoteReducer from './components/Tasks/Task/PlagiarismProcess/CommitteePlagiarismVote/CommitteePlagiarismVoteReducer';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
@@ -68,7 +72,11 @@ const rootReducer = combineReducers({
     opinionOfEditor: opinionOfEditorReducer,
     publishingInfo: publishingInfoReducer,
     merchantList: merchantListReducer, 
-    purchasedBooks: purchasedBooksReducer
+    purchasedBooks: purchasedBooksReducer,
+    plagiarismComplaint: plagiarismComplaintReducer,
+    assignReviewBoard: assignReviewBoardReducer,
+    editorsDownloadPlagiarismDocuments: editorsDownloadPlagiarismDocumentsReducer,
+    committeePlagiarismVote: committeePlagiarismVoteReducer
 });
 
 const persistConfig = {

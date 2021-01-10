@@ -32,7 +32,7 @@ const PublicationRequests = (props) => {
             field: 'buttons', headerName: " ", width: 180,
             renderCell: (params) => {
                 var complainBtn = <strong> </strong>;
-                if (params.row.status === "Not original") {
+                if (params.row.status === "In stores") {
                     complainBtn = <Button
                         variant="contained"
                         color="primary"
@@ -63,7 +63,8 @@ const PublicationRequests = (props) => {
     }
 
     const complaintHandler = (choosenPublicationRequest) => {
-        // Redirect to plagiarism complaint form
+        props.startPlagiarismProcess(choosenPublicationRequest);
+        history.push('./plagiarism-complaint');
     }
 
     if (props.publicationRequests) {
@@ -88,7 +89,7 @@ const PublicationRequests = (props) => {
                 <Avatar className={classes.avatar}>
                     <DescriptionIcon />
                 </Avatar>
-                <Typography component="h1" variant="h4" className={classes.title}>Publication Requests</Typography>
+                <Typography component="h1" variant="h4" className={classes.title}>Publications</Typography>
                 <Button variant="contained" color="primary"
                     startIcon={<AddIcon />} onClick={showForm}>
                     Create
@@ -112,6 +113,7 @@ const mapDispatchToProps = dispatch => {
     return {
         fetchPublicationRequests: () => dispatch(actions.fetchPublicationRequests()),
         startProcess: () => dispatch(actions.startProcess()),
+        startPlagiarismProcess: (choosenPublicationRequest) => dispatch(actions.startPlagiarismProcess(choosenPublicationRequest)),
         clearProcessState: () => dispatch(actions.clearProcessState()),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
     }

@@ -47,6 +47,9 @@ const input = (props) => {
                 }
             />;
             break;
+        case ('long'):
+            inputElement = null;
+            break;
         default:
             inputElement = <TextField variant="outlined" margin="normal" fullWidth
                 error={props.error} helperText={props.error ? props.errorMessage : ''}

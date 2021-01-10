@@ -19,5 +19,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Book findOneById(Long id);
 
     List<Book> findByWriterId(Long writerId);
+    
+    Book findFirstByTitleContainingAndWritersNamesContaining(String title, String writer);
 
 }

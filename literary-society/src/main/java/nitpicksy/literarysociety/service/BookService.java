@@ -19,5 +19,7 @@ public interface BookService {
     Book findById(Long id);
 
     List<Book> findPublicationRequestsForWriter();
+    
+    Boolean validatePlagiarismRequest(String bookTitle, String writerName);
 
 }

@@ -2,10 +2,7 @@ package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.constants.CamundaConstants;
-import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.response.*;
-import nitpicksy.literarysociety.enumeration.UserStatus;
-import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.mapper.*;
 import nitpicksy.literarysociety.model.Book;
@@ -13,14 +10,11 @@ import nitpicksy.literarysociety.model.BuyerToken;
 import nitpicksy.literarysociety.model.PDFDocument;
 import nitpicksy.literarysociety.model.Reader;
 import nitpicksy.literarysociety.model.Transaction;
-import nitpicksy.literarysociety.model.User;
-import nitpicksy.literarysociety.model.VerificationToken;
 import nitpicksy.literarysociety.service.BookService;
 import nitpicksy.literarysociety.service.BuyerTokenService;
 import nitpicksy.literarysociety.service.OpinionOfBetaReaderService;
 import nitpicksy.literarysociety.service.OpinionOfEditorService;
 import nitpicksy.literarysociety.service.PDFDocumentService;
-import nitpicksy.literarysociety.service.ReaderService;
 import nitpicksy.literarysociety.service.UserService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +22,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -37,11 +29,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -100,7 +89,18 @@ public class BookController {
         return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/plagiarism-complaint-form", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<FormFieldsDTO> getPlagiarismComplaintForm(@NotNull @RequestParam String piId, @NotNull @RequestParam String taskId) {
+        FormFieldsDTO formFieldsDTO = camundaService.getFormFields(piId, taskId);
+        return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/validate", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> validatePlagiarismRequest(@NotNull @RequestParam String bookTitle, @NotNull @RequestParam String writerName) {
+        return new ResponseEntity<>(bookService.validatePlagiarismRequest(bookTitle, writerName), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookDetailsDTO> getBookDetails(@Positive @PathVariable Long id) {
         Book book = bookService.findById(id);
         return new ResponseEntity<>(bookDetailsDtoMapper.toDto(book), HttpStatus.OK);

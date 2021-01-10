@@ -42,6 +42,10 @@ import PublishingInfo from './components/Tasks/Task/PublishingInfo/PublishingInf
 import MerchantSignUp from './components/Authentication/MerchantSignUp/MerchantSignUp';
 import ManageMerchants from './components/Authentication/ManageMerchants/ManageMerchants';
 import PurchasedBooks from './components/PurchasedBooks/PurchasedBooks';
+import PlagiarismComplaint from './components/WriterPages/PlagiarismComplaint/PlagiarismComplaint';
+import AssignReviewBoard from './components/Tasks/Task/PlagiarismProcess/AssignReviewBoard/AssignReviewBoard';
+import EditorDownloadPlagiarismDocuments from './components/Tasks/Task/PlagiarismProcess/EditorDownloadPlagiarismDocuments/EditorDownloadPlagiarismDocuments';
+import CommitteePlagiarismVote from './components/Tasks/Task/PlagiarismProcess/CommitteePlagiarismVote/CommitteePlagiarismVote';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -124,10 +128,15 @@ const App = props => {
           <Route path="/publishing-info" render={(props) => <PublishingInfo {...props} />} meta={{ roles: [roleEditor] }} />
 
           <Route path="/writer-membership-upload" render={(props) => <WriterUploadWork {...props} />} meta={{ roles:  [roleWriter] }}/>
-          <Route path="/voting" render={(props) => <CommitteeVoting {...props} />} meta={{ roles:  [roleWriter] }}/>
+          <Route path="/voting" render={(props) => <CommitteeVoting {...props} />} meta={{ roles:  [roleWriter, roleCommitteeMember] }}/>
           <Route path="/membership" render={(props) => <Membership {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
 
           <Route path="/purchased-books" render={(props) => <PurchasedBooks {...props} />} meta={{ roles: [roleReader] }} />
+          
+          <Route path="/plagiarism-complaint" render={(props) => <PlagiarismComplaint {...props} />} meta={{ roles:  [roleWriter] }}/>
+          <Route path="/plagiarism" render={(props) => <AssignReviewBoard {...props} />} meta={{ roles:  [roleEditor] }}/>
+          <Route path="/plagiarism-review-download" render={(props) => <EditorDownloadPlagiarismDocuments {...props} /> } meta={{roles: [roleEditor]}} />
+          <Route path="/plagiarism-vote" render={(props) => <CommitteePlagiarismVote {...props} /> } meta={{roles: [roleCommitteeMember]}} />
 
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
 

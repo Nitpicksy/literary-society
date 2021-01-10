@@ -118,15 +118,15 @@ values ('User', 'John', 'John', 'London', 'Ujedinjeno kraljevstvo', 'johnJohn1@m
 -- Committee members
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'Eržebet', 'Guliver', 'Kruševac', 'Srbija', 'communist1@maildrop.cc', 'member1',
+values ('User', 'Eržebet', 'Guliver', 'Kruševac', 'Srbija', 'communist1@maildrop.cc', 'bor1',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'Milovan', 'Ranisavljevic', 'London', 'Ujedinjeno kraljevstvo', 'communist2@maildrop.cc', 'member2',
+values ('User', 'Milovan', 'Ranisavljevic', 'London', 'Ujedinjeno kraljevstvo', 'communist2@maildrop.cc', 'bor2',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'INSANE MAN', 'PUSKIN', 'Sankt Petersburg', 'Rusija', 'communist3@maildrop.cc', 'member3',
+values ('User', 'INSANE MAN', 'PUSKIN', 'Sankt Petersburg', 'Rusija', 'communist3@maildrop.cc', 'bor3',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 
 
@@ -221,3 +221,8 @@ insert into price_list (membership_for_reader, membership_for_writer, start_date
 values (600, 2500, '2021-02-02');
 insert into price_list (membership_for_reader, membership_for_writer, start_date)
 values (700, 2700, '2021-03-03');
+
+insert into pdfdocument (created, name, book_id)
+values ('2021-01-01', 'Ivo-Andric-Na-Drini-cuprija.pdf', 1);
+insert into pdfdocument (created, name, book_id)
+values ('2021-01-01', 'Moby Dick.pdf', 2);
