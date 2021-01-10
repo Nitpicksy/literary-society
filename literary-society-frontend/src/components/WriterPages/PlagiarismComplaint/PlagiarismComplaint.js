@@ -40,10 +40,10 @@ const PlagiarismComplaint = (props) => {
     }, [formFields]);
 
 
-    if(valid == false) {
+    if(valid === false) {
         toastr.error('Oops', 'Unable to find a book with the given author and title')
         props.clearValidation();
-    } else if(valid == true) {
+    } else if(valid === true) {
         props.createRequest(array, props.taskId, history)
     }
 

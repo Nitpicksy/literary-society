@@ -183,7 +183,7 @@ public class PaymentServiceImpl implements PaymentService {
             if (optionalPaymentRequest.isPresent() && transaction == null) {
                 transaction = transactionService.createErrorTransaction(optionalPaymentRequest.get());
 
-                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SRQ",
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA",
                         String.format(
                                 "Because 15min from creation have passed, transaction %s is automatically CANCELED",
                                 transaction.getId())));

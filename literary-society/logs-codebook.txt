@@ -1,0 +1,27 @@
+APP|Application startup/shutdown
+LGN|Login
+REG|Registration
+CPW|Change password
+RPW|Reset password
+ACT|Activate account
+REF|Refresh token
+ATZ|Authorization exception
+FGN|Feign client exception
+OMP|Object mapper exception
+RST|Reset token exception
+BT|Buyer token
+BOOK|Book
+CAMUNDA|Camunda process
+CO|Committee Opinion
+MER|Merchant
+SYNC|Synchronized
+ADDM|Add merchant
+PAYB|Book Payment
+PAYM|Membership Payment
+PAY|Payment
+RREG|Reader registration
+WREG|Writer registration
+PUBB|Book publishing process
+DOWB|Download book
+UPLB|Upload book
+UPLM|Upload manuscripts

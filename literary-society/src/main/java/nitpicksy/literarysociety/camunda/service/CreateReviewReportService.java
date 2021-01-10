@@ -1,12 +1,14 @@
 package nitpicksy.literarysociety.camunda.service;
 
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
+import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.OpinionOfEditorAboutComplaint;
 import nitpicksy.literarysociety.model.PlagiarismComplaint;
 import nitpicksy.literarysociety.model.User;
 import nitpicksy.literarysociety.repository.BookRepository;
 import nitpicksy.literarysociety.repository.OpinionOfEditorAboutComplaintRepository;
 import nitpicksy.literarysociety.repository.PlagiarismComplaintRepository;
+import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -21,6 +23,10 @@ import java.util.stream.Collectors;
 @Service
 public class CreateReviewReportService implements JavaDelegate {
 
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
     private UserService userService;
 
     private BookRepository bookRepository;
@@ -28,6 +34,8 @@ public class CreateReviewReportService implements JavaDelegate {
     private PlagiarismComplaintRepository plagiarismComplaintRepository;
 
     private OpinionOfEditorAboutComplaintRepository opinionOfEditorAboutComplaintRepository;
+
+    private LogService logService;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -46,14 +54,21 @@ public class CreateReviewReportService implements JavaDelegate {
         User editor = userService.findByUsername(editorUsername);
 
         OpinionOfEditorAboutComplaint opinion = new OpinionOfEditorAboutComplaint(editor, review, plagiarismComplaint);
-        opinionOfEditorAboutComplaintRepository.save(opinion);
+        OpinionOfEditorAboutComplaint savedOpinion = opinionOfEditorAboutComplaintRepository.save(opinion);
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDOEC",
+                String.format("Opinion of Editor %s successfully created",savedOpinion.getId())));
+
     }
 
     @Autowired
-    public CreateReviewReportService(UserService userService, BookRepository bookRepository, PlagiarismComplaintRepository plagiarismComplaintRepository, OpinionOfEditorAboutComplaintRepository opinionOfEditorAboutComplaintRepository) {
+    public CreateReviewReportService(UserService userService, BookRepository bookRepository,
+                                     PlagiarismComplaintRepository plagiarismComplaintRepository,
+                                     OpinionOfEditorAboutComplaintRepository opinionOfEditorAboutComplaintRepository,LogService logService) {
         this.userService = userService;
         this.bookRepository = bookRepository;
         this.plagiarismComplaintRepository = plagiarismComplaintRepository;
         this.opinionOfEditorAboutComplaintRepository = opinionOfEditorAboutComplaintRepository;
+        this.logService = logService;
     }
 }

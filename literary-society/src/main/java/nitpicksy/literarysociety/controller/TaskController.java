@@ -9,6 +9,7 @@ import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.service.*;
+import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
@@ -34,6 +35,10 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/api/tasks")
 public class TaskController {
 
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
     private UserService userService;
 
     private CamundaService camundaService;
@@ -55,6 +60,10 @@ public class TaskController {
     private OpinionOfEditorAboutComplaintService opinionOfEditorAboutComplaintService;
 
     private static String IMAGES_PATH = "literary-society/src/main/resources/images/";
+
+    private LogService logService;
+
+    private IPAddressProvider ipAddressProvider;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TaskDto>> getTasksForAssignee() {
@@ -83,8 +92,13 @@ public class TaskController {
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
             byte[] content = pdfDocumentService.download(pdfDocument.getName());
             camundaService.completeTask(taskId);
+
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
+                    String.format("User from IP address %s completed task %s and downloaded book",ipAddressProvider.get(),taskId )));
             return new ResponseEntity<>(content, headers, HttpStatus.OK);
         } catch (IOException | URISyntaxException e) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
+                    String.format("Book %s cannot be downloaded. Something went wrong.",pdfDocument.getBook().getId() )));
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -97,10 +111,15 @@ public class TaskController {
         try {
             pdfDocumentService.upload(pdfFile, book);
         } catch (IOException e) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UPLB",
+                    String.format("Book %s cannot be uploaded. Something went wrong.",book.getId() )));
             throw new InvalidDataException("Manuscript could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
         camundaService.completeTask(taskId);
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UPLB",
+                String.format("User from IP address %s completed task %s and uploaded book",ipAddressProvider.get(),taskId )));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -123,10 +142,15 @@ public class TaskController {
             writer.getDrafts().addAll(uploadedPDFDocuments);
 
         } catch (IOException e) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UPLM",
+                    "Manuscripts %s cannot be uploaded. Something went wrong."));
             throw new InvalidDataException("Writer documents could not be uploaded. Please try again.", HttpStatus.BAD_REQUEST);
         }
 
         camundaService.completeTask(taskId);
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UPLM",
+                String.format("Writer %s completed task %s and uploaded manuscripts",writer.getId(),taskId )));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -206,8 +230,13 @@ public class TaskController {
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
             byte[] pdfBytes = pdfDocumentService.download(document.getName());
             camundaService.setProcessVariable(piId, "downloaded", "true");
+
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
+                    String.format("User from IP address %s completed task %s and downloaded plagiarism books",ipAddressProvider.get(),taskId )));
             return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
         } catch (IOException | URISyntaxException e) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
+                  "Plagiarism books %s cannot be downloaded. Something went wrong."));
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -237,6 +266,8 @@ public class TaskController {
         runtimeService.setVariable(processInstanceId, "formData", formDTOList);
         formService.submitTaskForm(taskId, fieldsMap);
 
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
+                String.format("Editor %s completed task %s.", book.getEditor().getId(),taskId )));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -245,7 +276,8 @@ public class TaskController {
     public TaskController(UserService userService, CamundaService camundaService, BookService bookService,
                           PDFDocumentService pdfDocumentService, TaskService taskService, RuntimeService runtimeService, FormService formService,
                           ImageService imageService, PlagiarismComplaintService plagiarismComplaintService,
-                          OpinionOfEditorAboutComplaintService opinionOfEditorAboutComplaintService) {
+                          OpinionOfEditorAboutComplaintService opinionOfEditorAboutComplaintService,
+                          LogService logService, IPAddressProvider ipAddressProvider) {
         this.userService = userService;
         this.camundaService = camundaService;
         this.bookService = bookService;
@@ -256,5 +288,7 @@ public class TaskController {
         this.imageService = imageService;
         this.plagiarismComplaintService = plagiarismComplaintService;
         this.opinionOfEditorAboutComplaintService = opinionOfEditorAboutComplaintService;
+        this.logService = logService;
+        this.ipAddressProvider = ipAddressProvider;
     }
 }

@@ -2,7 +2,10 @@ package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.dto.request.CommitteeOpinionDTO;
 import nitpicksy.literarysociety.dto.response.CommentsDTO;
+import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.service.CommitteeOpinionService;
+import nitpicksy.literarysociety.service.LogService;
+import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +20,7 @@ import java.util.List;
 public class CommitteeController {
 
     private CommitteeOpinionService committeeOpinionService;
+
 
     @PostMapping(value = "/vote", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> vote(@Valid @RequestBody CommitteeOpinionDTO opinionDTO) {

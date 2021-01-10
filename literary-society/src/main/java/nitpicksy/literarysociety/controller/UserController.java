@@ -7,8 +7,11 @@ import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.mapper.UserRequestMapper;
 import nitpicksy.literarysociety.mapper.UserResponseMapper;
+import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.User;
+import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
+import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,6 +44,7 @@ public class UserController {
     private UserRequestMapper userRequestMapper;
 
     private UserResponseMapper userResponseMapper;
+
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponseDTO> signUp(@Valid @RequestBody UserRequestDTO userDTO, @RequestParam @Pattern(regexp = "(?i)(lecturers|editors)$", message = "Type is not valid.")  String type) throws NoSuchAlgorithmException {

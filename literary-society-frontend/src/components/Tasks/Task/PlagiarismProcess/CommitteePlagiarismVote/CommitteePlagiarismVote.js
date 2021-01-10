@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Container, Avatar, CssBaseline, Button, Card, CardContent } from '@material-ui/core';
+import { Typography, Container, Avatar, CssBaseline, Button } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { useStyles } from './CommitteePlagiarismVoteStyles';
 import { responseInterceptor } from '../../../../../responseInterceptor';
@@ -9,7 +9,6 @@ import * as actions from './CommitteePlagiarismVoteExport';
 import Form from '../../../../../UI/Form/Form';
 import { extractControls } from '../../../../../utility/extractControls';
 import PeopleIcon from '@material-ui/icons/People';
-import PlagiarismDetailsCard from '../PlagiarismDetailsCard/PlagiarismDetailsCard';
 import EditorComments from '../EditorComments/EditorComments'
 
 const CommitteePlagiarismVote = (props) => {

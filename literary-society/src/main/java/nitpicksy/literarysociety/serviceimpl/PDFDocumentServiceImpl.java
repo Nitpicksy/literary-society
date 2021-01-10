@@ -3,11 +3,14 @@ package nitpicksy.literarysociety.serviceimpl;
 import nitpicksy.literarysociety.dto.camunda.WriterDocumentDTO;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Book;
+import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.PDFDocument;
 import nitpicksy.literarysociety.model.Writer;
 import nitpicksy.literarysociety.repository.PDFDocumentRepository;
 import nitpicksy.literarysociety.repository.WriterRepository;
+import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.PDFDocumentService;
+import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -16,10 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,21 +27,25 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 @Service
 public class PDFDocumentServiceImpl implements PDFDocumentService {
+
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
 
     private final String BOOKS_PATH = "literary-society/src/main/resources/books/";
     private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
     private PDFDocumentRepository pdfDocumentRepository;
     private WriterRepository writerRepository;
+
+    private LogService logService;
+
+    private IPAddressProvider ipAddressProvider;
 
     @Override
     public PDFDocument upload(MultipartFile pdfFile, Book book) throws IOException {
@@ -116,6 +120,8 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
                         writer.getAttempts(),
                         writer.getUsername()));
             } catch (IOException e) {
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWM",
+                        "Unknown exception when reading given draft"));
                 throw new InvalidDataException("Unknown exception when reading given draft", HttpStatus.BAD_REQUEST);
             }
 
@@ -126,8 +132,11 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
 
 
     @Autowired
-    public PDFDocumentServiceImpl(PDFDocumentRepository pdfDocumentRepository, WriterRepository writerRepository) {
+    public PDFDocumentServiceImpl(PDFDocumentRepository pdfDocumentRepository, WriterRepository writerRepository,
+                                  LogService logService, IPAddressProvider ipAddressProvider) {
         this.pdfDocumentRepository = pdfDocumentRepository;
         this.writerRepository = writerRepository;
+        this.logService = logService;
+        this.ipAddressProvider = ipAddressProvider;
     }
 }

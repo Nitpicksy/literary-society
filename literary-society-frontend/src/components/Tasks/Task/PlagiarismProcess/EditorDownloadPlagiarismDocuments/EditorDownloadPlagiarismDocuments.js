@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import ListIcon from '@material-ui/icons/List';
-import GetAppIcon from '@material-ui/icons/GetApp';
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { connect } from 'react-redux';
@@ -10,11 +9,9 @@ import { useStyles } from './EditorDownloadPlagiarismDocumentsStyles';
 import * as signInActions from '../../../../Authentication/SignIn/SignInExport';
 import { responseInterceptor } from '../../../../../responseInterceptor';
 import { useHistory } from 'react-router';
-import Button from '@material-ui/core/Button';
 import PlagiarismDetailsCard from '../PlagiarismDetailsCard/PlagiarismDetailsCard';
 import * as actions from './EditorDownloadPlagiarismDocumentsExport';
 import BookDetailsCard from '../BookDetailsCard/BookDetailsCard';
-import { Grid } from '@material-ui/core';
 
 const EditorDownloadPlagiarismDocuments = (props) => {
 

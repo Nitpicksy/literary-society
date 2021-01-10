@@ -1,6 +1,9 @@
 package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
+import nitpicksy.literarysociety.model.Log;
+import nitpicksy.literarysociety.service.LogService;
+import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
@@ -20,11 +23,19 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/api/process", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CamundaController {
 
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
     private TaskService taskService;
 
     private RuntimeService runtimeService;
 
     private FormService formService;
+
+    private LogService logService;
+
+    private IPAddressProvider ipAddressProvider;
 
     @PostMapping(path = "/{taskId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> submitForm(@Valid @RequestBody List<FormSubmissionDTO> formDTOList, @PathVariable String taskId) {
@@ -41,13 +52,18 @@ public class CamundaController {
 
         runtimeService.setVariable(processInstanceId, "formData", formDTOList);
         formService.submitTaskForm(taskId, fieldsMap);
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CAMUNDA",
+                String.format("Task %s is successfully completed from IP address %s",task.getId(), ipAddressProvider.get())));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Autowired
-    public CamundaController(TaskService taskService, RuntimeService runtimeService, FormService formService) {
+    public CamundaController(TaskService taskService, RuntimeService runtimeService, FormService formService, LogService logService,
+                             IPAddressProvider ipAddressProvider) {
         this.taskService = taskService;
         this.runtimeService = runtimeService;
         this.formService = formService;
+        this.logService = logService;
+        this.ipAddressProvider = ipAddressProvider;
     }
 }

@@ -7,3 +7,11 @@ ORD|Order
 PAY|Create payment request 
 CONFPAY|Confirm payment
 TRA|Transaction
+LGN|Login
+CPW|Change password
+REF|Refresh authentication token
+ADDM|Add merchant
+GETM|Get merchants
+SYNC|Synchronized
+GETT|Get transactions
+COMP|Company

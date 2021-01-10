@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import SockJsClient from 'react-stomp';
 import { toastr } from 'react-redux-toastr';
 
-const SockJS = (props) => {
+const SockJS = () => {
 
     let ref = useRef(null)
 
