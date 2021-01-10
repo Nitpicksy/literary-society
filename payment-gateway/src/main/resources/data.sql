@@ -120,7 +120,7 @@ values ('merchantId',
         3, 1, 1);
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
 values ('merchantPassword',
-        '4af7be4654250d64edffba14b763276fe428d9bd718f42c1362d27fd88f5bbd54d93ebc5905b5668a2db2c1c4de9d5c323e845cd60549efb2dd60456b59d5224',
+        '43a718f649b677cbee616b74b4f57e42de51c29e846e68eb339eb1c20cebe96829e73ffa803d4664d6b1d6b2f8d0c35b3f2385ca14ed95118a466b9644d200fe',
         3, 1, 2);
 
 -- For PayPal: merchantClientId and merchantClientSecret

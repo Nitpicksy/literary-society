@@ -228,9 +228,9 @@ public class BookController {
         return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> submitFormAndUploadImage(@RequestPart @Valid CreateBookRequestDTO createBookDTO, @RequestPart @NotNull MultipartFile image,
-                                                         @RequestPart @NotNull MultipartFile pdfFile ) throws IOException {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Book> create(@RequestPart @Valid CreateBookRequestDTO createBookDTO, @RequestPart @NotNull MultipartFile image,
+                                                         @RequestPart @NotNull  MultipartFile pdfFile ) throws IOException {
         Merchant merchant = userService.getAuthenticatedMerchant();
         if(!merchant.isSupportsPaymentMethods()){
             throw new InvalidDataException("You have to support all available payment methods before you start to sell books.",HttpStatus.BAD_REQUEST);
@@ -241,7 +241,7 @@ public class BookController {
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDB",
                 String.format("Book %s successfully created",book.getId())));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(book, HttpStatus.OK);
     }
 
     @Autowired

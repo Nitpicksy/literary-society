@@ -88,7 +88,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public Book createBook(CreateBookRequestDTO dto, Merchant merchant, MultipartFile image) {
-        Book book = new Book(dto.getWritersNames(), dto.getTitle(),dto.getSynopsis(),genreService.findById(dto.getGenreId()));
+        Book book = new Book(dto.getWritersNames(), dto.getTitle(),dto.getSynopsis(),genreService.findById(dto.getGenre()));
         Book savedBook = bookRepository.saveAndFlush(book);
 
         PublishingInfo publishingInfo = new PublishingInfo(dto.getISBN(), dto.getNumberOfPages(), dto.getPublisherCity(), getLocalDate(dto.getPublicationDate()), dto.getPublisher(), dto.getPrice(),
@@ -99,13 +99,10 @@ public class BookServiceImpl implements BookService {
         Image savedImage = imageService.saveImage(image, IMAGES_PATH, savedBook);
         savedBook.setImage(savedImage);
         savedBook = bookRepository.saveAndFlush(savedBook);
-
-
-        return null;
+        return savedBook;
     }
 
     private LocalDate getLocalDate(String date)  {
-        //yyyy-MM-dd
         return LocalDate.parse(date);
     }
 

@@ -221,8 +221,3 @@ insert into price_list (membership_for_reader, membership_for_writer, start_date
 values (600, 2500, '2021-02-02');
 insert into price_list (membership_for_reader, membership_for_writer, start_date)
 values (700, 2700, '2021-03-03');
-
-insert into pdfdocument (created, name, book_id)
-values ('2021-01-01', 'Ivo-Andric-Na-Drini-cuprija.pdf', 1);
-insert into pdfdocument (created, name, book_id)
-values ('2021-01-01', 'Moby Dick.pdf', 2);

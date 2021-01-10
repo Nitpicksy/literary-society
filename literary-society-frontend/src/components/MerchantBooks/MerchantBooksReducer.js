@@ -1,7 +1,8 @@
 import * as actionTypes from './MerchantBooksActionTypes';
 
 const initialState = {
-    books: null
+    books: null, 
+    genres: null
 }
 
 const reducer = (state = initialState, action) => {
@@ -15,6 +16,16 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 books: null,
+            };
+        case actionTypes.FETCH_GENRES_SUCCESS:
+            return {
+                ...state,
+                genres: action.genres,
+            };
+        case actionTypes.FETCH_GENRES_FAIL:
+            return {
+                ...state,
+                genres: null,
             };
         default:
             return state;

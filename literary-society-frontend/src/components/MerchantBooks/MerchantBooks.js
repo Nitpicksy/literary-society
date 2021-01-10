@@ -12,23 +12,33 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { useStyles } from './MerchantBooksStyles';
 import { connect } from 'react-redux';
+import { Button } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import { useHistory } from 'react-router';
 
 const MerchantBooks = (props) => {
-
+    const history = useHistory();
     const [loading, setLoading] = useState(true);
     const classes = useStyles();
     const { fetchBooks } = props;
+    const {onFetchGenres} = props;
+    
     let bookCards = null;
 
     useEffect(() => {
         fetchBooks();
+        onFetchGenres();
         setLoading(false);
-    }, [fetchBooks]);
+    }, [fetchBooks,onFetchGenres]);
+
+    const showForm = () => {
+        history.push('/add-book');
+    }
 
     if (!loading) {
         if (props.books && Array.isArray(props.books) && props.books.length) {
             bookCards = props.books.map(book => {
-                return <BookCard key={book.id} book={book} forShoppingCart = {false}/>
+                return <BookCard key={book.id} book={book} forShoppingCart={false} />
             });
         } else {
             bookCards =
@@ -49,7 +59,9 @@ const MerchantBooks = (props) => {
                 <Avatar className={classes.avatar}>
                     <MenuBookIcon />
                 </Avatar>
-                <Typography component="h1" variant="h4">Available books</Typography>
+                <Typography component="h1" variant="h4"  className={classes.title}>Your books</Typography>
+                <Button variant="contained" color="primary"
+                    startIcon={<AddIcon />} onClick={showForm}> Create </Button>
             </div>
             <Grid container spacing={3} align="center" justify="center">
                 {bookCards}
@@ -68,6 +80,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchBooks: () => dispatch(actions.fetchBooks()),
+        onFetchGenres: () => dispatch(actions.fetchGenres())
     }
 };
 

@@ -1,3 +1,5 @@
 export {
-    fetchBooks
+    fetchBooks,
+    addBook,
+    fetchGenres
 } from './MerchantBooksActions';

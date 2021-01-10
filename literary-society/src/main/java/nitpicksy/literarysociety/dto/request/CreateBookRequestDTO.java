@@ -3,11 +3,13 @@ package nitpicksy.literarysociety.dto.request;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nitpicksy.literarysociety.model.Genre;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
@@ -27,10 +29,10 @@ public class CreateBookRequestDTO {
 
     @Positive
     @NotNull
-    private Long genreId;
+    private Long genre;
 
     @NotBlank(message = "ISBN is empty")
-    @Size(max = 13)
+    @Pattern(regexp = "^\\d{13}$")
     private String ISBN;
 
     @Positive
@@ -52,6 +54,6 @@ public class CreateBookRequestDTO {
 
     @NotNull
     @Max(100)
-    @Min(1)
+    @Min(0)
     private Integer discount;
 }

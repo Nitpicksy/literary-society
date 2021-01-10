@@ -48,6 +48,7 @@ import EditorDownloadPlagiarismDocuments from './components/Tasks/Task/Plagiaris
 import CommitteePlagiarismVote from './components/Tasks/Task/PlagiarismProcess/CommitteePlagiarismVote/CommitteePlagiarismVote';
 import MerchantBooks from './components/MerchantBooks/MerchantBooks';
 import MerchantBookDetails from './components/MerchantBooks/MerchantBookDetails/MerchantBookDetails';
+import CreateBook from './components/MerchantBooks/CreateBook/CreateBook';
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
 // });
@@ -142,6 +143,7 @@ const App = props => {
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
           <GuardedRoute path="/merchant-books" render={(props) => <MerchantBooks {...props} />} meta={{ roles: [roleMerchant] }} />
           <GuardedRoute path="/merchant-book/:id" render={(props) => <MerchantBookDetails {...props} />} meta={{ roles: [roleMerchant] }} />
+          <GuardedRoute path="/add-book" render={(props) => <CreateBook {...props} />} meta={{ roles: [roleMerchant] }} />
 
           <GuardedRoute path="/manage-users" render={(props) => <ManageLecturersAndEditors {...props} />} meta={{ roles: [roleAdmin] }} />
           <GuardedRoute path="/manage-merchants" render={(props) => <ManageMerchants {...props} />} meta={{ roles: [roleAdmin] }} />

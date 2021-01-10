@@ -26,7 +26,7 @@ public class OrderRequestDTO {
     private String timestamp;
 
     @NotNull
-    @Pattern(regexp = "^(([A-Za-zÀ-ƒ]+[ ]?|[a-zÀ-ƒ]+['-]?){0,30})$", message = "Name is not valid.")
+    @NotBlank
     private String merchantName;
 
 }
