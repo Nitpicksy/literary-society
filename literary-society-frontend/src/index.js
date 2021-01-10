@@ -43,6 +43,8 @@ import plagiarismComplaintReducer from './components/WriterPages/PlagiarismCompl
 import assignReviewBoardReducer from './components/Tasks/Task/PlagiarismProcess/AssignReviewBoard/AssignReviewBoardReducer';
 import editorsDownloadPlagiarismDocumentsReducer from './components/Tasks/Task/PlagiarismProcess/EditorDownloadPlagiarismDocuments/EditorDownloadPlagiarismDocumentsReducer';
 import committeePlagiarismVoteReducer from './components/Tasks/Task/PlagiarismProcess/CommitteePlagiarismVote/CommitteePlagiarismVoteReducer';
+import merchantBookListReducer from './components/MerchantBooks/MerchantBooksReducer';
+import merchantBookReducer from './components/MerchantBooks/MerchantBookDetails/MerchantBookDetailsReducer';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
@@ -76,7 +78,9 @@ const rootReducer = combineReducers({
     plagiarismComplaint: plagiarismComplaintReducer,
     assignReviewBoard: assignReviewBoardReducer,
     editorsDownloadPlagiarismDocuments: editorsDownloadPlagiarismDocumentsReducer,
-    committeePlagiarismVote: committeePlagiarismVoteReducer
+    committeePlagiarismVote: committeePlagiarismVoteReducer,
+    merchantBookList:merchantBookListReducer,
+    merchantBook:merchantBookReducer
 });
 
 const persistConfig = {

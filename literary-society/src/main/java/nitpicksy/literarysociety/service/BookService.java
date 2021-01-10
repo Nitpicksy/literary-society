@@ -1,7 +1,10 @@
 package nitpicksy.literarysociety.service;
 
 import nitpicksy.literarysociety.dto.camunda.PublicationRequestDTO;
+import nitpicksy.literarysociety.dto.request.CreateBookRequestDTO;
 import nitpicksy.literarysociety.model.Book;
+import nitpicksy.literarysociety.model.Merchant;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
@@ -22,4 +25,7 @@ public interface BookService {
     
     Boolean validatePlagiarismRequest(String bookTitle, String writerName);
 
+    List<Book> getMerchantBooks(Long merchantId);
+
+    Book createBook(CreateBookRequestDTO createBookDTO, Merchant merchant, MultipartFile image);
 }

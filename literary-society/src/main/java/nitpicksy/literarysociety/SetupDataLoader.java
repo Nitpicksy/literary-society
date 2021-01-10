@@ -60,6 +60,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Permission downloadBookAndCompleteTask = createPermissionIfNotFound("DOWNLOAD_BOOK_AND_COMPLETE_TASK");
         Permission uploadBookAndCompleteTask = createPermissionIfNotFound("UPLOAD_BOOK_AND_COMPLETE_TASK");
         Permission submitFormAndUploadImage = createPermissionIfNotFound("SUBMIT_FORM_AND_UPLOAD_IMAGE");
+        Permission createBook = createPermissionIfNotFound("CREATE_BOOK");
 
         Permission purchaseBooks = createPermissionIfNotFound("PURCHASE_BOOKS");
 
@@ -82,7 +83,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Set<Permission> lecturerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask));
         createRoleIfNotFound("ROLE_LECTURER", lecturerPermissions);
 
-        Set<Permission> merchantPermissions = new HashSet<>(Arrays.asList(supportPaymentMethods));
+        Set<Permission> merchantPermissions = new HashSet<>(Arrays.asList(supportPaymentMethods,createBook));
         createRoleIfNotFound("ROLE_MERCHANT", merchantPermissions);
 
         RandomPasswordGenerator randomPasswordGenerator = new RandomPasswordGenerator();

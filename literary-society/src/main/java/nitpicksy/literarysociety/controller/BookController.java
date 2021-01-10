@@ -2,12 +2,17 @@ package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.constants.CamundaConstants;
+import nitpicksy.literarysociety.dto.request.CreateBookRequestDTO;
+import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.dto.response.*;
+import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.mapper.*;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.BuyerToken;
+import nitpicksy.literarysociety.model.Image;
 import nitpicksy.literarysociety.model.Log;
+import nitpicksy.literarysociety.model.Merchant;
 import nitpicksy.literarysociety.model.PDFDocument;
 import nitpicksy.literarysociety.model.Reader;
 import nitpicksy.literarysociety.model.Transaction;
@@ -20,14 +25,18 @@ import nitpicksy.literarysociety.service.PDFDocumentService;
 import nitpicksy.literarysociety.service.UserService;
 import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.apache.commons.io.IOUtils;
+import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.io.File;
@@ -35,6 +44,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -208,6 +218,30 @@ public class BookController {
         Reader reader = userService.getAuthenticatedReader();
         List<BookDTO> dtoList = reader.getPurchasedBooks().stream().map(bookDtoMapper::toDto).collect(Collectors.toList());
         return new ResponseEntity<>(dtoList, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/merchant",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<BookDTO>> getMerchantBooks() {
+        Merchant merchant = userService.getAuthenticatedMerchant();
+
+        List<BookDTO> dtoList = bookService.getMerchantBooks(merchant.getUserId()).stream().map(bookDtoMapper::toDto).collect(Collectors.toList());
+        return new ResponseEntity<>(dtoList, HttpStatus.OK);
+    }
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> submitFormAndUploadImage(@RequestPart @Valid CreateBookRequestDTO createBookDTO, @RequestPart @NotNull MultipartFile image,
+                                                         @RequestPart @NotNull MultipartFile pdfFile ) throws IOException {
+        Merchant merchant = userService.getAuthenticatedMerchant();
+        if(!merchant.isSupportsPaymentMethods()){
+            throw new InvalidDataException("You have to support all available payment methods before you start to sell books.",HttpStatus.BAD_REQUEST);
+        }
+
+        Book book = bookService.createBook(createBookDTO,merchant, image);
+        pdfDocumentService.upload(pdfFile, book);
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDB",
+                String.format("Book %s successfully created",book.getId())));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Autowired

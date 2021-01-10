@@ -14,6 +14,7 @@ const MerchantToolbar = (props) => {
     return (
         <React.Fragment>
             <Button className={classes.button} color="inherit" onClick={() =>redirect('/payment-data') }> Insert Payment Data </Button>
+            <Button className={classes.button} color="inherit" onClick={() =>redirect('/merchant-books') }> Your books </Button>
         </React.Fragment>
     );
 }
