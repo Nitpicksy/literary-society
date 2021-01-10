@@ -9,7 +9,7 @@ import Avatar from "@material-ui/core/Avatar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { useStyles } from "./ShoppingCartStyles";
 import BookCard from "../BookCard/BookCard";
-import { Button, MenuItem, TextField } from "@material-ui/core";
+import { Button, Card, CardContent, MenuItem, TextField } from "@material-ui/core";
 import { connect } from "react-redux";
 import { responseInterceptor } from "../../responseInterceptor";
 import * as signInActions from "../Authentication/SignIn/SignInExport";
@@ -54,7 +54,7 @@ const ShoppingCart = (props) => {
     setSelectedMerchantAndBooks(map, merchantsArray[0]);
     setLoading(false);
     toastr.success('Shopping cart', "If you paid this month's membership, discount will be applied when you proceed to payment.");
-    
+
   }, [setSelectedMerchantAndBooks]);
 
   const inputChangedHandler = (event) => {
@@ -119,75 +119,77 @@ const ShoppingCart = (props) => {
       });
     } else {
       bookCards = (
-        <Typography component="h3" variant="h6">
-          Empty Cart
-        </Typography>
+        <Card className={classes.card}>
+          <CardContent className={classes.cardContent}>
+            <Typography component="h3" variant="h5">Shopping cart is empty at the moment.</Typography>
+          </CardContent>
+        </Card>
       );
     }
 
-    if (merchants.length > 0) {
-      select = (
-        <TextField
-          variant="outlined"
-          margin="normal"
-          select
-          className={classes.selectMerchant}
-          label="Merchant"
-          value={selectedMerchant}
-          onChange={(event) => inputChangedHandler(event)}
-        >
-          {merchants.map((merchantName) => (
-            <MenuItem key={merchantName} value={merchantName}>
-              {merchantName}
-            </MenuItem>
-          ))}
-        </TextField>
-      );
-    }
-  } else {
-    <LinearProgress />;
-  }
-
-  if (books && books.length > 0) {
-    payButton = (
-      <Grid container>
-        <Grid item xs={7}>
-          &nbsp;
-        </Grid>
-        <Grid item xs={3} className={classes.price}>
-          <Typography component="h1" variant="h4">
-            Total:{" "}
-            <span className={classes.priceValue}>{amount.toFixed(2)} din.</span>
-          </Typography>
-        </Grid>
-        <Grid item xs={2}>
-          <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained" 
-              onClick={onProceedToPayment} title="If you paid this month's membership, discount will be applied when you proceed to payment." >
-              Proceed to payment{" "}
-          </Button>
-        </Grid>
-      </Grid>
-    );
-  }
-
-  return (
-    <Container component="main" maxWidth="lg">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <MenuBookIcon />
-        </Avatar>
-        <Typography component="h1" variant="h4">
-          Shopping cart
-        </Typography>
-        {select}
-      </div>
-      <Grid container spacing={3} align="center">
-        {bookCards}
-      </Grid>
-      {payButton}
-    </Container>
+if (merchants.length > 0) {
+  select = (
+    <TextField
+      variant="outlined"
+      margin="normal"
+      select
+      className={classes.selectMerchant}
+      label="Merchant"
+      value={selectedMerchant}
+      onChange={(event) => inputChangedHandler(event)}
+    >
+      {merchants.map((merchantName) => (
+        <MenuItem key={merchantName} value={merchantName}>
+          {merchantName}
+        </MenuItem>
+      ))}
+    </TextField>
   );
+}
+  } else {
+  <LinearProgress />;
+}
+
+if (books && books.length > 0) {
+  payButton = (
+    <Grid container>
+      <Grid item xs={7}>
+        &nbsp;
+        </Grid>
+      <Grid item xs={3} className={classes.price}>
+        <Typography component="h1" variant="h4">
+          Total:{" "}
+          <span className={classes.priceValue}>{amount.toFixed(2)} din.</span>
+        </Typography>
+      </Grid>
+      <Grid item xs={2}>
+        <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
+          onClick={onProceedToPayment} title="If you paid this month's membership, discount will be applied when you proceed to payment." >
+          Proceed to payment{" "}
+        </Button>
+      </Grid>
+    </Grid>
+  );
+}
+
+return (
+  <Container component="main" maxWidth="lg">
+    <CssBaseline />
+    <div className={classes.paper}>
+      <Avatar className={classes.avatar}>
+        <MenuBookIcon />
+      </Avatar>
+      <Typography component="h1" variant="h4">
+        Shopping cart
+        </Typography>
+      {select}
+    </div>
+    <Grid container spacing={3} align="center" justify="center">
+      {bookCards}
+    </Grid>
+    {payButton}
+  </Container>
+);
 };
 
 const mapDispatchToProps = (dispatch) => {

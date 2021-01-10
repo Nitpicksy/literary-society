@@ -24,7 +24,7 @@ public class MembershipController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MembershipDTO> getMembership() {
         User authenticated = userService.getAuthenticatedUser();
-        return new ResponseEntity<>(membershipDtoMapper.toDto(membershipService.findLatestUserMembership(authenticated)), HttpStatus.OK);
+        return new ResponseEntity<>(membershipDtoMapper.toDto(membershipService.findLatestUserMembership(authenticated.getUserId())), HttpStatus.OK);
     }
 
     @Autowired

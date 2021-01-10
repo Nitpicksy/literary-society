@@ -1,4 +1,9 @@
 APP|Application startup/shutdown
+REF|Refresh token
+FGN|Feign client exception
+CSP|Create subscription plan
+SUB|Subscribe
+UNS|Unsubscribe
 LGN|Login
 REG|Registration
 CPW|Change password

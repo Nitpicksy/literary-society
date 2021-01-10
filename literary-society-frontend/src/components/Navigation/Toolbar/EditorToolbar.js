@@ -13,7 +13,7 @@ const EditorToolbar = (props) => {
 
     return (
         <React.Fragment>
-            <Button className={classes.button} color="inherit" onClick={() =>redirect('/publication-requests') }> Hi </Button>
+            <Button color="inherit" onClick={() =>redirect('/publication-requests') }>Hi</Button>
         </React.Fragment>
     );
 }

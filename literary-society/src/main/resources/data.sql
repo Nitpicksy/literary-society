@@ -13,8 +13,25 @@ values ('Poezija');
 insert into genre (name)
 values ('Putopisi');
 
+-- LU One Token for Payment Gateway
 insert into jwttoken (token)
 values ('eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJsaXRlcmFyeS1zb2NpZXR5Iiwic3ViIjoibGl0ZXJhcnktc29jaWV0eSIsImF1ZCI6IndlYiIsImlhdCI6MTYwOTU4OTU2MCwiZXhwIjoxNjEwNzk5MTYwLCJyb2xlIjoiUk9MRV9DT01QQU5ZIiwicGVybWlzc2lvbnMiOlt7ImlkIjozLCJuYW1lIjoiQ1JFQVRFX09SREVSIn1dfQ.maf-whUBxv2Sl8LcAIq0mykJcbnclTsZUSQofTiYle1QuGC8lkLHHkSK-S-DKMkaFBC5el-0PrZtUWXmtoXwVg');
+
+
+-- LU One Subscription plans
+insert into subscription_plan (cancelurl, frequency_count, frequency_unit, plan_description, plan_name, price,
+                               product_category, product_name, product_type, successurl)
+values ('https://www.literary-society.com:3000', 3, 'MONTH',
+        'Create publication requests and publish books via Literary Society.', 'Writer Membership', 2000.0,
+        'BOOKS_MANUSCRIPTS', 'Book Publishing Option', 'DIGITAL',
+        'https://www.literary-society.com:3000/subscription/success');
+insert into subscription_plan (cancelurl, frequency_count, frequency_unit, plan_description, plan_name, price,
+                               product_category, product_name, product_type, successurl)
+values ('https://www.literary-society.com:3000', 1, 'MONTH',
+        'Buy books with discount from all Literary Society merchants.', 'Reader Membership', 1200.0,
+        'BOOKS_MANUSCRIPTS', 'Book Purchasing Discount', 'DIGITAL',
+        'https://www.literary-society.com:3000/subscription/success');
+
 
 -- Writers
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
@@ -210,19 +227,7 @@ insert into publishing_info(isbn, number_of_pages, publisher_city, publication_d
 values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 890.00, 5, 8, 12);
 
 --- pdf documents
-insert into pdfdocument(created,name, book_id)
-values ('2019-04-05 14:05:00', '2019-04-05_14-05-00_Moby Dick.pdf',1);
-insert into pdfdocument(created,name, book_id)
-values ('2019-04-05 14:05:00', '2019-04-05_14-05-00_Na Drini ćuprija.pdf',2);
-
-insert into price_list (membership_for_reader, membership_for_writer, start_date)
-values (500, 2000, '2021-01-01');
-insert into price_list (membership_for_reader, membership_for_writer, start_date)
-values (600, 2500, '2021-02-02');
-insert into price_list (membership_for_reader, membership_for_writer, start_date)
-values (700, 2700, '2021-03-03');
-
-insert into pdfdocument (created, name, book_id)
-values ('2021-01-01', 'Ivo-Andric-Na-Drini-cuprija.pdf', 1);
-insert into pdfdocument (created, name, book_id)
-values ('2021-01-01', 'Moby Dick.pdf', 2);
+insert into pdfdocument(created, name, book_id)
+values ('2019-04-05 14:05:00', '2019-04-05_14-05-00_Moby Dick.pdf', 1);
+insert into pdfdocument(created, name, book_id)
+values ('2019-04-05 14:05:00', '2019-04-05_14-05-00_Na Drini ćuprija.pdf', 2);

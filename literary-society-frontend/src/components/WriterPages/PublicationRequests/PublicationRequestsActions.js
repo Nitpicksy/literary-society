@@ -65,10 +65,11 @@ export const setChosenPlagiarismBook = (chosenPlagiarismBook) => {
     }
 }
 
-export const startProcess = () => {
+export const startProcess = (history) => {
     return (dispatch) => {
         axios.get('/books/start-publishing')
             .then(response => {
+                history.push('./create-publication-request');
                 dispatch(startProcessSuccess(response.data.processInstanceId, response.data.taskId));
             })
             .catch(err => {

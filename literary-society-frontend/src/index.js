@@ -34,6 +34,7 @@ import userListReducer from './components/Authentication/ManageLecturersAndEdito
 import opinionsOfBetaReadersReducer from './components/Tasks/Task/OpinionsOfBetaReaders/OpinionsOfBetaReadersReducer';
 import opinionOfEditorReducer from './components/Tasks/Task/OpinionOfEditor/OpinionOfEditorReducer';
 import publishingInfoReducer from './components/Tasks/Task/PublishingInfo/PublishingInfoReducer';
+import subscriptionReducer from './components/Subscription/SubscriptionReducer';
 import storage from 'redux-persist/lib/storage';
 import { persistStore, persistReducer } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -71,6 +72,7 @@ const rootReducer = combineReducers({
     opinionsOfBetaReaders: opinionsOfBetaReadersReducer,
     opinionOfEditor: opinionOfEditorReducer,
     publishingInfo: publishingInfoReducer,
+    subscription: subscriptionReducer,
     merchantList: merchantListReducer, 
     purchasedBooks: purchasedBooksReducer,
     plagiarismComplaint: plagiarismComplaintReducer,

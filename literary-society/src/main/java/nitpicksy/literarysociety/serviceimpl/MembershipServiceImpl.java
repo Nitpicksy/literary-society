@@ -31,20 +31,48 @@ public class MembershipServiceImpl implements MembershipService {
     private IPAddressProvider ipAddressProvider;
 
     @Override
-    public Membership findLatestUserMembership(User user) {
-        return membershipRepository.findByUserIdAndExpirationDateGreaterThanEqual(user.getUserId(), LocalDate.now());
+    public Membership findLatestUserMembership(Long id) {
+        Membership subscription = membershipRepository.findByUserIdAndExpirationDateIsNullAndIsSubscribedIsTrue(id);
+        if (subscription != null) {
+            return subscription;
+        }
+
+        return membershipRepository.findByUserIdAndExpirationDateGreaterThanEqual(id, LocalDate.now());
+    }
+
+    @Override
+    public Membership findUserSubscription(Long id) {
+        return membershipRepository.findByUserIdAndExpirationDateIsNullAndIsSubscribedIsTrue(id);
     }
 
     @Override
     public boolean checkIfUserMembershipIsValid(Long id) {
-        if (membershipRepository.findByUserIdAndExpirationDateGreaterThanEqual(id, LocalDate.now()) != null) {
-            return true;
-        }
-        return false;
+        return findLatestUserMembership(id) != null;
     }
 
     @Override
     public Membership createMembership(User user, Merchant merchant) {
+        PriceList priceList = priceListService.findLatestPriceList();
+        Double amount;
+        int months;
+
+        if (user.getRole().getName().equals(RoleConstants.ROLE_READER)) {
+            amount = priceList.getMembershipForReader();
+            months = 1;
+        } else {
+            amount = priceList.getMembershipForWriter();
+            months = 3;
+        }
+
+        Membership membership = new Membership(user, amount, LocalDate.now().plusMonths(months), false, merchant);
+        Membership savedMembership = membershipRepository.save(membership);
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDMEMB",
+                String.format("Membership %s successfully created from IP address %s",savedMembership.getId(), ipAddressProvider.get())));
+        return savedMembership;
+    }
+
+    @Override
+    public Membership createSubscriptionMembership(User user, Merchant merchant, String subscriptionId) {
         PriceList priceList = priceListService.findLatestPriceList();
         Double amount;
 
@@ -54,11 +82,16 @@ public class MembershipServiceImpl implements MembershipService {
             amount = priceList.getMembershipForWriter();
         }
 
-        Membership membership = new Membership(user, amount, LocalDate.now().plusMonths(3), false, merchant);
+        Membership membership = new Membership(null, user, amount, null, true, subscriptionId, merchant);
         Membership savedMembership = membershipRepository.save(membership);
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDMEMB",
                 String.format("Membership %s successfully created from IP address %s",savedMembership.getId(), ipAddressProvider.get())));
         return savedMembership;
+    }
+
+    @Override
+    public void deleteSubscriptionMembership(Long id) {
+        membershipRepository.deleteById(id);
     }
 
     @Autowired

@@ -3,21 +3,11 @@ package nitpicksy.literarysociety.controller;
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.response.*;
+import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.mapper.*;
-import nitpicksy.literarysociety.model.Book;
-import nitpicksy.literarysociety.model.BuyerToken;
-import nitpicksy.literarysociety.model.Log;
-import nitpicksy.literarysociety.model.PDFDocument;
-import nitpicksy.literarysociety.model.Reader;
-import nitpicksy.literarysociety.model.Transaction;
-import nitpicksy.literarysociety.service.BookService;
-import nitpicksy.literarysociety.service.BuyerTokenService;
-import nitpicksy.literarysociety.service.LogService;
-import nitpicksy.literarysociety.service.OpinionOfBetaReaderService;
-import nitpicksy.literarysociety.service.OpinionOfEditorService;
-import nitpicksy.literarysociety.service.PDFDocumentService;
-import nitpicksy.literarysociety.service.UserService;
+import nitpicksy.literarysociety.model.*;
+import nitpicksy.literarysociety.service.*;
 import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +59,8 @@ public class BookController {
 
     private PDFDocumentService pdfDocumentService;
 
+    private MembershipService membershipService;
+
     private UserService userService;
 
     private LogService logService;
@@ -81,19 +73,24 @@ public class BookController {
         return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/publication-requests",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/publication-requests", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PublicationRequestResponseDTO>> getPublicationRequestsForWriter() {
         return new ResponseEntity<>(bookService.findPublicationRequestsForWriter().stream()
                 .map(publReqResponseDtoMapper::toDto).collect(Collectors.toList()), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/start-publishing",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/start-publishing", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProcessDataDTO> getPublicationRequestFields() {
+        User writer = userService.getAuthenticatedUser();
+        if (!membershipService.checkIfUserMembershipIsValid(writer.getUserId())) {
+            throw new InvalidDataException("You haven't paid Writer Membership, therefore you can not create publication requests.", HttpStatus.BAD_REQUEST);
+        }
+
         ProcessDataDTO processDataDTO = camundaService.start(CamundaConstants.PROCESS_BOOK_PUBLISHING);
         return new ResponseEntity<>(processDataDTO, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/publication-request-form",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/publication-request-form", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FormFieldsDTO> getPublicationRequestForm(@NotNull @RequestParam String piId, @NotNull @RequestParam String taskId) {
         FormFieldsDTO formFieldsDTO = camundaService.getFormFields(piId, taskId);
         return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
@@ -116,18 +113,18 @@ public class BookController {
         return new ResponseEntity<>(bookDetailsDtoMapper.toDto(book), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}/opinions-of-beta-readers",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}/opinions-of-beta-readers", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<OpinionDTO>> getOpinionsOfBetaReaders(@Positive @PathVariable Long id) {
         return new ResponseEntity<>(opinionOfBetaReaderService.findByBookId(id).stream()
                 .map(opinion -> opinionOfBetaReaderDtoMapper.toDto(opinion)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}/opinion-of-editor",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}/opinion-of-editor", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OpinionDTO> getOpinionOfEditor(@Positive @PathVariable Long id) {
         return new ResponseEntity<>(opinionOfEditorDtoMapper.toDto(opinionOfEditorService.findNewestByBookId(id)), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/download",produces="application/zip")
+    @GetMapping(value = "/download", produces = "application/zip")
     public void downloadBooks(@RequestParam String t, HttpServletResponse response) throws IOException {
         BuyerToken buyerToken = buyerTokenService.verifyToken(t);
 
@@ -142,7 +139,7 @@ public class BookController {
         response.setStatus(HttpServletResponse.SC_OK);
         response.addHeader("Content-Disposition", "attachment; filename=books.zip");
         ZipOutputStream zipOutputStream = null;
-        try{
+        try {
             zipOutputStream = new ZipOutputStream(response.getOutputStream());
             for (PDFDocument pdfDocument : pdfDocumentList) {
                 File file = pdfDocumentService.download(pdfDocument);
@@ -157,8 +154,8 @@ public class BookController {
 
         } catch (IOException e) {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "BOOK", "Could not create ZipOutputStream."));
-        }finally {
-            if(zipOutputStream != null){
+        } finally {
+            if (zipOutputStream != null) {
                 zipOutputStream.flush();
                 zipOutputStream.close();
             }
@@ -169,21 +166,21 @@ public class BookController {
         buyerTokenService.invalidateToken(buyerToken.getId());
     }
 
-    @GetMapping(value = "/download/{bookId}",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(value = "/download/{bookId}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> downloadBook(@NotNull @Positive @PathVariable Long bookId) {
         Book book = bookService.findById(bookId);
 
-        if(book == null) {
+        if (book == null) {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "BOOK",
                     String.format("Book with %s doesn't exist.", bookId)));
             throw new InvalidTokenException("This book doesn't exist.", HttpStatus.BAD_REQUEST);
         }
 
-        if(book.getPublishingInfo().getPrice() != 0){
+        if (book.getPublishingInfo().getPrice() != 0) {
             Reader reader = userService.getAuthenticatedReader();
-            if(reader == null || !reader.getPurchasedBooks().contains(book)){
+            if (reader == null || !reader.getPurchasedBooks().contains(book)) {
                 logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "BT",
-                        String.format("User from %s tried to download book %s which is not free and which is not purchased.", ipAddressProvider.get(),bookId)));
+                        String.format("User from %s tried to download book %s which is not free and which is not purchased.", ipAddressProvider.get(), bookId)));
                 throw new InvalidTokenException("This book is not free so you have to buy it.", HttpStatus.BAD_REQUEST);
             }
         }
@@ -215,8 +212,8 @@ public class BookController {
                           OpinionOfEditorService opinionOfEditorService, CamundaService camundaService, BookDtoMapper bookDtoMapper,
                           BookDetailsDtoMapper bookDetailsDtoMapper, OpinionOfBetaReaderDtoMapper opinionOfBetaReaderDtoMapper,
                           OpinionOfEditorDtoMapper opinionOfEditorDtoMapper, PublicationRequestResponseDtoMapper publReqResponseDtoMapper,
-                          BuyerTokenService buyerTokenService,PDFDocumentService pdfDocumentService,UserService userService,LogService logService,
-                          IPAddressProvider ipAddressProvider) {
+                          BuyerTokenService buyerTokenService, PDFDocumentService pdfDocumentService, UserService userService, LogService logService,
+                          IPAddressProvider ipAddressProvider, MembershipService membershipService) {
         this.bookService = bookService;
         this.opinionOfBetaReaderService = opinionOfBetaReaderService;
         this.opinionOfEditorService = opinionOfEditorService;
@@ -228,6 +225,7 @@ public class BookController {
         this.publReqResponseDtoMapper = publReqResponseDtoMapper;
         this.buyerTokenService = buyerTokenService;
         this.pdfDocumentService = pdfDocumentService;
+        this.membershipService = membershipService;
         this.userService = userService;
         this.logService = logService;
         this.ipAddressProvider = ipAddressProvider;

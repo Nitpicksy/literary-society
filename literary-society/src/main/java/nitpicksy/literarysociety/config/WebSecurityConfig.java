@@ -94,6 +94,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/writers/start-registration").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/writers/registration-form").permitAll()
 
+                .antMatchers(HttpMethod.GET, "/api/subscriptions/create-plans").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/subscriptions/plan").hasAuthority("SUBSCRIBE")
+                .antMatchers(HttpMethod.POST, "/api/subscriptions/subscribe").hasAuthority("SUBSCRIBE")
+                .antMatchers(HttpMethod.POST, "/api/subscriptions/unsubscribe").hasAuthority("SUBSCRIBE")
+
                 .anyRequest().authenticated().and()
                 .cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(jwtUserDetailsService.tokenUtils,

@@ -1,16 +1,14 @@
 package nitpicksy.literarysociety;
 
+import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.common.RandomPasswordGenerator;
+import nitpicksy.literarysociety.dto.request.SubscriptionPlanDTO;
 import nitpicksy.literarysociety.enumeration.UserStatus;
-import nitpicksy.literarysociety.model.Permission;
-import nitpicksy.literarysociety.model.Role;
-import nitpicksy.literarysociety.model.User;
-import nitpicksy.literarysociety.model.Writer;
-import nitpicksy.literarysociety.repository.PermissionRepository;
-import nitpicksy.literarysociety.repository.RoleRepository;
-import nitpicksy.literarysociety.repository.UserRepository;
-import nitpicksy.literarysociety.repository.WriterRepository;
+import nitpicksy.literarysociety.model.*;
+import nitpicksy.literarysociety.repository.*;
 import nitpicksy.literarysociety.service.EmailNotificationService;
+import nitpicksy.literarysociety.service.JWTTokenService;
+import nitpicksy.literarysociety.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -19,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,6 +34,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private UserRepository userRepository;
 
     private WriterRepository writerRepository;
+
+    private PriceListRepository priceListRepository;
 
     private PasswordEncoder passwordEncoder;
 
@@ -60,17 +61,18 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Permission downloadBookAndCompleteTask = createPermissionIfNotFound("DOWNLOAD_BOOK_AND_COMPLETE_TASK");
         Permission uploadBookAndCompleteTask = createPermissionIfNotFound("UPLOAD_BOOK_AND_COMPLETE_TASK");
         Permission submitFormAndUploadImage = createPermissionIfNotFound("SUBMIT_FORM_AND_UPLOAD_IMAGE");
+        Permission subscribe = createPermissionIfNotFound("SUBSCRIBE");
 
         Permission purchaseBooks = createPermissionIfNotFound("PURCHASE_BOOKS");
 
         Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers,manageMerchants));
         createRoleIfNotFound("ROLE_ADMIN", adminPermissions);
 
-        Set<Permission> readerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask,purchaseBooks));
+        Set<Permission> readerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask, purchaseBooks, subscribe));
         createRoleIfNotFound("ROLE_READER", readerPermissions);
 
         Set<Permission> writerPermissions = new HashSet<>(Arrays.asList(managePublicationRequests,
-                manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask));
+                manageTasks, downloadBookAndCompleteTask, uploadBookAndCompleteTask, subscribe));
         createRoleIfNotFound("ROLE_WRITER", writerPermissions);
 
         Set<Permission> committeeMemberPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask));
@@ -96,11 +98,22 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             return;
         }
 
-        // TODO: Obrisati kad se user-i ne budu dodavali skriptom
+        // TODO: Obrisati funkciju kad se user-i ne budu dodavali skriptom
         assignRoles();
 
         userRepository.save(admin);
         composeAndSendEmailToChangePassword(admin.getEmail(), generatedPassword);
+
+        // PriceList creation - only currentPriceList is valid
+        PriceList previousPriceList = new PriceList(null, 1500.00, 800.00,
+                LocalDate.of(2020, 6, 1));
+        priceListRepository.save(previousPriceList);
+        PriceList currentPriceList = new PriceList(null, 2000.00, 1200.00,
+                LocalDate.of(2021, 1, 1));
+        priceListRepository.save(currentPriceList);
+        PriceList nextPriceList = new PriceList(null, 2300.00, 1500.00,
+                LocalDate.of(2021, 6, 1));
+        priceListRepository.save(nextPriceList);
 
         alreadySetup = true;
     }
@@ -226,12 +239,14 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Autowired
     public SetupDataLoader(RoleRepository roleRepository, PermissionRepository permissionRepository, UserRepository userRepository,
-                           WriterRepository writerRepository, PasswordEncoder passwordEncoder, EmailNotificationService emailNotificationService,
+                           WriterRepository writerRepository, PriceListRepository priceListRepository,
+                           PasswordEncoder passwordEncoder, EmailNotificationService emailNotificationService,
                            Environment environment) {
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
         this.userRepository = userRepository;
         this.writerRepository = writerRepository;
+        this.priceListRepository = priceListRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailNotificationService = emailNotificationService;
         this.environment = environment;

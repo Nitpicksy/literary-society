@@ -58,8 +58,7 @@ const PublicationRequests = (props) => {
     }, [fetchPublicationRequests, clearProcessState]);
 
     const showForm = () => {
-        props.startProcess();
-        history.push('./create-publication-request');
+        props.startProcess(history);
     }
 
     const complaintHandler = (choosenPublicationRequest) => {
@@ -112,7 +111,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchPublicationRequests: () => dispatch(actions.fetchPublicationRequests()),
-        startProcess: () => dispatch(actions.startProcess()),
+        startProcess: (history) => dispatch(actions.startProcess(history)),
         startPlagiarismProcess: (choosenPublicationRequest) => dispatch(actions.startPlagiarismProcess(choosenPublicationRequest)),
         clearProcessState: () => dispatch(actions.clearProcessState()),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
