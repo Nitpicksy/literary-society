@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.net.URI;
 
@@ -56,5 +55,8 @@ public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.POST, path = "/api/subscriptions/subscribe")
     String subscribe(URI baseUrl, @RequestBody SubscriptionToPaypalDTO subscriptionToPaypalDTO);
+
+    @RequestMapping(method = RequestMethod.POST, path = "/api/subscriptions/unsubscribe")
+    String unsubscribe(URI baseUrl, @RequestBody CancelSubscriptionToPaypalDTO cancelSubscriptionDTO);
 
 }

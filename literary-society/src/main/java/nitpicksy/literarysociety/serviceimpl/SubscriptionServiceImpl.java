@@ -3,10 +3,13 @@ package nitpicksy.literarysociety.serviceimpl;
 import feign.FeignException;
 import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.constants.RoleConstants;
+import nitpicksy.literarysociety.dto.request.CancelSubscriptionDTO;
 import nitpicksy.literarysociety.dto.request.SubscriptionDTO;
 import nitpicksy.literarysociety.dto.request.SubscriptionPlanDTO;
+import nitpicksy.literarysociety.dto.response.SubscriptionPlanResponseDTO;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.mapper.SubscriptionPlanDtoMapper;
+import nitpicksy.literarysociety.mapper.SubscriptionPlanResponseDtoMapper;
 import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.repository.MembershipRepository;
 import nitpicksy.literarysociety.repository.SubscriptionPlanRepository;
@@ -40,6 +43,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     private SubscriptionPlanDtoMapper planDtoMapper;
 
+    private SubscriptionPlanResponseDtoMapper planResponseDtoMapper;
+
     @Override
     public SubscriptionPlan createSubscriptionPlan(SubscriptionPlanDTO subscriptionPlanDTO) {
         SubscriptionPlan savedPlan = subscriptionPlanRepository.save(planDtoMapper.toEntity(subscriptionPlanDTO));
@@ -67,8 +72,22 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public SubscriptionPlan getSubscriptionPlan(String nameSubstring) {
-        return subscriptionPlanRepository.findOneByPlanNameContainingIgnoringCase(nameSubstring);
+    public SubscriptionPlanResponseDTO getSubscriptionPlan(String nameSubstring) {
+        SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findOneByPlanNameContainingIgnoringCase(nameSubstring);
+        if (subscriptionPlan == null) {
+            return null;
+        }
+        SubscriptionPlanResponseDTO responseDTO = planResponseDtoMapper.toDto(subscriptionPlan);
+
+        User user = userService.getAuthenticatedUser();
+        Membership membership = membershipService.findUserSubscription(user.getUserId());
+        if (membership == null) {
+            responseDTO.setMembershipStatus("NOT_SUBSCRIBED");
+        } else {
+            responseDTO.setMembershipStatus("SUBSCRIBED");
+        }
+
+        return responseDTO;
     }
 
     @Override
@@ -101,33 +120,70 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         try {
             redirectURL = zuulClient.subscribe("Bearer " + jwtToken, subscriptionDTO);
         } catch (RuntimeException e) {
-            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUP",
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUB",
                     "Forwarding request to subscribe has failed"));
             throw new InvalidDataException("Request to subscribe failed. Please try again later.", HttpStatus.BAD_REQUEST);
         }
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUB",
+                String.format("Subscription for plan '%s' with id=%s successfully created.", subscriptionPlan.getPlanName(), subscriptionPlan.getId())));
 
         return redirectURL;
     }
 
     @Override
-    public void createMembership() {
+    public void createMembership(String subscriptionId) {
         User user = userService.getAuthenticatedUser();
-
         Membership membership = membershipService.findUserSubscription(user.getUserId());
         if (membership != null) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUB",
                     "Request to subscribe failed. Already subscribed."));
             throw new InvalidDataException("You are already subscribed.", HttpStatus.BAD_REQUEST);
         }
-        
+
         Merchant ourMerchant = merchantService.findOurMerchant();
-        membershipService.createSubscriptionMembership(user, ourMerchant);
+        membershipService.createSubscriptionMembership(user, ourMerchant, subscriptionId);
+    }
+
+    @Override
+    public void unsubscribe(Long planId) {
+        SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findOneById(planId);
+        if (subscriptionPlan == null) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UNS",
+                    "Request to unsubscribe failed. Invalid plan id sent."));
+            throw new InvalidDataException("Plan you want to unsubscribe from is not available.", HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userService.getAuthenticatedUser();
+        Membership membership = membershipService.findUserSubscription(user.getUserId());
+        if (membership == null) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UNS",
+                    "Request to unsubscribe failed. Not subscribed."));
+            throw new InvalidDataException("You can not unsubscribe because you are not subscribed.", HttpStatus.BAD_REQUEST);
+        }
+
+        CancelSubscriptionDTO cancelSubscriptionDTO = new CancelSubscriptionDTO(planId, membership.getSubscriptionId());
+
+        String jwtToken = jwtTokenService.getToken();
+        try {
+            zuulClient.unsubscribe("Bearer " + jwtToken, cancelSubscriptionDTO);
+        } catch (RuntimeException e) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UNS",
+                    "Forwarding request to unsubscribe has failed"));
+            throw new InvalidDataException("Request to unsubscribe failed. Please try again later.", HttpStatus.BAD_REQUEST);
+        }
+
+        membershipService.deleteSubscriptionMembership(membership.getId());
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UNS",
+                String.format("Subscription for plan '%s' with id=%s successfully canceled.", subscriptionPlan.getPlanName(), subscriptionPlan.getId())));
     }
 
     @Autowired
     public SubscriptionServiceImpl(SubscriptionPlanRepository subscriptionPlanRepository, MembershipService membershipService,
                                    MerchantService merchantService, JWTTokenService jwtTokenService, UserService userService,
-                                   LogService logService, ZuulClient zuulClient, SubscriptionPlanDtoMapper planDtoMapper) {
+                                   LogService logService, ZuulClient zuulClient, SubscriptionPlanDtoMapper planDtoMapper,
+                                   SubscriptionPlanResponseDtoMapper planResponseDtoMapper) {
         this.subscriptionPlanRepository = subscriptionPlanRepository;
         this.membershipService = membershipService;
         this.merchantService = merchantService;
@@ -136,5 +192,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         this.logService = logService;
         this.zuulClient = zuulClient;
         this.planDtoMapper = planDtoMapper;
+        this.planResponseDtoMapper = planResponseDtoMapper;
     }
 }

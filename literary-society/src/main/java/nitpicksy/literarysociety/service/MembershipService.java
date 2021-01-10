@@ -14,5 +14,7 @@ public interface MembershipService {
 
     Membership createMembership(User user, Merchant merchant);
 
-    Membership createSubscriptionMembership(User user, Merchant merchant);
+    Membership createSubscriptionMembership(User user, Merchant merchant, String subscriptionId);
+
+    void deleteSubscriptionMembership(Long id);
 }

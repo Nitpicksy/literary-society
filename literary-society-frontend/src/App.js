@@ -41,6 +41,7 @@ import OpinionOfEditor from './components/Tasks/Task/OpinionOfEditor/OpinionOfEd
 import PublishingInfo from './components/Tasks/Task/PublishingInfo/PublishingInfo';
 import Subscription from './components/Subscription/Subscription';
 import SubscriptionSuccess from './components/Subscription/SubscriptionSuccess/SubscriptionSuccess';
+import CancelSubscriptionSuccess from './components/Subscription/SubscriptionSuccess/CancelSubscriptionSuccess';
 
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
@@ -102,6 +103,7 @@ const App = props => {
 
       <Route path="/book/:id" exact render={(props) => <BookDetails {...props} />} />
       <Route path="/" exact render={(props) => <HomePage {...props} />} />
+
     </Switch>
   );
 
@@ -123,8 +125,9 @@ const App = props => {
           <Route path="/writer-membership-upload" render={(props) => <WriterUploadWork {...props} />} meta={{ roles:  [roleWriter] }}/>
           <Route path="/voting" render={(props) => <CommitteeVoting {...props} />} meta={{ roles:  [roleWriter] }}/>
           <Route path="/membership" render={(props) => <Membership {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
+          <Route path="/subscription/cancel/success" render={(props) => <CancelSubscriptionSuccess {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
+          <Route path="/subscription/success" render={(props) => <SubscriptionSuccess {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
           <Route path="/subscription" render={(props) => <Subscription {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
-          <Route path="/subscription-success" render={(props) => <SubscriptionSuccess {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
           
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
 

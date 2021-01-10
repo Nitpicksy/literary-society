@@ -5,3 +5,4 @@ CONV|Currency conversion error
 CPR|Create product
 CBP|Create billing plan
 SUB|Subscribe
+UNS|Unsubscribe

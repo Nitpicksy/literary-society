@@ -1,5 +1,6 @@
 package nitpicksy.paypalservice.controller;
 
+import nitpicksy.paypalservice.dto.request.CancelSubscriptionDTO;
 import nitpicksy.paypalservice.dto.request.SubscriptionDTO;
 import nitpicksy.paypalservice.dto.request.SubscriptionPlanDTO;
 import nitpicksy.paypalservice.mapper.SubscriptionPlanMapper;
@@ -12,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.net.URI;
 
 @Validated
@@ -32,6 +34,12 @@ public class SubscriptionController {
     @PostMapping(value = "/subscribe")
     public ResponseEntity<String> subscribe(@Valid @RequestBody SubscriptionDTO subscriptionDTO) {
         return new ResponseEntity<>(subscriptionService.subscribe(subscriptionDTO), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/unsubscribe")
+    public ResponseEntity<Void> unsubscribe(@Valid @RequestBody CancelSubscriptionDTO cancelSubscriptionDTO) {
+        subscriptionService.unsubscribe(cancelSubscriptionDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Autowired

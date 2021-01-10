@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.client;
 
+import nitpicksy.literarysociety.dto.request.CancelSubscriptionDTO;
 import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
 import nitpicksy.literarysociety.dto.request.SubscriptionDTO;
 import nitpicksy.literarysociety.dto.request.SubscriptionPlanDTO;
@@ -33,4 +34,9 @@ public interface ZuulClient {
     @RequestMapping(method = RequestMethod.POST, path = "payment-gateway/api/subscriptions/subscribe")
     String subscribe(@RequestHeader(value = "Auth") String authHeader,
                      @RequestBody SubscriptionDTO subscriptionDTO);
+
+    @RequestMapping(method = RequestMethod.POST, path = "payment-gateway/api/subscriptions/unsubscribe")
+    String unsubscribe(@RequestHeader(value = "Auth") String authHeader,
+                       @RequestBody CancelSubscriptionDTO cancelSubscriptionDTO);
+
 }

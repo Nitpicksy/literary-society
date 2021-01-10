@@ -30,3 +30,13 @@ export const subscribe = (planId) => {
             toastr.error('Subscribe', err.response.data.message);
         });
 };
+
+export const unsubscribe = (planId, history) => {
+    axios.post(`/subscriptions/unsubscribe?planId=${planId}`)
+        .then(response => {
+            history.push('/subscription/cancel/success');
+        })
+        .catch(err => {
+            toastr.error('Unsubscribe', err.response.data.message);
+        });
+};

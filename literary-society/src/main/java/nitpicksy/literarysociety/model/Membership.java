@@ -32,6 +32,9 @@ public class Membership {
     @Column
     private boolean isSubscribed;
 
+    @Column
+    private String subscriptionId;
+
     @PrimaryKeyJoinColumn
     @ManyToOne(fetch = FetchType.EAGER)
     private Merchant merchant;

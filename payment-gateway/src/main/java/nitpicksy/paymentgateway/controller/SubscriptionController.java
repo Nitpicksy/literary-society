@@ -1,6 +1,6 @@
 package nitpicksy.paymentgateway.controller;
 
-import nitpicksy.paymentgateway.dto.request.OrderRequestDTO;
+import nitpicksy.paymentgateway.dto.request.CancelSubscriptionDTO;
 import nitpicksy.paymentgateway.dto.request.SubscriptionDTO;
 import nitpicksy.paymentgateway.dto.request.SubscriptionPlanDTO;
 import nitpicksy.paymentgateway.service.SubscriptionService;
@@ -28,6 +28,12 @@ public class SubscriptionController {
     @PostMapping(value = "/subscribe")
     public ResponseEntity<String> subscribe(@Valid @RequestBody SubscriptionDTO subscriptionDTO) {
         return new ResponseEntity<>(subscriptionService.subscribe(subscriptionDTO), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/unsubscribe")
+    public ResponseEntity<Void> unsubscribe(@Valid @RequestBody CancelSubscriptionDTO cancelSubscriptionDTO) {
+        subscriptionService.unsubscribe(cancelSubscriptionDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Autowired

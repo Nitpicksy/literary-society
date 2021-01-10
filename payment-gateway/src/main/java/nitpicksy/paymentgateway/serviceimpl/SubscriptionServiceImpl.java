@@ -1,10 +1,7 @@
 package nitpicksy.paymentgateway.serviceimpl;
 
 import nitpicksy.paymentgateway.client.ZuulClient;
-import nitpicksy.paymentgateway.dto.request.SubscriptionDTO;
-import nitpicksy.paymentgateway.dto.request.SubscriptionPlanDTO;
-import nitpicksy.paymentgateway.dto.request.SubscriptionPlanToPaypalDTO;
-import nitpicksy.paymentgateway.dto.request.SubscriptionToPaypalDTO;
+import nitpicksy.paymentgateway.dto.request.*;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.model.*;
 import nitpicksy.paymentgateway.repository.SubscriptionRepository;
@@ -57,14 +54,15 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             paypalPlanId = zuulClient.createSubscriptionPlan(URI.create(apiGatewayURL + "/paypal"), planToPaypalDTO);
         } catch (RuntimeException e) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME,
-                    "TRA", "Could not forward request to PayPal service."));
+                    "SUB", "Could not forward request to PayPal service."));
             throw new InvalidDataException("Subscription plan creating has failed. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
         SubscriptionPlan subscriptionPlan = new SubscriptionPlan(null, paypalPlanId, planDTO.getId(), company.getCommonName());
         subscriptionRepository.save(subscriptionPlan);
 
-        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CSP", String.format("Subscription plan with paypalPlanId=%s successfully created.", paypalPlanId)));
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CSP",
+                String.format("Subscription plan with paypalPlanId=%s successfully created.", paypalPlanId)));
 
         return paypalPlanId;
     }
@@ -80,11 +78,32 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             redirectURL = zuulClient.subscribe(URI.create(apiGatewayURL + "/paypal"), subscriptionToPaypalDTO);
         } catch (RuntimeException e) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME,
-                    "TRA", "Could not forward request to PayPal service."));
+                    "SUB", "Could not forward request to PayPal service."));
             throw new InvalidDataException("Request to subscribe has failed. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUB",
+                String.format("Subscription for plan with paypalPlanId=%s successfully created.", plan.getPaypalPlanId())));
+
         return redirectURL;
+    }
+
+    @Override
+    public void unsubscribe(CancelSubscriptionDTO cancelDTO) {
+        Company company = userService.getAuthenticatedCompany();
+        SubscriptionPlan plan = subscriptionRepository.findByCompanyCommonNameAndCompanyPlanId(company.getCommonName(), cancelDTO.getPlanId());
+
+        CancelSubscriptionToPaypalDTO cancelToPaypalDTO = new CancelSubscriptionToPaypalDTO(plan.getPaypalPlanId(), cancelDTO.getSubscriptionId());
+        try {
+            zuulClient.unsubscribe(URI.create(apiGatewayURL + "/paypal"), cancelToPaypalDTO);
+        } catch (RuntimeException e) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME,
+                    "UNS", "Could not forward request to PayPal service."));
+            throw new InvalidDataException("Request to unsubscribe has failed. Please try again later.", HttpStatus.BAD_REQUEST);
+        }
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UNS",
+                String.format("Subscription for plan with paypalPlanId=%s successfully canceled.", plan.getPaypalPlanId())));
     }
 
     @Autowired

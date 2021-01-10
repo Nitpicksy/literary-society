@@ -30,4 +30,6 @@ public class SubscriptionPlanResponseDTO {
 
     private Integer frequencyCount;
 
+    private String membershipStatus;
+
 }

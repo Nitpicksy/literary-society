@@ -3,6 +3,7 @@ package nitpicksy.paypalservice.serviceimpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nitpicksy.paypalservice.dto.request.CancelSubscriptionDTO;
 import nitpicksy.paypalservice.dto.request.SubscriptionDTO;
 import nitpicksy.paypalservice.dto.request.SubscriptionPlanDTO;
 import nitpicksy.paypalservice.exceptionHandler.InvalidDataException;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -85,7 +87,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscriptionPlanRepository.save(plan);
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CPR",
-                String.format("PayPal billing plan with planId=%s successfully created.", planId)));
+                String.format("Billing plan with planId=%s successfully created.", planId)));
 
         return planId;
     }
@@ -95,8 +97,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         SubscriptionPlan plan = subscriptionPlanRepository.findOneByPlanId(dto.getPlanId());
         if (plan == null) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUB",
-                    "PayPal subscription creation failed. Invalid plan id sent."));
-            throw new InvalidDataException("PayPal subscription could not be created. Invalid plan id provided.", HttpStatus.BAD_REQUEST);
+                    "Subscription creation failed. Invalid plan id sent."));
+            throw new InvalidDataException("Subscription could not be created. Invalid plan id provided.", HttpStatus.BAD_REQUEST);
         }
 
         JSONObject contextObj = new JSONObject();
@@ -121,9 +123,28 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         String redirectUrl = responseJSON.getJSONArray("links").getJSONObject(0).getString("href");
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUB",
-                String.format("PayPal subscription for plan with planId=%s successfully created.", plan.getPlanId())));
+                String.format("Subscription for plan with planId=%s successfully created.", plan.getPlanId())));
 
         return redirectUrl;
+    }
+
+    @Override
+    public void unsubscribe(CancelSubscriptionDTO dto) {
+        SubscriptionPlan plan = subscriptionPlanRepository.findOneByPlanId(dto.getPlanId());
+        if (plan == null) {
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUB",
+                    "PayPal subscription canceling failed. Invalid plan id sent."));
+            throw new InvalidDataException("PayPal subscription could not be canceled. Invalid plan id provided.", HttpStatus.BAD_REQUEST);
+        }
+
+        JSONObject payloadObj = new JSONObject();
+        payloadObj.put("reason", "Don't need subscription benefits anymore.");
+
+        String subscriptionsAPI = "https://api.sandbox.paypal.com/v1/billing/subscriptions/" + dto.getSubscriptionId() + "/cancel";
+        sendRequest(subscriptionsAPI, payloadObj, plan.getMerchantClientId(), plan.getMerchantClientSecret());
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUB",
+                String.format("Subscription for plan with planId=%s successfully canceled.", plan.getPlanId())));
     }
 
     private String createProduct(SubscriptionPlan plan) {
@@ -161,22 +182,26 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         } catch (RestClientException e) {
             if (url.endsWith("/products")) {
                 logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CPR",
-                        String.format("PayPal product '%s' creation failed. Invalid request sent.", body.getString("name"))));
-                throw new InvalidDataException("PayPal subscription plan could not be created. Please try again later.", HttpStatus.BAD_REQUEST);
+                        String.format("Product '%s' creation failed. Invalid request sent.", body.getString("name"))));
+                throw new InvalidDataException("Subscription plan could not be created. Please try again later.", HttpStatus.BAD_REQUEST);
             } else if (url.endsWith("/plans")) {
                 logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CBP",
-                        String.format("PayPal billing plan '%s' creation failed. Invalid request sent.", body.getString("name"))));
-                throw new InvalidDataException("PayPal subscription plan could not be created. Please try again later.", HttpStatus.BAD_REQUEST);
+                        String.format("Billing plan '%s' creation failed. Invalid request sent.", body.getString("name"))));
+                throw new InvalidDataException("Subscription plan could not be created. Please try again later.", HttpStatus.BAD_REQUEST);
             } else if (url.endsWith("/subscriptions")) {
                 logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SUB",
-                        "PayPal subscription creation failed. Invalid request sent."));
-                throw new InvalidDataException("PayPal subscription could not be created. Please try again later.", HttpStatus.BAD_REQUEST);
+                        "Subscription creation failed. Invalid request sent."));
+                throw new InvalidDataException("Subscription could not be created. Please try again later.", HttpStatus.BAD_REQUEST);
+            } else if (url.endsWith("/cancel")) {
+                logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UNS",
+                        "Subscription cancellation failed. Invalid request sent."));
+                throw new InvalidDataException("Subscription could not be canceled. Please try again later.", HttpStatus.BAD_REQUEST);
             } else {
                 throw new InvalidDataException("Something went wrong. Please try again later.", HttpStatus.BAD_REQUEST);
             }
         }
 
-        return new JSONObject(response.getBody());
+        return response.getBody() != null ? new JSONObject(response.getBody()) : null;
     }
 
     private String convertCurrency(Double baseAmount) {

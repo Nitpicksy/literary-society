@@ -58,7 +58,7 @@ public class MembershipServiceImpl implements MembershipService {
     }
 
     @Override
-    public Membership createSubscriptionMembership(User user, Merchant merchant) {
+    public Membership createSubscriptionMembership(User user, Merchant merchant, String subscriptionId) {
         PriceList priceList = priceListService.findLatestPriceList();
         Double amount;
 
@@ -68,8 +68,13 @@ public class MembershipServiceImpl implements MembershipService {
             amount = priceList.getMembershipForWriter();
         }
 
-        Membership membership = new Membership(user, amount, null, true, merchant);
+        Membership membership = new Membership(null, user, amount, null, true, subscriptionId, merchant);
         return membershipRepository.save(membership);
+    }
+
+    @Override
+    public void deleteSubscriptionMembership(Long id) {
+        membershipRepository.deleteById(id);
     }
 
     @Autowired

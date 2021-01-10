@@ -30,4 +30,16 @@ export const useStyles = makeStyles((theme) => ({
     fontWeight: 500,
     fontSize: 26
   },
+  wrapper: {
+    width: '100%',
+    position: 'relative',
+  },
+  buttonProgress: {
+    color: '#4caf50',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
+  },
 }));

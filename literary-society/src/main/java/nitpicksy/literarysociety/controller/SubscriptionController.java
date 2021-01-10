@@ -1,16 +1,9 @@
 package nitpicksy.literarysociety.controller;
 
-import feign.FeignException;
-import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.dto.request.SubscriptionPlanDTO;
 import nitpicksy.literarysociety.dto.response.SubscriptionPlanResponseDTO;
-import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
-import nitpicksy.literarysociety.mapper.SubscriptionPlanDtoMapper;
 import nitpicksy.literarysociety.mapper.SubscriptionPlanResponseDtoMapper;
-import nitpicksy.literarysociety.model.Log;
-import nitpicksy.literarysociety.model.Merchant;
 import nitpicksy.literarysociety.model.PriceList;
-import nitpicksy.literarysociety.model.SubscriptionPlan;
 import nitpicksy.literarysociety.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,9 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/subscriptions")
@@ -32,11 +22,9 @@ public class SubscriptionController {
 
     private PriceListService priceListService;
 
-    private SubscriptionPlanResponseDtoMapper planResponseDtoMapper;
-
     @GetMapping(value = "/plan")
     public ResponseEntity<SubscriptionPlanResponseDTO> getSubscriptionPlans(@NotBlank @RequestParam(name = "for") String nameSubstring) {
-        return new ResponseEntity<>(planResponseDtoMapper.toDto(subscriptionService.getSubscriptionPlan(nameSubstring)), HttpStatus.OK);
+        return new ResponseEntity<>(subscriptionService.getSubscriptionPlan(nameSubstring), HttpStatus.OK);
     }
 
     @PostMapping(value = "/subscribe")
@@ -44,9 +32,15 @@ public class SubscriptionController {
         return new ResponseEntity<>(subscriptionService.subscribe(planId), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/notify")
-    public ResponseEntity<Void> createMembership() {
-        subscriptionService.createMembership();
+    @PostMapping(value = "/create-membership")
+    public ResponseEntity<Void> createMembership(@NotBlank @RequestParam String subscriptionId) {
+        subscriptionService.createMembership(subscriptionId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/unsubscribe")
+    public ResponseEntity<Void> unsubscribe(@NotBlank @RequestParam Long planId) {
+        subscriptionService.unsubscribe(planId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -72,10 +66,8 @@ public class SubscriptionController {
     }
 
     @Autowired
-    public SubscriptionController(SubscriptionService subscriptionService, PriceListService priceListService,
-                                  SubscriptionPlanResponseDtoMapper planResponseDtoMapper) {
+    public SubscriptionController(SubscriptionService subscriptionService, PriceListService priceListService) {
         this.subscriptionService = subscriptionService;
         this.priceListService = priceListService;
-        this.planResponseDtoMapper = planResponseDtoMapper;
     }
 }
