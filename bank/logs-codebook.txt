@@ -13,3 +13,5 @@ PAY|Create payment request
 CONFPAY|Confirm payment
 TRA|Transaction
 CARD|Credit Card
+MERCHANTA|Merchant Account
+CLIENTA|Client Account

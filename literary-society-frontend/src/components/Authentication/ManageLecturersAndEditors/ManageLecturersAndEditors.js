@@ -30,18 +30,25 @@ const ManageLecturersAndEditors = (props) => {
         {
             field: 'buttons', headerName: " ", width: 190,
             renderCell: (params) => {
+                var showApprove = <strong> </strong>;
+                var showReject = <strong> </strong>;
+                if (params.row.status === "WAITING_APPROVAL") {
+                    showApprove = <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={() => approveHandler(params.row)}>Approve</Button>
+                    showReject = <Button
+                        variant="contained"
+                        color="secondary"
+                        size="small"
+                        style={{ marginLeft: 16 }} onClick={() => rejectHandler(params.row)}>Reject</Button>
+                }
+
                 return (
                     <strong>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            onClick={() => approveHandler(params.row)}>Approve</Button>
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            size="small"
-                            style={{ marginLeft: 16 }} onClick={() => rejectHandler(params.row)}>Reject</Button>
+                        {showApprove}
+                        {showReject}
                     </strong>
                 );
             }
@@ -69,8 +76,8 @@ const ManageLecturersAndEditors = (props) => {
             for (var i in props.users) {
                 rows.push({
                     "id": props.users[i].id, "name": props.users[i].firstName + ' ' + props.users[i].lastName,
-                    "city": props.users[i].city, "country": props.users[i].country,"email": props.users[i].email,
-                    "role": props.users[i].role
+                    "city": props.users[i].city, "country": props.users[i].country, "email": props.users[i].email,
+                    "role": props.users[i].role,"status": props.users[i].status
                 })
             }
             data = <Grid container className={classes.table}>

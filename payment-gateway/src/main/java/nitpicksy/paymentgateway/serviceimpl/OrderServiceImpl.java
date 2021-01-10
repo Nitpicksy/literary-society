@@ -1,6 +1,5 @@
 package nitpicksy.paymentgateway.serviceimpl;
 
-import feign.FeignException;
 import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.dto.request.ConfirmPaymentRequestDTO;
 import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
@@ -8,6 +7,8 @@ import nitpicksy.paymentgateway.dto.request.OrderRequestDTO;
 import nitpicksy.paymentgateway.dto.request.PaymentRequestDTO;
 import nitpicksy.paymentgateway.dto.response.LiterarySocietyOrderResponseDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentResponseDTO;
+import nitpicksy.paymentgateway.dto.response.TransactionResponseDTO;
+import nitpicksy.paymentgateway.enumeration.PaymentMethodStatus;
 import nitpicksy.paymentgateway.enumeration.TransactionStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.mapper.ForwardRequestMapper;
@@ -18,14 +19,23 @@ import nitpicksy.paymentgateway.repository.TransactionRepository;
 import nitpicksy.paymentgateway.service.CompanyService;
 import nitpicksy.paymentgateway.service.LogService;
 import nitpicksy.paymentgateway.service.OrderService;
+import nitpicksy.paymentgateway.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.sql.Timestamp;
-import java.util.List;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -47,12 +57,12 @@ public class OrderServiceImpl implements OrderService {
     private DataForPaymentRepository dataForPaymentRepository;
     private ZuulClient zuulClient;
     private LogService logService;
+    private UserService userService;
 
     @Override
     public String createOrder(OrderRequestDTO orderDTO) {
 
-        //TODO: based on certificate? for now we only have 1 literary society
-        Company company = companyService.findCompanyByCommonName("literary-society");
+        Company company = userService.getAuthenticatedCompany();
 
         if (company == null) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", "Company not found"));
@@ -69,6 +79,8 @@ public class OrderServiceImpl implements OrderService {
 
         Transaction order = createTransaction(orderDTO, orderMerchant, company);
 
+        Instant today = (new Date()).toInstant();
+        executeCancelledTransaction(order.getId(), today.plus(15, ChronoUnit.MINUTES));
 
         String url = gatewayRedirectUrl + "/" + order.getId();
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Order %s is successfully created and redirect url is %s", order.getId(), url)));
@@ -109,10 +121,11 @@ public class OrderServiceImpl implements OrderService {
             PaymentResponseDTO dto = zuulClient.forwardPaymentRequest(URI.create(apiGatewayURL + '/' + paymentRequestDTO.getPaymentCommonName()), forwardDTO);
             setPayment(paymentRequestDTO.getOrderId(), dto.getPaymentId());
             responseURL = dto.getPaymentURL();
-        } catch (FeignException.FeignClientException e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
             //if bank request fails, redirect user to the company failedURL;
-            cancelOrder(paymentRequestDTO.getOrderId());
+            setTransactionStatus(transaction,TransactionStatus.CANCELED);
+            notifyCompany(transaction,"ERROR" );
+
             responseURL = forwardDTO.getFailedURL();
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Order forward has failed and response URL is %s", responseURL)));
         }
@@ -146,30 +159,62 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void handleConfirmPayment(Long merchantOrderId, ConfirmPaymentRequestDTO dto) {
+    public void handleConfirmPayment(String merchantOrderId, ConfirmPaymentRequestDTO dto) {
         Transaction order = transactionRepository.findTransactionByMerchantOrderIdAndPaymentId(merchantOrderId, dto.getPaymentId());
 
         handleOrder(merchantOrderId, dto.getPaymentId(), dto.getStatus());
 
-        LiterarySocietyOrderResponseDTO responseDTO = new LiterarySocietyOrderResponseDTO(order.getMerchantOrderId(), dto.getStatus());
+        notifyCompany(order, dto.getStatus());
+    }
+
+    @Override
+    public void notifyCompany(Transaction order, String status) {
+        Long merchantOrderId = Long.valueOf( order.getMerchantOrderId().split("::")[1]);
+
+        LiterarySocietyOrderResponseDTO responseDTO = new LiterarySocietyOrderResponseDTO(merchantOrderId,status);
 
         String companyCommonName = order.getCompany().getCommonName();
 
         try {
-
             zuulClient.confirmPaymentToLiterarySociety(URI.create(apiGatewayURL + '/' + companyCommonName), responseDTO);
-
-        } catch (FeignException.FeignClientException e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Went wrong when contacting the Literary Society.")));
-            System.out.println("Went wrong when contacting the Literary Society.");
         }
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", String.format("Order with id %s is done and payment is successfully forwarded to Literary Society", order.getId())));
+    }
+
+    @Override
+    public Transaction setTransactionStatus(Transaction transaction,TransactionStatus status) {
+        transaction.setStatus(status);
+        return transactionRepository.save(transaction);
+    }
+
+
+    @Async
+    @Override
+    @Scheduled(cron = "0 20 0 * * ?")
+//    @Scheduled(cron = "0 */2 * * * *")
+    public void synchronizeTransactions() {
+        List<PaymentMethod> paymentMethods = paymentMethodRepository.findByStatus(PaymentMethodStatus.APPROVED);
+        for (PaymentMethod paymentMethod:paymentMethods) {
+            try{
+                List<TransactionResponseDTO> transactions = zuulClient.getAllTransactions(URI.create(apiGatewayURL + '/' + paymentMethod.getCommonName()));
+
+                for(TransactionResponseDTO dto: transactions){
+                    Transaction order = transactionRepository.findTransactionByMerchantOrderIdAndPaymentId(dto.getMerchantOrderId(), dto.getPaymentId());
+                    if(order != null){
+                        handleOrder(dto.getMerchantOrderId(), dto.getPaymentId(), dto.getStatus());
+                    }
+                }
+            }catch (RuntimeException e){
+                logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ORD", "Went wrong when contacting the " + paymentMethod.getName()));
+            }
+        }
 
     }
 
-    private void handleOrder(Long merchantOrderId, Long paymentId, String status) {
+    private void handleOrder(String merchantOrderId, Long paymentId, String status) {
         Transaction transaction = transactionRepository.findTransactionByMerchantOrderIdAndPaymentId(merchantOrderId, paymentId);
 
         if (transaction == null) {
@@ -178,6 +223,8 @@ public class OrderServiceImpl implements OrderService {
 
         if (status.equals("SUCCESS")) {
             transaction.setStatus(TransactionStatus.COMPLETED);
+        } else if (status.equals("ERROR")) {
+            transaction.setStatus(TransactionStatus.CANCELED);
         } else {
             transaction.setStatus(TransactionStatus.REJECTED);
         }
@@ -191,7 +238,8 @@ public class OrderServiceImpl implements OrderService {
         transaction.setCompany(company);
         transaction.setAmount(orderRequestDTO.getAmount());
         transaction.setMerchantTimestamp(Timestamp.valueOf(orderRequestDTO.getTimestamp()));
-        transaction.setMerchantOrderId(orderRequestDTO.getOrderId());
+
+        transaction.setMerchantOrderId(company.getCommonName() + "::" + orderRequestDTO.getOrderId());
         transaction.setStatus(TransactionStatus.CREATED);
         transaction.setMerchant(merchant);
         transaction.setPaymentMethod(null);
@@ -201,8 +249,31 @@ public class OrderServiceImpl implements OrderService {
         return transactionRepository.save(transaction);
     }
 
+    @Async
+    public void executeCancelledTransaction(Long transactionId, Instant executionMoment) {
+        ScheduledExecutorService localExecutor = Executors.newSingleThreadScheduledExecutor();
+        TaskScheduler scheduler = new ConcurrentTaskScheduler(localExecutor);
+        scheduler.schedule(createRunnable(transactionId), executionMoment);
+    }
+
+    private Runnable createRunnable(final Long transactionId) {
+        return () -> {
+            Transaction transaction = transactionRepository.findOneById(transactionId);
+            if (transaction != null && transaction.getStatus().equals(TransactionStatus.CREATED)) {
+                transaction.setStatus(TransactionStatus.CANCELED);
+                transactionRepository.save(transaction);
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA",
+                        String.format(
+                                "Because 15min from creation have passed, transaction %s is automatically CANCELED",
+                                transaction.getId())));
+            }
+        };
+    }
+
     @Autowired
-    public OrderServiceImpl(LogService logService, TransactionRepository transactionRepository, CompanyService companyService, PaymentMethodRepository paymentMethodRepository, ForwardRequestMapper forwardRequestMapper, DataForPaymentRepository dataForPaymentRepository, ZuulClient zuulClient) {
+    public OrderServiceImpl(LogService logService, TransactionRepository transactionRepository, CompanyService companyService,
+                            PaymentMethodRepository paymentMethodRepository, ForwardRequestMapper forwardRequestMapper,
+                            DataForPaymentRepository dataForPaymentRepository, ZuulClient zuulClient,UserService userService) {
         this.logService = logService;
         this.transactionRepository = transactionRepository;
         this.companyService = companyService;
@@ -210,5 +281,6 @@ public class OrderServiceImpl implements OrderService {
         this.forwardRequestMapper = forwardRequestMapper;
         this.dataForPaymentRepository = dataForPaymentRepository;
         this.zuulClient = zuulClient;
+        this.userService = userService;
     }
 }

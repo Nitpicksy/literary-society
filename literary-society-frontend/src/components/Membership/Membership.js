@@ -14,6 +14,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { responseInterceptor } from '../../responseInterceptor';
 import * as signInActions from '../Authentication/SignIn/SignInActions';
 import MembershipDetails from './MembershipDetails/MembershipDetails';
+import SockJS from './SockJS/SockJS';
 
 const Membership = (props) => {
 
@@ -46,9 +47,10 @@ const Membership = (props) => {
     }
 
     const handlePay = () => {
-        onPay();
-        if(selectedTask) {
+        if(selectedTask.piId != null && selectedTask.taskId != null) {
             completePayTask(selectedTask);
+        } else {
+            onPay();
         }
     }
 
@@ -174,6 +176,8 @@ const Membership = (props) => {
         </div>
         {data}
         <br/>
+
+        <SockJS />
     </Container>
     )
 }

@@ -53,6 +53,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         Permission manageEditors = createPermissionIfNotFound("MANAGE_EDITORS");
         Permission manageLecturers = createPermissionIfNotFound("MANAGE_LECTURERS");
+        Permission manageMerchants = createPermissionIfNotFound("MANAGE_MERCHANTS");
+
         Permission supportPaymentMethods = createPermissionIfNotFound("SUPPORT_PAYMENT_METHODS");
         Permission manageTasks = createPermissionIfNotFound("MANAGE_TASKS");
         Permission managePublicationRequests = createPermissionIfNotFound("MANAGE_PUBLICATION_REQUESTS");
@@ -61,10 +63,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Permission submitFormAndUploadImage = createPermissionIfNotFound("SUBMIT_FORM_AND_UPLOAD_IMAGE");
         Permission subscribe = createPermissionIfNotFound("SUBSCRIBE");
 
-        Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers));
+        Permission purchaseBooks = createPermissionIfNotFound("PURCHASE_BOOKS");
+
+        Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers,manageMerchants));
         createRoleIfNotFound("ROLE_ADMIN", adminPermissions);
 
-        Set<Permission> readerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask, subscribe));
+        Set<Permission> readerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask, purchaseBooks, subscribe));
         createRoleIfNotFound("ROLE_READER", readerPermissions);
 
         Set<Permission> writerPermissions = new HashSet<>(Arrays.asList(managePublicationRequests,

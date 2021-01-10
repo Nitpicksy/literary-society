@@ -5,8 +5,11 @@ import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.camunda.WriterDocumentDTO;
 import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
 import nitpicksy.literarysociety.dto.response.ProcessDataDTO;
+import nitpicksy.literarysociety.model.Log;
+import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.PDFDocumentService;
 import nitpicksy.literarysociety.service.UserService;
+import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,13 +26,23 @@ import java.util.List;
 @RequestMapping(value = "/api/writers", produces = MediaType.APPLICATION_JSON_VALUE)
 public class WriterController {
 
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
     private CamundaService camundaService;
     private PDFDocumentService pdfDocumentService;
     private UserService userService;
 
+    private LogService logService;
+
+    private IPAddressProvider ipAddressProvider;
+
     @GetMapping("/start-registration")
     public ResponseEntity<ProcessDataDTO> startProcess() {
         ProcessDataDTO processDataDTO = camundaService.start(CamundaConstants.PROCESS_WRITER_REGISTRATION);
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "WREG",
+                String.format("User from IP address %s started writer's registration process.",ipAddressProvider.get())));
         return new ResponseEntity<>(processDataDTO, HttpStatus.OK);
     }
 
@@ -44,10 +57,22 @@ public class WriterController {
         return new ResponseEntity<>(pdfDocumentService.getDraftsByWriter(userService.getAuthenticatedUser().getUsername()), HttpStatus.OK);
     }
 
+    @GetMapping("/start-plagiarism")
+    public ResponseEntity<ProcessDataDTO> startPlagiarismProcess() {
+        ProcessDataDTO processDataDTO = camundaService.start(CamundaConstants.PROCESS_PLAGIARISM);
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PLAGP",
+                String.format("User from IP address %s started plagiarism process.",ipAddressProvider.get())));
+        return new ResponseEntity<>(processDataDTO, HttpStatus.OK);
+    }
+
+
     @Autowired
-    public WriterController(CamundaService camundaService, PDFDocumentService pdfDocumentService, UserService userService) {
+    public WriterController(CamundaService camundaService, PDFDocumentService pdfDocumentService, UserService userService,
+                            LogService logService, IPAddressProvider ipAddressProvider) {
         this.camundaService = camundaService;
         this.pdfDocumentService = pdfDocumentService;
         this.userService = userService;
+        this.logService = logService;
+        this.ipAddressProvider = ipAddressProvider;
     }
 }

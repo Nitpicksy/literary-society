@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,8 +26,6 @@ import java.util.stream.Collectors;
 public class PaymentController {
 
     private PaymentService paymentService;
-
-    private BookDtoMapper bookDtoMapper;
 
     private UserService userService;
 
@@ -52,15 +51,14 @@ public class PaymentController {
 
 
     @PostMapping(value = "/confirm", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> confirmPayment(@Valid @RequestBody LiterarySocietyOrderRequestDTO requestDTO) {
+    public ResponseEntity<Void> confirmPayment(@Valid @RequestBody LiterarySocietyOrderRequestDTO requestDTO) throws NoSuchAlgorithmException {
         paymentService.handlePayment(requestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Autowired
-    public PaymentController(PaymentService paymentService, BookDtoMapper bookDtoMapper, UserService userService, BookService bookService) {
+    public PaymentController(PaymentService paymentService, UserService userService, BookService bookService) {
         this.paymentService = paymentService;
-        this.bookDtoMapper = bookDtoMapper;
         this.userService = userService;
         this.bookService = bookService;
     }

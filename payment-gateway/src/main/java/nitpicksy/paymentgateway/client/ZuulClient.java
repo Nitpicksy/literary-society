@@ -1,17 +1,26 @@
 package nitpicksy.paymentgateway.client;
 
 import nitpicksy.paymentgateway.dto.request.*;
+import nitpicksy.paymentgateway.config.FeignClientConfiguration;
 import nitpicksy.paymentgateway.dto.response.LiterarySocietyOrderResponseDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentResponseDTO;
+import nitpicksy.paymentgateway.dto.response.TransactionResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.security.cert.X509Certificate;
+import java.util.List;
 
-@FeignClient(name = "zuul")
+@FeignClient(name = "zuul",configuration = FeignClientConfiguration.class)
 public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.GET, path = "/test/health")
@@ -59,4 +68,9 @@ public interface ZuulClient {
     @RequestMapping(method = RequestMethod.POST, path = "/api/subscriptions/unsubscribe")
     String unsubscribe(URI baseUrl, @RequestBody CancelSubscriptionToPaypalDTO cancelSubscriptionDTO);
 
+    @RequestMapping(method = RequestMethod.GET, path = "/api/merchants/active")
+    List<String> getAllMerchants(URI baseUrl);
+
+    @RequestMapping(method = RequestMethod.GET, path = "/api/transactions")
+    List<TransactionResponseDTO> getAllTransactions(URI baseUrl);
 }

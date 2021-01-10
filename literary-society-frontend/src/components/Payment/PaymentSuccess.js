@@ -9,10 +9,16 @@ import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import * as actions from './Transaction/TransactionExport';
 import { connect } from 'react-redux';
+import { Grid } from '@material-ui/core';
+import { Link, useHistory } from 'react-router-dom';
 
 const PaymentSuccess = (props) => {
     const classes = useStyles();
+    const history = useHistory();
+    
     const {fetchTransaction} = props;
+    var download = null;
+    var token = null;
 
     useEffect(() => {
         const { id } = props.match.params;
@@ -21,6 +27,21 @@ const PaymentSuccess = (props) => {
         }
     }, [props.match.params, fetchTransaction]);
 
+    const onDownload = (event) => {
+        event.preventDefault();
+        props.download(token,history);
+    }
+
+    if(props.transaction){
+        const params = props.transaction.url.split('?t=');
+        token = params[1];
+        if(token){
+            download = <Link  to="#" onClick = {onDownload} 
+             variant="body2">Click this link to find the book and download it</Link>
+        }else {
+            download = <Link to="/purchased-books" variant="body2">Click this link to find the book and download it</Link>;
+        }
+    }
     return (
            <Container component="main" maxWidth="sm">
             <CssBaseline />
@@ -30,18 +51,28 @@ const PaymentSuccess = (props) => {
                         <ThumbUpIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5" className={classes.message}>
-                        Payment was successful. Click this link to find the book and download it.
+                        Payment was successful. 
                     </Typography>
+                    <Grid item xs>
+                            {download}
+                    </Grid>
                 </CardContent>
             </Card>
         </Container>
     );
 };
 
-const mapDispatchToProps = dispatch => {
+const mapStateToProps = state => {
     return {
-        fetchTransaction: (id) => dispatch(actions.fetchTransaction(id)),
+        transaction: state.transaction.transaction
     }
 };
 
-export default connect(null, mapDispatchToProps)(PaymentSuccess);
+const mapDispatchToProps = dispatch => {
+    return {
+        fetchTransaction: (id) => dispatch(actions.fetchTransaction(id)),
+        download: (token,history) => dispatch(actions.download(token,history)),
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PaymentSuccess);

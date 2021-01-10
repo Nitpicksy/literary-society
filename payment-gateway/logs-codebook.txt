@@ -10,3 +10,11 @@ TRA|Transaction
 CSP|Create subscription plan
 SUB|Subscribe
 UNS|Unsubscribe
+LGN|Login
+CPW|Change password
+REF|Refresh authentication token
+ADDM|Add merchant
+GETM|Get merchants
+SYNC|Synchronized
+GETT|Get transactions
+COMP|Company

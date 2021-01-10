@@ -5,9 +5,11 @@ import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Genre;
+import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.Writer;
 import nitpicksy.literarysociety.repository.WriterRepository;
 import nitpicksy.literarysociety.service.GenreService;
+import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
 import nitpicksy.literarysociety.service.VerificationService;
 import org.camunda.bpm.engine.delegate.BpmnError;
@@ -27,6 +29,10 @@ import java.util.stream.Collectors;
 @Service
 public class WriterRegistrationService implements JavaDelegate {
 
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
     private UserService userService;
 
     private GenreService genreService;
@@ -38,6 +44,8 @@ public class WriterRegistrationService implements JavaDelegate {
     private WriterRepository writerRepository;
 
     private VerificationService verificationService;
+
+    private LogService logService;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -77,17 +85,23 @@ public class WriterRegistrationService implements JavaDelegate {
         String nonHashedToken = verificationService.generateToken(savedWriter);
 
         execution.setVariable("token", nonHashedToken);
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDW",
+                String.format("Writer %s  successfully created",savedWriter.getId())));
         return savedWriter;
     }
 
     @Autowired
-    public WriterRegistrationService(UserService userService, GenreService genreService, CamundaService camundaService, PasswordEncoder passwordEncoder, WriterRepository writerRepository, VerificationService verificationService) {
+    public WriterRegistrationService(UserService userService, GenreService genreService, CamundaService camundaService,
+                                     PasswordEncoder passwordEncoder, WriterRepository writerRepository, VerificationService verificationService,
+                                     LogService logService) {
         this.userService = userService;
         this.genreService = genreService;
         this.camundaService = camundaService;
         this.passwordEncoder = passwordEncoder;
         this.writerRepository = writerRepository;
         this.verificationService = verificationService;
+        this.logService = logService;
     }
 
 }

@@ -13,8 +13,11 @@ import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,6 +26,10 @@ import java.util.Set;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
+
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
 
     private MerchantService merchantService;
 
@@ -38,16 +45,26 @@ public class PaymentServiceImpl implements PaymentService {
 
     private CamundaService camundaService;
 
+    private BuyerTokenService buyerTokenService;
+
+    private ReaderService readerService;
+
+    private LogService logService;
+
     @Override
     public String proceedToBookPayment(Set<Book> bookSet, User user) {
         List<Book> bookList = new ArrayList<>(bookSet);
         Merchant merchant = merchantService.findByName(bookList.get(0).getPublishingInfo().getMerchant().getName());
         if (merchant == null) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAYB",
+                    String.format("Merchant %s doesn't exist",bookList.get(0).getPublishingInfo().getMerchant().getName())));
             throw new InvalidUserDataException("Merchant doesn't exist.", HttpStatus.BAD_REQUEST);
         }
         Double amount = calculatePrice(bookList, user);
         Transaction transaction = transactionService.create(TransactionStatus.CREATED, TransactionType.ORDER, user, amount,
                 new HashSet<>(bookList), merchant);
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAYB",
+                String.format("Successfully created transaction %s.",transaction.getId())));
         try {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             // Send JWT token for authentication in Payment Gateway
@@ -55,6 +72,8 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (RuntimeException exception) {
             transaction.setStatus(TransactionStatus.ERROR);
             transactionService.save(transaction);
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAYB",
+                    "Forwarding request to book payment has failed"));
             throw new InvalidUserDataException("Something went wrong. Please try again.", HttpStatus.BAD_REQUEST);
         }
     }
@@ -79,6 +98,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         Transaction transaction = transactionService.create(TransactionStatus.CREATED, TransactionType.MEMBERSHIP, user, amount,
                 null, merchant);
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAYM",
+                String.format("Successfully created transaction %s.",transaction.getId())));
         try {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             // Send JWT token for authentication in Payment Gateway
@@ -86,12 +107,14 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (RuntimeException exception) {
             transaction.setStatus(TransactionStatus.ERROR);
             transactionService.save(transaction);
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAYM",
+                    "Forwarding request to membership  payment has failed"));
             throw new InvalidUserDataException("Something went wrong. Please try again.", HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
-    public void handlePayment(LiterarySocietyOrderRequestDTO dto) {
+    public void handlePayment(LiterarySocietyOrderRequestDTO dto) throws NoSuchAlgorithmException {
         Transaction order = transactionService.findById(dto.getMerchantOrderId());
         User user = order.getBuyer();
 
@@ -99,20 +122,18 @@ public class PaymentServiceImpl implements PaymentService {
             order.setStatus(TransactionStatus.SUCCESS);
 
             if (order.getType().equals(TransactionType.ORDER)) {
-                if (user.getRole().getName().equals(RoleConstants.ROLE_READER)) {
+                if (user != null && user.getRole().getName().equals(RoleConstants.ROLE_READER)) {
                     Reader reader = (Reader) user;
-                    reader.setPurchasedBooks(order.getOrderedBooks());
+                    reader.getPurchasedBooks().addAll(order.getOrderedBooks());
+                    readerService.save(reader);
+                }else{
+                    logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAY",
+                            String.format("Successfully generated buyer token for transaction %s.",order.getId())));
+                    buyerTokenService.generateToken(order);
                 }
             } else {
-                if (user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
-                    try {
-                        camundaService.messageEventReceived(CamundaConstants.MESSAGE_PAYMENT_SUCCESS, user.getUsername());
-                    } catch (Exception e) {
-                        //not a camunda process, carry on as usual
-                        Merchant merchant = merchantService.findOurMerchant();
-                        Membership membership = membershipService.createMembership(user, merchant);
-                        order.setMembership(membership);
-                    }
+                if (user != null && user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
+                    notifyCamundaMessageEvent(CamundaConstants.MESSAGE_PAYMENT_SUCCESS, user, order);
                 } else {
                     Merchant merchant = merchantService.findOurMerchant();
                     Membership membership = membershipService.createMembership(user, merchant);
@@ -122,17 +143,62 @@ public class PaymentServiceImpl implements PaymentService {
             }
         } else if (dto.getStatus().equals("ERROR")) {
             order.setStatus(TransactionStatus.ERROR);
-            if (user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
-                camundaService.messageEventReceived(CamundaConstants.MESSAGE_PAYMENT_ERROR, user.getUsername());
+            if (user != null && user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
+                notifyCamundaMessageEvent(CamundaConstants.MESSAGE_PAYMENT_ERROR, user, order);
             }
         } else {
             order.setStatus(TransactionStatus.FAILED);
+            if (user != null && user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
+                notifyCamundaMessageEvent(CamundaConstants.MESSAGE_PAYMENT_ERROR, user, order);
+            }
         }
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAY",
+                String.format("Changed transaction %s status to  %s.",order.getId(), order.getStatus().toString())));
         transactionService.save(order);
     }
 
+    @Async
+    @Override
+    @Scheduled(cron = "0 30 0 * * ?")
+    public void synchronizeTransactions() {
+        try {
+            List<LiterarySocietyOrderRequestDTO> transactions = zuulClient.getAllTransactions("Bearer " + jwtTokenService.getToken());
+
+            for (LiterarySocietyOrderRequestDTO dto : transactions) {
+                Transaction order = transactionService.findById(dto.getMerchantOrderId());
+                if(order != null && !order.getStatus().equals(TransactionStatus.valueOf(dto.getStatus()))){
+                    try{
+                        handlePayment(dto);
+                    }catch (NoSuchAlgorithmException e){
+                        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAY",
+                                "Generating buyer token is failed. Something went wrong."));
+                    }
+                }
+            }
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC",
+                    "Successfully synchronized transactions."));
+        }catch (RuntimeException  e){
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC",
+                    "Forwarding request to synchronize transactions has failed."));
+        }
+    }
+
+    private void notifyCamundaMessageEvent(String message, User user, Transaction order) {
+        try {
+            camundaService.messageEventReceived(message, user.getUsername());
+        } catch (Exception e) {
+            //not a camunda process, carry on as usual
+            Merchant merchant = merchantService.findOurMerchant();
+            Membership membership = membershipService.createMembership(user, merchant);
+            order.setMembership(membership);
+        }
+    }
+
     private double calculatePrice(List<Book> bookList, User user) {
-        boolean includeDiscount = membershipService.checkIfUserMembershipIsValid(user.getUserId());
+        boolean includeDiscount = false;
+        if (user != null) {
+            includeDiscount = membershipService.checkIfUserMembershipIsValid(user.getUserId());
+        }
         Double amount = 0.0;
         for (Book book : bookList) {
             if (includeDiscount) {
@@ -145,7 +211,10 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Autowired
-    public PaymentServiceImpl(MerchantService merchantService, TransactionService transactionService, ZuulClient zuulClient, MembershipService membershipService, JWTTokenService jwtTokenService, PriceListService priceListService, CamundaService camundaService) {
+    public PaymentServiceImpl(MerchantService merchantService, TransactionService transactionService, ZuulClient zuulClient,
+                              MembershipService membershipService, JWTTokenService jwtTokenService, PriceListService priceListService,
+                              CamundaService camundaService, BuyerTokenService buyerTokenService,ReaderService readerService,
+                              LogService logService) {
         this.merchantService = merchantService;
         this.transactionService = transactionService;
         this.zuulClient = zuulClient;
@@ -153,5 +222,8 @@ public class PaymentServiceImpl implements PaymentService {
         this.jwtTokenService = jwtTokenService;
         this.priceListService = priceListService;
         this.camundaService = camundaService;
+        this.buyerTokenService = buyerTokenService;
+        this.readerService = readerService;
+        this.logService = logService;
     }
 }

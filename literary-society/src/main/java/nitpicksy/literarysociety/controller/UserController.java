@@ -7,8 +7,11 @@ import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.mapper.UserRequestMapper;
 import nitpicksy.literarysociety.mapper.UserResponseMapper;
+import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.User;
+import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
+import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +30,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +44,7 @@ public class UserController {
     private UserRequestMapper userRequestMapper;
 
     private UserResponseMapper userResponseMapper;
+
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponseDTO> signUp(@Valid @RequestBody UserRequestDTO userDTO, @RequestParam @Pattern(regexp = "(?i)(lecturers|editors)$", message = "Type is not valid.")  String type) throws NoSuchAlgorithmException {
@@ -60,8 +65,8 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> findLecturersAndEditors() {
-        return new ResponseEntity<>(userService.findByRoleNameAndStatusOrRoleNameAndStatus(RoleConstants.ROLE_LECTURER,UserStatus.WAITING_APPROVAL,
-                RoleConstants.ROLE_EDITOR,UserStatus.WAITING_APPROVAL).stream()
+        return new ResponseEntity<>(userService.findByRoleNameAndStatusInOrRoleNameAndStatusIn(RoleConstants.ROLE_LECTURER, Arrays.asList(UserStatus.WAITING_APPROVAL,
+                UserStatus.ACTIVE), RoleConstants.ROLE_EDITOR,Arrays.asList(UserStatus.WAITING_APPROVAL, UserStatus.ACTIVE)).stream()
                 .map(user -> userResponseMapper.toDto(user)).collect(Collectors.toList()), HttpStatus.OK);
     }
 

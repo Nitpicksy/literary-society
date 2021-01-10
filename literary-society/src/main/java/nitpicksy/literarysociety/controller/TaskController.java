@@ -1,14 +1,15 @@
 package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.camunda.service.CamundaService;
+import nitpicksy.literarysociety.dto.camunda.EditorsCommentsDTO;
+import nitpicksy.literarysociety.dto.camunda.PlagiarismDetailsDTO;
+import nitpicksy.literarysociety.dto.camunda.PublicationRequestDTO;
 import nitpicksy.literarysociety.dto.camunda.TaskDataDTO;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.*;
-import nitpicksy.literarysociety.service.BookService;
-import nitpicksy.literarysociety.service.ImageService;
-import nitpicksy.literarysociety.service.PDFDocumentService;
-import nitpicksy.literarysociety.service.UserService;
+import nitpicksy.literarysociety.service.*;
+import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
@@ -27,15 +28,16 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/tasks")
 public class TaskController {
+
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
 
     private UserService userService;
 
@@ -53,7 +55,15 @@ public class TaskController {
 
     private ImageService imageService;
 
+    private PlagiarismComplaintService plagiarismComplaintService;
+
+    private OpinionOfEditorAboutComplaintService opinionOfEditorAboutComplaintService;
+
     private static String IMAGES_PATH = "literary-society/src/main/resources/images/";
+
+    private LogService logService;
+
+    private IPAddressProvider ipAddressProvider;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TaskDto>> getTasksForAssignee() {
@@ -82,8 +92,13 @@ public class TaskController {
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
             byte[] content = pdfDocumentService.download(pdfDocument.getName());
             camundaService.completeTask(taskId);
+
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
+                    String.format("User from IP address %s completed task %s and downloaded book",ipAddressProvider.get(),taskId )));
             return new ResponseEntity<>(content, headers, HttpStatus.OK);
         } catch (IOException | URISyntaxException e) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
+                    String.format("Book %s cannot be downloaded. Something went wrong.",pdfDocument.getBook().getId() )));
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -96,10 +111,15 @@ public class TaskController {
         try {
             pdfDocumentService.upload(pdfFile, book);
         } catch (IOException e) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UPLB",
+                    String.format("Book %s cannot be uploaded. Something went wrong.",book.getId() )));
             throw new InvalidDataException("Manuscript could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
         camundaService.completeTask(taskId);
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UPLB",
+                String.format("User from IP address %s completed task %s and uploaded book",ipAddressProvider.get(),taskId )));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -122,10 +142,15 @@ public class TaskController {
             writer.getDrafts().addAll(uploadedPDFDocuments);
 
         } catch (IOException e) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UPLM",
+                    "Manuscripts %s cannot be uploaded. Something went wrong."));
             throw new InvalidDataException("Writer documents could not be uploaded. Please try again.", HttpStatus.BAD_REQUEST);
         }
 
         camundaService.completeTask(taskId);
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UPLM",
+                String.format("Writer %s completed task %s and uploaded manuscripts",writer.getId(),taskId )));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -135,6 +160,85 @@ public class TaskController {
                 pdfDocumentService.getDraftsByWriter(camundaService.getProcessVariable(piId, "writer")));
 
         return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
+    }
+
+
+    @GetMapping(value = "/{taskId}/editors", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TaskDataDTO> getTaskDataForEditor(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
+
+        PlagiarismComplaint plagiarismComplaint;
+
+        try {
+            Long id = Long.valueOf(camundaService.getProcessVariable(piId, "plagiarismId"));
+            plagiarismComplaint = plagiarismComplaintService.findById(id);
+        } catch (Exception e) {
+            plagiarismComplaint = null;
+        }
+
+        List<EditorsCommentsDTO> editorsCommentsDTOS = new ArrayList<>();
+        if (plagiarismComplaint != null) {
+            editorsCommentsDTOS = opinionOfEditorAboutComplaintService.findOpinionsByPlagiarismComplaint(plagiarismComplaint.getId());
+        }
+
+        TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.setEnumValues(camundaService.getFormFields(piId, taskId)),
+                new PlagiarismDetailsDTO(camundaService.getProcessVariable(piId, "writersName"),
+                        camundaService.getProcessVariable(piId, "title"),
+                        camundaService.getProcessVariable(piId, "mainEditor"),
+                        (plagiarismComplaint != null ? new PublicationRequestDTO(plagiarismComplaint.getWritersBook().getId(),
+                                plagiarismComplaint.getWritersBook().getTitle(),
+                                plagiarismComplaint.getWritersBook().getGenre().getName(),
+                                plagiarismComplaint.getWritersBook().getSynopsis()) : null)),
+                editorsCommentsDTOS);
+
+        return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/{taskId}/download-plagiarism", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @Transactional
+    public ResponseEntity<byte[]> completeTaskAndDownloadPlagiarismBooks(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId,
+                                                                         @NotNull @RequestParam String type) {
+
+        PlagiarismComplaint plagiarismComplaint;
+        PDFDocument document;
+
+        String result = camundaService.getProcessVariable(piId, "downloaded");
+        if (result != null) {
+            camundaService.completeTask(taskId);
+        }
+
+        try {
+            Long id = Long.valueOf(camundaService.getProcessVariable(piId, "plagiarismId"));
+            plagiarismComplaint = plagiarismComplaintService.findById(id);
+        } catch (Exception e) {
+            plagiarismComplaint = null;
+        }
+
+        if (type.equals("SUBMITTED")) {
+            document = pdfDocumentService.findByBookId(plagiarismComplaint.getWritersBook().getId());
+        } else {
+            document = pdfDocumentService.findByBookId(plagiarismComplaint.getReportedBook().getId());
+        }
+
+        if (document == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        try {
+            headers.setContentDispositionFormData(document.getName(), document.getName());
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            byte[] pdfBytes = pdfDocumentService.download(document.getName());
+            camundaService.setProcessVariable(piId, "downloaded", "true");
+
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
+                    String.format("User from IP address %s completed task %s and downloaded plagiarism books",ipAddressProvider.get(),taskId )));
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (IOException | URISyntaxException e) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
+                  "Plagiarism books %s cannot be downloaded. Something went wrong."));
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping(value = "{taskId}/membership")
@@ -162,6 +266,8 @@ public class TaskController {
         runtimeService.setVariable(processInstanceId, "formData", formDTOList);
         formService.submitTaskForm(taskId, fieldsMap);
 
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
+                String.format("Editor %s completed task %s.", book.getEditor().getId(),taskId )));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -169,7 +275,9 @@ public class TaskController {
     @Autowired
     public TaskController(UserService userService, CamundaService camundaService, BookService bookService,
                           PDFDocumentService pdfDocumentService, TaskService taskService, RuntimeService runtimeService, FormService formService,
-                          ImageService imageService) {
+                          ImageService imageService, PlagiarismComplaintService plagiarismComplaintService,
+                          OpinionOfEditorAboutComplaintService opinionOfEditorAboutComplaintService,
+                          LogService logService, IPAddressProvider ipAddressProvider) {
         this.userService = userService;
         this.camundaService = camundaService;
         this.bookService = bookService;
@@ -178,5 +286,9 @@ public class TaskController {
         this.runtimeService = runtimeService;
         this.formService = formService;
         this.imageService = imageService;
+        this.plagiarismComplaintService = plagiarismComplaintService;
+        this.opinionOfEditorAboutComplaintService = opinionOfEditorAboutComplaintService;
+        this.logService = logService;
+        this.ipAddressProvider = ipAddressProvider;
     }
 }

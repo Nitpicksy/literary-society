@@ -7,6 +7,7 @@ import lombok.Setter;
 import nitpicksy.literarysociety.enumeration.BookStatus;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -61,5 +62,20 @@ public class Book {
         this.synopsis = synopsis;
         this.genre = genre;
         this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Book book = (Book) o;
+        if (book.getId() == null || id == null) {
+            return book.getTitle().equals(getTitle()) && book.getSynopsis().equals(getSynopsis());
+        }
+        return Objects.equals(id, book.getId());
     }
 }

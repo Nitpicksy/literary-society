@@ -53,6 +53,12 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findByWriterId(writer.getUserId());
     }
 
+    @Override
+    public Boolean validatePlagiarismRequest(String bookTitle, String writerName) {
+        Book book = bookRepository.findFirstByTitleContainingAndWritersNamesContaining(bookTitle, writerName);
+        return book != null;
+    }
+
     @Autowired
     public BookServiceImpl(BookRepository bookRepository, UserService userService) {
         this.bookRepository = bookRepository;

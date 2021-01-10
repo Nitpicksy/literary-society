@@ -113,6 +113,25 @@ const extractControl = (field) => {
                 }
             };
             break;
+        case ('long'):
+                control = {
+                    [field.id]: {
+                        elementType: 'long',
+                        elementConfig: {
+                            label: field.label,
+                        },
+                        value: '',
+                        validation:constaints,
+                        valid: true,
+                        touched: false,
+                        error: false,
+                        errorMessage: '',
+                        additionalData: {
+                            ...field.properties
+                        }
+                    }
+                };
+                break;
         default:
             control = {
                 [field.id]: {

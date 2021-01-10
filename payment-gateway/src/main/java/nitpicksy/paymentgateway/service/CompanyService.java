@@ -18,4 +18,5 @@ public interface CompanyService {
 
     String getToken();
 
+    List<Company> findAllApproved();
 }

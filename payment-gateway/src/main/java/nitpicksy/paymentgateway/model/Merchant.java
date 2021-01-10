@@ -26,4 +26,13 @@ public class Merchant {
 
     @ManyToOne
     private Company company;
+
+    @Column
+    private boolean supportsPaymentMethods;
+
+    public Merchant(String name, Company company) {
+        this.name = name;
+        this.company = company;
+        this.supportsPaymentMethods = false;
+    }
 }

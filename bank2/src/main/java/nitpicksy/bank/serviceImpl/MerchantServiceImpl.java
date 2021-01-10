@@ -26,9 +26,10 @@ public class MerchantServiceImpl implements MerchantService {
             throw new InvalidDataException("Invalid merchant id or password. Please try again.", HttpStatus.BAD_REQUEST);
         }
 
-        if(!merchantPassword.equals(merchant.getMerchantPassword())){
+        if(!merchant.getMerchantPassword().equals(merchantPassword)){
             throw new InvalidDataException("Invalid merchant id or password. Please try again.", HttpStatus.BAD_REQUEST);
         }
+
         return merchant;
     }
 

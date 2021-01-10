@@ -1,6 +1,5 @@
 package nitpicksy.bank.mapper;
 
-
 import nitpicksy.bank.dto.request.PaymentRequestDTO;
 import nitpicksy.bank.model.PaymentRequest;
 import org.modelmapper.ModelMapper;
@@ -17,7 +16,9 @@ public class PaymentRequestMapper implements MapperInterface<PaymentRequest, Pay
 
     @Override
     public PaymentRequest toEntity(PaymentRequestDTO dto) {
-        PaymentRequest request = modelMapper.map(dto, PaymentRequest.class);
+        PaymentRequest request = new PaymentRequest();
+        request.setMerchantOrderId(dto.getMerchantOrderId());
+        request.setAmount(dto.getAmount());
         request.setSuccessUrl(dto.getSuccessURL());
         request.setErrorUrl(dto.getErrorURL());
         request.setFailedUrl(dto.getFailedURL());

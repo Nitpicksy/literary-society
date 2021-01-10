@@ -37,4 +37,6 @@ public class UserResponseDTO {
     @NotBlank
     private String role;
 
+    private String status;
+
 }

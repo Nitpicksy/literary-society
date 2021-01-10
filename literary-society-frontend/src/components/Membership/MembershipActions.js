@@ -76,7 +76,6 @@ export const onPay = () => {
 
 export const completePayTask = (selectedTask) => {
     return dispatch => {
-        console.log('selt', selectedTask)
         if(selectedTask) { //for writer
             axios.put(`/tasks/${selectedTask.taskId}/membership?piId=${selectedTask.piId}`)
             .then(response => {

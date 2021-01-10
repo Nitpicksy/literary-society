@@ -68,7 +68,16 @@ const Tasks = (props) => {
             history.push('/publishing-info');
         } else if (properties.row.name === "Unos podataka o rukopisu") {
             history.push('/create-publication-request');
+        } else if (properties.row.name === "Choose plagiarism review board"
+        || properties.row.name === 'Submit your review report'
+        || properties.row.name === 'Assign another editor') {
+            history.push('/plagiarism');
+        } else if (properties.row.name === "Download books to submit a report") {
+            history.push('/plagiarism-review-download');
+        } else if(properties.row.name === 'Plagiarism report-cast your vote') {
+            history.push('/plagiarism-vote')
         }
+        
     }
 
     if (!loading) {

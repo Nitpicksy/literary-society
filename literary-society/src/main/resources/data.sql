@@ -118,15 +118,15 @@ values ('User', 'John', 'John', 'London', 'Ujedinjeno kraljevstvo', 'johnJohn1@m
 -- Committee members
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'Eržebet', 'Guliver', 'Kruševac', 'Srbija', 'communist1@maildrop.cc', 'member1',
+values ('User', 'Eržebet', 'Guliver', 'Kruševac', 'Srbija', 'communist1@maildrop.cc', 'bor1',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'Milovan', 'Ranisavljevic', 'London', 'Ujedinjeno kraljevstvo', 'communist2@maildrop.cc', 'member2',
+values ('User', 'Milovan', 'Ranisavljevic', 'London', 'Ujedinjeno kraljevstvo', 'communist2@maildrop.cc', 'bor2',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled)
-values ('User', 'INSANE MAN', 'PUSKIN', 'Sankt Petersburg', 'Rusija', 'communist3@maildrop.cc', 'member3',
+values ('User', 'INSANE MAN', 'PUSKIN', 'Sankt Petersburg', 'Rusija', 'communist3@maildrop.cc', 'bor3',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
 
 
@@ -209,10 +209,8 @@ insert into publishing_info(isbn, number_of_pages, publisher_city, publication_d
                             book_id, merchant_id)
 values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 890.00, 5, 8, 12);
 
-
--- insert into price_list (membership_for_reader, membership_for_writer, start_date)
--- values (500, 2000, '2021-01-01');
--- insert into price_list (membership_for_reader, membership_for_writer, start_date)
--- values (600, 2500, '2021-02-02');
--- insert into price_list (membership_for_reader, membership_for_writer, start_date)
--- values (700, 2700, '2021-03-03');
+--- pdf documents
+insert into pdfdocument(created,name, book_id)
+values ('2019-04-05 14:05:00', '2019-04-05_14-05-00_Moby Dick.pdf',1);
+insert into pdfdocument(created,name, book_id)
+values ('2019-04-05 14:05:00', '2019-04-05_14-05-00_Na Drini ćuprija.pdf',2);

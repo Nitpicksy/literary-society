@@ -4,3 +4,38 @@ FGN|Feign client exception
 CSP|Create subscription plan
 SUB|Subscribe
 UNS|Unsubscribe
+LGN|Login
+REG|Registration
+CPW|Change password
+RPW|Reset password
+ACT|Activate account
+REF|Refresh token
+ATZ|Authorization exception
+FGN|Feign client exception
+OMP|Object mapper exception
+RST|Reset token exception
+BT|Buyer token
+BOOK|Book
+CAMUNDA|Camunda process
+CO|Committee Opinion
+MER|Merchant
+SYNC|Synchronized
+ADDM|Add merchant
+PAYB|Book Payment
+PAYM|Membership Payment
+PAY|Payment
+RREG|Reader registration
+WREG|Writer registration
+PUBB|Book publishing process
+DOWB|Download book
+DOWM|Download manuscripts
+UPLM|Upload manuscripts
+UPLB|Upload book
+PLAGP|Plagiarism process
+ADDMEMB|Add membership
+ADDOBR|Add opinion od beta reader
+ADDOC|Add opinion od committee member about complaint
+ADDOEC|Add opinion od editor about complaint
+ADDOE|Add opinion od editor
+ADDR|Add reader
+ADDW|Add writer

@@ -15,7 +15,7 @@ const ReaderToolbar = (props) => {
 
     const handleClose = () => {
         setAnchorEl(null);
-    };    
+    };
 
     const redirect = (path) => {
         setAnchorEl(null);
@@ -24,6 +24,7 @@ const ReaderToolbar = (props) => {
 
     return (
         <React.Fragment>
+            <Button color="inherit" onClick={() => redirect('/purchased-books')}> Purchased books </Button>
             <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} className={classes.menuBtn}>Membership</Button>
             <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose} getContentAnchorEl={null}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }} transformOrigin={{ vertical: "top", horizontal: "center" }}>

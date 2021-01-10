@@ -27,4 +27,5 @@ public class TransactionDTO {
     @NotEmpty
     private List<BookDTO> orderedBooks;
 
+    private String url;
 }

@@ -14,6 +14,7 @@ const AdminToolbar = (props) => {
     return (
         <React.Fragment>
             <Button color="inherit" onClick={() =>redirect('/manage-users') }>Manage Users</Button>
+            <Button color="inherit" onClick={() =>redirect('/manage-merchants') }>Manage Merchants</Button>
         </React.Fragment>
     );
 }

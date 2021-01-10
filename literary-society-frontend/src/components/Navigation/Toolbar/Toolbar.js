@@ -18,6 +18,7 @@ const CustomToolbar = (props) => {
     const roleAdmin = "ROLE_ADMIN";
     const roleLecturer = "ROLE_LECTURER";
     const roleMerchant = "ROLE_MERCHANT";
+    const roleCommitteeMember = "ROLE_COMMITTEE_MEMBER";
 
     const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -44,6 +45,10 @@ const CustomToolbar = (props) => {
         setAnchorEl(null);
         history.push(path);
     }
+    let tasks = null;
+    if(props.isAuthenticated && (checkRole(roleWriter) || checkRole(roleEditor) || checkRole(roleReader) || checkRole(roleLecturer) || checkRole(roleCommitteeMember))){
+        tasks = <Button className={classes.button} color="inherit" onClick={() => redirect('/tasks')}>Tasks</Button>;
+    }
 
     let toolbarItems = (
         <React.Fragment>
@@ -56,7 +61,7 @@ const CustomToolbar = (props) => {
 
         toolbarItems = (
             <React.Fragment>
-                <Button className={classes.button} color="inherit" onClick={() => redirect('/tasks')}>Tasks</Button>
+                {tasks}
 
                 {checkRole(roleWriter) ? <WriterToolbar /> : null}
 

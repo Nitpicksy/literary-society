@@ -6,6 +6,9 @@ import nitpicksy.paymentgateway.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+
 @Service
 public class MerchantServiceImpl implements MerchantService {
 
@@ -20,6 +23,17 @@ public class MerchantServiceImpl implements MerchantService {
     public Merchant findByIdAndCompany(Long merchantId, Long companyId) {
         return merchantRepository.findByIdAndCompanyId(merchantId,companyId);
     }
+
+    @Override
+    public Merchant save(Merchant merchant) {
+        return merchantRepository.save(merchant);
+    }
+
+    @Override
+    public List<Merchant> findByCompany(Long companyId) {
+        return merchantRepository.findByCompanyId(companyId);
+    }
+
 
     @Autowired
     public MerchantServiceImpl(MerchantRepository merchantRepository) {

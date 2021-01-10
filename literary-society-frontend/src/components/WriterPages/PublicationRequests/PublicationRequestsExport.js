@@ -1,5 +1,6 @@
 export {
     fetchPublicationRequests,
     startProcess,
-    clearProcessState,
+    startPlagiarismProcess,
+    clearProcessState
 } from './PublicationRequestsActions';

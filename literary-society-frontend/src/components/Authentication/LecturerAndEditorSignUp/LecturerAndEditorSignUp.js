@@ -3,8 +3,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import * as actions from './LecturerAndEditorSignUpExport';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { useStyles } from './LecturerAndEditorSignUpStyles';
@@ -174,19 +172,12 @@ const LecturerAndEditorSignUp = (props) => {
                 <Avatar className={classes.avatar}>
                     <PersonIcon />
                 </Avatar>
-                <Typography component="h1" variant="h4">Sign up</Typography>
+                {props.signUpType === "editors" ?  <Typography component="h1" variant="h4">Editor - Sign up</Typography>: 
+                 <Typography component="h1" variant="h4">Lecturer - Sign up</Typography> }
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     <Form controls={controls} setControls={setControls} setFormIsValid= {setFormIsValid}/>
                     <Button type="submit" color="primary" className={classes.submit} fullWidth variant="contained"
-                        onClick={submitHander} disabled={!formIsValid}>Sign In</Button>
-                    <Grid container>
-                        <Grid item xs>
-                            <Link href="/forgot-password" variant="body2">Forgot password?</Link>
-                        </Grid>
-                        <Grid item>
-                            <Link href="/sign-up-options" variant="body2">Don't have an account? Sign Up</Link>
-                        </Grid>
-                    </Grid>
+                        onClick={submitHander} disabled={!formIsValid}>Submit</Button>
                 </form>
             </div>
         </Container>
