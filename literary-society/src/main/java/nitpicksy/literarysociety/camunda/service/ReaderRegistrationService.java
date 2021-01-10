@@ -5,9 +5,11 @@ import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Genre;
+import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.Reader;
 import nitpicksy.literarysociety.repository.ReaderRepository;
 import nitpicksy.literarysociety.service.GenreService;
+import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
 import nitpicksy.literarysociety.service.VerificationService;
 import org.camunda.bpm.engine.delegate.BpmnError;
@@ -27,6 +29,10 @@ import java.util.stream.Collectors;
 @Service
 public class ReaderRegistrationService implements JavaDelegate {
 
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
     private UserService userService;
 
     private PasswordEncoder passwordEncoder;
@@ -38,6 +44,8 @@ public class ReaderRegistrationService implements JavaDelegate {
     private GenreService genreService;
 
     private CamundaService camundaService;
+
+    private LogService logService;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -79,18 +87,22 @@ public class ReaderRegistrationService implements JavaDelegate {
 
         execution.setVariable("token", nonHashedToken);
 
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDR",
+                String.format("Reader %s successfully created",savedReader.getId())));
+
         return savedReader;
     }
 
     @Autowired
     public ReaderRegistrationService(UserService userService, PasswordEncoder passwordEncoder,
                                      ReaderRepository readerRepository, VerificationService verificationService,
-                                     GenreService genreService, CamundaService camundaService) {
+                                     GenreService genreService, CamundaService camundaService,LogService logService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.readerRepository = readerRepository;
         this.verificationService = verificationService;
         this.genreService = genreService;
         this.camundaService = camundaService;
+        this.logService = logService;
     }
 }

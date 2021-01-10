@@ -53,7 +53,7 @@ export const validateBook = (bookTitle, writerName) => {
     return dispatch => {
         axios.get(`/books/validate?bookTitle=${bookTitle}&writerName=${writerName}`)
             .then((response) => {
-                if(response.data == true) {
+                if(response.data === true) {
                     dispatch(validateSuccess())
                 }
                 else {

@@ -77,6 +77,8 @@ public class MerchantController {
 
         Merchant merchant = merchantService.findByNameAndCompany(name, company.getId());
         if(merchant == null){
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MER",
+                    String.format("In company %s merchant %s doesn't exist",company.getId(), name)));
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         String url = getLocalhostURL() + "payment-data?company="+company.getId()+"&merchant="+merchant.getId();
@@ -88,6 +90,8 @@ public class MerchantController {
     public ResponseEntity<List<PaymentDataResponseDTO>> getPaymentData(@RequestParam Long companyId, @RequestParam Long merchantId) {
         Merchant merchant = merchantService.findByIdAndCompany(merchantId, companyId);
         if(merchant == null){
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MER",
+                    String.format("In company %s merchant %s doesn't exist",companyId, merchantId)));
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -108,7 +112,7 @@ public class MerchantController {
         try {
             redirectURL = zuulClient.supportPaymentMethods(URI.create(apiGatewayURL + '/' + merchant.getCompany().getCommonName()), merchant.getName());
         }catch (RuntimeException e){
-            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Could not notify " + merchant.getCompany().getCommonName()));
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MER", "Could not notify " + merchant.getCompany().getCommonName()));
         }
         return new ResponseEntity<>(redirectURL, HttpStatus.OK);
     }
@@ -152,10 +156,10 @@ public class MerchantController {
                     }
 
                 }
-                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYN",
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC",
                         "Merchants are successfully synchronized - " + company.getCompanyName()));
             }catch (RuntimeException e){
-                logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC", "Could not notify " +  company.getCompanyName()));
+                logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC", "Forwarding request to synchronize merchants has failed "));
             }
         }
     }

@@ -262,7 +262,7 @@ public class OrderServiceImpl implements OrderService {
             if (transaction != null && transaction.getStatus().equals(TransactionStatus.CREATED)) {
                 transaction.setStatus(TransactionStatus.CANCELED);
                 transactionRepository.save(transaction);
-                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SRQ",
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA",
                         String.format(
                                 "Because 15min from creation have passed, transaction %s is automatically CANCELED",
                                 transaction.getId())));

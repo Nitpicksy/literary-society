@@ -2,11 +2,13 @@ package nitpicksy.literarysociety.camunda.service;
 
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.enumeration.PlagiarismDecision;
+import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.OpinionOfCommitteeMemberAboutComplaint;
 import nitpicksy.literarysociety.model.PlagiarismComplaint;
 import nitpicksy.literarysociety.model.User;
 import nitpicksy.literarysociety.repository.OpinionOfCommitteeMemberAboutComplaintRepository;
 import nitpicksy.literarysociety.repository.PlagiarismComplaintRepository;
+import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -20,10 +22,15 @@ import java.util.stream.Collectors;
 @Service
 public class CommitteePlagiarismDecisionService implements JavaDelegate {
 
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
     private UserService userService;
     private OpinionOfCommitteeMemberAboutComplaintRepository opinionOfCommitteeMemberAboutComplaintRepository;
     private PlagiarismComplaintRepository plagiarismComplaintRepository;
 
+    private LogService logService;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -46,13 +53,18 @@ public class CommitteePlagiarismDecisionService implements JavaDelegate {
         }
 
         OpinionOfCommitteeMemberAboutComplaint opinionOfCommitteeMemberAboutComplaint = new OpinionOfCommitteeMemberAboutComplaint(committee, plagiarismDecision, complaint);
-        opinionOfCommitteeMemberAboutComplaintRepository.save(opinionOfCommitteeMemberAboutComplaint);
+        OpinionOfCommitteeMemberAboutComplaint saved = opinionOfCommitteeMemberAboutComplaintRepository.save(opinionOfCommitteeMemberAboutComplaint);
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDOC",
+                String.format("Opinion of Committee Member about complaint %s successfully created",saved.getId())));
     }
 
     @Autowired
-    public CommitteePlagiarismDecisionService(UserService userService, OpinionOfCommitteeMemberAboutComplaintRepository opinionOfCommitteeMemberAboutComplaintRepository, PlagiarismComplaintRepository plagiarismComplaintRepository) {
+    public CommitteePlagiarismDecisionService(UserService userService, OpinionOfCommitteeMemberAboutComplaintRepository opinionOfCommitteeMemberAboutComplaintRepository,
+                                              PlagiarismComplaintRepository plagiarismComplaintRepository,LogService logService) {
         this.userService = userService;
         this.opinionOfCommitteeMemberAboutComplaintRepository = opinionOfCommitteeMemberAboutComplaintRepository;
         this.plagiarismComplaintRepository = plagiarismComplaintRepository;
+        this.logService = logService;
     }
 }

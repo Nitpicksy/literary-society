@@ -1,0 +1,4 @@
+APP|Application startup/shutdown
+FGN|Feign client exception
+OMP|Object mapper exception
+CONFPAY|Confirm payment

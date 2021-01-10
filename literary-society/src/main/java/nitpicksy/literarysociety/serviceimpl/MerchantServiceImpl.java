@@ -4,11 +4,14 @@ import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.dto.response.MerchantPaymentGatewayResponseDTO;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
+import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.Merchant;
 import nitpicksy.literarysociety.repository.MerchantRepository;
 import nitpicksy.literarysociety.service.EmailNotificationService;
 import nitpicksy.literarysociety.service.JWTTokenService;
+import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.MerchantService;
+import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,10 @@ import java.util.Optional;
 @Service
 public class MerchantServiceImpl implements MerchantService {
 
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
     private MerchantRepository merchantRepository;
 
     private ZuulClient zuulClient;
@@ -37,6 +44,9 @@ public class MerchantServiceImpl implements MerchantService {
 
     private Environment environment;
 
+    private LogService logService;
+
+    private IPAddressProvider ipAddressProvider;
 
     @Override
     public Merchant findByName(String name) {
@@ -45,17 +55,24 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public String getPaymentData(Merchant merchant) {
-        ResponseEntity<String> response = zuulClient.getPaymentData("Bearer " + jwtTokenService.getToken(), merchant.getName());
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();
+        try{
+            ResponseEntity<String> response = zuulClient.getPaymentData("Bearer " + jwtTokenService.getToken(), merchant.getName());
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return response.getBody();
+            }
+        }catch (RuntimeException e){
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MER",
+                    "Forwarding request to get payment data has failed"));
         }
-
         throw new InvalidDataException("Something went wrong.Please try again.", HttpStatus.BAD_REQUEST);
     }
 
     @Override
     public Merchant save(Merchant merchant) {
-        return merchantRepository.save(merchant);
+        Merchant savedMerchant = merchantRepository.save(merchant);
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDM",
+                String.format("Merchant %s successfully saved",savedMerchant.getId())));
+        return savedMerchant;
     }
 
     @Override
@@ -76,6 +93,8 @@ public class MerchantServiceImpl implements MerchantService {
         String nonHashedToken = verificationService.generateToken(savedMerchant);
         composeEmailToActivate(nonHashedToken,savedMerchant.getEmail());
 
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDM",
+                String.format("Merchant %s successfully sign up from IP address %s",savedMerchant.getId(), ipAddressProvider.get())));
         return savedMerchant;
     }
 
@@ -93,9 +112,13 @@ public class MerchantServiceImpl implements MerchantService {
                 merchant.setStatus(UserStatus.ACTIVE);
                 composeAndSendEmailApprovedRequest(merchant.getEmail());
                 addMerchantToPaymentGateway(merchant);
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MER",
+                        String.format("Merchant request for registration %s is approved",merchant.getId())));
             } else {
                 merchant.setStatus(UserStatus.REJECTED);
                 composeAndSendRejectionEmail(merchant.getEmail());
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MER",
+                        String.format("Merchant request for registration %s is rejected",merchant.getId())));
             }
             return merchantRepository.save(merchant);
         }
@@ -107,7 +130,8 @@ public class MerchantServiceImpl implements MerchantService {
         try{
             zuulClient.addMerchant("Bearer " + jwtTokenService.getToken(),merchant.getName());
         }catch (RuntimeException ex){
-
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MER",
+                    "Forwarding request to add merchant has failed"));
         }
 
     }
@@ -125,9 +149,12 @@ public class MerchantServiceImpl implements MerchantService {
                     merchant.setSupportsPaymentMethods(currentMerchant.isSupportsPaymentMethods());
                     merchantRepository.save(merchant);
                 }
-
             }
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC",
+                    "Successfully synchronized merchants."));
         }catch (RuntimeException e){
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC",
+                    "Forwarding request to synchronize merchants has failed."));
         }
     }
 
@@ -172,12 +199,15 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Autowired
     public MerchantServiceImpl(MerchantRepository merchantRepository, ZuulClient zuulClient, JWTTokenService jwtTokenService,VerificationServiceImpl verificationService,
-                               EmailNotificationService emailNotificationService,Environment environment) {
+                               EmailNotificationService emailNotificationService,Environment environment,
+                               LogService logService, IPAddressProvider ipAddressProvider) {
         this.merchantRepository = merchantRepository;
         this.zuulClient = zuulClient;
         this.jwtTokenService = jwtTokenService;
         this.verificationService = verificationService;
         this.emailNotificationService =emailNotificationService;
         this.environment = environment;
+        this.logService = logService;
+        this.ipAddressProvider = ipAddressProvider;
     }
 }

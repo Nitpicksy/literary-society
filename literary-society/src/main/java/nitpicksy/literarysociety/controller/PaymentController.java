@@ -27,8 +27,6 @@ public class PaymentController {
 
     private PaymentService paymentService;
 
-    private BookDtoMapper bookDtoMapper;
-
     private UserService userService;
 
     private BookService bookService;
@@ -59,9 +57,8 @@ public class PaymentController {
     }
 
     @Autowired
-    public PaymentController(PaymentService paymentService, BookDtoMapper bookDtoMapper, UserService userService, BookService bookService) {
+    public PaymentController(PaymentService paymentService, UserService userService, BookService bookService) {
         this.paymentService = paymentService;
-        this.bookDtoMapper = bookDtoMapper;
         this.userService = userService;
         this.bookService = bookService;
     }

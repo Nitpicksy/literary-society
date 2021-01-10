@@ -190,6 +190,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         User savedReader = userRepository.save(user);
         String nonHashedToken = verificationService.generateToken(savedReader);
         composeEmailToActivate(nonHashedToken, user.getEmail());
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "REG",
+                String.format("User %s successfully sign up from IP address %s",savedReader.getId(), ipAddressProvider.get())));
         return savedReader;
     }
 
@@ -212,8 +215,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 user.setStatus(UserStatus.REJECTED);
                 composeAndSendRejectionEmail(user.getEmail());
             }
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "REG",
+                    String.format("User %s status is successfully changed.",user.getId())));
             return userRepository.save(user);
         }
+
         return null;
     }
 

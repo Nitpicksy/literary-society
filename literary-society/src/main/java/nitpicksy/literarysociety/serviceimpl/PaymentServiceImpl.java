@@ -27,6 +27,10 @@ import java.util.Set;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
     private MerchantService merchantService;
 
     private TransactionService transactionService;
@@ -45,16 +49,22 @@ public class PaymentServiceImpl implements PaymentService {
 
     private ReaderService readerService;
 
+    private LogService logService;
+
     @Override
     public String proceedToBookPayment(Set<Book> bookSet, User user) {
         List<Book> bookList = new ArrayList<>(bookSet);
         Merchant merchant = merchantService.findByName(bookList.get(0).getPublishingInfo().getMerchant().getName());
         if (merchant == null) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAYB",
+                    String.format("Merchant %s doesn't exist",bookList.get(0).getPublishingInfo().getMerchant().getName())));
             throw new InvalidUserDataException("Merchant doesn't exist.", HttpStatus.BAD_REQUEST);
         }
         Double amount = calculatePrice(bookList, user);
         Transaction transaction = transactionService.create(TransactionStatus.CREATED, TransactionType.ORDER, user, amount,
                 new HashSet<>(bookList), merchant);
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAYB",
+                String.format("Successfully created transaction %s.",transaction.getId())));
         try {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             // Send JWT token for authentication in Payment Gateway
@@ -62,6 +72,8 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (RuntimeException exception) {
             transaction.setStatus(TransactionStatus.ERROR);
             transactionService.save(transaction);
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAYB",
+                    "Forwarding request to book payment has failed"));
             throw new InvalidUserDataException("Something went wrong. Please try again.", HttpStatus.BAD_REQUEST);
         }
     }
@@ -86,6 +98,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         Transaction transaction = transactionService.create(TransactionStatus.CREATED, TransactionType.MEMBERSHIP, user, amount,
                 null, merchant);
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAYM",
+                String.format("Successfully created transaction %s.",transaction.getId())));
         try {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             // Send JWT token for authentication in Payment Gateway
@@ -93,6 +107,8 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (RuntimeException exception) {
             transaction.setStatus(TransactionStatus.ERROR);
             transactionService.save(transaction);
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAYM",
+                    "Forwarding request to membership  payment has failed"));
             throw new InvalidUserDataException("Something went wrong. Please try again.", HttpStatus.BAD_REQUEST);
         }
     }
@@ -111,6 +127,8 @@ public class PaymentServiceImpl implements PaymentService {
                     reader.getPurchasedBooks().addAll(order.getOrderedBooks());
                     readerService.save(reader);
                 }else{
+                    logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAY",
+                            String.format("Successfully generated buyer token for transaction %s.",order.getId())));
                     buyerTokenService.generateToken(order);
                 }
             } else {
@@ -134,6 +152,8 @@ public class PaymentServiceImpl implements PaymentService {
                 notifyCamundaMessageEvent(CamundaConstants.MESSAGE_PAYMENT_ERROR, user, order);
             }
         }
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAY",
+                String.format("Changed transaction %s status to  %s.",order.getId(), order.getStatus().toString())));
         transactionService.save(order);
     }
 
@@ -150,12 +170,16 @@ public class PaymentServiceImpl implements PaymentService {
                     try{
                         handlePayment(dto);
                     }catch (NoSuchAlgorithmException e){
-
+                        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAY",
+                                "Generating buyer token is failed. Something went wrong."));
                     }
                 }
             }
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC",
+                    "Successfully synchronized transactions."));
         }catch (RuntimeException  e){
-
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC",
+                    "Forwarding request to synchronize transactions has failed."));
         }
     }
 
@@ -189,7 +213,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     public PaymentServiceImpl(MerchantService merchantService, TransactionService transactionService, ZuulClient zuulClient,
                               MembershipService membershipService, JWTTokenService jwtTokenService, PriceListService priceListService,
-                              CamundaService camundaService, BuyerTokenService buyerTokenService,ReaderService readerService) {
+                              CamundaService camundaService, BuyerTokenService buyerTokenService,ReaderService readerService,
+                              LogService logService) {
         this.merchantService = merchantService;
         this.transactionService = transactionService;
         this.zuulClient = zuulClient;
@@ -199,5 +224,6 @@ public class PaymentServiceImpl implements PaymentService {
         this.camundaService = camundaService;
         this.buyerTokenService = buyerTokenService;
         this.readerService = readerService;
+        this.logService = logService;
     }
 }

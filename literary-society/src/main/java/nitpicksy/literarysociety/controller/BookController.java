@@ -7,15 +7,18 @@ import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.mapper.*;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.BuyerToken;
+import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.PDFDocument;
 import nitpicksy.literarysociety.model.Reader;
 import nitpicksy.literarysociety.model.Transaction;
 import nitpicksy.literarysociety.service.BookService;
 import nitpicksy.literarysociety.service.BuyerTokenService;
+import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.OpinionOfBetaReaderService;
 import nitpicksy.literarysociety.service.OpinionOfEditorService;
 import nitpicksy.literarysociety.service.PDFDocumentService;
 import nitpicksy.literarysociety.service.UserService;
+import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -39,6 +42,10 @@ import java.util.zip.ZipOutputStream;
 @RestController
 @RequestMapping(value = "/api/books")
 public class BookController {
+
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
 
     private BookService bookService;
 
@@ -64,6 +71,9 @@ public class BookController {
 
     private UserService userService;
 
+    private LogService logService;
+
+    private IPAddressProvider ipAddressProvider;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookDTO>> getAllForSale() {
@@ -122,6 +132,8 @@ public class BookController {
         BuyerToken buyerToken = buyerTokenService.verifyToken(t);
 
         if (buyerToken == null) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "BT",
+                    String.format("Invalid or expired buyer token provided from %s", ipAddressProvider.get())));
             throw new InvalidTokenException("This token is invalid or expired.", HttpStatus.BAD_REQUEST);
         }
         Transaction transaction = buyerToken.getTransaction();
@@ -144,6 +156,7 @@ public class BookController {
             }
 
         } catch (IOException e) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "BOOK", "Could not create ZipOutputStream."));
         }finally {
             if(zipOutputStream != null){
                 zipOutputStream.flush();
@@ -151,6 +164,8 @@ public class BookController {
             }
         }
 
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "BOOK",
+                String.format("Transaction %s is successfully created and books are successfully downloaded.", transaction.getId())));
         buyerTokenService.invalidateToken(buyerToken.getId());
     }
 
@@ -159,12 +174,16 @@ public class BookController {
         Book book = bookService.findById(bookId);
 
         if(book == null) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "BOOK",
+                    String.format("Book with %s doesn't exist.", bookId)));
             throw new InvalidTokenException("This book doesn't exist.", HttpStatus.BAD_REQUEST);
         }
 
         if(book.getPublishingInfo().getPrice() != 0){
             Reader reader = userService.getAuthenticatedReader();
             if(reader == null || !reader.getPurchasedBooks().contains(book)){
+                logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "BT",
+                        String.format("User from %s tried to download book %s which is not free and which is not purchased.", ipAddressProvider.get(),bookId)));
                 throw new InvalidTokenException("This book is not free so you have to buy it.", HttpStatus.BAD_REQUEST);
             }
         }
@@ -178,6 +197,7 @@ public class BookController {
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
             return new ResponseEntity<>(pdfDocumentService.download(pdfDocument.getName()), headers, HttpStatus.OK);
         } catch (IOException | URISyntaxException e) {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "BOOK", String.format("Could not download book %s .", bookId)));
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -195,7 +215,8 @@ public class BookController {
                           OpinionOfEditorService opinionOfEditorService, CamundaService camundaService, BookDtoMapper bookDtoMapper,
                           BookDetailsDtoMapper bookDetailsDtoMapper, OpinionOfBetaReaderDtoMapper opinionOfBetaReaderDtoMapper,
                           OpinionOfEditorDtoMapper opinionOfEditorDtoMapper, PublicationRequestResponseDtoMapper publReqResponseDtoMapper,
-                          BuyerTokenService buyerTokenService,PDFDocumentService pdfDocumentService,UserService userService) {
+                          BuyerTokenService buyerTokenService,PDFDocumentService pdfDocumentService,UserService userService,LogService logService,
+                          IPAddressProvider ipAddressProvider) {
         this.bookService = bookService;
         this.opinionOfBetaReaderService = opinionOfBetaReaderService;
         this.opinionOfEditorService = opinionOfEditorService;
@@ -208,5 +229,7 @@ public class BookController {
         this.buyerTokenService = buyerTokenService;
         this.pdfDocumentService = pdfDocumentService;
         this.userService = userService;
+        this.logService = logService;
+        this.ipAddressProvider = ipAddressProvider;
     }
 }

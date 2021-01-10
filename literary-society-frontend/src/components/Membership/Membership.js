@@ -20,8 +20,7 @@ const Membership = (props) => {
 
     const history = useHistory();
     const classes = useStyles();
-    
-    const [loading, setLoading] = useState(true);
+
     const [displayPrice, setDisplayPrice] = useState(false);
 
     const { fetchMembership, membership } = props;
@@ -37,12 +36,10 @@ const Membership = (props) => {
 
     useEffect(() => {
         fetchMembership(history);
-        setLoading(false);
     }, [fetchMembership, history]);
 
     useEffect(() => {
         fetchPriceList();
-        setLoading(false);
     }, [fetchPriceList]);
 
     const handleDisplayPrice = () => {
