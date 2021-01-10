@@ -40,6 +40,22 @@ export const checkValidity = (name, value, rules, type, patternErrorMessage) => 
             }
         }
 
+        if (isValid && rules.isISBN) {
+            const pattern = /^\d{13}$/;
+            isValid = pattern.test(value);
+            if (!isValid) {
+                errorMessage = 'ISBN has to contain 13 digits.';
+            }
+        }
+
+        if (isValid && rules.isPrice) {
+            const pattern = /^\d+(.\d{1,2})?$/;
+            isValid = pattern.test(value);
+            if (!isValid) {
+                errorMessage = 'Price is not valid.';
+            }
+        }
+
         if (isValid && rules.pattern) {
             const pattern = new RegExp(rules.pattern);
             isValid = pattern.test(value)

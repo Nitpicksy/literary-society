@@ -1,25 +1,25 @@
 insert into company (uri, common_name, company_name, email, error_url, failed_url, success_url, certificate_name,
                      status, enabled)
 values ('http://localhost:8090', 'literary-society', 'Nitpicksy LU 1', 'literary@maildrop.cc',
-        'https://localhost:3000/payment/error', 'https://localhost:3000/payment/failed',
-        'https://localhost:3000/payment/success', 'literary.crt', 'APPROVED', true);
+        'https://www.literary-society.com:3000/payment/error', 'https://www.literary-society.com:3000/payment/failed',
+        'https://www.literary-society.com:3000/payment/success', 'literary.crt', 'APPROVED', true);
 
-insert into merchant (name, company_id,supports_payment_methods)
+insert into merchant (name, company_id, supports_payment_methods)
 values ('LU One Merchant', 1, true);
 
-insert into merchant (name, company_id,supports_payment_methods)
+insert into merchant (name, company_id, supports_payment_methods)
 values ('Vulkan', 1, true);
 
-insert into merchant (name, company_id,supports_payment_methods)
+insert into merchant (name, company_id, supports_payment_methods)
 values ('Laguna', 1, true);
 
-insert into merchant (name, company_id,supports_payment_methods)
+insert into merchant (name, company_id, supports_payment_methods)
 values ('Lom', 1, true);
 
-insert into merchant (name, company_id,supports_payment_methods)
+insert into merchant (name, company_id, supports_payment_methods)
 values ('Logos', 1, true);
 
-insert into merchant (name, company_id,supports_payment_methods)
+insert into merchant (name, company_id, supports_payment_methods)
 values ('Amazon', 1, true);
 
 
@@ -63,7 +63,7 @@ values ('merchantToken', 'Merchant API Token', 'password', 3);
 
 -- DATA FOR PAYMENT
 
--- Default LU Merchant - Only PayPal data
+-- Default LU Merchant
 -- For Bank: merchantId and merchantPassword
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
 values ('merchantId',
@@ -76,10 +76,10 @@ values ('merchantPassword',
 
 -- For PayPal: merchantClientId and merchantClientSecret
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantClientId', 'AYfQea8-7YvonXN8LxkI-jigeTQuw3lg_ixCM3MabqDjGx8egncKmCiIHH05XQ0C1Azev1IlgA86XGwP', 1, 2,
+values ('merchantClientId', 'AZRZ5NKCNB4ZkLdmx-o_SZIL3lTbGaKd0tiX2dyVaNMfEqSIMVZJPNjgcZKmbGLNUy17Z6gOi9jZIj4R', 1, 2,
         3);
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantClientSecret', 'EAK4iy7MfWLcw6QE71jlOR4nhm34ylFKlhHuL2CDsC2weGokdaUt54uZSwQO2pVge9ZaQGyOMQ1SktAl', 1,
+values ('merchantClientSecret', 'EGU9nvBhzJPHupEsi6cFTIkDfE4uKIz7fnQZsXpvWkMh5InMVlbwjGqp3AFJdBI9qeLH51I4WCuluWOL', 1,
         2, 4);
 
 -- For Bitcoin: merchantToken
@@ -87,6 +87,8 @@ insert into data_for_payment (attribute_name, attribute_value, merchant_id, paym
 values ('merchantToken',
         'xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC',
         1, 3, 5);
+
+
 -- Vulkan
 -- For Bank: merchantId and merchantPassword
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
@@ -112,6 +114,7 @@ values ('merchantToken',
         'xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC',
         2, 3, 5);
 
+
 -- Laguna
 -- For Bank: merchantId and merchantPassword
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
@@ -120,7 +123,7 @@ values ('merchantId',
         3, 1, 1);
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
 values ('merchantPassword',
-        '4af7be4654250d64edffba14b763276fe428d9bd718f42c1362d27fd88f5bbd54d93ebc5905b5668a2db2c1c4de9d5c323e845cd60549efb2dd60456b59d5224',
+        '43a718f649b677cbee616b74b4f57e42de51c29e846e68eb339eb1c20cebe96829e73ffa803d4664d6b1d6b2f8d0c35b3f2385ca14ed95118a466b9644d200fe',
         3, 1, 2);
 
 -- For PayPal: merchantClientId and merchantClientSecret
@@ -136,3 +139,12 @@ insert into data_for_payment (attribute_name, attribute_value, merchant_id, paym
 values ('merchantToken',
         'xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC',
         3, 3, 5);
+
+
+-- SUBSCRIPTION PLANS
+
+-- Default LU Merchant
+insert into subscription_plan (company_common_name, company_plan_id, paypal_plan_id)
+values ('literary-society', 1, 'P-74S64158P6034971TL75S45Y');
+insert into subscription_plan (company_common_name, company_plan_id, paypal_plan_id)
+values ('literary-society', 2, 'P-3B8868172K211273WL75S46A');

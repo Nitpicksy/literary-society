@@ -64,6 +64,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/books/download").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/books/download/{bookId}").permitAll()
 
+                .antMatchers(HttpMethod.GET, "/api/books/merchant").hasAuthority("CREATE_BOOK")
+                .antMatchers(HttpMethod.POST, "/api/books").hasAuthority("CREATE_BOOK")
+
                 .antMatchers(HttpMethod.GET, "/api/books/{id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/books/start-publishing").hasAuthority("MANAGE_PUBLICATION_REQUESTS")
                 .antMatchers(HttpMethod.GET, "/api/books/publication-request-form").hasAuthority("MANAGE_PUBLICATION_REQUESTS")
@@ -93,6 +96,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.GET, "/api/writers/start-registration").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/writers/registration-form").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/subscriptions/create-plans").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/subscriptions/plan").hasAuthority("SUBSCRIBE")
+                .antMatchers(HttpMethod.POST, "/api/subscriptions/subscribe").hasAuthority("SUBSCRIBE")
+                .antMatchers(HttpMethod.POST, "/api/subscriptions/unsubscribe").hasAuthority("SUBSCRIBE")
 
                 .anyRequest().authenticated().and()
                 .cors().and()

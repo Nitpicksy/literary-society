@@ -19,7 +19,9 @@ public class MembershipDtoMapper implements MapperInterface<Membership, Membersh
     @Override
     public MembershipDTO toDto(Membership entity) {
         MembershipDTO dto = modelMapper.map(entity, MembershipDTO.class);
-        dto.setExpirationDate(entity.getExpirationDate().toString());
+        if (entity.getExpirationDate() != null) {
+            dto.setExpirationDate(entity.getExpirationDate().toString());
+        }
         dto.setUser(entity.getUser().getUsername());
         dto.setMerchantName(entity.getMerchant().getName());
         return dto;

@@ -61,6 +61,19 @@ public class PublishingInfo {
         this.ISBN = generateISBN();
     }
 
+    public PublishingInfo(String ISBN, Integer numberOfPages, String publisherCity, LocalDate publicationDate, String publisher, Double price,
+                          Integer discount, Book book, Merchant merchant) {
+        this.ISBN = ISBN;
+        this.numberOfPages = numberOfPages;
+        this.publisherCity = publisherCity;
+        this.publicationDate = publicationDate;
+        this.publisher = publisher;
+        this.price = price;
+        this.discount = discount;
+        this.book = book;
+        this.merchant = merchant;
+    }
+
     private String generateISBN() {
         RandomStringGenerator generator = new RandomStringGenerator.Builder()
                 .withinRange('0', '9').build();

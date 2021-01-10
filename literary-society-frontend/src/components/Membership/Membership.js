@@ -20,7 +20,7 @@ const Membership = (props) => {
 
     const history = useHistory();
     const classes = useStyles();
-
+    
     const [displayPrice, setDisplayPrice] = useState(false);
 
     const { fetchMembership, membership } = props;
@@ -83,36 +83,43 @@ const Membership = (props) => {
                {buttons}
           </Grid>) 
     } else {
-        let expirationDate = new Date(membership.expirationDate);
-        let now = new Date();
-
-        buttons = (
-            <Fragment>
-                <Grid container
-            alignItems="center"
-            justify="center" 
-            spacing={3} align="center">   
-              <Grid item xs={2}>
-               <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => handlePay()}>
-                   Purchase
-               </Button>
-             </Grid> 
-            </Grid>
-            </Fragment>
-        )
-
-        if(now > expirationDate) {
-            data = (<Fragment> 
-                <MembershipDetails user={membership}/>
-                {buttons}
+        if(membership.expirationDate) {
+            let expirationDate = new Date(membership.expirationDate);
+            let now = new Date();
+    
+            buttons = (
+                <Fragment>
+                    <Grid container
+                alignItems="center"
+                justify="center" 
+                spacing={3} align="center">   
+                  <Grid item xs={2}>
+                   <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => handlePay()}>
+                       Purchase
+                   </Button>
+                 </Grid> 
+                </Grid>
                 </Fragment>
-                )
+            )
+    
+            if(now > expirationDate) {
+                data = (<Fragment> 
+                    <MembershipDetails user={membership}/>
+                    {buttons}
+                    </Fragment>
+                    )
+            } else {
+                data = (<Fragment> 
+                    <MembershipDetails user={membership}/>
+                    </Fragment>
+                    )
+            }
         } else {
             data = (<Fragment> 
                 <MembershipDetails user={membership}/>
                 </Fragment>
                 )
-        }
+        }        
     }
 
     if(priceList) {

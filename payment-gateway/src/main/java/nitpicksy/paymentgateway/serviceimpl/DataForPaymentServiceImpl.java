@@ -20,6 +20,12 @@ public class DataForPaymentServiceImpl implements DataForPaymentService {
     }
 
     @Override
+    public DataForPayment findByAttribute(Long merchantId, String paymentMethodCommonName, String attributeName) {
+        return dataForPaymentRepository.findByMerchantIdAndPaymentMethodCommonNameAndAttributeName(
+                merchantId, paymentMethodCommonName, attributeName);
+    }
+
+    @Override
     public List<DataForPayment> save(List<DataForPayment> dataForPayments) {
         return dataForPaymentRepository.saveAll(dataForPayments);
     }

@@ -1,4 +1,9 @@
 APP|Application startup/shutdown
+REF|Refresh token
+FGN|Feign client exception
+CSP|Create subscription plan
+SUB|Subscribe
+UNS|Unsubscribe
 LGN|Login
 REG|Registration
 CPW|Change password
@@ -34,3 +39,4 @@ ADDOEC|Add opinion od editor about complaint
 ADDOE|Add opinion od editor
 ADDR|Add reader
 ADDW|Add writer
+ADDB|Add book

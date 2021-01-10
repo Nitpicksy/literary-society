@@ -26,11 +26,14 @@ public class Membership {
     @Column(nullable = false)
     private Double price;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate expirationDate;
 
     @Column
     private boolean isSubscribed;
+
+    @Column
+    private String subscriptionId;
 
     @PrimaryKeyJoinColumn
     @ManyToOne(fetch = FetchType.EAGER)

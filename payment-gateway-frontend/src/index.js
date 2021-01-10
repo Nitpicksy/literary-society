@@ -31,7 +31,7 @@ const rootReducer = combineReducers({
   signIn: signInReducer,
   addCompany: addCompanyReducer,
   companyList: companyListReducer,
-  merchantSupportPaymentMethods:merchantSupportPaymentMethodsReducer
+  merchantSupportPaymentMethods: merchantSupportPaymentMethodsReducer
 });
 
 const store = createStore(

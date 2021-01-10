@@ -1,5 +1,9 @@
 package nitpicksy.literarysociety.client;
 
+import nitpicksy.literarysociety.dto.request.CancelSubscriptionDTO;
+import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
+import nitpicksy.literarysociety.dto.request.SubscriptionDTO;
+import nitpicksy.literarysociety.dto.request.SubscriptionPlanDTO;
 import nitpicksy.literarysociety.config.FeignClientConfiguration;
 import nitpicksy.literarysociety.dto.request.LiterarySocietyOrderRequestDTO;
 import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
@@ -27,6 +31,18 @@ public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.GET, path = "payment-gateway/api/merchants/{name}/payment-data")
     ResponseEntity<String> getPaymentData(@RequestHeader(value = "Auth") String authHeader, @PathVariable String name);
+
+    @RequestMapping(method = RequestMethod.POST, path = "payment-gateway/api/subscriptions/create-plan")
+    String createSubscriptionPlan(@RequestHeader(value = "Auth") String authHeader,
+                                  @RequestBody SubscriptionPlanDTO subscriptionPlanDTO);
+
+    @RequestMapping(method = RequestMethod.POST, path = "payment-gateway/api/subscriptions/subscribe")
+    String subscribe(@RequestHeader(value = "Auth") String authHeader,
+                     @RequestBody SubscriptionDTO subscriptionDTO);
+
+    @RequestMapping(method = RequestMethod.POST, path = "payment-gateway/api/subscriptions/unsubscribe")
+    String unsubscribe(@RequestHeader(value = "Auth") String authHeader,
+                       @RequestBody CancelSubscriptionDTO cancelSubscriptionDTO);
 
     @RequestMapping(method = RequestMethod.POST, path = "payment-gateway/api/merchants")
     void addMerchant(@RequestHeader(value = "Auth") String authHeader,

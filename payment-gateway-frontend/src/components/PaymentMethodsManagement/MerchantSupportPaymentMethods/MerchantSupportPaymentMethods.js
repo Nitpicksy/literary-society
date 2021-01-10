@@ -41,14 +41,17 @@ const MerchantSupportPaymentMethods = (props) => {
             }
         }
 
-    }, [fetchPayment]);
+    }, [fetchPayment, history, props.location]);
+
+    console.log('methods', props.paymentMethods);
 
     useEffect(() => {
+
         if (paymentMethods) {
             let extractedControls = extractControlsFromPaymentMethodsData(paymentMethods);
             setControls(extractedControls);
         }
-    }, [paymentMethods]);
+    }, []);
 
     const submitHander = (event) => {
         event.preventDefault();

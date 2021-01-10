@@ -1,7 +1,7 @@
 package nitpicksy.paymentgateway.client;
 
+import nitpicksy.paymentgateway.dto.request.*;
 import nitpicksy.paymentgateway.config.FeignClientConfiguration;
-import nitpicksy.paymentgateway.dto.request.DynamicPaymentDetailsDTO;
 import nitpicksy.paymentgateway.dto.response.LiterarySocietyOrderResponseDTO;
 import nitpicksy.paymentgateway.dto.response.PaymentResponseDTO;
 import nitpicksy.paymentgateway.dto.response.TransactionResponseDTO;
@@ -55,8 +55,18 @@ public interface ZuulClient {
     void sendJWTToken(URI baseUrl, @RequestBody String jwtToken);
 
 
-    @RequestMapping(method = RequestMethod.POST, path="/api/merchants/{name}/payment-data")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/merchants/{name}/payment-data")
     String supportPaymentMethods(URI baseUrl, @PathVariable String name);
+
+
+    @RequestMapping(method = RequestMethod.POST, path = "/api/subscriptions/create-plan")
+    String createSubscriptionPlan(URI baseUrl, @RequestBody SubscriptionPlanToPaypalDTO planToPaypalDTO);
+
+    @RequestMapping(method = RequestMethod.POST, path = "/api/subscriptions/subscribe")
+    String subscribe(URI baseUrl, @RequestBody SubscriptionToPaypalDTO subscriptionToPaypalDTO);
+
+    @RequestMapping(method = RequestMethod.POST, path = "/api/subscriptions/unsubscribe")
+    String unsubscribe(URI baseUrl, @RequestBody CancelSubscriptionToPaypalDTO cancelSubscriptionDTO);
 
     @RequestMapping(method = RequestMethod.GET, path = "/api/merchants/active")
     List<String> getAllMerchants(URI baseUrl);

@@ -28,7 +28,6 @@ eureka:
     prefer-ip-address: false
     instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
 
-# enable all actuator endpoints for testing (review this for real deployments)
 management:
   endpoints:
     web:

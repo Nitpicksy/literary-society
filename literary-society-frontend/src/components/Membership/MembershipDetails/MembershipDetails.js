@@ -12,6 +12,10 @@ const MembershipDetails = (props) => {
 
     let isExpired = () => {
 
+        if(!user.expirationDate) {
+            return false;
+        }
+
         let expirationDate = new Date(user.expirationDate);
         let now = new Date();
 
