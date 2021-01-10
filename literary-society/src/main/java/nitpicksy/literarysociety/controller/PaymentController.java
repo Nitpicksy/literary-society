@@ -39,14 +39,14 @@ public class PaymentController {
             throw new InvalidUserDataException("Please choose existing books.", HttpStatus.BAD_REQUEST);
         }
         String redirectUrl = paymentService.proceedToBookPayment(bookService.findByIds(booksIds), userService.getAuthenticatedUser());
-        System.out.println("redirectUrl" + redirectUrl);
+        System.out.println("redirectUrl: " + redirectUrl);
         return new ResponseEntity<>(redirectUrl, HttpStatus.OK);
     }
-    
+
     @PostMapping(value = "/pay-membership", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> proceedToMembershipPayment() {
         String redirectUrl = paymentService.proceedToMembershipPayment(userService.getAuthenticatedUser());
-        System.out.println("redirectUrl" + redirectUrl);
+        System.out.println("redirectUrl: " + redirectUrl);
         return new ResponseEntity<>(redirectUrl, HttpStatus.OK);
     }
 

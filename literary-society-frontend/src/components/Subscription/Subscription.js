@@ -52,16 +52,16 @@ const Subscription = (props) => {
     if (props.subscriptionPlan) {
         if (props.subscriptionPlan.membershipStatus === "NOT_SUBSCRIBED") {
             button =
-                <Button variant="contained" color="primary" fullWidth
-                    disabled={loading} onClick={() => handleSubscribe()}>
-                    Subscribe
-                </Button>;
+                <div className={classes.wrapper}>
+                    <Button variant="contained" color="primary" fullWidth
+                        disabled={loading} onClick={() => handleSubscribe()}>
+                        Subscribe
+                    </Button>
+                    {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+                </div>;
         } else if (props.subscriptionPlan.membershipStatus === "SUBSCRIBED") {
             button =
-                <Button variant="contained" fullWidth
-                    disabled={loading} onClick={() => handleUnsubscribe()}>
-                    Unsubscribe
-                </Button>;
+                <Button variant="contained" fullWidthonClick={() => handleUnsubscribe()}>Unsubscribe</Button>;
         }
 
         plan =
@@ -78,10 +78,7 @@ const Subscription = (props) => {
                 <Typography component="h1" variant="h5" className={classes.message && classes.price}>
                     {props.subscriptionPlan.price} din. every {props.subscriptionPlan.frequencyCount} {props.subscriptionPlan.frequencyUnit.toLowerCase()}
                 </Typography>
-                <div className={classes.wrapper}>
-                    {button}
-                    {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
-                </div>
+                {button}
             </React.Fragment>;
     }
 
