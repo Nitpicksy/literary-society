@@ -1,6 +1,7 @@
 import axios from '../../axios-endpoint';
 import { toastr } from 'react-redux-toastr';
 import * as actionTypes from './BookDetailsActionTypes';
+import { saveAs } from 'file-saver';
 
 export const fetchBookSuccess = (book) => {
     return {
@@ -30,5 +31,19 @@ export const fetchBook = (id, history) => {
                 }
                 history.push('/');
             });
+    };
+};
+
+export const download = (id,title) => {
+    return dispatch => {
+        axios(`/books/download/${id}`, {
+            method: 'GET',
+            responseType: 'blob'
+        }).then((response) => {
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            saveAs(blob, title);
+        }).catch(err => {
+            toastr.error('Download book', 'Something went wrong.Please try again.');
+        });
     };
 };

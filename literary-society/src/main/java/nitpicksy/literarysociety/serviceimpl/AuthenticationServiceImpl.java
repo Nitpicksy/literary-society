@@ -137,9 +137,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = token.getUser();
         user.setEnabled(true);
 
-        if (user.getRole().getName().equals(RoleConstants.ROLE_WRITER)) {
+        if (user.getRole().getName().equals(RoleConstants.ROLE_EDITOR)) {
             user.setStatus(UserStatus.WAITING_APPROVAL);
-        } else {
+        } else if (user.getRole().getName().equals(RoleConstants.ROLE_LECTURER)) {
+            user.setStatus(UserStatus.WAITING_APPROVAL);
+        }else if(user.getRole().getName().equals(RoleConstants.ROLE_MERCHANT)){
+            user.setStatus(UserStatus.WAITING_APPROVAL);
+        }
+        else {
             user.setStatus(UserStatus.ACTIVE);
         }
 

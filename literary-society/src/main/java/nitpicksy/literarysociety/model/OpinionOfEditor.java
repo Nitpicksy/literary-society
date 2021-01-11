@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -29,10 +30,13 @@ public class OpinionOfEditor {
     @ManyToOne(fetch = FetchType.EAGER)
     private User editor;
 
+    @Column(nullable = false, length = 1000)
+    private String comment;
+
     @PrimaryKeyJoinColumn
     @ManyToOne(fetch = FetchType.EAGER)
-    private PDFDocument downloadedPDFDocument;
+    private Book book;
 
     @Column(nullable = false)
-    private String comment;
+    private LocalDateTime created;
 }

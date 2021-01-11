@@ -1,29 +1,36 @@
-insert into company (uri, common_name, company_name, error_url, failed_url, success_url)
-values ('http://localhost:8090', 'literary-society', 'Nitpicksy LU 1', 'https://localhost:3000/payment/error',
-        'https://localhost:3000/payment/failed', 'https://localhost:3000/payment/success');
+insert into company (uri, common_name, company_name, email, error_url, failed_url, success_url, certificate_name,
+                     status, enabled)
+values ('http://localhost:8090', 'literary-society', 'Nitpicksy LU 1', 'literary@maildrop.cc',
+        'https://www.literary-society.com:3000/payment/error', 'https://www.literary-society.com:3000/payment/failed',
+        'https://www.literary-society.com:3000/payment/success', 'literary.crt', 'APPROVED', true);
+
+insert into merchant (name, company_id, supports_payment_methods)
+values ('LU One Merchant', 1, true);
+
+insert into merchant (name, company_id, supports_payment_methods)
+values ('Vulkan', 1, true);
+
+insert into merchant (name, company_id, supports_payment_methods)
+values ('Laguna', 1, true);
+
+insert into merchant (name, company_id, supports_payment_methods)
+values ('Lom', 1, true);
+
+insert into merchant (name, company_id, supports_payment_methods)
+values ('Logos', 1, true);
+
+insert into merchant (name, company_id, supports_payment_methods)
+values ('Amazon', 1, true);
 
 
-insert into merchant (name, company_id)
-values ('Vulkan', 1);
+insert into payment_method (common_name, name, subscription, status, uri, email, certificate_name)
+values ('bank', 'Credit Card', false, 'APPROVED', 'https://localhost:8090/api', 'bank@maildrop.cc', 'bank.crt');
 
-insert into merchant (name, company_id)
-values ('Laguna', 1);
+insert into payment_method (common_name, name, subscription, status, uri, email, certificate_name)
+values ('paypal', 'Paypal', true, 'APPROVED', 'https://localhost:8200/api', 'paypal@maildrop.cc', 'paypal.crt');
 
-insert into merchant (name, company_id)
-values ('Lom', 1);
-
-insert into merchant (name, company_id)
-values ('Logos', 1);
-
-
-insert into payment_method (common_name, name, subscription, status, uri)
-values ('bank', 'Credit Card', false, 'APPROVED', 'https://localhost:8090/api');
-
-insert into payment_method (common_name, name, subscription, status, uri)
-values ('paypal', 'Paypal', true, 'APPROVED', 'https://localhost:8200/api');
-
-insert into payment_method (common_name, name, subscription, status, uri)
-values ('bitcoin', 'Bitcoin', false, 'APPROVED', 'https://localhost:8300/api');
+insert into payment_method (common_name, name, subscription, status, uri, email, certificate_name)
+values ('bitcoin', 'Bitcoin', false, 'APPROVED', 'https://localhost:8300/api', 'bitcoin@maildrop.cc', 'bitcoin.crt');
 
 
 insert into company_payment_methods (company_id, payment_method_id)
@@ -36,34 +43,108 @@ insert into company_payment_methods (company_id, payment_method_id)
 values (1, 3);
 
 
--- Vulkan
+--DATA
+--Bank
+insert into data (attribute_json_name, name, attribute_type, payment_method_id)
+values ('merchantId', 'Merchant Id', 'text', 1);
+insert into data (attribute_json_name, name, attribute_type, payment_method_id)
+values ('merchantPassword', 'Merchant Password', 'password', 1);
+
+--PayPal
+insert into data (attribute_json_name, name, attribute_type, payment_method_id)
+values ('merchantClientId', 'Merchant client Id', 'text', 2);
+insert into data (attribute_json_name, name, attribute_type, payment_method_id)
+values ('merchantClientSecret', 'Merchant Client Secret', 'password', 2);
+
+--Bitcoin
+insert into data (attribute_json_name, name, attribute_type, payment_method_id)
+values ('merchantToken', 'Merchant API Token', 'password', 3);
+
+
+-- DATA FOR PAYMENT
+
+-- Default LU Merchant
 -- For Bank: merchantId and merchantPassword
-insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
 values ('merchantId',
-        '91f30b2d7007cd72372ba0761549dca5f8c7dc3f6b104cadf1741a467250a9abd8063ba1136e11d13d2f3ceee82c17f2ac41c632d5fb57c9db8d841ba99b63b3',
-        1, 1);
-insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
-values ('merchantPassword', '$2y$12$eXrOWDTddWPKYU77BTZpM.1O0ZYAZ9GgVugZi5yK/5eRUT9EYy0xm', 1, 1);
+        '48629d6f8ac6048d1f17266bd732324c79c26bfcacd6db69852a7b2500f94422e8d6c221e759b4e685b25959c9bed9dd5fb6a309a412a522a210c0f4e39de895',
+        1, 1, 1);
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
+values ('merchantPassword',
+        '2cbcb5fcca516d90d4cd1b65c5bc844d67955b41e8ba66cdffef8dc894c981d044c09fcc1f3e04baf1475401ab321ed813fb668ccb369b2f70788a3c70793da3',
+        1, 1, 2);
 
 -- For PayPal: merchantClientId and merchantClientSecret
-insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
-values ('merchantClientId', 'Af7nTAdvuAjb3_n5gzUTsfQag0ZCkF-qs6ASwFdMfLKzZ_6GWVNCB9TdTpXVAsKZBeYHSVGRqZx1h68R', 1, 2);
-insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
-values ('merchantClientSecret', 'EF60H0GD454RHXIpemtrBAi1w6VmeGjmc_sY7C8aa0YaEwLp_Xv2sJTSIpLkVuqaSXdSAQ72VAWiu3MY', 1,
-        2);
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
+values ('merchantClientId', 'AZRZ5NKCNB4ZkLdmx-o_SZIL3lTbGaKd0tiX2dyVaNMfEqSIMVZJPNjgcZKmbGLNUy17Z6gOi9jZIj4R', 1, 2,
+        3);
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
+values ('merchantClientSecret', 'EGU9nvBhzJPHupEsi6cFTIkDfE4uKIz7fnQZsXpvWkMh5InMVlbwjGqp3AFJdBI9qeLH51I4WCuluWOL', 1,
+        2, 4);
+
+-- For Bitcoin: merchantToken
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
+values ('merchantToken',
+        'xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC',
+        1, 3, 5);
+
+
+-- Vulkan
+-- For Bank: merchantId and merchantPassword
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
+values ('merchantId',
+        '91f30b2d7007cd72372ba0761549dca5f8c7dc3f6b104cadf1741a467250a9abd8063ba1136e11d13d2f3ceee82c17f2ac41c632d5fb57c9db8d841ba99b63b3',
+        2, 1, 1);
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
+values ('merchantPassword',
+        '2ab816119860a4f2ea41ef58181cc965d2dc87c2bf3f5c39ffa66bb6c8e2ee7b454fe47d62be94bcf0ab09889757580756fbc4e32609ac639740aede43f22280',
+        2, 1, 2);
+
+-- For PayPal: merchantClientId and merchantClientSecret
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
+values ('merchantClientId', 'Af7nTAdvuAjb3_n5gzUTsfQag0ZCkF-qs6ASwFdMfLKzZ_6GWVNCB9TdTpXVAsKZBeYHSVGRqZx1h68R', 2, 2,
+        3);
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
+values ('merchantClientSecret', 'EF60H0GD454RHXIpemtrBAi1w6VmeGjmc_sY7C8aa0YaEwLp_Xv2sJTSIpLkVuqaSXdSAQ72VAWiu3MY', 2,
+        2, 4);
+
+-- For Bitcoin: merchantToken
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
+values ('merchantToken',
+        'xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC',
+        2, 3, 5);
+
 
 -- Laguna
 -- For Bank: merchantId and merchantPassword
-insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
 values ('merchantId',
         '1dcae25c2de2bbab00044e500962d7cf40f9c1bbf19d508af0d1a3a9799462573af4b246d5ec3f3d7286b368f5a85b5fbb3db31ded47f3770e1c79fd5b15532',
-        2, 1);
-insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
-values ('merchantPassword', '$2y$12$nUQcibFKSiCXM7o9K3fYLuedSA0how/xjScCGGHpOtjqXNGD1NFc6', 2, 1);
+        3, 1, 1);
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
+values ('merchantPassword',
+        '43a718f649b677cbee616b74b4f57e42de51c29e846e68eb339eb1c20cebe96829e73ffa803d4664d6b1d6b2f8d0c35b3f2385ca14ed95118a466b9644d200fe',
+        3, 1, 2);
 
 -- For PayPal: merchantClientId and merchantClientSecret
-insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
-values ('merchantClientId', 'ARPDqaQtYU6ilCpwG0IXT35OMXGTjsA3K-QFYLItx5oRcJUOqZ527Z7BfNs6sS3yu45kdINghGRLR8vV', 2, 2);
-insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id)
-values ('merchantClientSecret', 'ECBW7VI6Tzi23LnYdLEvnvEW5fm7drD6kvgVRMD2hnTOk9f9AJSqJaD-8p0aLrOWMBdoKGM9wIoPby4j', 2,
-        2);
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
+values ('merchantClientId', 'ARPDqaQtYU6ilCpwG0IXT35OMXGTjsA3K-QFYLItx5oRcJUOqZ527Z7BfNs6sS3yu45kdINghGRLR8vV', 3, 2,
+        3);
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
+values ('merchantClientSecret', 'ECBW7VI6Tzi23LnYdLEvnvEW5fm7drD6kvgVRMD2hnTOk9f9AJSqJaD-8p0aLrOWMBdoKGM9wIoPby4j', 3,
+        2, 4);
+
+-- For Bitcoin: merchantToken
+insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
+values ('merchantToken',
+        'xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC',
+        3, 3, 5);
+
+
+-- SUBSCRIPTION PLANS
+
+-- Default LU Merchant
+insert into subscription_plan (company_common_name, company_plan_id, paypal_plan_id)
+values ('literary-society', 1, 'P-74S64158P6034971TL75S45Y');
+insert into subscription_plan (company_common_name, company_plan_id, paypal_plan_id)
+values ('literary-society', 2, 'P-3B8868172K211273WL75S46A');

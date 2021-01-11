@@ -27,9 +27,19 @@ public class OpinionOfCommitteeMember {
     @ManyToOne(fetch = FetchType.EAGER)
     private Writer writer;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String comment;
 
     @Enumerated(EnumType.STRING)
     private CommitteeMemberOpinion opinion;
+
+    @Column
+    private boolean reviewed;
+
+    public OpinionOfCommitteeMember(User committeeMember, Writer writer, String comment, CommitteeMemberOpinion opinion) {
+        this.committeeMember = committeeMember;
+        this.writer = writer;
+        this.comment = comment;
+        this.opinion = opinion;
+    }
 }

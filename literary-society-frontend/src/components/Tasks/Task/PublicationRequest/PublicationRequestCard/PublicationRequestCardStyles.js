@@ -18,12 +18,12 @@ export const useStyles = makeStyles((theme) => ({
   synopsis: {
     fontSize: '1.1rem',
     lineHeight: 'normal',
-    marginBottom: theme.spacing(0.4),
+    marginBottom: theme.spacing(1),
     textAlign: 'justify',
   },
   genre: {
     fontSize: '1.1rem',
     lineHeight: 'normal',
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(2),
   },
 }));

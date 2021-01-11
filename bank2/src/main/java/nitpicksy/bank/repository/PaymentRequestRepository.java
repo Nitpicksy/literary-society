@@ -9,5 +9,5 @@ public interface PaymentRequestRepository extends JpaRepository<PaymentRequest, 
 
     PaymentRequest findOneById(Long id);
 
-    PaymentRequest findByMerchantOrderId(Long id);
+    PaymentRequest findByMerchantOrderId(String id);
 }

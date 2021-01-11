@@ -18,9 +18,9 @@ export const fetchFormFail = (error) => {
     };
 };
 
-export const fetchForm = () => {
+export const fetchForm = (piId, taskId) => {
     return dispatch => {
-        axios.get('/books/start-publishing')
+        axios.get(`/books/publication-request-form?piId=${piId}&taskId=${taskId}`)
             .then(response => {
                 dispatch(fetchFormSuccess(response.data.formFields, response.data.processInstanceId, response.data.taskId));
             })
@@ -29,7 +29,7 @@ export const fetchForm = () => {
                     dispatch(fetchFormFail(err.response.data.message));
                     toastr.error('Create Publication Request', err.response.data.message);
                 } else {
-                    toastr.error('Create Publication Request', 'Something goes wrong');
+                    toastr.error('Create Publication Request', 'Something went wrong');
                 }
             });
     };

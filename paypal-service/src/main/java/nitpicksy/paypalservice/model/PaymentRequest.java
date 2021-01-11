@@ -29,7 +29,7 @@ public class PaymentRequest {
     private String merchantClientSecret;
 
     @Column(nullable = false)
-    private Long merchantOrderId;
+    private String merchantOrderId;
 
     @Column(nullable = false)
     private Timestamp merchantTimestamp;

@@ -22,6 +22,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.security.NoSuchAlgorithmException;
 
+
 @Validated
 @RestController
 @RequestMapping(value = "/api/payments", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -43,7 +44,7 @@ public class PaymentController {
 
     @PostMapping(value = "/confirm/{paymentId}",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> confirmPayment(@PathVariable @Positive(message = "Payment id must be positive.") Long paymentId,
-                                                             @Valid @RequestBody ConfirmPaymentDTO confirmPaymentDTO) throws NoSuchAlgorithmException {
+                                                 @Valid @RequestBody ConfirmPaymentDTO confirmPaymentDTO) throws NoSuchAlgorithmException {
         return new ResponseEntity<>(paymentService.confirmPayment(confirmPaymentDTO,paymentId), HttpStatus.OK);
     }
 
@@ -54,3 +55,4 @@ public class PaymentController {
         this.merchantService = merchantService;
     }
 }
+

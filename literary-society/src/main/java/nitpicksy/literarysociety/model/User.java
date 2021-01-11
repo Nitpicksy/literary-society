@@ -99,10 +99,6 @@ public class User implements org.camunda.bpm.engine.identity.User, UserDetails {
         this.password = password;
     }
 
-    public Long getIdFromDB() {
-        return this.id;
-    }
-
     @Override
     public String getUsername() {
         return username;
@@ -125,7 +121,7 @@ public class User implements org.camunda.bpm.engine.identity.User, UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return (this.getStatus() == UserStatus.ACTIVE || this.getStatus() == UserStatus.WAITING_APPROVAL);
+        return (this.getStatus() == UserStatus.ACTIVE);
     }
 
     @Override

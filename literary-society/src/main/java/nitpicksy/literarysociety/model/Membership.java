@@ -26,13 +26,24 @@ public class Membership {
     @Column(nullable = false)
     private Double price;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate expirationDate;
 
     @Column
     private boolean isSubscribed;
 
+    @Column
+    private String subscriptionId;
+
     @PrimaryKeyJoinColumn
     @ManyToOne(fetch = FetchType.EAGER)
     private Merchant merchant;
+
+    public Membership(User user, Double price, LocalDate expirationDate, boolean isSubscribed, Merchant merchant) {
+        this.user = user;
+        this.price = price;
+        this.expirationDate = expirationDate;
+        this.isSubscribed = isSubscribed;
+        this.merchant = merchant;
+    }
 }

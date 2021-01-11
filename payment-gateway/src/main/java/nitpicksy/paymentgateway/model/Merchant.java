@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 @Getter
@@ -20,6 +21,18 @@ public class Merchant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
+
+    @ManyToOne
+    private Company company;
+
+    @Column
+    private boolean supportsPaymentMethods;
+
+    public Merchant(String name, Company company) {
+        this.name = name;
+        this.company = company;
+        this.supportsPaymentMethods = false;
+    }
 }

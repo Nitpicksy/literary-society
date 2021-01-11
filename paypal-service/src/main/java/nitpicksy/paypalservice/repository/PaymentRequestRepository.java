@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface PaymentRequestRepository extends JpaRepository<PaymentRequest, Long> {
 
     PaymentRequest findOneByPaymentId(String paymentId);
-    
+
+    PaymentRequest findOneById(Long id);
 }

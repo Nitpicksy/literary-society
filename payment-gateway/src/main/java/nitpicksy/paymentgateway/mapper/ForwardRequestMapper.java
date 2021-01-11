@@ -20,10 +20,13 @@ public class ForwardRequestMapper implements MapperInterface<Transaction, Dynami
     public DynamicPaymentDetailsDTO toDto(Transaction entity) {
         DynamicPaymentDetailsDTO dto = modelMapper.map(entity, DynamicPaymentDetailsDTO.class);
         dto.setAmount(entity.getAmount());
-        dto.setSuccessURL(entity.getCompany().getSuccessURL() + '/' + entity.getMerchantOrderId());
+        Long merchantOrderId = Long.valueOf( entity.getMerchantOrderId().split("::")[1]);
+
+        dto.setSuccessURL(entity.getCompany().getSuccessURL() + '/' + merchantOrderId);
         dto.setFailedURL(entity.getCompany().getFailedURL());
         dto.setErrorURL(entity.getCompany().getErrorURL());
         dto.setMerchantTimestamp(entity.getMerchantTimestamp().toString());
+
         dto.setMerchantOrderId(entity.getMerchantOrderId());
         return dto;
     }

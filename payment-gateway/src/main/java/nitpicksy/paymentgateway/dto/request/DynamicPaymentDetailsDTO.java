@@ -19,9 +19,8 @@ public class DynamicPaymentDetailsDTO {
     @Digits(integer = 10, fraction = 2)
     private Double amount;
 
-    @NotNull
-    @Digits(integer = 10, fraction = 0)
-    private Long merchantOrderId;
+    @NotBlank
+    private String merchantOrderId;
 
     @NotBlank(message = "Timestamp is not provided.")
     private String merchantTimestamp;

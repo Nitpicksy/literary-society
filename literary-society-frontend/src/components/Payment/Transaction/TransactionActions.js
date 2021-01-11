@@ -1,5 +1,7 @@
 import axios from '../../../axios-endpoint';
 import * as actionTypes from './TransactionActionTypes';
+import { saveAs } from 'file-saver';
+import { toastr } from 'react-redux-toastr';
 
 export const fetchTransactionStart = () => {
     return {
@@ -9,7 +11,9 @@ export const fetchTransactionStart = () => {
 
 
 export const fetchTransactionSuccess = (transaction) => {
-    removeBooksFromLocalStorage(transaction.orderedBooks)
+    if(transaction.orderedBooks.length !== 0) {
+        removeBooksFromLocalStorage(transaction.orderedBooks)
+    }
     return {
         type: actionTypes.FETCH_TRANSACTION_SUCCESS,
         transaction: transaction
@@ -31,5 +35,21 @@ export const fetchTransaction = (transactionId) => {
             .then(response => {
                 dispatch(fetchTransactionSuccess(response.data));
             });
+    };
+};
+
+
+export const download = (token,history) => {
+    return dispatch => {
+        axios(`/books/download?t=${token}`, {
+            method: 'GET',
+            responseType: 'blob'
+        }).then((response) => {
+            const blob = new Blob([response.data], { type: 'application/zip' });
+            saveAs(blob, 'books.zip');
+        }).catch(err => {
+            toastr.error('Books', 'Something went wrong.Please try again.');
+            history.push('/');
+        });
     };
 };

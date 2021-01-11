@@ -14,7 +14,14 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     List<Book> findByStatusAndPublishingInfoMerchantSupportsPaymentMethods(BookStatus status, boolean supportsPaymentMethods);
 
+    List<Book> findByStatusAndPublishingInfoMerchantSupportsPaymentMethodsAndPublishingInfoMerchantId(BookStatus status, boolean supportsPaymentMethods, Long merchantId);
+
     Set<Book> findByIdIn(Collection<Long> id);
 
     Book findOneById(Long id);
+
+    List<Book> findByWriterId(Long writerId);
+    
+    Book findFirstByTitleContainingAndWritersNamesContaining(String title, String writer);
+
 }

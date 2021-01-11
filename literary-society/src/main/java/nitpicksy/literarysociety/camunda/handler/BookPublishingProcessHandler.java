@@ -31,13 +31,8 @@ public class BookPublishingProcessHandler implements ExecutionListener {
         }
         execution.setVariable("selectGenreList", enumList);
 
-        User user = userService.getAuthenticatedUser();
-        if (user instanceof Writer) {
-            execution.setVariable("writer", user.getUsername());
-        } else {
-            // TODO: Kako obraditi slucaj ako nije pisac?
-            System.out.println("***** NIJE PISAC *****");
-        }
+        Writer writer = (Writer) userService.getAuthenticatedUser();
+        execution.setVariable("writer", writer.getUsername());
     }
 
     @Autowired

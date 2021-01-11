@@ -26,9 +26,19 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     show-sql: false
-
+  mail:
+    host: smtp.gmail.com
+    username: konstrukcijaitestsoftvera2020@gmail.com
+    password: KTS2020Projekat
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 eureka:
   client:
     service-url:
@@ -46,7 +56,20 @@ eureka:
     prefer-ip-address: false
     hostname: localhost
 
-API_GATEWAY_URL: https://zuul:8080
+API_GATEWAY_URL: https://localhost:8080
 
 #payment methods redirect url
 GATEWAY_PAYMENT_REDIRECT_URL: https://localhost:3003/payment
+TOKEN_UTILS_APP_NAME: literary-society
+TOKEN_UTILS_SECRET: Nitpicsky
+
+TOKEN_UTILS_EXPIRES_IN: 1209600000
+# 14 days
+TOKEN_UTILS_REFRESH_TOKEN_EXPIRES_IN: 1209600000
+TOKEN_UTILS_AUTH_HEADER: Auth
+
+LOCALHOST_URL: https://localhost:3003/
+
+#TRUST_STORE_PASSWORD: password
+TRUST_STORE_PASSWORD: cinema
+

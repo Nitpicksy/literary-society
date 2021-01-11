@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0erbsq2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:process id="EditorSendManuScriptToBetaReaders" isExecutable="true">
+    <bpmn:startEvent id="Event_1qmitq8" name="Start">
+      <bpmn:outgoing>Flow_13oygnz</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0jh8xj5" name="Success">
+      <bpmn:incoming>Flow_1ra7i2a</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_0fd8acg" name="Definišite da li se rukopis šalje skupu beta čitaoca" camunda:assignee="${mainEditor}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="decision" label="Decision" type="enum">
+            <camunda:properties>
+              <camunda:property id="multipleSelect" value="false" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="requiredSelect" config="true" />
+            </camunda:validation>
+            <camunda:value id="SEND_IT" name="I want to send it to beta-readers" />
+            <camunda:value id="NOT_SEND_IT" name="I don&#39;t want to send it to beta-readers" />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_13oygnz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xpuqt1</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_1vs5x05">
+      <bpmn:incoming>Flow_1xpuqt1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0t5598f</bpmn:outgoing>
+      <bpmn:outgoing>Flow_03wozca</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_13oygnz" sourceRef="Event_1qmitq8" targetRef="Activity_0fd8acg" />
+    <bpmn:sequenceFlow id="Flow_0t5598f" name="Rukopis se salje beta-citaocima" sourceRef="Gateway_1vs5x05" targetRef="Activity_03w3i7h">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision != "NOT_SEND_IT"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1xpuqt1" sourceRef="Activity_0fd8acg" targetRef="Gateway_1vs5x05" />
+    <bpmn:sequenceFlow id="Flow_03wozca" name="Rukopis se ne salje beta-citaocima" sourceRef="Gateway_1vs5x05" targetRef="Event_17icg98">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision == "NOT_SEND_IT"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_17icg98" name="Success">
+      <bpmn:incoming>Flow_03wozca</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0zlfk38" sourceRef="Activity_03w3i7h" targetRef="Activity_1kghhxo" />
+    <bpmn:serviceTask id="Activity_03w3i7h" name="Dobavi beta-čitaoce" camunda:class="nitpicksy.literarysociety.camunda.service.FindBetaReadersForPublicationRequestProcessService">
+      <bpmn:incoming>Flow_0t5598f</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zlfk38</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Activity_1kghhxo" name="Odaberite beta-citaoce" camunda:assignee="${mainEditor}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="selectBetaReader" label="Choose Beta-readers" type="enum">
+            <camunda:properties>
+              <camunda:property id="multipleSelect" value="true" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="requiredSelect" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0zlfk38</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kz8vf7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0kz8vf7" sourceRef="Activity_1kghhxo" targetRef="Activity_1rqgb9s" />
+    <bpmn:sequenceFlow id="Flow_1ra7i2a" sourceRef="Activity_1rqgb9s" targetRef="Event_0jh8xj5" />
+    <bpmn:serviceTask id="Activity_1rqgb9s" name="Postavi listu odabranih beta-citalaca" camunda:class="nitpicksy.literarysociety.camunda.service.SetChosenBetaReadersService">
+      <bpmn:incoming>Flow_0kz8vf7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ra7i2a</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmn:error id="Error_0b9ne7o" name="greskaOdbijanje" errorCode="greskaOdbijanje" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="EditorSendManuScriptToBetaReaders">
+      <bpmndi:BPMNEdge id="Flow_1ra7i2a_di" bpmnElement="Flow_1ra7i2a">
+        <di:waypoint x="1220" y="270" />
+        <di:waypoint x="1292" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kz8vf7_di" bpmnElement="Flow_0kz8vf7">
+        <di:waypoint x="1030" y="270" />
+        <di:waypoint x="1120" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zlfk38_di" bpmnElement="Flow_0zlfk38">
+        <di:waypoint x="830" y="270" />
+        <di:waypoint x="930" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03wozca_di" bpmnElement="Flow_03wozca">
+        <di:waypoint x="590" y="245" />
+        <di:waypoint x="590" y="120" />
+        <di:waypoint x="892" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="611" y="80" width="70" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xpuqt1_di" bpmnElement="Flow_1xpuqt1">
+        <di:waypoint x="370" y="270" />
+        <di:waypoint x="565" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0t5598f_di" bpmnElement="Flow_0t5598f">
+        <di:waypoint x="615" y="270" />
+        <di:waypoint x="730" y="270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="592" y="288" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13oygnz_di" bpmnElement="Flow_13oygnz">
+        <di:waypoint x="228" y="270" />
+        <di:waypoint x="270" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1qmitq8_di" bpmnElement="Event_1qmitq8">
+        <dc:Bounds x="192" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="200" y="295" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0fd8acg_di" bpmnElement="Activity_0fd8acg">
+        <dc:Bounds x="270" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1vs5x05_di" bpmnElement="Gateway_1vs5x05" isMarkerVisible="true">
+        <dc:Bounds x="565" y="245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1efm723_di" bpmnElement="Event_17icg98">
+        <dc:Bounds x="892" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="889" y="149" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02ji6ap_di" bpmnElement="Activity_03w3i7h">
+        <dc:Bounds x="730" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kghhxo_di" bpmnElement="Activity_1kghhxo">
+        <dc:Bounds x="930" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0warye8_di" bpmnElement="Activity_1rqgb9s">
+        <dc:Bounds x="1120" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0jh8xj5_di" bpmnElement="Event_0jh8xj5">
+        <dc:Bounds x="1292" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1291" y="295" width="42" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

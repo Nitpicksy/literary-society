@@ -7,7 +7,7 @@
     <bpmn:endEvent id="Event_0sn6vry" name="Success">
       <bpmn:incoming>Flow_0qk9h5w</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:userTask id="Activity_01h8vb9" name="Obrada zahteva za izdavanje knjige" camunda:assignee="${mainEditor}">
+    <bpmn:userTask id="Activity_01h8vb9" name="Obradite zahtev za izdavanje knjige" camunda:assignee="${mainEditor}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="decision" label="Decision" type="enum">
@@ -20,7 +20,7 @@
             <camunda:value id="TO_BE_SENT" name="I want to read it" />
             <camunda:value id="REQUEST_REJECTED" name="I don&#39;t want to read it." />
           </camunda:formField>
-          <camunda:formField id="reason" label="If you chose not to read it, elaborate why" type="textarea">
+          <camunda:formField id="reason" label="If you chose not to read it, explain why" type="textarea">
             <camunda:properties>
               <camunda:property id="rows" value="3" />
             </camunda:properties>

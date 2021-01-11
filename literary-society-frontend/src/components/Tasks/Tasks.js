@@ -35,7 +35,49 @@ const Tasks = (props) => {
     const selectRow = (properties) => {
         props.setSelectedTask(properties.row.processInstanceId, properties.row.id, properties.row.name);
 
-        history.push('/publication-request');
+        if (properties.row.name === "Obradite zahtev za izdavanje knjige"
+            || properties.row.name === "Proverite da li je delo originalno"
+            || properties.row.name === "Prihvatite ili odbijte rukopis"
+            || properties.row.name === "Definišite da li se rukopis šalje skupu beta čitaoca"
+            || properties.row.name === "Ostavljanje komentara"
+            || properties.row.name === "Definišite da li se rukopis šalje lektoru ili treba još nešto da se izmeni"
+            || properties.row.name === "Definisite da li je potrebno izmeniti rukopis"
+            || properties.row.name === "Posaljite knjigu na stampu ili dajte sugestije za izmenu") {
+            history.push('/publication-request');
+        } else if (properties.row.name === "Urednik preuzimanje dokumenta"
+            || properties.row.name === "Preuzimanje PDF verzije rukopisa"
+            || properties.row.name === "Preuzimanje dokumenta"
+            || properties.row.name === "Preuzimanje PDF verzije rukopisa sa lektorovim izmenama") {
+            history.push('/download-document');
+        } else if (properties.row.name === "Slanje PDF verzije rukopisa"
+            || properties.row.name === "Slanje rukopisa sa zabelezenim greskama") {
+            history.push('/writer-upload-document');
+        } else if(properties.row.name === 'Membership - submit your work' || properties.row.name === "Membership-more documents needed") {
+            history.push('/writer-membership-upload')
+        } else if(properties.row.name === 'Vote on a writer') {
+            history.push('/voting')
+        } else if(properties.row.name === 'Pay your membership') {
+            history.push('/membership')
+        } else if (properties.row.name === "Odaberite beta-citaoce") {
+            history.push('/editor-choose-beta-readers');
+        } else if (properties.row.name === "Izmena rukopisa prema komentarima beta-citalaca") {
+            history.push('/opinions-of-beta-readers');
+        } else if (properties.row.name === "Izmena rukopisa prema sugestijama urednika") {
+            history.push('/opinion-of-editor');
+        } else if (properties.row.name === "Definisite informacije o knjizi koja je poslata na stampu") {
+            history.push('/publishing-info');
+        } else if (properties.row.name === "Unos podataka o rukopisu") {
+            history.push('/create-publication-request');
+        } else if (properties.row.name === "Choose plagiarism review board"
+        || properties.row.name === 'Submit your review report'
+        || properties.row.name === 'Assign another editor') {
+            history.push('/plagiarism');
+        } else if (properties.row.name === "Download books to submit a report") {
+            history.push('/plagiarism-review-download');
+        } else if(properties.row.name === 'Plagiarism report-cast your vote') {
+            history.push('/plagiarism-vote')
+        }
+        
     }
 
     if (!loading) {
@@ -44,9 +86,9 @@ const Tasks = (props) => {
         </Grid>;
         if (props.tasks) {
             rows = props.tasks;
-            
+
             data = <Grid container className={classes.table}>
-                <DataGrid rows={rows} columns={columns} pageSize={5} onRowClick={(properties) => selectRow(properties)} />
+                <DataGrid rows={rows} columns={columns} pageSize={5} onRowClick={(properties) => selectRow(properties)} autoPageSize />
             </Grid>;
         }
     } else {

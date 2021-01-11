@@ -13,4 +13,8 @@ public interface DataForPaymentRepository extends JpaRepository<DataForPayment, 
 
     @Query(value = "select dfp.* from data_for_payment dfp where dfp.merchant_id=:merchantId and dfp.payment_method_id=:paymentId", nativeQuery = true)
     List<DataForPayment> findDataForPaymentByMerchantAndPaymentMethod(@Param("merchantId") Long merchantId, @Param("paymentId") Long paymentId);
+
+    List<DataForPayment> findByMerchantId(Long id);
+
+    DataForPayment findByMerchantIdAndPaymentMethodCommonNameAndAttributeName(Long merchantId, String paymentMethodCommonName, String attributeName);
 }

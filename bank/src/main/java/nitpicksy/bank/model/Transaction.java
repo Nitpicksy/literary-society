@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Positive;
 import java.sql.Timestamp;
 
 @Entity
@@ -32,7 +33,7 @@ public class Transaction {
     private String merchantId;
 
     @Column(nullable = false)
-    private Long merchantOrderId;
+    private String merchantOrderId;
 
     @Column(nullable = false)
     private Timestamp merchantTimestamp;
@@ -40,13 +41,19 @@ public class Transaction {
     @Column(nullable = false)
     private Long paymentId;
 
-    @Column(nullable = false)
+    @Column
     private String pan;
 
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 
-    public Transaction(Double amount, String merchantId, Long merchantOrderId, Timestamp merchantTimestamp, String pan,Long paymentId) {
+    @Column
+    private Long acquirerOrderId;
+
+    @Column
+    private Timestamp acquirerTimestamp;
+
+    public Transaction(Double amount, String merchantId, String merchantOrderId, Timestamp merchantTimestamp, String pan,Long paymentId) {
         this.amount = amount;
         this.merchantId = merchantId;
         this.merchantOrderId = merchantOrderId;
@@ -55,7 +62,7 @@ public class Transaction {
         this.paymentId = paymentId;
     }
 
-    public Transaction(Double amount, String merchantId, Long merchantOrderId, Timestamp merchantTimestamp, Long paymentId, String pan, TransactionStatus status) {
+    public Transaction(Double amount, String merchantId, String merchantOrderId, Timestamp merchantTimestamp, Long paymentId, String pan, TransactionStatus status) {
         this.amount = amount;
         this.merchantId = merchantId;
         this.merchantOrderId = merchantOrderId;

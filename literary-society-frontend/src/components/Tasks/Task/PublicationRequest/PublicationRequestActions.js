@@ -25,14 +25,20 @@ export const fetchForm = (piId, taskId) => {
     };
 };
 
+export const clearState = () => {
+    return {
+        type: actionTypes.CLEAR_STATE,
+    };
+};
+
 export const confirm = (data, taskId, history) => {
     return dispatch => {
         axios.post(`/process/${taskId}`, data)
             .then(() => {
                 toastr.success('Publication Request','Success');
+                dispatch(clearState());
                 history.push('/tasks');
             }).catch(err => {
-                console.log("sjsj")
                 toastr.error('Publication Request', err.response.data.message);
                 history.push('/tasks');
             });

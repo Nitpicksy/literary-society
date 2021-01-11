@@ -1,9 +1,8 @@
 package nitpicksy.literarysociety.camunda.service;
 
 import nitpicksy.literarysociety.dto.camunda.EnumKeyValueDTO;
-import nitpicksy.literarysociety.dto.camunda.TaskDataDTO;
-import nitpicksy.literarysociety.dto.response.BookDTO;
 import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
+import nitpicksy.literarysociety.dto.response.ProcessDataDTO;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
@@ -12,6 +11,7 @@ import org.camunda.bpm.engine.form.TaskFormData;
 import org.camunda.bpm.engine.impl.form.FormFieldImpl;
 import org.camunda.bpm.engine.impl.form.type.EnumFormType;
 import org.camunda.bpm.engine.rest.dto.task.TaskDto;
+import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +31,10 @@ public class CamundaService {
 
     private FormService formService;
 
-    public FormFieldsDTO start(String processId) {
+    public ProcessDataDTO start(String processId) {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey(processId);
         Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).list().get(0);
-        return getFormFields(pi.getId(), task.getId());
+        return new ProcessDataDTO(pi.getId(), task.getId());
     }
 
     public FormFieldsDTO getFormFields(String piId, String taskId) {
@@ -77,9 +77,13 @@ public class CamundaService {
         return formFieldsDTO;
     }
 
-    public void complete(String processInstanceId) {
+    public void findAndCompleteActiveTask(String processInstanceId) {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).list().get(0);
         taskService.complete(task.getId());
+    }
+
+    public void completeTask(String taskId) {
+        taskService.complete(taskId);
     }
 
     public List<Long> extractIds(String selectedIdsString) {
@@ -100,7 +104,7 @@ public class CamundaService {
         if (selectedIdString.contains("_")) {
             id = Long.valueOf(selectedIdString.split("_")[1]);
         }
-        
+
         return id;
     }
 
@@ -113,7 +117,7 @@ public class CamundaService {
         return value;
     }
 
-    public List<TaskDto> getTasksByAssignee(String userId){
+    public List<TaskDto> getTasksByAssignee(String userId) {
         List<Task> tasks = taskService.createTaskQuery()
                 .taskAssignee(userId)
                 .orderByDueDate().asc()
@@ -121,8 +125,20 @@ public class CamundaService {
         return tasks.stream().map(TaskDto::fromEntity).collect(Collectors.toList());
     }
 
-    public String getProcessVariable(String piId, String name){
-       return (String) runtimeService.getVariable(piId, name);
+    public String getProcessVariable(String piId, String name) {
+        return (String) runtimeService.getVariable(piId, name);
+    }
+
+    public void setProcessVariable(String piId, String variable, Object value) {
+        runtimeService.setVariable(piId, variable, value);
+    }
+
+    public void messageEventReceived(String messageName, String user) {
+        Execution execution = runtimeService.createExecutionQuery()
+                .messageEventSubscriptionName(messageName)
+                .processVariableValueEquals("user", user)
+                .singleResult();
+        runtimeService.messageEventReceived(messageName, execution.getId());
     }
 
     @Autowired

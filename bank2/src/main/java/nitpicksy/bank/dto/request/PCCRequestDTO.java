@@ -39,9 +39,8 @@ public class PCCRequestDTO {
     @NotBlank
     private String merchantId;
 
-    @NotNull
-    @Positive
-    private Long merchantOrderId;
+    @NotBlank
+    private String merchantOrderId;
 
     private Timestamp merchantTimestamp;
 

@@ -31,8 +31,8 @@ spring:
     show-sql: false
   mail:
     host: smtp.gmail.com
-    username: teamvjn@gmail.com
-    password: team29VJN
+    username: ${MAIL_USERNAME:no.reply.wroom@gmail.com}
+    password: ${MAIL_PASSWORD:sfwqelhzwkeqhgje}
     port: 587
     properties:
       mail:
@@ -70,5 +70,7 @@ TOKEN_UTILS_EXPIRES_IN: 10800000
 TOKEN_UTILS_REFRESH_TOKEN_EXPIRES_IN: 1209600000
 TOKEN_UTILS_AUTH_HEADER: Authorization
 # Localhost
-LOCALHOST_URL: http://localhost:3000/
+#LOCALHOST_URL: https://localhost:3000/
+LOCALHOST_URL: https://www.literary-society.com:3000/
 
+PUBLISHER: Literary Society

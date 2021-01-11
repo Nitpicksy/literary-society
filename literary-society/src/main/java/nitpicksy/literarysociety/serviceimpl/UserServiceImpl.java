@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.serviceimpl;
 
 import nitpicksy.literarysociety.enumeration.UserStatus;
+import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidUserDataException;
 import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.repository.ResetTokenRepository;
@@ -10,8 +11,8 @@ import nitpicksy.literarysociety.security.TokenUtils;
 import nitpicksy.literarysociety.service.EmailNotificationService;
 import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
+import nitpicksy.literarysociety.service.VerificationService;
 import nitpicksy.literarysociety.utils.IPAddressProvider;
-import org.bouncycastle.crypto.generators.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -29,7 +30,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -56,6 +59,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     public RoleRepository roleRepository;
 
+    private VerificationService verificationService;
+
+
     @Bean
     public PasswordEncoder passwordEncoder() {
 
@@ -70,7 +76,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
         User user = userRepository.findByUsername(username);
         if (user == null) {
-            throw new UsernameNotFoundException(String.format("No user found with email '%s'.", username));
+            throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
         } else {
             return user;
         }
@@ -97,8 +103,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public List<User> findAllWithRole(String roleName) {
-        return userRepository.findByRoleName(roleName);
+    public List<User> findAllWithRoleAndStatus(String roleName, UserStatus status) {
+        return userRepository.findByRoleNameAndStatus(roleName, status);
     }
 
     @Override
@@ -153,6 +159,75 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return userRepository.findByUsername(currentUser.getName());
     }
 
+    @Override
+    public Reader getAuthenticatedReader() {
+        User user = getAuthenticatedUser();
+        if(user instanceof Reader){
+            return (Reader)user;
+        }
+        return null;
+    }
+
+    @Override
+    public Merchant getAuthenticatedMerchant() {
+        User user = getAuthenticatedUser();
+        if (user instanceof Merchant) {
+            return (Merchant) user;
+        }
+        return null;
+    }
+
+    @Override
+    public User signUp(User user) throws NoSuchAlgorithmException {
+        if (findByUsername(user.getUsername()) != null) {
+            throw new InvalidDataException("User with same username already exist", HttpStatus.BAD_REQUEST);
+        }
+
+        if (findByEmail(user.getEmail()) != null) {
+            throw new InvalidDataException("User with same email already exist", HttpStatus.BAD_REQUEST);
+        }
+        user.setStatus(UserStatus.NON_VERIFIED);
+        User savedReader = userRepository.save(user);
+        String nonHashedToken = verificationService.generateToken(savedReader);
+        composeEmailToActivate(nonHashedToken, user.getEmail());
+
+        logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "REG",
+                String.format("User %s successfully sign up from IP address %s",savedReader.getId(), ipAddressProvider.get())));
+        return savedReader;
+    }
+
+    @Override
+    public List<User> findByRoleNameAndStatusInOrRoleNameAndStatusIn(String roleName1, Collection<UserStatus> status1,
+                                                                     String roleName2, Collection<UserStatus> status2) {
+        return userRepository.findByRoleNameAndStatusInOrRoleNameAndStatusIn(roleName1, status1, roleName2, status2);
+    }
+
+    @Override
+    public User changeUserStatus(Long id, String status) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (status.equals("approve")) {
+
+                user.setStatus(UserStatus.ACTIVE);
+                composeAndSendEmailApprovedRequest(user.getEmail());
+            } else {
+                user.setStatus(UserStatus.REJECTED);
+                composeAndSendRejectionEmail(user.getEmail());
+            }
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "REG",
+                    String.format("User %s status is successfully changed.",user.getId())));
+            return userRepository.save(user);
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<User> findByIds(List<Long> ids) {
+        return userRepository.findByIdIn(ids);
+    }
+
     private void composeAndSendEmail(String recipientEmail) {
         String subject = "Reset your password";
         StringBuilder sb = new StringBuilder();
@@ -194,12 +269,44 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return String.format("%040x", new BigInteger(1, digest.digest()));
     }
 
+    private void composeEmailToActivate(String token, String email) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("You have successfully registered to the Literary Society website.");
+        sb.append(System.lineSeparator());
+        sb.append(System.lineSeparator());
+        sb.append("To activate your account click the following link:");
+        sb.append(System.lineSeparator());
+        sb.append(getLocalhostURL());
+        sb.append(String.format("activate-account?t=%s", token));
+        sb.append(System.lineSeparator());
+        sb.append("When you activate your account you will be notified when the admins approves your request.");
+        emailNotificationService.sendEmail(email, "Activate account", sb.toString());
+    }
+
+    private void composeAndSendRejectionEmail(String recipientEmail) {
+        String subject = "Request to register rejected";
+        StringBuilder sb = new StringBuilder();
+        sb.append("Your request to register is rejected by a Literary Society administrator.");
+        sb.append(System.lineSeparator());
+        String text = sb.toString();
+        emailNotificationService.sendEmail(recipientEmail, subject, text);
+    }
+
+    private void composeAndSendEmailApprovedRequest(String recipientEmail) {
+        String subject = "Request to register accepted";
+        StringBuilder sb = new StringBuilder();
+        sb.append("Your request to register is accepted by a Literary Society administrator.");
+        sb.append(System.lineSeparator());
+        String text = sb.toString();
+        emailNotificationService.sendEmail(recipientEmail, subject, text);
+    }
+
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, LoginAttemptService loginAttemptService,
                            LogService logService, IPAddressProvider ipAddressProvider, Environment environment,
                            EmailNotificationService emailNotificationService, ResetTokenRepository resetTokenRepository,
-                           TokenUtils tokenUtils, RoleRepository roleRepository) {
+                           TokenUtils tokenUtils, RoleRepository roleRepository, VerificationService verificationService) {
         this.userRepository = userRepository;
         this.loginAttemptService = loginAttemptService;
         this.logService = logService;
@@ -209,5 +316,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         this.resetTokenRepository = resetTokenRepository;
         this.tokenUtils = tokenUtils;
         this.roleRepository = roleRepository;
+        this.verificationService = verificationService;
     }
 }

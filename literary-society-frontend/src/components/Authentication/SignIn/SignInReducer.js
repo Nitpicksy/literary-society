@@ -32,7 +32,7 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 error: action.error,
-                isAuthenticated: false
+                isAuthenticated: false, 
             };
         case actionTypes.SIGN_OUT:
             return {
@@ -41,7 +41,8 @@ const reducer = (state = initialState, action) => {
                 expiresIn: null,
                 refreshToken: null,
                 isAuthenticated: false,
-                authRedirectPath: action.path
+                authRedirectPath: action.path, 
+                role: null
             };
         case actionTypes.SET_SIGN_IN_REDIRECT_PATH:
             return {

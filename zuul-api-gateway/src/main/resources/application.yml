@@ -9,7 +9,7 @@ server:
     trust-store: ${TRUSTSTORE:classpath:zuul.truststore.p12}
     trust-store-password: ${TRUSTSTORE_PASSWORD:password}
     trust-store-type: ${TRUSTSTORE_TYPE:PKCS12}
-    client-auth: want
+    client-auth: need
 
 eureka:
   client:

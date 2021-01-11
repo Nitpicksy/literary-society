@@ -56,6 +56,9 @@ const BookDetails = (props) => {
         }
     }
 
+    const download = () => {
+        props.download(props.bookDetails.bookDTO.id,props.bookDetails.bookDTO.title);
+    }
 
     if (!loading && props.bookDetails) {
 
@@ -67,7 +70,7 @@ const BookDetails = (props) => {
             </Typography>;
 
         if (props.bookDetails.bookDTO.price <= 0) {
-            button = <Button size="large" color="secondary" variant="contained">Get for free</Button>;
+            button = <Button size="large" color="secondary" onClick={download} variant="contained">Get for free</Button>;
             price = null;
         }
 
@@ -143,6 +146,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchBook: (id, history) => dispatch(actions.fetchBook(id, history)),
+        download: (id,title) => dispatch(actions.download(id,title))
     }
 };
 

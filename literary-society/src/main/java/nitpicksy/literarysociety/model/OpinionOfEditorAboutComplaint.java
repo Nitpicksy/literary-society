@@ -5,14 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -29,10 +22,16 @@ public class OpinionOfEditorAboutComplaint {
     @ManyToOne(fetch = FetchType.EAGER)
     private User editor;
 
-    @Column(nullable = false)
-    private String comment;
+    @Column(nullable = false, length = 1000)
+    private String review;
 
     @PrimaryKeyJoinColumn
     @ManyToOne(fetch = FetchType.EAGER)
     private PlagiarismComplaint plagiarismComplaint;
+
+    public OpinionOfEditorAboutComplaint(User editor, String review, PlagiarismComplaint plagiarismComplaint) {
+        this.editor = editor;
+        this.review = review;
+        this.plagiarismComplaint = plagiarismComplaint;
+    }
 }
