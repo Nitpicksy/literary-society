@@ -23,21 +23,22 @@ public class TrustStoreUtils {
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
         try {
             keyStore.load(new FileInputStream(TRUST_STORE_PATH), keyStorePassArray);
-        } catch (Exception  e) {
+        } catch (Exception e) {
             keyStore.load(null, keyStorePassArray);
         }
 
         return keyStore;
     }
 
-    public static boolean importCertificateInTrustStore(X509Certificate certificate, String alias, KeyStore truststore){
+    public static boolean importCertificateInTrustStore(X509Certificate certificate, String alias, KeyStore truststore) {
         try {
             truststore.setCertificateEntry(alias, certificate);
             truststore.containsAlias(alias);
             FileOutputStream fos = new FileOutputStream(TRUST_STORE_PATH);
             truststore.store(fos, password.toCharArray());
+            fos.flush();
             fos.close();
-        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException| IOException  e) {
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
             return false;
         }
         return true;

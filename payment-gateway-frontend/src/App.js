@@ -78,6 +78,7 @@ const App = (props) => {
           <Route path="/add-company-success" render={() => <AddCompanySuccess {...props} />} />
 
           <Route path="/error/non-authorized" render={(props) => <NonAuthorized {...props} />} />
+          <Route path="/payment-data" render={(props) => <MerchantSupportPaymentMethods {...props} />} />
 
           <Route path="/sign-out" render={(props) => <Logout {...props} />} />
           <Route path="/" render={() => <h1> Welcome </h1>} />

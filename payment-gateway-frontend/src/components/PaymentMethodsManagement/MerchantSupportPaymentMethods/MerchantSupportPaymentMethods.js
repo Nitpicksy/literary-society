@@ -49,6 +49,8 @@ const MerchantSupportPaymentMethods = (props) => {
 
         if (paymentMethods) {
             let extractedControls = extractControlsFromPaymentMethodsData(paymentMethods);
+            console.log('ex', extractedControls);
+
             setControls(extractedControls);
         }
     }, []);
