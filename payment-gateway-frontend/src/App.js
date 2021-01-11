@@ -18,6 +18,7 @@ import Logout from './components/Authentication/SignIn/Logout';
 import AddCompanySuccess from './components/CompanyManagement/AddCompany/AddCompanySuccess';
 import CompanyList from './components/CompanyManagement/CompanyList/CompanyList';
 import MerchantSupportPaymentMethods from './components/PaymentMethodsManagement/MerchantSupportPaymentMethods/MerchantSupportPaymentMethods';
+import LandingPage from './components/LandingPage/LandingPage';
 const App = (props) => {
   const { onTryAutoSignUp } = props;
 
@@ -58,7 +59,7 @@ const App = (props) => {
 
       <Route path="/payment-data" render={(props) => <MerchantSupportPaymentMethods {...props} />} />
 
-      <Route path="/" render={() => <h1> Welcome, navigate to payment/:id. </h1>} />
+      <Route path="/" render={() => <LandingPage />} />
     </Switch>
   );
 
@@ -81,7 +82,7 @@ const App = (props) => {
           <Route path="/payment-data" render={(props) => <MerchantSupportPaymentMethods {...props} />} />
 
           <Route path="/sign-out" render={(props) => <Logout {...props} />} />
-          <Route path="/" render={() => <h1> Welcome </h1>} />
+          <Route path="/" render={() => <LandingPage />} />
         </Switch>
       </GuardProvider>
     );

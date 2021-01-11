@@ -1,0 +1,3 @@
+export const FETCH_FORM_SUCCESS = 'FETCH_FORM_SUCCESS';
+export const FETCH_FORM_FAIL = 'FETCH_FORM_FAIL';
+export const CLEAR_STATE = 'CLEAR_STATE';
