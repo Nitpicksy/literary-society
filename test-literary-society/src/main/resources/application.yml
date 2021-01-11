@@ -13,7 +13,7 @@ server:
 
 spring:
   application:
-    name: ${SPRINGBOOT_APP_NAME:literary-society2}
+    name: ${SPRINGBOOT_APP_NAME:literary-society-2}
   datasource:
     username: ${DATABASE_USERNAME:nitpicksy_user}
     password: ${DATABASE_PASSWORD:Nitpicksy-2020}

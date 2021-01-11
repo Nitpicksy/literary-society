@@ -54,6 +54,8 @@ const MerchantSupportPaymentMethods = (props) => {
     }
   }, []);
 
+
+
   const submitHander = (event) => {
     event.preventDefault();
     let array = [];

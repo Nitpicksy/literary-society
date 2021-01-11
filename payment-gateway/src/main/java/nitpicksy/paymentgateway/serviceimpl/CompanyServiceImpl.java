@@ -92,6 +92,7 @@ public class CompanyServiceImpl implements CompanyService {
                 try {
                     zuulClient.sendJWTToken(URI.create(apiGatewayURL + '/' + company.getCommonName()), jwtToken);
                     company.setStatus(CompanyStatus.APPROVED);
+                    company.setEnabled(true);
                     composeAndSendApprovalEmail(company.getEmail());
                 } catch (RuntimeException e) {
                     logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "COMP", "Could not notify " + company.getCompanyName()));

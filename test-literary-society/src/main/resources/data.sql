@@ -13,21 +13,21 @@ values ('Lektira');
 insert into genre (name)
 values ('Putopis');
 
--- LU One Token for Payment Gateway
-insert into jwttoken (token)
-values ('eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJsaXRlcmFyeS1zb2NpZXR5Iiwic3ViIjoibGl0ZXJhcnktc29jaWV0eSIsImF1ZCI6IndlYiIsImlhdCI6MTYwOTU4OTU2MCwiZXhwIjoxNjEwNzk5MTYwLCJyb2xlIjoiUk9MRV9DT01QQU5ZIiwicGVybWlzc2lvbnMiOlt7ImlkIjozLCJuYW1lIjoiQ1JFQVRFX09SREVSIn1dfQ.maf-whUBxv2Sl8LcAIq0mykJcbnclTsZUSQofTiYle1QuGC8lkLHHkSK-S-DKMkaFBC5el-0PrZtUWXmtoXwVg');
+-- -- LU Two Token for Payment Gateway
+-- insert into jwttoken (token)
+-- values ('eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJsaXRlcmFyeS1zb2NpZXR5Iiwic3ViIjoibGl0ZXJhcnktc29jaWV0eS0yIiwiYXVkIjoid2ViIiwiaWF0IjoxNjEwNDA0ODMyLCJleHAiOjE2MTE2MTQ0MzIsInJvbGUiOiJST0xFX0NPTVBBTlkiLCJwZXJtaXNzaW9ucyI6W3siaWQiOjMsIm5hbWUiOiJDUkVBVEVfT1JERVIifV19.rNb_VhtYqXQLl_KfEUQacf22DJsW61uCA0jHiwynyIiXQhK_KfDKPqe9-_pS9hoyeek5TfnR6zLJm0rzqB2sfw');
 
 
--- LU One Subscription plans
+-- LU Two Subscription plans
 insert into subscription_plan (cancelurl, frequency_count, frequency_unit, plan_description, plan_name, price,
                                product_category, product_name, product_type, successurl)
-values ('https://www.literary-society.com:3000', 3, 'MONTH',
+values ('https://www.literary-society.com:3009', 3, 'MONTH',
         'Create publication requests and publish books via Literary Society.', 'Writer Membership', 2000.0,
         'BOOKS_MANUSCRIPTS', 'Book Publishing Option', 'DIGITAL',
         'https://www.literary-society.com:3000/subscription/success');
 insert into subscription_plan (cancelurl, frequency_count, frequency_unit, plan_description, plan_name, price,
                                product_category, product_name, product_type, successurl)
-values ('https://www.literary-society.com:3000', 1, 'MONTH',
+values ('https://www.literary-society.com:3009', 1, 'MONTH',
         'Buy books with discount from all Literary Society merchants.', 'Reader Membership', 1200.0,
         'BOOKS_MANUSCRIPTS', 'Book Purchasing Discount', 'DIGITAL',
         'https://www.literary-society.com:3000/subscription/success');
@@ -100,18 +100,18 @@ values (10, 4);
 
 -- Merchants
 
--- default LU 1 merchant
+-- default LU 2 merchant
 -- Client Id: AYfQea8-7YvonXN8LxkI-jigeTQuw3lg_ixCM3MabqDjGx8egncKmCiIHH05XQ0C1Azev1IlgA86XGwP
 -- Client Secret: EAK4iy7MfWLcw6QE71jlOR4nhm34ylFKlhHuL2CDsC2weGokdaUt54uZSwQO2pVge9ZaQGyOMQ1SktAl
 insert into users (type, name, city, country, email, username, password, status, enabled, supports_payment_methods)
-values ('MERCHANT', 'LU One Merchant', 'Beograd', 'Srbija', 'lu-1-merchant@maildrop.cc', 'lu-1-merchant',
+values ('MERCHANT', 'LU Two Merchant', 'Beograd', 'Srbija', 'lu-2-merchant@maildrop.cc', 'lu-2-merchant',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true);
 
 -- Client Id: ARPDqaQtYU6ilCpwG0IXT35OMXGTjsA3K-QFYLItx5oRcJUOqZ527Z7BfNs6sS3yu45kdINghGRLR8vV
 -- Client Secret: ECBW7VI6Tzi23LnYdLEvnvEW5fm7drD6kvgVRMD2hnTOk9f9AJSqJaD-8p0aLrOWMBdoKGM9wIoPby4j
 insert into users (type, name, city, country, email, username, password, status, enabled, supports_payment_methods)
 values ('MERCHANT', 'Laguna', 'Beograd', 'Srbija', 'laguna@maildrop.cc', 'laguna',
-        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true);
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, false);
 -- Client Id: Af7nTAdvuAjb3_n5gzUTsfQag0ZCkF-qs6ASwFdMfLKzZ_6GWVNCB9TdTpXVAsKZBeYHSVGRqZx1h68R
 -- Client Secret: EF60H0GD454RHXIpemtrBAi1w6VmeGjmc_sY7C8aa0YaEwLp_Xv2sJTSIpLkVuqaSXdSAQ72VAWiu3MY
 insert into users (type, name, city, country, email, username, password, status, enabled, supports_payment_methods)
