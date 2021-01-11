@@ -6,7 +6,6 @@ import nitpicksy.bank.repository.MerchantRepository;
 import nitpicksy.bank.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -15,8 +14,6 @@ import java.security.NoSuchAlgorithmException;
 public class MerchantServiceImpl implements MerchantService {
 
     private MerchantRepository merchantRepository;
-
-    private HashValueServiceImpl hashValueServiceImpl;
 
     @Override
     public Merchant findByMerchantIdAndPassword(String merchantId, String merchantPassword) {
@@ -41,8 +38,7 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Autowired
-    public MerchantServiceImpl(MerchantRepository merchantRepository, HashValueServiceImpl hashValueServiceImpl) {
+    public MerchantServiceImpl(MerchantRepository merchantRepository) {
         this.merchantRepository = merchantRepository;
-        this.hashValueServiceImpl = hashValueServiceImpl;
     }
 }

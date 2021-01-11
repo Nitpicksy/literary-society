@@ -1,6 +1,6 @@
 package nitpicksy.bank.controller;
 
-import nitpicksy.bank.serviceImpl.TestServiceImpl;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -26,14 +26,6 @@ import java.util.Base64;
 @RequestMapping(value = "/test", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TestController {
 
-    private TestServiceImpl testService;
-
-    @GetMapping("/health")
-    public ResponseEntity<String> health() {
-        System.out.println("Greetings from bank");
-        return new ResponseEntity<>(testService.healthCheck(), HttpStatus.OK);
-    }
-
     @GetMapping("/encrypted")
     public ResponseEntity<String> getEncryptedValue(@RequestParam String value) {
         byte[] secret = loadSecret().getBytes();
@@ -51,7 +43,7 @@ public class TestController {
     private String loadSecret(){
         try {
             Path fileStorageLocation = Paths.get("");
-            Path filePath = fileStorageLocation.resolve("bank_key.np").normalize();
+            Path filePath = fileStorageLocation.resolve("bank2_key.np").normalize();
             Resource resource = new UrlResource(filePath.toUri());
             File file = resource.getFile();
             return FileUtils.readFileToString(file, "UTF-8");
@@ -59,10 +51,5 @@ public class TestController {
             e.printStackTrace();
         }
         return "";
-    }
-
-    @Autowired
-    public TestController(TestServiceImpl testService) {
-        this.testService = testService;
     }
 }
