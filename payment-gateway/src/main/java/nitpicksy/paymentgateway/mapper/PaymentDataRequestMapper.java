@@ -19,32 +19,33 @@ import java.util.List;
 @Component
 public class PaymentDataRequestMapper {
 
-    private  DataService dataService;
+    private DataService dataService;
 
-    private  PaymentMethodService paymentMethodService;
+    private PaymentMethodService paymentMethodService;
 
     private HashValueServiceImpl hashValueService;
 
-    public  List<DataForPayment> convert(List<PaymentDataRequestDTO> listPaymentDataRequest, Merchant merchant) throws NoSuchAlgorithmException {
+    public List<DataForPayment> convert(List<PaymentDataRequestDTO> listPaymentDataRequest, Merchant merchant) throws NoSuchAlgorithmException {
         List<DataForPayment> dataForPayments = new ArrayList<>();
-        for (PaymentDataRequestDTO paymentDataRequestDTO:listPaymentDataRequest) {
+        for (PaymentDataRequestDTO paymentDataRequestDTO : listPaymentDataRequest) {
             PaymentMethod paymentMethod = paymentMethodService.findById(paymentDataRequestDTO.getPaymentMethod().getId());
             dataForPayments.addAll(convertPaymentData(paymentMethod, paymentDataRequestDTO.getPaymentData(), merchant));
         }
         return dataForPayments;
     }
 
-    public  List<DataForPayment> convertPaymentData(PaymentMethod paymentMethod, List<DataForPaymentRequestDTO> listDataForPayment, Merchant merchant) throws NoSuchAlgorithmException {
+    public List<DataForPayment> convertPaymentData(PaymentMethod paymentMethod, List<DataForPaymentRequestDTO> listDataForPayment, Merchant merchant) throws NoSuchAlgorithmException {
         List<DataForPayment> dataForPayments = new ArrayList<>();
-        for (DataForPaymentRequestDTO dataForPaymentRequestDTO:listDataForPayment) {
+        for (DataForPaymentRequestDTO dataForPaymentRequestDTO : listDataForPayment) {
             DataForPayment dataForPayment = new DataForPayment();
             Data data = dataService.findById(dataForPaymentRequestDTO.getPaymentDataId());
             dataForPayment.setAttributeName(data.getAttributeJSONName());
 
-            if(paymentMethod.getCommonName().equals("paypal")){
-                dataForPayment.setAttributeValue(dataForPaymentRequestDTO.getAttributeValue());
-            }else{
+            //dodavanje info za banku heširaj, ostalo crypto
+            if (paymentMethod.getCommonName().equals("bank")) {
                 dataForPayment.setAttributeValue(hashValueService.getHashValue(dataForPaymentRequestDTO.getAttributeValue()));
+            } else {
+                dataForPayment.setAttributeValue(dataForPaymentRequestDTO.getAttributeValue());
             }
 
             dataForPayment.setPaymentMethod(paymentMethod);
@@ -56,7 +57,7 @@ public class PaymentDataRequestMapper {
     }
 
     @Autowired
-    public PaymentDataRequestMapper(DataService dataService, PaymentMethodService paymentMethodService,HashValueServiceImpl hashValueService) {
+    public PaymentDataRequestMapper(DataService dataService, PaymentMethodService paymentMethodService, HashValueServiceImpl hashValueService) {
         this.dataService = dataService;
         this.paymentMethodService = paymentMethodService;
         this.hashValueService = hashValueService;
