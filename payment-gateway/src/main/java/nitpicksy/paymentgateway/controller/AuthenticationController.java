@@ -1,6 +1,7 @@
 package nitpicksy.paymentgateway.controller;
 
 import nitpicksy.paymentgateway.dto.request.ChangePasswordDTO;
+import nitpicksy.paymentgateway.dto.request.JWTRequestDTO;
 import nitpicksy.paymentgateway.dto.response.UserTokenState;
 import nitpicksy.paymentgateway.exceptionHandler.BlockedUserException;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidUserDataException;
@@ -93,6 +94,10 @@ public class AuthenticationController {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(userService.refreshAuthenticationToken(request));
     }
 
+    @RequestMapping(value = "/company-refresh", method = RequestMethod.POST)
+    public ResponseEntity<JWTRequestDTO> companyRefreshAuthenticationToken(HttpServletRequest request) {
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(userService.companyRefreshAuthenticationToken(request));
+    }
 
 
     @Autowired

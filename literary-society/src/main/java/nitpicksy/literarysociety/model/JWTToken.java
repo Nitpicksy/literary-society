@@ -21,7 +21,11 @@ public class JWTToken {
     @Column(nullable = false, length = 500)
     private String token;
 
-    public JWTToken(String token) {
+    @Column(nullable = false, length = 500)
+    private String refreshToken;
+
+    public JWTToken(String token, String refreshToken) {
         this.token = token;
+        this.refreshToken = refreshToken;
     }
 }

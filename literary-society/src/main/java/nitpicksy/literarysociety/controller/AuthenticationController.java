@@ -1,8 +1,10 @@
 package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.camunda.service.CamundaService;
+import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.request.ChangePasswordDTO;
+import nitpicksy.literarysociety.dto.request.JWTRequestDTO;
 import nitpicksy.literarysociety.dto.request.RequestTokenDTO;
 import nitpicksy.literarysociety.dto.request.ResetPasswordDTO;
 import nitpicksy.literarysociety.exceptionHandler.BlockedUserException;
@@ -23,6 +25,9 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +35,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @RestController
 @RequestMapping(value = "/api/auth", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -53,6 +64,8 @@ public class AuthenticationController {
     private CamundaService camundaService;
 
     private JWTTokenRepository jwtTokenRepository;
+
+    private ZuulClient zuulClient;
 
     @PostMapping(value = "/sign-in", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserTokenState> login(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest) {
@@ -150,9 +163,34 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/accept-pg-token")
-    public ResponseEntity<Void> acceptPaymentGatewayToken(@NotBlank @RequestBody String jwtToken) {
-        jwtTokenRepository.save(new JWTToken(jwtToken));
+    public ResponseEntity<Void> acceptPaymentGatewayToken(@NotNull @RequestBody JWTRequestDTO jwtRequestDTO) {
+        jwtTokenRepository.save(new JWTToken(jwtRequestDTO.getJwtToken(), jwtRequestDTO.getRefreshJwt()));
+        executeRefreshToken(jwtRequestDTO.getRefreshJwt(), jwtRequestDTO.getExpirationDate());
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Async
+    public void executeRefreshToken(String refreshJWTToken, Date expirationDate) {
+        Instant instantExpirationDate = (expirationDate).toInstant();
+        Instant executionMoment = instantExpirationDate.plus(1, ChronoUnit.MINUTES);
+        ScheduledExecutorService localExecutor = Executors.newSingleThreadScheduledExecutor();
+        TaskScheduler scheduler = new ConcurrentTaskScheduler(localExecutor);
+        scheduler.schedule(createRunnable(refreshJWTToken), executionMoment);
+    }
+
+    private Runnable createRunnable(final String refreshJWTToken) {
+        return () -> {
+            JWTRequestDTO jwtRequestDTO = zuulClient.refreshAuthenticationToken("Bearer " + refreshJWTToken);
+            changeJWTToken(jwtRequestDTO);
+            executeRefreshToken(jwtRequestDTO.getRefreshJwt(),jwtRequestDTO.getExpirationDate());
+        };
+    }
+
+    private void changeJWTToken(JWTRequestDTO jwtRequestDTO){
+        JWTToken jwtToken = jwtTokenRepository.findById(1L).get();
+        jwtToken.setToken(jwtRequestDTO.getJwtToken());
+        jwtToken.setRefreshToken(jwtRequestDTO.getRefreshJwt());
+        jwtTokenRepository.save(jwtToken);
     }
 
     @GetMapping("/health")
@@ -172,7 +210,7 @@ public class AuthenticationController {
     @Autowired
     public AuthenticationController(UserService userService, AuthenticationService authenticationService, LogService logService,
                                     IPAddressProvider ipAddressProvider, TestServiceImpl testService, CamundaService camundaService,
-                                    JWTTokenRepository jwtTokenRepository) {
+                                    JWTTokenRepository jwtTokenRepository,ZuulClient zuulClient) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.logService = logService;
@@ -180,5 +218,6 @@ public class AuthenticationController {
         this.testService = testService;
         this.camundaService = camundaService;
         this.jwtTokenRepository = jwtTokenRepository;
+        this.zuulClient = zuulClient;
     }
 }
