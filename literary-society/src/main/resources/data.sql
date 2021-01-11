@@ -5,13 +5,13 @@
 
 -- Genres
 insert into genre (name)
-values ('Romani');
+values ('Roman');
 insert into genre (name)
-values ('Fantastika');
+values ('Klasik');
 insert into genre (name)
-values ('Poezija');
+values ('Lektira');
 insert into genre (name)
-values ('Putopisi');
+values ('Putopis');
 
 -- LU One Token for Payment Gateway
 insert into jwttoken (token)
@@ -151,17 +151,17 @@ values ('User', 'INSANE MAN', 'PUSKIN', 'Sankt Petersburg', 'Rusija', 'communist
 insert into image (data)
 values ('na-drini-cuprija.jpg');
 insert into image (data)
-values ('moby-dick.jpg');
+values ('mobi-dik.jpg');
 insert into image (data)
-values ('naucite-bootstrap-4.jpg');
+values ('majstor-i-margarita.jpg');
 insert into image (data)
-values ('i-leoni-di-sicilia.jpg');
+values ('komo.jpg');
 insert into image (data)
 values ('covek-koji-je-voleo-pse.jpg');
 insert into image (data)
-values ('a-young-doctors-notebook.jpg');
+values ('ana-karenjina.jpg');
 insert into image (data)
-values ('javascript-fp.jpg');
+values ('hajduci.jpg');
 insert into image (data)
 values ('na-drini-cuprija.jpg');
 
@@ -170,64 +170,79 @@ values ('na-drini-cuprija.jpg');
 insert into book (title, writers_names, image_id, status, synopsis, genre_id)
 values ('Na Drini ćuprija', 'Ivo Andrić', 1, 'IN_STORES',
         'Sudbina Mehmed-paše Sokolovića predodredila je da njegov život bude prekinut pre otelotvorenja njegove ideje na javi. On je napustio ovaj svet a veliki most na Drini je ostao kao simbol trajanja. Oko njega će se isplesti bezbroj priča o ljudima, njihovim sudbinama i istorijskim dešavanjima.',
-        1);
-insert into book (title, writers_names, image_id, status, synopsis, genre_id)
-values ('Moby Dick', 'Herman Melville', 2, 'IN_STORES',
-        'When the young Ishmael gets on board Captain Ahab''s whaling ship, little does he suspect that the mission on which he is about to embark is the fulfilment of his master''s obsessive desire for revenge on Moby Dick, a white whale who has already claimed countless human victims and destroyed many fleets. With some sinister crew members in their midst and the hazardous conditions of the sea to contend with, the expedition becomes increasingly dangerous the closer it gets to its quarry.',
         2);
 insert into book (title, writers_names, image_id, status, synopsis, genre_id)
-values ('Naučite Bootstrap 4', 'Benjamin Jakobus, Jason Marah', 3, 'IN_STORES',
-        'Ova knjiga će vam pomoći da upotrebite i prilagodite Bootstrap za kreiranje privlačnih veb sajtova koji odgovaraju vašim potrebama. Kreiraćete prilagođeni Bootstrap veb sajt korišćenjem različitih pristupa za prilagođavanje radnog okvira. Koristićete ključne funkcije Bootstrapa i brzo ćete otkriti različite načine na koje Bootstrap može da vam pomogne da kreirate veb interfejse.',
-        3);
+values ('Mobi Dik', 'Herman Melvil', 2, 'IN_STORES',
+        'Uzbudljiva priča o kitolovcima, tragična ispovest i složena alegorija, ovo je knjiga koja obuhvata sve aspekte ljudskog postojanja – od telesnog do metafizičkog. Duboko promišljen i s velikim brojem burnih epizoda, Mobi Dik predstavlja vrhunsko ostvarenje američke književnosti XIX veka.',
+        4);
 insert into book (title, writers_names, image_id, status, synopsis, genre_id)
-values ('I leoni di Sicilia', 'Stefania Auci', 4, 'IN_STORES',
-        'Roman o porodici Florio, nekrunisanim kraljevima Sicilije. Bila jednom jedna porodica koja se suprotstavila postojećem. Porodica koja je rizikovala sve. Porodica koja je ušla u legendu. Uplićući priču o društvenom i trgovačkom uspehu Floriovih sa njihovim burnim životima, tokom najnemirnijih godina u italijanskoj istoriji, Stefanija Auči razmotava klupko jedne neverovatne porodične sage.',
+values ('Majstor i Margarita', 'Mihail Bulgakov', 3, 'IN_STORES',
+        'Dolazak tajanstvenog Volanda i njegove svite – neobičnog gospodina u kariranim pantalonama i neponovljivog mačka Behemota – u Staljinovu Moskvu iniciraće čitav niz događaja sa tragikomičnim zapletom i surovim posledicama: svako će biti prinuđen da se suoči sa istinom o sebi.',
+        1);
+insert into book (title, writers_names, image_id, status, synopsis, genre_id)
+values ('Komo', 'Srđan Valjarević', 4, 'IN_STORES',
+        'Jedan se pisac, koji trenutno ne piše, našao u sredini koja nije njegova, u idiličnom kraju tako različitom od Beograda iz kojega je stigao, tu susreće neke ljude, pije, šeta prirodom, planinari, konverzira koliko je potrebno, i to je uglavnom sve. No, taj minimalizam s kojim se opisuje svakodnevica, nonšalancija s kojom se usput dodiruju razne teme i međuljudski odnosi, doista su rijetko uspjeli, do te mjere da čitatelja ne ostavljaju na miru dok se ne dočepa zadnje stranice.',
         4);
 insert into book (title, writers_names, image_id, status, synopsis, genre_id)
 values ('Čovek koji je voleo pse', 'Leonardo Padura', 5, 'IN_STORES',
         'Kroz razuđenu epsku  sliku najvažnijih događanja u svetu u prve četiri decenije XX veka — čiji odjeci u romanu živo pulsiraju gotovo do kraja veka — u širokom geografskom rasponu od današnjeg Kazahstana, preko Turske, nekoliko evropskih zemalja, pa do prekookeanskih Sjedinjenih Država, Meksika i Kube, pratimo životopis jednog revolucionara i njegovog ubice, dva lika zadojena istim idealima, ali potpuno suprotno ostvarivanim. Između njih i sa njima, na različite načine, nalazi se pripovedač, Kubanac.',
         1);
 insert into book (title, writers_names, image_id, status, synopsis, genre_id)
-values ('A Young Doctor''s Notebook', 'Mikhail Bulgakov', 6, 'IN_STORES',
-        'Using a sharply realistic and humorous style, Bulgakov reveals his doubts about his own competence and the immense burden of responsibility, as he deals with a superstitious and poorly educated people struggling to enter the modern age.',
-        4);
+values ('Ana Karenjina', 'Lav Tolstoj', 6, 'IN_STORES',
+        'Čini se da Ana Karenjina ima sve što se poželeti može – lepa je, bogata, omiljena u društvu, a njen sin je jednostavno obožava. Međutim, Ana ipak oseća da je život suviše prazan, sve dok ne sretne naočitog i šarmantnog oficira, grofa Vronskog. Njihova veza postaće pravi skandal u visokom društvu i izazvaće ogorčenost i zavist ljudi koji okružuju ovo dvoje ljubavnika.',
+        3);
 insert into book (title, writers_names, image_id, status, synopsis, genre_id)
-values ('JavaScript funkc. programiranje', 'Federico Kereki', 7, 'IN_STORES',
-        'Funkcionalno programiranje je paradigma za razvoj softvera sa boljim performansama. Ono pomaže da napišete sažet kod i kod koji se može testirati. Da biste podigli vaše programske veštine na viši nivo, ova sveobuhvatna knjiga će vam pomoći da iskoristite mogućnosti funkcionalnog programiranja u JavaScriptu i da napišete visokoodržive i testirane aplikacije za Veb i server pomoću funkcionalnog JavaScripta.',
-        2);
+values ('Hajduci', 'Branislav Nušić', 7, 'IN_STORES',
+        'Reč je o uzbudljivoj, iz dečje perspektive ispripovedanoj, avanturističkoj priči u čijem središtu je četa nestašnih dečaka, odbeglih u hajduke. Iako su njihobve zgode I nezgode, a sa tim u vezi i komične epizode, ono što zaokuplja pažnju najmlađih čitalaca, šire gledano ovaj roman govori o pobuni mladih protiv sveta odraslih, podsećajući pritom ove potonje da su i oni nekada bili deca, te da se dečjim nestašlucima nasmeju, jer dečji smeh je najveća radost starosti.',
+        3);
 insert into book (title, writers_names, image_id, status, synopsis, genre_id)
 values ('Na Drini ćuprija', 'Ivo Andrić', 8, 'IN_STORES',
         'Sudbina Mehmed-paše Sokolovića predodredila je da njegov život bude prekinut pre otelotvorenja njegove ideje na javi. On je napustio ovaj svet a veliki most na Drini je ostao kao simbol trajanja. Oko njega će se isplesti bezbroj priča o ljudima, njihovim sudbinama i istorijskim dešavanjima.',
-        3);
+        2);
+
 
 -- Publishing Infos
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 935.00, 10, 1, 13);
+values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan', 850.00, 0, 1, 13);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9781847496447', 704, 'London', '2017-05-11', 'Alma Books', 0.00, 0, 2, 13);
+values ('9788652137619', 730, 'London', '2020-07-20', 'Laguna', 1100.00, 20, 2, 12);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9788673105260', 354, 'Subotica', '2018-09-14', 'Kompjuter biblioteka', 1760.00, 20, 3, 12);
+values ('9788610013658', 375, 'Subotica', '2015-09-14', 'Vulkan', 1230.00, 25, 3, 13);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9788842931539', 448, 'Rim', '2019-04-05', 'Editrice Nord', 1170.00, 10, 4, 12);
+values ('9788652133796', 240, 'Kragujevac', '2019-10-18', 'Vulkan', 0.00, 0, 4, 13);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9788652138586', 632, 'Novi Sad', '2018-10-11', 'Laguna', 1530.00, 15, 5, 13);
+values ('9788652138586', 632, 'Madrid', '2018-10-11', 'Laguna', 1050.00, 15, 5, 12);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9781847492869', 160, 'Moskva', '2012-07-03', 'Alma Books', 0.00, 0, 6, 13);
+values ('9788652135554', 896, 'Moskva', '2012-04-15', 'Laguna', 990.00, 10, 6, 12);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9788673105505', 470, 'Subotica', '2020-06-12', 'Kompjuter biblioteka', 2310.00, 20, 7, 12);
+values ('9788610032291', 208, 'Beograd', '2019-04-05', 'Vulkan', 400.00, 0, 7, 13);
 insert into publishing_info(isbn, number_of_pages, publisher_city, publication_date, publisher, price, discount,
                             book_id, merchant_id)
-values ('9788610034226', 352, 'Beograd', '2020-03-07', 'Vulkan izdavaštvo', 890.00, 5, 8, 12);
+values ('9788610034226', 352, 'Novi Sad', '2020-03-07', 'Laguna', 0.00, 0, 8, 12);
 
---- pdf documents
+
+--- PDF Documents
 insert into pdfdocument(created, name, book_id)
-values ('2019-04-05 14:05:00', '2019-04-05_14-05-00_Moby Dick.pdf', 1);
+values ('2020-03-07 14:05:30', '2020-03-07_14-05-30_Na drini ćuprija.pdf', 1);
 insert into pdfdocument(created, name, book_id)
-values ('2019-04-05 14:05:00', '2019-04-05_14-05-00_Na Drini ćuprija.pdf', 2);
+values ('2020-07-20 11:23:47', '2020-07-20_11-23-47_Mobi Dik.pdf', 2);
+insert into pdfdocument(created, name, book_id)
+values ('2015-09-14 15:41:55', '2015-09-14_15-41-55_Majstor i Margarita.pdf', 3);
+insert into pdfdocument(created, name, book_id)
+values ('2019-10-18 12:39:18', '2019-10-18_12-39-18_Komo.pdf', 4);
+insert into pdfdocument(created, name, book_id)
+values ('2018-10-11 13:16:45', '2018-10-11_13-16-45_Čovek koji je voleo pse.pdf', 5);
+insert into pdfdocument(created, name, book_id)
+values ('2012-04-15 08:54:22', '2012-04-15_08-54-22_Ana Karenjina.pdf', 6);
+insert into pdfdocument(created, name, book_id)
+values ('2019-04-05 10:09:14', '2019-04-05_10-09-14_Hajduci.pdf', 7);
+insert into pdfdocument(created, name, book_id)
+values ('2020-08-19 09:12:15', '2020-08-19_09-12-15_Na drini ćuprija.pdf', 8);
+

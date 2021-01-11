@@ -8,7 +8,6 @@ import nitpicksy.paymentgateway.model.Merchant;
 import nitpicksy.paymentgateway.model.PaymentMethod;
 import nitpicksy.paymentgateway.service.DataService;
 import nitpicksy.paymentgateway.service.PaymentMethodService;
-import nitpicksy.paymentgateway.serviceimpl.HashValueServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +21,6 @@ public class PaymentDataRequestMapper {
     private DataService dataService;
 
     private PaymentMethodService paymentMethodService;
-
-    private HashValueServiceImpl hashValueService;
 
     public List<DataForPayment> convert(List<PaymentDataRequestDTO> listPaymentDataRequest, Merchant merchant) throws NoSuchAlgorithmException {
         List<DataForPayment> dataForPayments = new ArrayList<>();
@@ -40,14 +37,7 @@ public class PaymentDataRequestMapper {
             DataForPayment dataForPayment = new DataForPayment();
             Data data = dataService.findById(dataForPaymentRequestDTO.getPaymentDataId());
             dataForPayment.setAttributeName(data.getAttributeJSONName());
-
-            //dodavanje info za banku heširaj, ostalo crypto
-            if (paymentMethod.getCommonName().equals("bank")) {
-                dataForPayment.setAttributeValue(hashValueService.getHashValue(dataForPaymentRequestDTO.getAttributeValue()));
-            } else {
-                dataForPayment.setAttributeValue(dataForPaymentRequestDTO.getAttributeValue());
-            }
-
+            dataForPayment.setAttributeValue(dataForPaymentRequestDTO.getAttributeValue());
             dataForPayment.setPaymentMethod(paymentMethod);
             dataForPayment.setMerchant(merchant);
             dataForPayment.setData(data);
@@ -57,9 +47,8 @@ public class PaymentDataRequestMapper {
     }
 
     @Autowired
-    public PaymentDataRequestMapper(DataService dataService, PaymentMethodService paymentMethodService, HashValueServiceImpl hashValueService) {
+    public PaymentDataRequestMapper(DataService dataService, PaymentMethodService paymentMethodService) {
         this.dataService = dataService;
         this.paymentMethodService = paymentMethodService;
-        this.hashValueService = hashValueService;
     }
 }

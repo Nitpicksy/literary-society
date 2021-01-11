@@ -13,15 +13,10 @@ import org.joda.time.DateTime;
 @Component
 public class PCCRequestMapper {
 
-    @Autowired
-    private HashValueServiceImpl hashValueServiceImpl;
-
-    public PCCRequestDTO toDTO(Transaction transaction , ConfirmPaymentDTO confirmPaymentDTO) throws NoSuchAlgorithmException {
+    public PCCRequestDTO toDTO(Transaction transaction , ConfirmPaymentDTO confirmPaymentDTO) {
         ConfirmPaymentDTO confirmPaymentDTOWithHashedValues = new ConfirmPaymentDTO(
-                hashValueServiceImpl.getHashValue(confirmPaymentDTO.getPAN()),
-                hashValueServiceImpl.getHashValue(confirmPaymentDTO.getCardHolderName()), confirmPaymentDTO.getExpirationDate(),
+                confirmPaymentDTO.getPAN(), confirmPaymentDTO.getCardHolderName(), confirmPaymentDTO.getExpirationDate(),
                 confirmPaymentDTO.getSecurityCode());
-                System.out.println(confirmPaymentDTOWithHashedValues.getSecurityCode());
         return new PCCRequestDTO(transaction.getId(), new Timestamp(DateTime.now().getMillis()),
                 transaction.getAmount(), confirmPaymentDTOWithHashedValues,getBankIdentificationNumber(confirmPaymentDTO.getPAN()),
                 transaction.getMerchantId(),transaction.getMerchantOrderId(),

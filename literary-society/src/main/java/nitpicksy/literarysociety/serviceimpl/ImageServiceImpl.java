@@ -32,6 +32,7 @@ import java.util.Objects;
 public class ImageServiceImpl implements ImageService {
 
     private static String IMAGES_PATH = "literary-society/src/main/resources/images/";
+    private static String DEFAULT_IMG = "default-img.jpg";
 
     private final String CLASS_PATH = this.getClass().getCanonicalName();
     private final String CLASS_NAME = this.getClass().getSimpleName();
@@ -45,6 +46,9 @@ public class ImageServiceImpl implements ImageService {
         try {
             Path fileStorageLocation = Paths.get(IMAGES_PATH);
             Path filePath = fileStorageLocation.resolve(fileName).normalize();
+            if (!Files.exists(filePath)) {
+                filePath = fileStorageLocation.resolve(DEFAULT_IMG).normalize();
+            }
             Resource resource = new UrlResource(filePath.toUri());
             File file = resource.getFile();
             byte[] fileContent = Files.readAllBytes(file.toPath());

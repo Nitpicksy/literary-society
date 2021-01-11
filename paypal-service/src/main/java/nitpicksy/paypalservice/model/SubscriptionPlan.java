@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nitpicksy.paypalservice.converter.CryptoStringConverter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -26,9 +27,11 @@ public class SubscriptionPlan {
     private String planId;
 
     @Column(nullable = false)
+    @Convert(converter = CryptoStringConverter.class)
     private String merchantClientId;
 
     @Column(nullable = false)
+    @Convert(converter = CryptoStringConverter.class)
     private String merchantClientSecret;
 
     @Column(nullable = false)

@@ -25,19 +25,13 @@ public class CreditCardServiceImpl implements CreditCardService {
 
     private CreditCardRepository creditCardRepository;
 
-    private HashValueServiceImpl hashValueServiceImpl;
 
     private LogService logService;
 
     @Override
-    public CreditCard checkCreditCardDate(String pan, String cardHolderName, String expirationDate, String securityCode) throws NoSuchAlgorithmException {
-        CreditCard creditCard = creditCardRepository.findByPanAndCardHolderName(hashValueServiceImpl.getHashValue(pan), hashValueServiceImpl.getHashValue(cardHolderName));
+    public CreditCard checkCreditCardDate(String pan, String cardHolderName, String expirationDate, String securityCode)  {
+        CreditCard creditCard = creditCardRepository.findByPanAndCardHolderNameAndSecurityCode(pan, cardHolderName,securityCode);
         if(creditCard == null){
-            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CARD", String.format("Invalid Credit Card data.")));
-            throw new InvalidDataException("Invalid Credit Card data. Please try again.", HttpStatus.BAD_REQUEST);
-        }
-
-        if(!BCrypt.checkpw(securityCode, creditCard.getSecurityCode())){
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CARD", String.format("Invalid Credit Card data.")));
             throw new InvalidDataException("Invalid Credit Card data. Please try again.", HttpStatus.BAD_REQUEST);
         }
@@ -50,26 +44,6 @@ public class CreditCardServiceImpl implements CreditCardService {
         return creditCard;
     }
 
-    @Override
-    public CreditCard checkCreditCardDateHashedValues(String pan, String cardHolderName, String expirationDate, String securityCode){
-        CreditCard creditCard = creditCardRepository.findByPanAndCardHolderName(pan, cardHolderName);
-        if(creditCard == null){
-            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CARD", String.format("Invalid Credit Card data.")));
-            return null;
-        }
-
-        if(!BCrypt.checkpw(securityCode, creditCard.getSecurityCode())){
-            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CARD", String.format("Invalid Credit Card data.")));
-            return null;
-        }
-
-        if(!checkCreditCardExpirationDate(creditCard.getExpirationDate(),expirationDate)){
-            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CARD", String.format("Invalid Credit Card data.")));
-            return null;
-        }
-
-        return creditCard;
-    }
 
     @Override
     public boolean isClientOfThisBank(String pan){
@@ -101,9 +75,8 @@ public class CreditCardServiceImpl implements CreditCardService {
     }
 
     @Autowired
-    public CreditCardServiceImpl(CreditCardRepository creditCardRepository,HashValueServiceImpl hashValueServiceImpl,LogService logService) {
+    public CreditCardServiceImpl(CreditCardRepository creditCardRepository,LogService logService) {
         this.creditCardRepository = creditCardRepository;
-        this.hashValueServiceImpl = hashValueServiceImpl;
         this.logService = logService;
     }
 }
