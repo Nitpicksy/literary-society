@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nitpicksy.paypalservice.converter.CryptoStringConverter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -23,9 +24,11 @@ public class PaymentRequest {
     private String paymentId;
 
     @Column(nullable = false)
+    @Convert(converter = CryptoStringConverter.class)
     private String merchantClientId;
 
     @Column(nullable = false)
+    @Convert(converter = CryptoStringConverter.class)
     private String merchantClientSecret;
 
     @Column(nullable = false)

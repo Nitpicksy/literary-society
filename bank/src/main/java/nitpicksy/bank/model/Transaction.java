@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nitpicksy.bank.converter.CryptoStringConverter;
 import nitpicksy.bank.enumeration.TransactionStatus;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -30,6 +32,7 @@ public class Transaction {
     private Double amount;
 
     @Column(nullable = false)
+    @Convert(converter = CryptoStringConverter.class)
     private String merchantId;
 
     @Column(nullable = false)

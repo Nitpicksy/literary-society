@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nitpicksy.paymentgateway.converter.CryptoStringConverter;
 
 import javax.persistence.*;
 
@@ -21,6 +22,7 @@ public class DataForPayment {
     private String attributeName;
 
     @Column(nullable = false)
+    @Convert(converter = CryptoStringConverter.class)
     private String attributeValue;
 
     @PrimaryKeyJoinColumn

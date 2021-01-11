@@ -33,8 +33,6 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final String CLASS_NAME = this.getClass().getSimpleName();
 
-    private HashValueServiceImpl hashValueServiceImpl;
-
     private TransactionRepository transactionRepository;
 
     private AccountService accountService;
@@ -73,16 +71,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public ConfirmPaymentResponseDTO transferBetweenBanks(PaymentRequest paymentRequest, ConfirmPaymentDTO confirmPaymentDTO)  {
-        Transaction transaction = null;
+        Transaction transaction = create(paymentRequest,confirmPaymentDTO.getPAN());
         ConfirmPaymentResponseDTO confirmPaymentResponseDTO = new ConfirmPaymentResponseDTO(paymentRequest.getId());
-        try {
-            transaction = create(paymentRequest,hashValueServiceImpl.getHashValue(confirmPaymentDTO.getPAN()));
-        } catch (NoSuchAlgorithmException e) {
-            setTransactionStatus(transaction, TransactionStatus.ERROR);
-            confirmPaymentResponseDTO.setStatus(TransactionStatus.ERROR.toString());
-            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", String.format("Transaction %s is failed. Hash algorithm does not exist.", transaction.getId())));
-            return confirmPaymentResponseDTO;
-        }
         transactionRepository.save(transaction);
         try {
             PCCRequestDTO pccRequestDTO = pccRequestMapper.toDTO(transaction, confirmPaymentDTO);
@@ -158,9 +148,8 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Autowired
-    public TransactionServiceImpl(HashValueServiceImpl hashValueServiceImpl, TransactionRepository transactionRepository,AccountService accountService,
+    public TransactionServiceImpl(TransactionRepository transactionRepository,AccountService accountService,
                                   MerchantService merchantService,PCCRequestMapper pccRequestMapper,ZuulClient pccClient,LogService logService) {
-        this.hashValueServiceImpl = hashValueServiceImpl;
         this.transactionRepository = transactionRepository;
         this.accountService = accountService;
         this.merchantService = merchantService;
