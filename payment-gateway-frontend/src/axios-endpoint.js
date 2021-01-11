@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const instance = axios.create({
   // baseURL: "https://localhost:8080/payment-gateway/api",
-  baseURL: "https://localhost:40647/api",
+  baseURL: "https://localhost:36015/api",
   orders: "/orders",
   payments: "/payments",
 });
@@ -11,7 +11,7 @@ instance.interceptors.request.use(
   async (request) => {
     if (!request.url.includes("/auth")) {
       const accessToken = localStorage.getItem("accessToken");
-      if(accessToken){
+      if (accessToken) {
         request.headers = {
           Auth: `Bearer ${accessToken}`,
         };
