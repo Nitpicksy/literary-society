@@ -66,80 +66,67 @@ values ('merchantToken', 'Merchant API Token', 'password', 3);
 -- Default LU Merchant
 -- For Bank: merchantId and merchantPassword
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantId',
-        '48629d6f8ac6048d1f17266bd732324c79c26bfcacd6db69852a7b2500f94422e8d6c221e759b4e685b25959c9bed9dd5fb6a309a412a522a210c0f4e39de895',
-        1, 1, 1);
+values ('merchantId','znRXaWARTj/GLNy7B2RXaHMw/p9gSQCbGMsWZmQHHZc=',1, 1, 1);
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantPassword',
-        '2cbcb5fcca516d90d4cd1b65c5bc844d67955b41e8ba66cdffef8dc894c981d044c09fcc1f3e04baf1475401ab321ed813fb668ccb369b2f70788a3c70793da3',
-        1, 1, 2);
+values ('merchantPassword', '3eNe4BSkd8W8Dnf3vJwsBQ==',  1, 1, 2);
 
 -- For PayPal: merchantClientId and merchantClientSecret
+-- merchantClientId je AZRZ5NKCNB4ZkLdmx-o_SZIL3lTbGaKd0tiX2dyVaNMfEqSIMVZJPNjgcZKmbGLNUy17Z6gOi9jZIj4R
+-- merchantClientSecret je EGU9nvBhzJPHupEsi6cFTIkDfE4uKIz7fnQZsXpvWkMh5InMVlbwjGqp3AFJdBI9qeLH51I4WCuluWOL
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantClientId', 'AZRZ5NKCNB4ZkLdmx-o_SZIL3lTbGaKd0tiX2dyVaNMfEqSIMVZJPNjgcZKmbGLNUy17Z6gOi9jZIj4R', 1, 2,
-        3);
+values ('merchantClientId', 'HjrUQgJ3UlgMAA8IxiuLp8M7y3j0LcqN6qW26wtgiw3kq/v/7sgQH6vflrM9fdogUDuzOsUiLE45Vyf2rMOCNpPSgT5BaA1blEYJDQ0PwD9zMP6fYEkAmxjLFmZkBx2X', 1, 2, 3);
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantClientSecret', 'EGU9nvBhzJPHupEsi6cFTIkDfE4uKIz7fnQZsXpvWkMh5InMVlbwjGqp3AFJdBI9qeLH51I4WCuluWOL', 1,
-        2, 4);
+values ('merchantClientSecret', '1bMOqvW9nhI12qIWoNcS0JQFqysx5oH/70/RNpHNpNmP8wEMOYv3Sl4tf6IFRecCY67shanoz8rCSnVB086qswNjHSLjjT+lIRVq3EiMc+FzMP6fYEkAmxjLFmZkBx2X', 1,2, 4);
 
 -- For Bitcoin: merchantToken
+-- merchantToken je xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantToken',
-        'xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC',
-        1, 3, 5);
-
+values ('merchantToken','XkS0CGAC7y37MLSz5UvVrOkHaJSrcWEynG9KGIKDVXtqeqBWrPAzd+gccai5NCo+',1, 3, 5);
 
 -- Vulkan
 -- For Bank: merchantId and merchantPassword
+-- merchantId je 8888888888888889
+-- merchantPassword je merchant2
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantId',
-        '91f30b2d7007cd72372ba0761549dca5f8c7dc3f6b104cadf1741a467250a9abd8063ba1136e11d13d2f3ceee82c17f2ac41c632d5fb57c9db8d841ba99b63b3',
-        2, 1, 1);
+values ('merchantId','hicitSlQatJeuNkuJ+Cq4XMw/p9gSQCbGMsWZmQHHZc=', 2, 1, 1);
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantPassword',
-        '2ab816119860a4f2ea41ef58181cc965d2dc87c2bf3f5c39ffa66bb6c8e2ee7b454fe47d62be94bcf0ab09889757580756fbc4e32609ac639740aede43f22280',
-        2, 1, 2);
+values ('merchantPassword', 'oHk9uPXFVxN77xIdiSA41A==', 2, 1, 2);
 
 -- For PayPal: merchantClientId and merchantClientSecret
+-- merchantClientId je Af7nTAdvuAjb3_n5gzUTsfQag0ZCkF-qs6ASwFdMfLKzZ_6GWVNCB9TdTpXVAsKZBeYHSVGRqZx1h68R
+-- merchantClientSecret je EF60H0GD454RHXIpemtrBAi1w6VmeGjmc_sY7C8aa0YaEwLp_Xv2sJTSIpLkVuqaSXdSAQ72VAWiu3MY
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantClientId', 'Af7nTAdvuAjb3_n5gzUTsfQag0ZCkF-qs6ASwFdMfLKzZ_6GWVNCB9TdTpXVAsKZBeYHSVGRqZx1h68R', 2, 2,
-        3);
+values ('merchantClientId', 'ZhDqYXnp6f08ZSk8fhDqiXUUijfLSLOUNsMDhtCHeRYpF2ZwLmW75lCImvuV9SZvuQLkgmr7DrU/doAyWbd+DD0SK8xkTTerpm4YONqr561zMP6fYEkAmxjLFmZkBx2X', 2, 2,3);
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantClientSecret', 'EF60H0GD454RHXIpemtrBAi1w6VmeGjmc_sY7C8aa0YaEwLp_Xv2sJTSIpLkVuqaSXdSAQ72VAWiu3MY', 2,
-        2, 4);
+values ('merchantClientSecret', 'gaPuXYOoJbl6ius3H9cM3SiR+1WCM6twEnz4ZZwOMN4fj02diM26ECJEUCOYTGby+GRia/BMiJ9TzgTBt8sa5jXR51TVtzvFgLnaeDYo4OBzMP6fYEkAmxjLFmZkBx2X', 2, 2, 4);
 
 -- For Bitcoin: merchantToken
+-- merchantToken je xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantToken',
-        'xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC',
-        2, 3, 5);
+values ('merchantToken','XkS0CGAC7y37MLSz5UvVrOkHaJSrcWEynG9KGIKDVXtqeqBWrPAzd+gccai5NCo+', 2, 3, 5);
 
 
 -- Laguna
 -- For Bank: merchantId and merchantPassword
+-- merchantId je 8888888888888888
+-- merchantPassword je merchant1
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantId',
-        '1dcae25c2de2bbab00044e500962d7cf40f9c1bbf19d508af0d1a3a9799462573af4b246d5ec3f3d7286b368f5a85b5fbb3db31ded47f3770e1c79fd5b15532',
-        3, 1, 1);
+values ('merchantId','MCCrFmY/JEiq7Skdpgc7nXMw/p9gSQCbGMsWZmQHHZc=', 3, 1, 1);
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantPassword',
-        '43a718f649b677cbee616b74b4f57e42de51c29e846e68eb339eb1c20cebe96829e73ffa803d4664d6b1d6b2f8d0c35b3f2385ca14ed95118a466b9644d200fe',
-        3, 1, 2);
+values ('merchantPassword', 'S5Vuko/c7Tq0WNP7kvt2aQ==', 3, 1, 2);
 
 -- For PayPal: merchantClientId and merchantClientSecret
+-- merchantClientId je ARPDqaQtYU6ilCpwG0IXT35OMXGTjsA3K-QFYLItx5oRcJUOqZ527Z7BfNs6sS3yu45kdINghGRLR8vV
+-- merchantClientSecret je ECBW7VI6Tzi23LnYdLEvnvEW5fm7drD6kvgVRMD2hnTOk9f9AJSqJaD-8p0aLrOWMBdoKGM9wIoPby4j
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantClientId', 'ARPDqaQtYU6ilCpwG0IXT35OMXGTjsA3K-QFYLItx5oRcJUOqZ527Z7BfNs6sS3yu45kdINghGRLR8vV', 3, 2,
-        3);
+values ('merchantClientId', 'peqGo1stDYXqMsel3LPL1Xv4XRLDuMeij6ROyRQDLquJctqb2dgY6o/Zp9rHXy6U7spWS6YGm+X1g2SmKPPLTzydegBBzleOFfNpuIrLOhdzMP6fYEkAmxjLFmZkBx2X', 3, 2, 3);
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantClientSecret', 'ECBW7VI6Tzi23LnYdLEvnvEW5fm7drD6kvgVRMD2hnTOk9f9AJSqJaD-8p0aLrOWMBdoKGM9wIoPby4j', 3,
-        2, 4);
+values ('merchantClientSecret', 'hty26ltyxHZ7itEDMr9SXE2ezIDDVgsJLdDJxldV9Q8Z1XGAiR/ywdNKAs8jPBunbJBcJyezSvQcAAtgAgEv1efFBFenLOm+A1UbL9dYmolzMP6fYEkAmxjLFmZkBx2X', 3, 2, 4);
 
 -- For Bitcoin: merchantToken
+-- merchantToken je xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantToken',
-        'xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC',
-        3, 3, 5);
-
+values ('merchantToken', 'XkS0CGAC7y37MLSz5UvVrOkHaJSrcWEynG9KGIKDVXtqeqBWrPAzd+gccai5NCo+', 3, 3, 5);
 
 -- SUBSCRIPTION PLANS
 

@@ -26,19 +26,16 @@ values ('dd642550b81c3e299d759d41a63f3fb22091f155f49dffb133a0695a2991cc6f04bb259
         '2020-08-25', 3);
 
 --8888888888888888
---sifra je perica1
+--sifra je merchant1
 insert into merchant (name,city, country, email, balance, merchant_id, merchant_password) values ('Laguna', 'Novi Sad', 'Srbija', 'laguna@maildrop.cc', 100000,
- '1dcae25c2de2bbab00044e500962d7cf40f9c1bbf19d508af0d1a3a9799462573af4b246d5ec3f3d7286b368f5a85b5fbb3db31ded47f3770e1c79fd5b15532',
- '43a718f649b677cbee616b74b4f57e42de51c29e846e68eb339eb1c20cebe96829e73ffa803d4664d6b1d6b2f8d0c35b3f2385ca14ed95118a466b9644d200fe');
+ 'MCCrFmY/JEiq7Skdpgc7nXMw/p9gSQCbGMsWZmQHHZc=','S5Vuko/c7Tq0WNP7kvt2aQ==');
 
 --8888888888888889
---password je perica2
+--password je merchant2
 insert into merchant (name,city, country, email, balance, merchant_id, merchant_password) values ('Vulkan', 'Novi Sad', 'Srbija', 'vulkan@maildrop.cc', 100000,
-'91f30b2d7007cd72372ba0761549dca5f8c7dc3f6b104cadf1741a467250a9abd8063ba1136e11d13d2f3ceee82c17f2ac41c632d5fb57c9db8d841ba99b63b3',
- '2ab816119860a4f2ea41ef58181cc965d2dc87c2bf3f5c39ffa66bb6c8e2ee7b454fe47d62be94bcf0ab09889757580756fbc4e32609ac639740aede43f22280');
+'hicitSlQatJeuNkuJ+Cq4XMw/p9gSQCbGMsWZmQHHZc=','oHk9uPXFVxN77xIdiSA41A==');
 
 --9999999999999999
 --sifra je merchant
  insert into merchant (name,city, country, email, balance, merchant_id, merchant_password) values ('Default LU Merchant', 'Novi Sad', 'Srbija', 'merchant@maildrop.cc', 100000,
-'48629d6f8ac6048d1f17266bd732324c79c26bfcacd6db69852a7b2500f94422e8d6c221e759b4e685b25959c9bed9dd5fb6a309a412a522a210c0f4e39de895',
- '2cbcb5fcca516d90d4cd1b65c5bc844d67955b41e8ba66cdffef8dc894c981d044c09fcc1f3e04baf1475401ab321ed813fb668ccb369b2f70788a3c70793da3');
+'znRXaWARTj/GLNy7B2RXaHMw/p9gSQCbGMsWZmQHHZc=', '3eNe4BSkd8W8Dnf3vJwsBQ==');
