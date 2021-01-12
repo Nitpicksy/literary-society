@@ -2,6 +2,7 @@ package nitpicksy.paymentgateway.serviceimpl;
 
 import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.dto.both.PaymentMethodDTO;
+import nitpicksy.paymentgateway.dto.request.JWTRequestDTO;
 import nitpicksy.paymentgateway.enumeration.CompanyStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
 import nitpicksy.paymentgateway.model.Company;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,10 +89,12 @@ public class CompanyServiceImpl implements CompanyService {
                     TrustStoreUtils.importCertificateInTrustStore(certificate, company.getCommonName(), trustStore);
                 } catch (Exception e) {
                 }
-                String jwtToken = tokenUtils.generateToken(company.getCommonName(), company.getRole().getName(),
+                String jwtToken = tokenUtils.generateTokenForCompany(company.getCommonName(), company.getRole().getName(),
                         company.getRole().getPermissions());
+                String refreshJwt = tokenUtils.generateRefreshToken(company.getCommonName());
+                Date date = tokenUtils.getExpirationDateFromToken(jwtToken);
                 try{
-                    zuulClient.sendJWTToken(URI.create(apiGatewayURL + '/' + company.getCommonName()), jwtToken);
+                    zuulClient.sendJWTToken(URI.create(apiGatewayURL + '/' + company.getCommonName()), new JWTRequestDTO(jwtToken,refreshJwt,date));
                     company.setStatus(CompanyStatus.APPROVED);
                     composeAndSendApprovalEmail(company.getEmail());
                 }catch (RuntimeException e){

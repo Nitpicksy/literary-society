@@ -1,6 +1,7 @@
 package nitpicksy.paymentgateway.serviceimpl;
 
 
+import nitpicksy.paymentgateway.dto.request.JWTRequestDTO;
 import nitpicksy.paymentgateway.dto.response.UserTokenState;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidUserDataException;
 import nitpicksy.paymentgateway.model.Admin;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -115,6 +117,34 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             String newToken = tokenUtils.refreshToken(refreshToken, role);
             int expiresIn = tokenUtils.getExpiredIn();
             return new UserTokenState(newToken, expiresIn, refreshToken);
+        } else {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "REF", String.format("User from %s tried to refresh token manually", ipAddressProvider.get())));
+            throw new InvalidUserDataException("Token can not be refreshed", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public JWTRequestDTO companyRefreshAuthenticationToken(HttpServletRequest request) {
+        String refreshToken = tokenUtils.getToken(request);
+        String username = this.tokenUtils.getUsernameFromToken(refreshToken);
+        UserDetails userDetails = loadUserByUsername(username);
+        Timestamp lastPasswordResetDate;
+        Role role;
+        if(userDetails instanceof Company){
+            Company company = (Company) userDetails;
+            lastPasswordResetDate = company.getLastPasswordResetDate();
+            role = company.getRole();
+        }else {
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "REF", String.format("User from %s tried to refresh token manually", ipAddressProvider.get())));
+            throw new InvalidUserDataException("Token can not be refreshed", HttpStatus.BAD_REQUEST);
+        }
+
+        if (this.tokenUtils.canTokenBeRefreshed(refreshToken,lastPasswordResetDate)) {
+            String newToken = tokenUtils.companyRefreshToken(refreshToken, role);
+            String refreshJwt = tokenUtils.generateRefreshToken(username);
+
+            Date date = tokenUtils.getExpirationDateFromToken(newToken);
+            return new JWTRequestDTO(newToken, refreshJwt,date );
         } else {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "REF", String.format("User from %s tried to refresh token manually", ipAddressProvider.get())));
             throw new InvalidUserDataException("Token can not be refreshed", HttpStatus.BAD_REQUEST);

@@ -1,6 +1,4 @@
 package nitpicksy.paymentgateway.security;
-
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -29,6 +27,9 @@ public class TokenUtils {
     @Value("${TOKEN_UTILS_EXPIRES_IN}")
     private int EXPIRES_IN;
 
+    @Value("${COMPANY_TOKEN_UTILS_EXPIRES_IN}")
+    private int COMPANY_EXPIRES_IN;
+
     @Value("${TOKEN_UTILS_REFRESH_TOKEN_EXPIRES_IN}")
     private int REFRESH_TOKEN_EXPIRES_IN;
 
@@ -45,7 +46,14 @@ public class TokenUtils {
     // Funkcija za generisanje JWT token
     public String generateToken(String username, String role, Set<Permission> permissions) {
         return Jwts.builder().setIssuer(APP_NAME).setSubject(username).setAudience(generateAudience())
-                .setIssuedAt(timeProvider.now()).setExpiration(generateExpirationDate()).claim("role", role)
+                .setIssuedAt(timeProvider.now()).setExpiration(generateExpirationDate(EXPIRES_IN)).claim("role", role)
+                .claim("permissions", permissions) // postavljanje proizvoljnih podataka u telo JWT tokena
+                .signWith(SIGNATURE_ALGORITHM, SECRET).compact();
+    }
+
+    public String generateTokenForCompany(String username, String role, Set<Permission> permissions) {
+        return Jwts.builder().setIssuer(APP_NAME).setSubject(username).setAudience(generateAudience())
+                .setIssuedAt(timeProvider.now()).setExpiration(generateExpirationDate(COMPANY_EXPIRES_IN)).claim("role", role)
                 .claim("permissions", permissions) // postavljanje proizvoljnih podataka u telo JWT tokena
                 .signWith(SIGNATURE_ALGORITHM, SECRET).compact();
     }
@@ -62,16 +70,32 @@ public class TokenUtils {
         return AUDIENCE_WEB;
     }
 
-    private Date generateExpirationDate() {
-        return new Date(timeProvider.now().getTime() + EXPIRES_IN);
+    private Date generateExpirationDate(int expire) {
+        return new Date(timeProvider.now().getTime() + expire);
     }
+
 
     public String refreshToken(String token, Role role) {
         String refreshedToken;
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
             claims.setIssuedAt(timeProvider.now());
-            refreshedToken = Jwts.builder().setClaims(claims).setExpiration(generateExpirationDate())
+            refreshedToken = Jwts.builder().setClaims(claims).setExpiration(generateExpirationDate(EXPIRES_IN))
+                    .claim("role", role.getName()).claim("permissions",role.getPermissions())
+                    .signWith(SIGNATURE_ALGORITHM, SECRET).compact();
+        } catch (Exception e) {
+            refreshedToken = null;
+        }
+        return refreshedToken;
+    }
+
+
+    public String companyRefreshToken(String token, Role role) {
+        String refreshedToken;
+        try {
+            final Claims claims = this.getAllClaimsFromToken(token);
+            claims.setIssuedAt(timeProvider.now());
+            refreshedToken = Jwts.builder().setClaims(claims).setExpiration(generateExpirationDate(COMPANY_EXPIRES_IN))
                     .claim("role", role.getName()).claim("permissions",role.getPermissions())
                     .signWith(SIGNATURE_ALGORITHM, SECRET).compact();
         } catch (Exception e) {
