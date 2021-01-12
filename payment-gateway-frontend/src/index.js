@@ -18,7 +18,7 @@ import { MuiThemeProvider } from "@material-ui/core/styles";
 import addCompanyReducer from './components/CompanyManagement/AddCompany/AddCompanyReducer';
 import companyListReducer from './components/CompanyManagement/CompanyList/CompanyListReducer';
 import merchantSupportPaymentMethodsReducer from './components/PaymentMethodsManagement/MerchantSupportPaymentMethods/MerchantSupportPaymentMethodsReducer';
-
+import choosePaymentMethodsReducer from './components/PaymentMethodsManagement/ChoosePaymentMethods/ChoosePaymentMethodsReducer';
 const composeEnhancers =
   process.env.NODE_ENV === "development"
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -31,7 +31,8 @@ const rootReducer = combineReducers({
   signIn: signInReducer,
   addCompany: addCompanyReducer,
   companyList: companyListReducer,
-  merchantSupportPaymentMethods:merchantSupportPaymentMethodsReducer
+  merchantSupportPaymentMethods:merchantSupportPaymentMethodsReducer,
+  choosePaymentMethods:choosePaymentMethodsReducer
 });
 
 const store = createStore(

@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -156,6 +157,15 @@ public class MerchantServiceImpl implements MerchantService {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC",
                     "Forwarding request to synchronize merchants has failed."));
         }
+    }
+
+    @Override
+    public void changeSupportPaymentMethods(Boolean supportPaymentMethods) {
+        List<Merchant> merchants = merchantRepository.findByStatusIn(Arrays.asList(UserStatus.ACTIVE));
+        for (Merchant merchant:merchants) {
+            merchant.setSupportsPaymentMethods(supportPaymentMethods);
+        }
+        merchantRepository.saveAll(merchants);
     }
 
     private void composeAndSendRejectionEmail(String recipientEmail) {

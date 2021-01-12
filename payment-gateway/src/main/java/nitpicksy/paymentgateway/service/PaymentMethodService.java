@@ -1,6 +1,7 @@
 package nitpicksy.paymentgateway.service;
 
 import nitpicksy.paymentgateway.dto.request.PaymentDataRequestDTO;
+import nitpicksy.paymentgateway.model.Company;
 import nitpicksy.paymentgateway.model.Data;
 import nitpicksy.paymentgateway.model.Merchant;
 import nitpicksy.paymentgateway.model.PaymentMethod;
@@ -31,5 +32,7 @@ public interface PaymentMethodService {
     List<PaymentMethod> getPaymentMethodsWithoutDataForPayment(Merchant merchant);
 
     PaymentMethod findById(Long id);
+
+    String changeSupportPaymentMethods(List<PaymentMethod> listPaymentMethods, Company company);
 
 }

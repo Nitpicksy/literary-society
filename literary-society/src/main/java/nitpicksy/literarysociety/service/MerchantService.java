@@ -25,4 +25,6 @@ public interface MerchantService {
     Merchant changeUserStatus(Long id, String status);
 
     void synchronizeMerchants();
+
+    void changeSupportPaymentMethods(Boolean supportPaymentMethods);
 }

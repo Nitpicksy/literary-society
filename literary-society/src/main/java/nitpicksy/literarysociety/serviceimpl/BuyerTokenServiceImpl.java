@@ -26,6 +26,8 @@ public class BuyerTokenServiceImpl implements BuyerTokenService {
         BuyerToken dbToken = buyerTokenRepository.findByToken(buyerToken.getToken());
         while (dbToken != null) {
             buyerToken = new BuyerToken(transaction);
+            nonHashedToken = buyerToken.getToken();
+            buyerToken.setToken(getTokenHash(nonHashedToken));
             dbToken = buyerTokenRepository.findByToken(buyerToken.getToken());
         }
         buyerTokenRepository.save(buyerToken);
