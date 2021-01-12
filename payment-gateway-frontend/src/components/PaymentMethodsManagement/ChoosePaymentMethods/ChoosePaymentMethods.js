@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as actions from './ChoosePaymentMethodsActions';
-import { Avatar, Button, CssBaseline, Typography, Container, TextField, Grid, Paper, FormControlLabel, Checkbox } from '@material-ui/core';
+import { Avatar, Button, CssBaseline, Typography, Container, Grid, Paper, FormControlLabel, Checkbox } from '@material-ui/core';
 import BusinessIcon from '@material-ui/icons/Business';
 import { useStyles } from './ChoosePaymentMethodsStyles';
 import { connect } from 'react-redux';
@@ -48,12 +48,10 @@ const ChoosePaymentMethods = (props) => {
 
     const submitHander = (event) => {
         event.preventDefault();
-        console.log(supportedPaymentMethods)
         if (!(supportedPaymentMethods && Array.isArray(supportedPaymentMethods) && supportedPaymentMethods.length)) {
             toastr.info("Choose Payment Methods", "You need to support at least one payment method.");
             return;
         }
-        console.log(supportedPaymentMethods);
         props.onChoosePaymentMethods(supportedPaymentMethods,token);
     };
 
@@ -65,7 +63,6 @@ const ChoosePaymentMethods = (props) => {
             const found = props.supportedMethods.filter(method => method.id === paymentMethod.id)[0];
             let checked = false;
             if(found){
-                console.log(found)
                 checked = true;
             }
             return <Paper key={paymentMethod.id} className={classes.paymentMethodPaper}>
