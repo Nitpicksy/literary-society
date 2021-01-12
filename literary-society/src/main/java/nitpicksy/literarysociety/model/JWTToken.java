@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nitpicksy.literarysociety.converter.CryptoStringConverter;
 
 import javax.persistence.*;
 
@@ -19,9 +20,11 @@ public class JWTToken {
     private Long id;
 
     @Column(nullable = false, length = 500)
+    @Convert(converter = CryptoStringConverter.class)
     private String token;
 
     @Column(nullable = false, length = 500)
+    @Convert(converter = CryptoStringConverter.class)
     private String refreshToken;
 
     public JWTToken(String token, String refreshToken) {
