@@ -58,7 +58,6 @@ public interface ZuulClient {
     @RequestMapping(method = RequestMethod.POST, path = "/api/merchants/{name}/payment-data")
     String supportPaymentMethods(URI baseUrl, @PathVariable String name);
 
-
     @RequestMapping(method = RequestMethod.POST, path = "/api/subscriptions/create-plan")
     String createSubscriptionPlan(URI baseUrl, @RequestBody SubscriptionPlanToPaypalDTO planToPaypalDTO);
 
@@ -73,4 +72,7 @@ public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.GET, path = "/api/transactions")
     List<TransactionResponseDTO> getAllTransactions(URI baseUrl);
+
+    @RequestMapping(method = RequestMethod.PUT, path = "/api/payments/choose-payment-methods")
+    String choosePaymentMethods(URI baseUrl, @RequestBody Boolean supportPaymentMethods);
 }

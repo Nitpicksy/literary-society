@@ -49,7 +49,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/api/payment-methods").hasAuthority("MANAGE_PAYMENT_METHODS")
-                .antMatchers(HttpMethod.PUT, "/api/payment-methods/{id}").hasAuthority("MANAGE_PAYMENT_METHODS")
 
                 .antMatchers(HttpMethod.GET, "/api/companies").hasAuthority("MANAGE_COMPANIES")
                 .antMatchers(HttpMethod.PUT, "/api/companies/{id}").hasAuthority("MANAGE_COMPANIES")

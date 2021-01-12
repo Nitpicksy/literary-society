@@ -32,6 +32,8 @@ public class VerificationServiceImpl implements VerificationService {
         VerificationToken dbToken = verificationTokenRepository.findByToken(verificationToken.getToken());
         while (dbToken != null) {
             verificationToken = new VerificationToken(user);
+            nonHashedToken = verificationToken.getToken();
+            verificationToken.setToken(getTokenHash(nonHashedToken));
             dbToken = verificationTokenRepository.findByToken(verificationToken.getToken());
         }
         verificationTokenRepository.save(verificationToken);

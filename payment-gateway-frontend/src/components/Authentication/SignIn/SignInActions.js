@@ -112,7 +112,6 @@ export const refreshToken = (history) => {
                 }
             })
             .catch(err => {
-                console.log("Refresh return bad request")
                 history.push('/sign-in')
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('expiresIn');

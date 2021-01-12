@@ -41,7 +41,7 @@ const MerchantSupportPaymentMethods = (props) => {
             }
         }
 
-    }, [fetchPayment]);
+    }, [fetchPayment,props.location,history]);
 
     useEffect(() => {
         if (paymentMethods) {
@@ -70,7 +70,6 @@ const MerchantSupportPaymentMethods = (props) => {
             paymentData.push({ paymentDataId: key, attributeValue: value });
         }
         array.push({ paymentMethod: paymentMethod, paymentData: paymentData });
-        console.log(array)
         props.onSubmit(array,companyId, merchantId, history);
     }
 

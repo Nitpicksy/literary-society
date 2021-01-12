@@ -8,11 +8,13 @@ import nitpicksy.literarysociety.dto.request.LiterarySocietyOrderRequestDTO;
 import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
 import nitpicksy.literarysociety.enumeration.TransactionStatus;
 import nitpicksy.literarysociety.enumeration.TransactionType;
+import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidUserDataException;
 import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -181,6 +183,20 @@ public class PaymentServiceImpl implements PaymentService {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC",
                     "Forwarding request to synchronize transactions has failed."));
         }
+    }
+
+    @Override
+    public String choosePaymentMethods() {
+        try{
+            ResponseEntity<String> response = zuulClient.choosePaymentMethods("Bearer " + jwtTokenService.getToken());
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return response.getBody();
+            }
+        }catch (RuntimeException e){
+            logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAYM",
+                    "Forwarding request to get choose payment methods has failed"));
+        }
+        throw new InvalidDataException("Something went wrong. Please try again.", HttpStatus.BAD_REQUEST);
     }
 
     private void notifyCamundaMessageEvent(String message, User user, Transaction order) {

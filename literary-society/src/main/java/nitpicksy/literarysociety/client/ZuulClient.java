@@ -57,4 +57,7 @@ public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.POST, path = "payment-gateway/api/auth/company-refresh")
     JWTRequestDTO refreshAuthenticationToken(@RequestHeader(value = "Auth") String authHeader);
+
+    @RequestMapping(method = RequestMethod.PUT, path = "payment-gateway/api/payment-methods")
+    ResponseEntity<String> choosePaymentMethods(@RequestHeader(value = "Auth") String authHeader);
 }

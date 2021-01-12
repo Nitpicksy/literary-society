@@ -40,3 +40,4 @@ ADDOE|Add opinion od editor
 ADDR|Add reader
 ADDW|Add writer
 ADDB|Add book
+PAYM|Payment methods
