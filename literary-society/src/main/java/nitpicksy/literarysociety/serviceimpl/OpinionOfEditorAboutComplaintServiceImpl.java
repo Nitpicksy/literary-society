@@ -21,12 +21,14 @@ public class OpinionOfEditorAboutComplaintServiceImpl implements OpinionOfEditor
 
         List<EditorsCommentsDTO> list = new ArrayList<>();
         for (OpinionOfEditorAboutComplaint opinion : opinions) {
-            list.add(new EditorsCommentsDTO(
-                    opinion.getId(),
-                    opinion.getReview(),
-                    opinion.getEditor().getUsername(),
-                    opinion.getEditor().getFirstName() + ' ' + opinion.getEditor().getLastName()
-            ));
+            if (!opinion.isReviewed()) {
+                list.add(new EditorsCommentsDTO(
+                        opinion.getId(),
+                        opinion.getReview(),
+                        opinion.getEditor().getUsername(),
+                        opinion.getEditor().getFirstName() + ' ' + opinion.getEditor().getLastName()
+                ));
+            }
         }
 
         return list;
