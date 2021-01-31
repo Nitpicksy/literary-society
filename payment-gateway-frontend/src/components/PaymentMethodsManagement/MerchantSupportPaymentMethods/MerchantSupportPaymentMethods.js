@@ -39,7 +39,7 @@ const MerchantSupportPaymentMethods = (props) => {
         fetchPayment(companyId, merchantId, history);
       }
     }
-  }, [fetchPayment, history, props.location]);
+  }, [fetchPayment, history, props.location ]);
 
   console.log("methods", props.paymentMethods);
 
@@ -52,9 +52,10 @@ const MerchantSupportPaymentMethods = (props) => {
 
       setControls(extractedControls);
     }
-  }, []);
+  }, [paymentMethods]);
 
 
+  
   const submitHander = (event) => {
     event.preventDefault();
     let array = [];
@@ -81,7 +82,6 @@ const MerchantSupportPaymentMethods = (props) => {
     console.log(array);
     props.onSubmit(array, companyId, merchantId, history);
   };
-
 
   if (controls) {
     form = (
@@ -142,4 +142,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(MerchantSupportPaymentMethods);
-
