@@ -20,7 +20,6 @@ export const fetchFormFail = (error) => {
 
 export const fetchForm = (piId, taskId, signUpType) => {
     return (dispatch) => {
-        console.log(signUpType, piId, taskId)
         axios.get(`/${signUpType}/registration-form?piId=${piId}&taskId=${taskId}`)
             .then(response => {
                 dispatch(fetchFormSuccess(response.data.formFields, response.data.processInstanceId, response.data.taskId));
@@ -55,19 +54,9 @@ export const signUpFail = (error) => {
     };
 };
 
-
 export const signUp = (signUpData, taskId, history, isBetaReader) => {
     return dispatch => {
         dispatch(signUpStart());
-        // axios.post('/process/'.concat(taskId),signUpData)
-        //     .then(() => {
-        //         dispatch(signUpSuccess());
-        //         const history = useHistory();
-        //         history.push('/');
-        //     })
-        //     .catch(err => {
-        //         // dispatch(signUpFail(err.response.data.error)); 
-        //     })
         axios.post('/process/' + taskId, signUpData)
             .then(() => {
                 dispatch(signUpSuccess());

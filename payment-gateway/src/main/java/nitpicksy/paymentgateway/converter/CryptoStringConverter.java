@@ -28,7 +28,6 @@ public class CryptoStringConverter implements AttributeConverter<String, String>
     private final Cipher cipher;
 
     public CryptoStringConverter() throws Exception {
-        System.out.println("Hajic");
         byte[] secret = loadSecret().getBytes();
         key = new SecretKeySpec(secret, "AES");
         cipher = Cipher.getInstance(ALGORITHM);
@@ -54,7 +53,7 @@ public class CryptoStringConverter implements AttributeConverter<String, String>
         }
     }
 
-    private String loadSecret(){
+    private String loadSecret() {
         try {
             Path fileStorageLocation = Paths.get("");
             Path filePath = fileStorageLocation.resolve("pg_key.np").normalize();
