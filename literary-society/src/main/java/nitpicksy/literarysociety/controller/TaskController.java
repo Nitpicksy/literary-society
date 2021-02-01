@@ -25,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -78,6 +80,11 @@ public class TaskController {
                 bookService.getPublicationRequest(Long.valueOf(camundaService.getProcessVariable(piId, "bookId"))));
 
         return new ResponseEntity<>(taskDataDTO, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/process-variable", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getProcessVariable(@NotNull @RequestParam String piId, @NotBlank @RequestParam String name) {
+        return new ResponseEntity<>(camundaService.getProcessVariable(piId, name), HttpStatus.OK);
     }
 
     @PutMapping(value = "/{taskId}/complete-and-download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
