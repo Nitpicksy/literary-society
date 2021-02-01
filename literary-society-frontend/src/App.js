@@ -53,6 +53,7 @@ import MerchantBooks from './components/MerchantBooks/MerchantBooks';
 import MerchantBookDetails from './components/MerchantBooks/MerchantBookDetails/MerchantBookDetails';
 import CreateBook from './components/MerchantBooks/CreateBook/CreateBook';
 import ChoosePaymentMethods from './components/ChoosePaymentMethods/ChoosePaymentMethods';
+import EditorCheckIfBookIsPlagiarism from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/EditorCheckIfBookIsPlagiarism';
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
 // });
@@ -129,6 +130,7 @@ const App = props => {
           <Route path="/opinions-of-beta-readers" render={(props) => <OpinionsOfBetaReaders {...props} />} meta={{ roles: [roleWriter] }} />
           <Route path="/opinion-of-editor" render={(props) => <OpinionOfEditor {...props} />} meta={{ roles: [roleWriter] }} />
           
+          <Route path="/check-if-book-is-plagiarism" render={(props) => <EditorCheckIfBookIsPlagiarism {...props} />} meta={{ roles: [roleEditor] }} />
           <Route path="/publication-request" render={(props) => <PublicationRequest {...props} />} meta={{ roles: [roleEditor] }} />
           <Route path="/download-document" render={(props) => <EditorDownloadDocument {...props} />} meta={{ roles: [roleEditor, roleReader] }} />
           <Route path="/editor-choose-beta-readers" render={(props) => <EditorChooseBetaReaders {...props} />} meta={{ roles: [roleEditor] }} />

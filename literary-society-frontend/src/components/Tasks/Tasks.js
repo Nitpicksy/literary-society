@@ -36,7 +36,6 @@ const Tasks = (props) => {
         props.setSelectedTask(properties.row.processInstanceId, properties.row.id, properties.row.name);
 
         if (properties.row.name === "Obradite zahtev za izdavanje knjige"
-            || properties.row.name === "Proverite da li je delo originalno"
             || properties.row.name === "Prihvatite ili odbijte rukopis"
             || properties.row.name === "Definišite da li se rukopis šalje skupu beta čitaoca"
             || properties.row.name === "Ostavljanje komentara"
@@ -76,6 +75,8 @@ const Tasks = (props) => {
             history.push('/plagiarism-review-download');
         } else if(properties.row.name === 'Plagiarism report-cast your vote') {
             history.push('/plagiarism-vote')
+        }else if(properties.row.name === "Proverite da li je delo originalno"){
+            history.push('/check-if-book-is-plagiarism')
         }
         
     }
