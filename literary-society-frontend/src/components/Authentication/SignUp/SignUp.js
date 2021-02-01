@@ -28,7 +28,6 @@ const SignUp = (props) => {
     responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
 
     useEffect(() => {
-        console.log(props.processInstanceId, props.taskId, props.signUpType)
         if (props.processInstanceId && props.taskId && props.signUpType) {
             fetchForm(props.processInstanceId, props.taskId, props.signUpType);
         }

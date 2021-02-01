@@ -10,6 +10,11 @@
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_19wz333" sourceRef="StartEvent_1" targetRef="Activity_0e8s0hz" />
     <bpmn:userTask id="Activity_0e8s0hz" name="Slanje PDF verzije rukopisa" camunda:assignee="${writer}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="manuscript" label="Upload manuscript" type="file" />
+        </camunda:formData>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_19wz333</bpmn:incoming>
       <bpmn:outgoing>Flow_1vepjbi</bpmn:outgoing>
     </bpmn:userTask>

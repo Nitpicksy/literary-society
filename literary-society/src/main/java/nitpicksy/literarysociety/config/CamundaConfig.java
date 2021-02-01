@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.config;
 
+import nitpicksy.literarysociety.camunda.formtype.FileFormType;
 import nitpicksy.literarysociety.camunda.formtype.PasswordFormType;
 import nitpicksy.literarysociety.camunda.formtype.TextAreaFormType;
 import nitpicksy.literarysociety.camunda.validator.PatternValidator;
@@ -17,5 +18,6 @@ public class CamundaConfig extends AbstractCamundaConfiguration {
         config.getCustomFormFieldValidators().put("requiredSelect", RequiredSelectValidator.class);
         config.getCustomFormTypes().add(new PasswordFormType());
         config.getCustomFormTypes().add(new TextAreaFormType());
+        config.getCustomFormTypes().add(new FileFormType());
     }
 }
