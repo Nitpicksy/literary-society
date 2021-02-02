@@ -19,6 +19,8 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -32,7 +34,9 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -75,6 +79,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String refreshJwt = tokenUtils.generateRefreshToken(user.getUsername());
         int expiresIn = tokenUtils.getExpiredIn();
 
+        user.setLastSignInDate(LocalDateTime.now());
+        userRepository.save(user);
+
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "LGN", String.format("User %s successfully logged in", user.getId())));
         return new UserTokenState(jwt, expiresIn, refreshJwt);
     }
@@ -109,7 +116,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CPW", String.format("User %s successfully changed password", user.getId())));
     }
 
-
     @Override
     public void resetPassword(String token, ResetPasswordDTO resetPasswordDTO) throws NoSuchAlgorithmException {
         ResetToken resetToken = resetTokenRepository.findByTokenAndExpiryDateTimeAfter(getTokenHash(token),
@@ -141,10 +147,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             user.setStatus(UserStatus.WAITING_APPROVAL);
         } else if (user.getRole().getName().equals(RoleConstants.ROLE_LECTURER)) {
             user.setStatus(UserStatus.WAITING_APPROVAL);
-        }else if(user.getRole().getName().equals(RoleConstants.ROLE_MERCHANT)){
+        } else if (user.getRole().getName().equals(RoleConstants.ROLE_MERCHANT)) {
             user.setStatus(UserStatus.WAITING_APPROVAL);
-        }
-        else {
+        } else {
             user.setStatus(UserStatus.ACTIVE);
         }
 
@@ -161,6 +166,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return user.getStatus() == UserStatus.NEVER_LOGGED_IN;
     }
 
+    @Async
+    @Override
+    @Scheduled(cron = "0 0 3 */5 * ?")
+    public void deactivateInactiveUsers() {
+        List<User> inactiveUsers = userRepository.findByStatusNotAndLastSignInDateLessThan(UserStatus.REJECTED, LocalDateTime.now().minusDays(90));
+        if (!inactiveUsers.isEmpty()) {
+            inactiveUsers.forEach(user -> {
+                user.setStatus(UserStatus.REJECTED);
+                user.setEnabled(false);
+            });
+            userRepository.saveAll(inactiveUsers);
+        }
+    }
 
     private String getTokenHash(String token) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-512");

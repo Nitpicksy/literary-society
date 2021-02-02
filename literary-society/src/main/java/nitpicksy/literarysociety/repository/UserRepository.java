@@ -5,6 +5,7 @@ import nitpicksy.literarysociety.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByRoleNameAndStatusInOrRoleNameAndStatusIn(String roleName1, Collection<UserStatus> status1, String roleName2, Collection<UserStatus> status2);
 
     List<User> findByIdIn(List<Long> ids);
+
+    List<User> findByStatusNotAndLastSignInDateLessThan(UserStatus status, LocalDateTime before90Days);
 }
