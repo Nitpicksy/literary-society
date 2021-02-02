@@ -32,6 +32,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +47,7 @@ import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+@Validated
 @RestController
 @RequestMapping(value = "/api/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthenticationController {
@@ -118,7 +120,7 @@ public class AuthenticationController {
     }
 
     @PutMapping(value = "/activate", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> activateAccount(@RequestParam(required = false) String piId, @RequestParam String t) {
+    public ResponseEntity<Void> activateAccount(@RequestParam(required = false) String piId, @NotBlank @RequestParam String t) {
         try {
             authenticationService.activateAccount(t);
             if (piId != null && !piId.isEmpty() && !piId.equals("null")) {
@@ -168,7 +170,7 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/accept-pg-token")
-    public ResponseEntity<Void> acceptPaymentGatewayToken(@NotNull @RequestBody JWTRequestDTO jwtRequestDTO) {
+    public ResponseEntity<Void> acceptPaymentGatewayToken(@Valid @RequestBody JWTRequestDTO jwtRequestDTO) {
         jwtTokenRepository.save(new JWTToken(jwtRequestDTO.getJwtToken(), jwtRequestDTO.getRefreshJwt()));
         executeRefreshToken(jwtRequestDTO.getRefreshJwt(), jwtRequestDTO.getExpirationDate());
         return new ResponseEntity<>(HttpStatus.OK);

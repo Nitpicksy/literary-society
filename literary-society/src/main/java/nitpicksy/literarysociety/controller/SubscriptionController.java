@@ -8,12 +8,14 @@ import nitpicksy.literarysociety.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+@Validated
 @RestController
 @RequestMapping(value = "/api/subscriptions")
 public class SubscriptionController {
@@ -39,7 +41,7 @@ public class SubscriptionController {
     }
 
     @PostMapping(value = "/unsubscribe")
-    public ResponseEntity<Void> unsubscribe(@NotBlank @RequestParam Long planId) {
+    public ResponseEntity<Void> unsubscribe(@NotNull @Positive @RequestParam Long planId) {
         subscriptionService.unsubscribe(planId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

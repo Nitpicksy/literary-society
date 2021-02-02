@@ -20,24 +20,29 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Validated
 @RestController
 @RequestMapping(value = "/api/tasks")
 public class TaskController {
 
     private final String CLASS_PATH = this.getClass().getCanonicalName();
-
     private final String CLASS_NAME = this.getClass().getSimpleName();
+
+    private static String IMAGES_PATH = "literary-society/src/main/resources/images/";
 
     private UserService userService;
 
@@ -59,8 +64,6 @@ public class TaskController {
 
     private OpinionOfEditorAboutComplaintService opinionOfEditorAboutComplaintService;
 
-    private static String IMAGES_PATH = "literary-society/src/main/resources/images/";
-
     private LogService logService;
 
     private IPAddressProvider ipAddressProvider;
@@ -72,7 +75,7 @@ public class TaskController {
     }
 
     @GetMapping(value = "/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TaskDataDTO> getTaskData(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
+    public ResponseEntity<TaskDataDTO> getTaskData(@NotBlank @RequestParam String piId, @NotBlank @PathVariable String taskId) {
 
         TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.setEnumValues(camundaService.getFormFields(piId, taskId)),
                 bookService.getPublicationRequest(Long.valueOf(camundaService.getProcessVariable(piId, "bookId"))));
@@ -81,7 +84,7 @@ public class TaskController {
     }
 
     @PutMapping(value = "/{taskId}/complete-and-download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<byte[]> completeTaskAndDownloadBook(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
+    public ResponseEntity<byte[]> completeTaskAndDownloadBook(@NotBlank @RequestParam String piId, @NotBlank @PathVariable String taskId) {
         PDFDocument pdfDocument = pdfDocumentService.findByBookId(Long.valueOf(camundaService.getProcessVariable(piId, "bookId")));
 
         HttpHeaders headers = new HttpHeaders();
@@ -94,39 +97,39 @@ public class TaskController {
             camundaService.completeTask(taskId);
 
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
-                    String.format("User from IP address %s completed task %s and downloaded book",ipAddressProvider.get(),taskId )));
+                    String.format("User from IP address %s completed task %s and downloaded book", ipAddressProvider.get(), taskId)));
             return new ResponseEntity<>(content, headers, HttpStatus.OK);
         } catch (IOException | URISyntaxException e) {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
-                    String.format("Book %s cannot be downloaded. Something went wrong.",pdfDocument.getBook().getId() )));
+                    String.format("Book %s cannot be downloaded. Something went wrong.", pdfDocument.getBook().getId())));
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping(value = "/{taskId}/complete-and-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> completeTaskAndUploadBook(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId,
-                                                          @Valid @RequestParam MultipartFile pdfFile) {
+    public ResponseEntity<Void> completeTaskAndUploadBook(@NotBlank @RequestParam String piId, @NotBlank @PathVariable String taskId,
+                                                          @NotNull @RequestParam MultipartFile pdfFile) {
         Book book = bookService.findById(Long.valueOf(camundaService.getProcessVariable(piId, "bookId")));
 
         try {
             pdfDocumentService.upload(pdfFile, book);
         } catch (IOException e) {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UPLB",
-                    String.format("Book %s cannot be uploaded. Something went wrong.",book.getId() )));
+                    String.format("Book %s cannot be uploaded. Something went wrong.", book.getId())));
             throw new InvalidDataException("Manuscript could not be uploaded. Please try again later.", HttpStatus.BAD_REQUEST);
         }
 
         camundaService.completeTask(taskId);
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UPLB",
-                String.format("User from IP address %s completed task %s and uploaded book",ipAddressProvider.get(),taskId )));
+                String.format("User from IP address %s completed task %s and uploaded book", ipAddressProvider.get(), taskId)));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
     @PostMapping(value = "{taskId}/writer-membership-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> writerMembershipUpload(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId,
-                                                       @Valid @RequestParam MultipartFile[] files) {
+    public ResponseEntity<Void> writerMembershipUpload(@NotBlank @RequestParam String piId, @NotBlank @PathVariable String taskId,
+                                                       @NotEmpty @RequestParam MultipartFile[] files) {
 
         Writer writer = (Writer) userService.getAuthenticatedUser();
 
@@ -150,12 +153,12 @@ public class TaskController {
         camundaService.completeTask(taskId);
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "UPLM",
-                String.format("Writer %s completed task %s and uploaded manuscripts",writer.getId(),taskId )));
+                String.format("Writer %s completed task %s and uploaded manuscripts", writer.getId(), taskId)));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "{taskId}/committee", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TaskDataDTO> getTaskDataCommittee(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
+    public ResponseEntity<TaskDataDTO> getTaskDataCommittee(@NotBlank @RequestParam String piId, @NotBlank @PathVariable String taskId) {
         TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.getFormFields(piId, taskId),
                 pdfDocumentService.getDraftsByWriter(camundaService.getProcessVariable(piId, "writer")));
 
@@ -164,7 +167,7 @@ public class TaskController {
 
 
     @GetMapping(value = "/{taskId}/editors", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TaskDataDTO> getTaskDataForEditor(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId) {
+    public ResponseEntity<TaskDataDTO> getTaskDataForEditor(@NotBlank @RequestParam String piId, @NotBlank @PathVariable String taskId) {
 
         PlagiarismComplaint plagiarismComplaint;
 
@@ -195,8 +198,8 @@ public class TaskController {
 
     @PutMapping(value = "/{taskId}/download-plagiarism", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @Transactional
-    public ResponseEntity<byte[]> completeTaskAndDownloadPlagiarismBooks(@NotNull @RequestParam String piId, @NotNull @PathVariable String taskId,
-                                                                         @NotNull @RequestParam String type) {
+    public ResponseEntity<byte[]> completeTaskAndDownloadPlagiarismBooks(@NotBlank @RequestParam String piId, @NotBlank @PathVariable String taskId,
+                                                                         @NotBlank @RequestParam String type) {
 
         PlagiarismComplaint plagiarismComplaint;
         PDFDocument document;
@@ -232,24 +235,24 @@ public class TaskController {
             camundaService.setProcessVariable(piId, "downloaded", "true");
 
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
-                    String.format("User from IP address %s completed task %s and downloaded plagiarism books",ipAddressProvider.get(),taskId )));
+                    String.format("User from IP address %s completed task %s and downloaded plagiarism books", ipAddressProvider.get(), taskId)));
             return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
         } catch (IOException | URISyntaxException e) {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
-                  "Plagiarism books %s cannot be downloaded. Something went wrong."));
+                    "Plagiarism books %s cannot be downloaded. Something went wrong."));
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping(value = "{taskId}/membership")
-    public ResponseEntity<Void> payMembership(@RequestParam(required = false) String piId, @NotNull @PathVariable String taskId) {
+    public ResponseEntity<Void> payMembership(@RequestParam(required = false) String piId, @NotBlank @PathVariable String taskId) {
         camundaService.completeTask(taskId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(path = "/{taskId}/submit-form-and-upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Transactional
-    public ResponseEntity<Void> submitFormAndUploadImage(@PathVariable String taskId,
+    public ResponseEntity<Void> submitFormAndUploadImage(@NotBlank @PathVariable String taskId,
                                                          @RequestPart @Valid List<FormSubmissionDTO> formDTOList, @RequestPart @NotNull MultipartFile image) {
 
         Map<String, Object> fieldsMap = formDTOList.stream()
@@ -267,7 +270,7 @@ public class TaskController {
         formService.submitTaskForm(taskId, fieldsMap);
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "DOWB",
-                String.format("Editor %s completed task %s.", book.getEditor().getId(),taskId )));
+                String.format("Editor %s completed task %s.", book.getEditor().getId(), taskId)));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

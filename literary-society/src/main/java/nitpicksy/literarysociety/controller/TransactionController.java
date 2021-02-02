@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ public class TransactionController {
     private TransactionDtoMapper transactionDtoMapper;
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TransactionDTO> getTransaction(@Positive @PathVariable Long id) {
+    public ResponseEntity<TransactionDTO> getTransaction(@NotNull @Positive @PathVariable Long id) {
         return new ResponseEntity<>(transactionDtoMapper.toDto(transactionService.findById(id)), HttpStatus.OK);
     }
 

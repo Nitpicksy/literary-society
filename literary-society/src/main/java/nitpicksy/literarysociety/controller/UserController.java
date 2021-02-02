@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import java.security.NoSuchAlgorithmException;
@@ -74,7 +76,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<UserResponseDTO> changeUserStatus(@PathVariable @Positive Long id,
+    public ResponseEntity<UserResponseDTO> changeUserStatus(@PathVariable @NotNull @Positive Long id,
                                                             @RequestParam @Pattern(regexp = "(?i)(approve|reject)$", message = "Status is not valid.") String status) {
         return new ResponseEntity<>(userResponseMapper.toDto(userService.changeUserStatus(id, status)), HttpStatus.OK);
     }

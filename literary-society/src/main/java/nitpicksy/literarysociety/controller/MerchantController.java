@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import java.lang.reflect.Array;
@@ -41,6 +44,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Validated
 @RestController
 @RequestMapping(value = "/api/merchants", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MerchantController {
@@ -67,7 +71,7 @@ public class MerchantController {
     }
 
     @PostMapping("/{name}/payment-data")
-    public ResponseEntity<String> supportPaymentMethods(@PathVariable String name) {
+    public ResponseEntity<String> supportPaymentMethods(@NotBlank @PathVariable String name) {
         Merchant merchant = merchantService.findByName(name);
         if (merchant == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -116,7 +120,7 @@ public class MerchantController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<MerchantResponseDTO> changeUserStatus(@PathVariable @Positive Long id,
+    public ResponseEntity<MerchantResponseDTO> changeUserStatus(@PathVariable @NotNull @Positive Long id,
                                                                 @RequestParam @Pattern(regexp = "(?i)(approve|reject)$", message = "Status is not valid.") String status) {
         return new ResponseEntity<>(merchantResponseMapper.toDto(merchantService.changeUserStatus(id, status)), HttpStatus.OK);
     }
