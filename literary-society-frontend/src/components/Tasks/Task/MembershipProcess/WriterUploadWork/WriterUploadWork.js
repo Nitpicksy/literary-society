@@ -57,10 +57,8 @@ const WriterUploadWork = props => {
     let displayDocuments = null;
     let modal = null;
 
-    console.log('ex', controls)
 
     const handleChooseFile = ( target ) => {
-        console.log('my target', target)
         const file = files.filter(item => item.name === target.name) //if you're readding the same file, return
         if(file.length !== 0) {
             return;
@@ -139,6 +137,7 @@ const WriterUploadWork = props => {
         form = <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} setPdfFile={handleChooseFile} removeText={true}/>;
     }
 
+    console.log('form is valid', formIsValid)
     return (
         <Container component="main" maxWidth="xs">
             {modal}
@@ -191,19 +190,8 @@ const WriterUploadWork = props => {
                 justify="center" 
                 spacing={2}
             >
-                <Grid item>
-                <input type="file" accept="application/pdf" hidden id="writer-upload-files"
-                            onChange={handleChooseFile} onClick={e => (e.target.value = null)}
-                        />
-
-                <label htmlFor="writer-upload-files">
                 <Grid item  >
-                    {/* <Button color="primary" variant="contained" component="span">
-                        Add file
-                    </Button> */}
-                                    {form}
-                </Grid>
-                </label>
+                    {form}
                 </Grid>
 
                 <Grid item>
