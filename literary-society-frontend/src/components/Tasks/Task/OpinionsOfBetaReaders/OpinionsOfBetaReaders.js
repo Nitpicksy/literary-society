@@ -10,20 +10,25 @@ import { useHistory } from 'react-router';
 import PublicationRequestCard from '../PublicationRequest/PublicationRequestCard/PublicationRequestCard';
 import * as actions from './OpinionsOfBetaReadersExport';
 import { toastr } from 'react-redux-toastr';
+import Form from '../../../../UI/Form/Form';
+import { extractControls } from '../../../../utility/extractControls';
 
 const OpinionsOfBetaReaders = (props) => {
 
     const [pdfFile, setPdfFile] = useState(null);
+    let [controls, setControls] = useState(null);
     const history = useHistory();
     responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
     const classes = useStyles();
 
     const { selectedTask } = props;
-    const { fetchForm, fetchOpinions } = props;
+    const { fetchForm, fetchOpinions,formFields } = props;
     const { publicationRequest } = props;
+    const [formIsValid, setFormIsValid] = useState(false);
 
     let publicationRequestCard = null;
     let opinionItems = null;
+    let form = null;
 
     useEffect(() => {
         fetchForm(selectedTask.piId, selectedTask.taskId);
@@ -35,9 +40,12 @@ const OpinionsOfBetaReaders = (props) => {
         }
     }, [publicationRequest, fetchOpinions])
 
-    const handleChooseFile = ({ target }) => {
-        setPdfFile(target.files[0]);
-    }
+    useEffect(() => {
+        if (formFields) {
+            let extractedControls = extractControls(formFields)
+            setControls(extractedControls);
+        }
+    }, [formFields]);
 
     const handleUpload = () => {
         if (pdfFile) {
@@ -47,6 +55,10 @@ const OpinionsOfBetaReaders = (props) => {
         } else {
             toastr.warning('Upload edited manuscript', 'Please choose PDF file to upload.')
         }
+    }
+
+    if (controls) {
+        form = <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} setPdfFile={setPdfFile} />;
     }
 
     if (publicationRequest) {
@@ -85,24 +97,8 @@ const OpinionsOfBetaReaders = (props) => {
                 </Paper>
 
                 <Grid container className={classes.uploadGrid}>
-                    <Grid item xs={9} >
-                        <input type="file" accept="application/pdf" hidden id="upload-file"
-                            onChange={handleChooseFile} //samo dodati multiple ako treba vise fajlova na jedno dugme
-                        />
-                        <label htmlFor="upload-file">
-                            <Grid container >
-                                <Grid item xs={4} >
-                                    <Button color="primary" variant="contained" component="span">
-                                        Choose file
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={8} className={classes.fileNameGrid}>
-                                    <Typography variant="body2" component="span" className={classes.fileName}>
-                                        {pdfFile ? pdfFile.name : ''}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </label>
+                   <Grid item xs={9} >
+                        {form}
                     </Grid>
                     <Grid item xs={3} className={classes.uploadBtn}>
                         <Button color="primary" variant="contained" component="span"
@@ -120,6 +116,7 @@ const OpinionsOfBetaReaders = (props) => {
 
 const mapStateToProps = state => {
     return {
+        formFields: state.opinionsOfBetaReaders.formFields,
         selectedTask: state.tasks.selectedTask,
         refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
         publicationRequest: state.opinionsOfBetaReaders.publicationRequest,

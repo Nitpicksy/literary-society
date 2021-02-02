@@ -41,7 +41,7 @@
     </bpmn:exclusiveGateway>
     <bpmn:endEvent id="Event_1fv9uea" name="Fail">
       <bpmn:incoming>Flow_1pk2u9p</bpmn:incoming>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_0zzk4x8" errorRef="Error_1dlvfm5" />
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0zzk4x8" errorRef="Error_1r32qrt" />
     </bpmn:endEvent>
     <bpmn:sendTask id="Activity_1kw61yp" name="Slanje email-a piscu sa razlogom odbijanja" camunda:class="nitpicksy.literarysociety.camunda.messages.RequestIsRejectedEmail">
       <bpmn:incoming>Flow_1srp8jb</bpmn:incoming>
@@ -59,6 +59,7 @@
     <bpmn:sequenceFlow id="Flow_1pk2u9p" sourceRef="Activity_1kw61yp" targetRef="Event_1fv9uea" />
   </bpmn:process>
   <bpmn:error id="Error_1dlvfm5" name="greskaOdbijanje" errorCode="greskaOdbijanje" />
+  <bpmn:error id="Error_1r32qrt" name="greskaUrednikJeOdbioRukopis" errorCode="greskaUrednikJeOdbioRukopis" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="EditorAcceptOrRejectManuscript">
       <bpmndi:BPMNEdge id="Flow_1pk2u9p_di" bpmnElement="Flow_1pk2u9p">
