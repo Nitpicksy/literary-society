@@ -134,10 +134,9 @@ const WriterUploadWork = props => {
     }
 
     if (controls) {
-        form = <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} setPdfFile={handleChooseFile} removeText={true}/>;
+        form = <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} setPdfFile={handleChooseFile} removeText={true} files={files}/>;
     }
-
-    console.log('form is valid', formIsValid)
+   
     return (
         <Container component="main" maxWidth="xs">
             {modal}
