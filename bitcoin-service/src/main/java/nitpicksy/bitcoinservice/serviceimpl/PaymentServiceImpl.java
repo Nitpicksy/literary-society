@@ -58,7 +58,7 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponseDTO createPayment(Payment paymentRequest) {
 
         paymentRequest = paymentRepository.save(paymentRequest);
-       
+
         Double amount = Double.valueOf(currencyService.convertCurrency(paymentRequest.getAmount()));
 
         CreateOrderBTCDTO orderBTCDTO = new CreateOrderBTCDTO(paymentRequest.getId().toString(),

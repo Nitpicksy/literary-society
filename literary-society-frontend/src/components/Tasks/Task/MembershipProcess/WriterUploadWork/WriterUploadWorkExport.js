@@ -1,5 +1,6 @@
 export {
     upload,
     fetchDrafts,
-    fetchComments
+    fetchComments,
+    fetchForm
 } from './WriterUploadWorkActions';

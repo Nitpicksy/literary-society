@@ -60,3 +60,25 @@ export const upload = (piId, taskId, files, history) => {
         });
     };
 };
+
+export const fetchFormSuccess = (formFields, processInstanceId, taskId) => {
+    return {
+        type: actionTypes.FETCH_FORM_SUCCESS,
+        processInstanceId: processInstanceId,
+        taskId: taskId,
+        formFields: formFields,
+    };
+};
+
+export const fetchForm = (piId, taskId) => {
+    return dispatch => {
+        axios.get(`/tasks/${taskId}/committee?piId=${piId}`)
+            .then(response => {
+                dispatch(fetchFormSuccess(response.data.formFieldsDTO.formFields, response.data.formFieldsDTO.processInstanceId,
+                    response.data.formFieldsDTO.taskId));
+            })
+            .catch(err => {
+                 toastr.error('Writer upload work', 'Something went wrong. Please try again.');
+            });
+    };
+};

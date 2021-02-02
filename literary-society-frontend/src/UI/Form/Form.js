@@ -42,7 +42,11 @@ const Form = (props) => {
     const handleChooseFile = ({ target }) => {       
         if (target.files[0]) {
             props.setPdfFile(target.files[0]);
-            setFileName(target.files[0].name);
+            if(props.removeText) {
+                setFileName('');
+            } else {
+                setFileName(target.files[0].name);
+            }
         } 
     }
 

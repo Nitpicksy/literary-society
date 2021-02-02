@@ -18,22 +18,22 @@ import java.util.List;
 @Component
 public class PaymentDataRequestMapper {
 
-    private  DataService dataService;
+    private DataService dataService;
 
-    private  PaymentMethodService paymentMethodService;
+    private PaymentMethodService paymentMethodService;
 
-    public  List<DataForPayment> convert(List<PaymentDataRequestDTO> listPaymentDataRequest, Merchant merchant) throws NoSuchAlgorithmException {
+    public List<DataForPayment> convert(List<PaymentDataRequestDTO> listPaymentDataRequest, Merchant merchant) throws NoSuchAlgorithmException {
         List<DataForPayment> dataForPayments = new ArrayList<>();
-        for (PaymentDataRequestDTO paymentDataRequestDTO:listPaymentDataRequest) {
+        for (PaymentDataRequestDTO paymentDataRequestDTO : listPaymentDataRequest) {
             PaymentMethod paymentMethod = paymentMethodService.findById(paymentDataRequestDTO.getPaymentMethod().getId());
             dataForPayments.addAll(convertPaymentData(paymentMethod, paymentDataRequestDTO.getPaymentData(), merchant));
         }
         return dataForPayments;
     }
 
-    public  List<DataForPayment> convertPaymentData(PaymentMethod paymentMethod, List<DataForPaymentRequestDTO> listDataForPayment, Merchant merchant) throws NoSuchAlgorithmException {
+    public List<DataForPayment> convertPaymentData(PaymentMethod paymentMethod, List<DataForPaymentRequestDTO> listDataForPayment, Merchant merchant) throws NoSuchAlgorithmException {
         List<DataForPayment> dataForPayments = new ArrayList<>();
-        for (DataForPaymentRequestDTO dataForPaymentRequestDTO:listDataForPayment) {
+        for (DataForPaymentRequestDTO dataForPaymentRequestDTO : listDataForPayment) {
             DataForPayment dataForPayment = new DataForPayment();
             Data data = dataService.findById(dataForPaymentRequestDTO.getPaymentDataId());
             dataForPayment.setAttributeName(data.getAttributeJSONName());
