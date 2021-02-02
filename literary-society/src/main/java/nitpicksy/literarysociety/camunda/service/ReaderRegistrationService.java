@@ -57,24 +57,25 @@ public class ReaderRegistrationService implements JavaDelegate {
         Reader reader = new Reader(map.get("firstName"), map.get("lastName"), map.get("city"), map.get("country"), map.get("email"),
                 map.get("username"), map.get("password"), isBetaReader);
 
-        if (isBetaReader) {
-            List<Long> genresIds = camundaService.extractIds(map.get("selectGenres"));
-            List<Genre> genres = genreService.findWithIds(genresIds);
-            if (genres.isEmpty()) {
-                throw new InvalidDataException("You have to choose at least one genre.", HttpStatus.BAD_REQUEST);
-            }
-            reader.setGenres(new HashSet<>(genres));
+        List<Long> genresIds = camundaService.extractIds(map.get("selectGenres"));
+        List<Genre> genres = genreService.findWithIds(genresIds);
+        if (genres.isEmpty()) {
+            execution.setVariable("errorMessage", "You have to choose at least one genre.");
+            throw new BpmnError("greskaKreiranjeCitaoca");
         }
+        reader.setGenres(new HashSet<>(genres));
 
         create(reader, execution);
     }
 
     public Reader create(Reader reader, DelegateExecution execution) throws NoSuchAlgorithmException {
         if (userService.findByUsername(reader.getUsername()) != null) {
+            execution.setVariable("errorMessage", "User with same username or email already exists.");
             throw new BpmnError("greskaKreiranjeCitaoca");
         }
 
         if (userService.findByEmail(reader.getEmail()) != null) {
+            execution.setVariable("errorMessage", "User with same username or email already exists.");
             throw new BpmnError("greskaKreiranjeCitaoca");
         }
 

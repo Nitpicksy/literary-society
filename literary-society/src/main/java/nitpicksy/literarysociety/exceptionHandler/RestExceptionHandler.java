@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.exceptionHandler;
 import feign.FeignException;
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -40,6 +41,12 @@ public class RestExceptionHandler  extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidDataException.class)
     protected ResponseEntity<Object> handleInvalidDataException(InvalidDataException ex) {
         ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildResponseEntity(error);
+    }
+
+    @ExceptionHandler(BpmnError.class)
+    protected ResponseEntity<Object> handleBpmnError(BpmnError ex) {
+        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST, "Greska");
         return buildResponseEntity(error);
     }
 
