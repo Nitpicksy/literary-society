@@ -14,7 +14,7 @@
     <bpmn:userTask id="Activity_03m9fx4" name="Membership - submit your work" camunda:assignee="${writer}">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="files" label="Upload your work" type="file">
+          <camunda:formField id="files" label="Choose file" type="file">
             <camunda:validation>
               <camunda:constraint name="minlength" config="2" />
             </camunda:validation>
@@ -83,6 +83,15 @@
       <bpmn:outgoing>Flow_0s87n7d</bpmn:outgoing>
     </bpmn:sendTask>
     <bpmn:userTask id="Activity_12p0hw3" name="Membership-more documents needed" camunda:assignee="${writer}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="files" label="Choose file" type="file">
+            <camunda:validation>
+              <camunda:constraint name="minlength" config="1" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_1urt6pq</bpmn:incoming>
       <bpmn:outgoing>Flow_0r08gj7</bpmn:outgoing>
     </bpmn:userTask>

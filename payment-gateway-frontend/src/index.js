@@ -19,10 +19,14 @@ import addCompanyReducer from './components/CompanyManagement/AddCompany/AddComp
 import companyListReducer from './components/CompanyManagement/CompanyList/CompanyListReducer';
 import merchantSupportPaymentMethodsReducer from './components/PaymentMethodsManagement/MerchantSupportPaymentMethods/MerchantSupportPaymentMethodsReducer';
 import choosePaymentMethodsReducer from './components/PaymentMethodsManagement/ChoosePaymentMethods/ChoosePaymentMethodsReducer';
-const composeEnhancers =
-  process.env.NODE_ENV === "development"
-    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    : null || compose;
+
+// const composeEnhancers =
+//   process.env.NODE_ENV === "development"
+//     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+//     : null || compose;
+
+
+const composeEnhancers =  compose;
 
 const rootReducer = combineReducers({
   toastr: toastrReducer,

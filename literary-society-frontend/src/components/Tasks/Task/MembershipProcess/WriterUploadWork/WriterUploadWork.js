@@ -40,6 +40,7 @@ const WriterUploadWork = props => {
 
 
     useEffect(() => {
+        console.log('fetchform')
         fetchForm(selectedTask.piId, selectedTask.taskId);
     }, [fetchForm, selectedTask.piId, selectedTask.taskId]);
 
@@ -133,7 +134,9 @@ const WriterUploadWork = props => {
         modal = <PreviewPDFModal file={currentFile} close={exitPreview}/>
     }
 
+    console.log('controls', controls)
     if (controls) {
+        console.log('fomr', form)
         form = <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} setPdfFile={handleChooseFile} removeText={true} files={files}/>;
     }
    
@@ -192,6 +195,7 @@ const WriterUploadWork = props => {
                 <Grid item  >
                     {form}
                 </Grid>
+
 
                 <Grid item>
                 <Button m={1} color="primary" variant="contained" component="span"
