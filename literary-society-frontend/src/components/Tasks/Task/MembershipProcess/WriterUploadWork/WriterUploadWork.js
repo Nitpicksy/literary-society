@@ -33,6 +33,8 @@ const WriterUploadWork = props => {
     const [currentFile, setCurrentFile] = useState(null);
     const [displayModal, setDisplayModal] = useState(false);
     let [controls, setControls] = useState(null);
+    
+    //eslint-disable-next-line
     const [formIsValid, setFormIsValid] = useState(false);
 
     responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
