@@ -26,9 +26,9 @@ public class RequestIsRejectedEmail implements JavaDelegate {
 
         String writerUsername = (String) execution.getVariable("writer");
 
-        User mainEditor = userService.findByUsername(writerUsername);
+        User writer = userService.findByUsername(writerUsername);
 
-        String email = mainEditor.getEmail();
+        String email = writer.getEmail();
         String subject = "Publication request is rejected";
         String text = composeEmailToActivate(publicationRequestDTO.getTitle(),(String) execution.getVariable("reason"));
 

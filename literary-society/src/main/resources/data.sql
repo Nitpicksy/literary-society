@@ -82,7 +82,7 @@ values ('READER', 'John', 'John', 'London', 'Ujedinjeno kraljevstvo', 'johnj@mai
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled, is_beta_reader, penalty)
 values ('READER', 'Olega', 'Aleksandrov', 'Sankt Petersburg', 'Rusija', 'olegaa@maildrop.cc', 'olegaa',
-        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'WAITING_APPROVAL', true, true, 0);
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true, 0);
 
 insert into beta_reader_genre (beta_reader_id, genre_id)
 values (8, 1);

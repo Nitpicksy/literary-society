@@ -107,9 +107,7 @@ const pReducer = persistReducer(persistConfig, appReducer);
 
 // const pReducer = persistReducer(persistConfig, rootReducer);
 
-const store = createStore(pReducer, composeEnhancers(
-    applyMiddleware(thunk)
-));
+const store = createStore(pReducer,applyMiddleware(thunk));
 const persistor = persistStore(store);
 
 const app = (

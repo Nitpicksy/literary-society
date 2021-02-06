@@ -2,6 +2,7 @@ package nitpicksy.bitcoinservice.repository;
 
 import nitpicksy.bitcoinservice.config.ApplicationConfiguration;
 import nitpicksy.bitcoinservice.model.Log;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
@@ -20,7 +21,7 @@ public class LogRepository implements FileRepository<Log> {
 
     @Override
     public void write(Path file, Log log) throws IOException {
-        String logStr = log.toFile() + "\n";
+        String logStr = Encode.forHtml(log.toFile()) + "\n";
         Files.write(file, logStr.getBytes(), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
         if (Files.exists(file) && Files.size(file) > MAX_FILE_SIZE) {
             rotateLogFiles(file, Paths.get(configuration.getLogBackup1()), Paths.get(configuration.getLogBackup2()));

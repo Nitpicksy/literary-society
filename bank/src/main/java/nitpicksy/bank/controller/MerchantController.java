@@ -22,7 +22,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Validated
 @RestController
 @RequestMapping(value = "/api/merchants", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MerchantController {

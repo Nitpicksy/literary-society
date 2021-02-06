@@ -18,12 +18,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.io.File;
@@ -36,6 +38,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+@Validated
 @RestController
 @RequestMapping(value = "/api/books")
 public class BookController {
@@ -98,41 +101,41 @@ public class BookController {
     }
 
     @GetMapping(value = "/publication-request-form", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FormFieldsDTO> getPublicationRequestForm(@NotNull @RequestParam String piId, @NotNull @RequestParam String taskId) {
+    public ResponseEntity<FormFieldsDTO> getPublicationRequestForm(@NotBlank @RequestParam String piId, @NotBlank @RequestParam String taskId) {
         FormFieldsDTO formFieldsDTO = camundaService.getFormFields(piId, taskId);
         return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
     }
 
     @GetMapping(value = "/plagiarism-complaint-form", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FormFieldsDTO> getPlagiarismComplaintForm(@NotNull @RequestParam String piId, @NotNull @RequestParam String taskId) {
+    public ResponseEntity<FormFieldsDTO> getPlagiarismComplaintForm(@NotBlank @RequestParam String piId, @NotBlank @RequestParam String taskId) {
         FormFieldsDTO formFieldsDTO = camundaService.getFormFields(piId, taskId);
         return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
     }
 
     @GetMapping(value = "/validate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> validatePlagiarismRequest(@NotNull @RequestParam String bookTitle, @NotNull @RequestParam String writerName) {
+    public ResponseEntity<Boolean> validatePlagiarismRequest(@NotBlank @RequestParam String bookTitle, @NotBlank @RequestParam String writerName) {
         return new ResponseEntity<>(bookService.validatePlagiarismRequest(bookTitle, writerName), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BookDetailsDTO> getBookDetails(@Positive @PathVariable Long id) {
+    public ResponseEntity<BookDetailsDTO> getBookDetails(@NotNull @Positive @PathVariable Long id) {
         Book book = bookService.findById(id);
         return new ResponseEntity<>(bookDetailsDtoMapper.toDto(book), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/opinions-of-beta-readers", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<OpinionDTO>> getOpinionsOfBetaReaders(@Positive @PathVariable Long id) {
+    public ResponseEntity<List<OpinionDTO>> getOpinionsOfBetaReaders(@NotNull @Positive @PathVariable Long id) {
         return new ResponseEntity<>(opinionOfBetaReaderService.findByBookId(id).stream()
                 .map(opinion -> opinionOfBetaReaderDtoMapper.toDto(opinion)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/opinion-of-editor", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OpinionDTO> getOpinionOfEditor(@Positive @PathVariable Long id) {
+    public ResponseEntity<OpinionDTO> getOpinionOfEditor(@NotNull @Positive @PathVariable Long id) {
         return new ResponseEntity<>(opinionOfEditorDtoMapper.toDto(opinionOfEditorService.findNewestByBookId(id)), HttpStatus.OK);
     }
 
     @GetMapping(value = "/download", produces = "application/zip")
-    public void downloadBooks(@RequestParam String t, HttpServletResponse response) throws IOException {
+    public void downloadBooks(@NotBlank @RequestParam String t, HttpServletResponse response) throws IOException {
         BuyerToken buyerToken = buyerTokenService.verifyToken(t);
 
         if (buyerToken == null) {
@@ -214,7 +217,7 @@ public class BookController {
         return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/merchant",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/merchant", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookDTO>> getMerchantBooks() {
         Merchant merchant = userService.getAuthenticatedMerchant();
 
@@ -222,19 +225,19 @@ public class BookController {
         return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Book> create(@RequestPart @Valid CreateBookRequestDTO createBookDTO, @RequestPart @NotNull MultipartFile image,
-                                                         @RequestPart @NotNull  MultipartFile pdfFile ) throws IOException {
+                                       @RequestPart @NotNull MultipartFile pdfFile) throws IOException {
         Merchant merchant = userService.getAuthenticatedMerchant();
-        if(!merchant.isSupportsPaymentMethods()){
-            throw new InvalidDataException("You have to support all available payment methods before you start to sell books.",HttpStatus.BAD_REQUEST);
+        if (!merchant.isSupportsPaymentMethods()) {
+            throw new InvalidDataException("You have to support all available payment methods before you start to sell books.", HttpStatus.BAD_REQUEST);
         }
 
-        Book book = bookService.createBook(createBookDTO,merchant, image);
+        Book book = bookService.createBook(createBookDTO, merchant, image);
         pdfDocumentService.upload(pdfFile, book);
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDB",
-                String.format("Book %s successfully created",book.getId())));
+                String.format("Book %s successfully created", book.getId())));
         return new ResponseEntity<>(book, HttpStatus.OK);
     }
 

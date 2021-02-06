@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.controller;
 
+import com.github.nbaars.pwnedpasswords4j.client.PwnedPasswordChecker;
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.constants.CamundaConstants;
@@ -8,6 +9,7 @@ import nitpicksy.literarysociety.dto.request.JWTRequestDTO;
 import nitpicksy.literarysociety.dto.request.RequestTokenDTO;
 import nitpicksy.literarysociety.dto.request.ResetPasswordDTO;
 import nitpicksy.literarysociety.exceptionHandler.BlockedUserException;
+import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidUserDataException;
 import nitpicksy.literarysociety.model.JWTToken;
@@ -30,6 +32,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +47,7 @@ import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+@Validated
 @RestController
 @RequestMapping(value = "/api/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthenticationController {
@@ -59,13 +63,13 @@ public class AuthenticationController {
 
     private IPAddressProvider ipAddressProvider;
 
-    private TestServiceImpl testService;
-
     private CamundaService camundaService;
 
     private JWTTokenRepository jwtTokenRepository;
 
     private ZuulClient zuulClient;
+
+    private PwnedPasswordChecker pwnedChecker;
 
     @PostMapping(value = "/sign-in", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserTokenState> login(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest) {
@@ -101,10 +105,13 @@ public class AuthenticationController {
             if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getRepeatedPassword())) {
                 throw new InvalidUserDataException("Passwords do not match", HttpStatus.BAD_REQUEST);
             }
+            if (pwnedChecker.check(changePasswordDTO.getNewPassword())) {
+                throw new InvalidDataException("Chosen password is not secure. Please choose another one.", HttpStatus.BAD_REQUEST);
+            }
             authenticationService.changePassword(changePasswordDTO);
         } catch (NullPointerException e) {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CPW", String.format("Invalid email or password provided from %s", ipAddressProvider.get())));
-            throw new InvalidUserDataException("Invalid email  or password.", HttpStatus.BAD_REQUEST);
+            throw new InvalidUserDataException("Invalid email or password.", HttpStatus.BAD_REQUEST);
         } catch (NoSuchAlgorithmException e) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CPW", "External password check failed"));
             throw new InvalidUserDataException("Password cannot be checked. Please try again.", HttpStatus.BAD_REQUEST);
@@ -113,7 +120,7 @@ public class AuthenticationController {
     }
 
     @PutMapping(value = "/activate", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> activateAccount(@RequestParam(required = false) String piId, @RequestParam String t) {
+    public ResponseEntity<Void> activateAccount(@RequestParam(required = false) String piId, @NotBlank @RequestParam String t) {
         try {
             authenticationService.activateAccount(t);
             if (piId != null && !piId.isEmpty() && !piId.equals("null")) {
@@ -163,7 +170,7 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/accept-pg-token")
-    public ResponseEntity<Void> acceptPaymentGatewayToken(@NotNull @RequestBody JWTRequestDTO jwtRequestDTO) {
+    public ResponseEntity<Void> acceptPaymentGatewayToken(@Valid @RequestBody JWTRequestDTO jwtRequestDTO) {
         jwtTokenRepository.save(new JWTToken(jwtRequestDTO.getJwtToken(), jwtRequestDTO.getRefreshJwt()));
         executeRefreshToken(jwtRequestDTO.getRefreshJwt(), jwtRequestDTO.getExpirationDate());
         return new ResponseEntity<>(HttpStatus.OK);
@@ -182,11 +189,11 @@ public class AuthenticationController {
         return () -> {
             JWTRequestDTO jwtRequestDTO = zuulClient.refreshAuthenticationToken("Bearer " + refreshJWTToken);
             changeJWTToken(jwtRequestDTO);
-            executeRefreshToken(jwtRequestDTO.getRefreshJwt(),jwtRequestDTO.getExpirationDate());
+            executeRefreshToken(jwtRequestDTO.getRefreshJwt(), jwtRequestDTO.getExpirationDate());
         };
     }
 
-    private void changeJWTToken(JWTRequestDTO jwtRequestDTO){
+    private void changeJWTToken(JWTRequestDTO jwtRequestDTO) {
         JWTToken jwtToken = jwtTokenRepository.findById(1L).get();
         jwtToken.setToken(jwtRequestDTO.getJwtToken());
         jwtToken.setRefreshToken(jwtRequestDTO.getRefreshJwt());
@@ -209,15 +216,15 @@ public class AuthenticationController {
 
     @Autowired
     public AuthenticationController(UserService userService, AuthenticationService authenticationService, LogService logService,
-                                    IPAddressProvider ipAddressProvider, TestServiceImpl testService, CamundaService camundaService,
-                                    JWTTokenRepository jwtTokenRepository,ZuulClient zuulClient) {
+                                    IPAddressProvider ipAddressProvider, CamundaService camundaService,
+                                    JWTTokenRepository jwtTokenRepository, ZuulClient zuulClient, PwnedPasswordChecker pwnedChecker) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.logService = logService;
         this.ipAddressProvider = ipAddressProvider;
-        this.testService = testService;
         this.camundaService = camundaService;
         this.jwtTokenRepository = jwtTokenRepository;
         this.zuulClient = zuulClient;
+        this.pwnedChecker = pwnedChecker;
     }
 }

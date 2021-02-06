@@ -16,14 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-@Validated
 @RestController
 @RequestMapping(value = "/api/payments", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PaymentController {
 
     private TransactionService transactionService;
 
-    @PostMapping(value = "/pay",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/pay", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PayResponseDTO> pay(@Valid @RequestBody PCCRequestDTO pccRequestDTO) {
         return new ResponseEntity<>(transactionService.pay(pccRequestDTO), HttpStatus.OK);
     }
