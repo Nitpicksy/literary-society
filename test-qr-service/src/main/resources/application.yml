@@ -47,4 +47,4 @@ eureka:
 SANDBOX_ENVIRONMENT: https://api-sandbox.coingate.com/v2
 TOKEN_UTILS_SECRET: Nitpicsky
 
-CALLBACK_URL: http://0e9be6b77a4b.ngrok.io/api/payments/callback
+CALLBACK_URL: https://1daf3fb20905.ngrok.io/api/payments/callback
