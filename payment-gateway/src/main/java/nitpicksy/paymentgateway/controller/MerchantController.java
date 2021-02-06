@@ -19,8 +19,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
+
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -66,7 +67,7 @@ public class MerchantController {
     private MerchantResponseMapper merchantResponseMapper;
 
     @GetMapping("/{name}/payment-data")
-    public ResponseEntity<String> getPaymentData(@PathVariable @NotBlank String name) {
+    public ResponseEntity<String> getPaymentData(@NotBlank @PathVariable String name) {
         Company company = userService.getAuthenticatedCompany();
 
         Merchant merchant = merchantService.findByNameAndCompany(name, company.getId());
@@ -113,7 +114,7 @@ public class MerchantController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@NotBlank @RequestBody String merchantName) {
+    public ResponseEntity<Void> create(@RequestBody String merchantName) {
         Company company = userService.getAuthenticatedCompany();
         if (company == null) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDM", "Company not found"));
