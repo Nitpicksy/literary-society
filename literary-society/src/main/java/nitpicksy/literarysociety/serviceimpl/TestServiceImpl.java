@@ -9,11 +9,12 @@ public class TestServiceImpl {
 
     private ZuulClient zuulClient;
 
-
     public String healthCheck() {
-        System.out.println("Hello from health LS!");
+        System.out.println("Literary Society - Hello from health!");
+
         String response = zuulClient.healthCheck();
-        StringBuilder sb = new StringBuilder("Literary Society is up and running!" + response.toString());
+
+        StringBuilder sb = new StringBuilder("Literary Society is up and running!");
         sb.append(System.lineSeparator());
         sb.append(response);
 

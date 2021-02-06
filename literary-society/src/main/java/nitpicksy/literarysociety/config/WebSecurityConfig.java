@@ -48,7 +48,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/ws/**").permitAll()
-                
+                .antMatchers("/ls-test/**").permitAll()
+
                 .antMatchers(HttpMethod.POST, "/api/merchants").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/merchants").hasAnyAuthority("MANAGE_MERCHANTS")
                 .antMatchers(HttpMethod.PUT, "/api/merchants/{id}").hasAnyAuthority("MANAGE_MERCHANTS")
