@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -62,6 +63,9 @@ public class User implements org.camunda.bpm.engine.identity.User, UserDetails {
 
     @Column
     private Timestamp lastPasswordResetDate = new Timestamp(DateTime.now().getMillis());
+
+    @Column
+    private LocalDateTime lastSignInDate = LocalDateTime.now();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.camunda.service;
 
+import com.github.nbaars.pwnedpasswords4j.client.PwnedPasswordChecker;
 import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.enumeration.UserStatus;
@@ -47,6 +48,8 @@ public class WriterRegistrationService implements JavaDelegate {
 
     private LogService logService;
 
+    private PwnedPasswordChecker pwnedChecker;
+
     @Override
     public void execute(DelegateExecution execution) throws Exception {
 
@@ -55,6 +58,10 @@ public class WriterRegistrationService implements JavaDelegate {
 
         Writer writer = new Writer(map.get("firstName"), map.get("lastName"), map.get("city"), map.get("country"), map.get("email"),
                 map.get("username"), map.get("password"));
+
+        if (pwnedChecker.check(writer.getPassword())) {
+            throw new InvalidDataException("Chosen password is not secure. Please choose another one.", HttpStatus.BAD_REQUEST);
+        }
 
         List<Long> genresIds = camundaService.extractIds(map.get("selectGenres"));
         List<Genre> genres = genreService.findWithIds(genresIds);
@@ -87,14 +94,14 @@ public class WriterRegistrationService implements JavaDelegate {
         execution.setVariable("token", nonHashedToken);
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDW",
-                String.format("Writer %s  successfully created",savedWriter.getId())));
+                String.format("Writer %s  successfully created", savedWriter.getId())));
         return savedWriter;
     }
 
     @Autowired
     public WriterRegistrationService(UserService userService, GenreService genreService, CamundaService camundaService,
                                      PasswordEncoder passwordEncoder, WriterRepository writerRepository, VerificationService verificationService,
-                                     LogService logService) {
+                                     LogService logService, PwnedPasswordChecker pwnedChecker) {
         this.userService = userService;
         this.genreService = genreService;
         this.camundaService = camundaService;
@@ -102,6 +109,7 @@ public class WriterRegistrationService implements JavaDelegate {
         this.writerRepository = writerRepository;
         this.verificationService = verificationService;
         this.logService = logService;
+        this.pwnedChecker = pwnedChecker;
     }
 
 }

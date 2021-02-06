@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.security.NoSuchAlgorithmException;
 
@@ -34,7 +35,7 @@ public class PaymentController {
 
     private MerchantService merchantService;
 
-    @PostMapping(value = "/pay",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/pay", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PaymentResponseDTO> pay(@Valid @RequestBody PaymentRequestDTO paymentRequestDTO) throws NoSuchAlgorithmException {
         merchantService.findByMerchantIdAndPassword(paymentRequestDTO.getPaymentDetails().getMerchantId(),
                 paymentRequestDTO.getPaymentDetails().getMerchantPassword());
@@ -42,14 +43,14 @@ public class PaymentController {
         return new ResponseEntity<>(paymentService.pay(paymentRequestMapper.toEntity(paymentRequestDTO)), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/confirm/{paymentId}",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> confirmPayment(@PathVariable @Positive(message = "Payment id must be positive.") Long paymentId,
+    @PostMapping(value = "/confirm/{paymentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> confirmPayment(@PathVariable @NotNull @Positive(message = "Payment id must be positive.") Long paymentId,
                                                  @Valid @RequestBody ConfirmPaymentDTO confirmPaymentDTO) throws NoSuchAlgorithmException {
-        return new ResponseEntity<>(paymentService.confirmPayment(confirmPaymentDTO,paymentId), HttpStatus.OK);
+        return new ResponseEntity<>(paymentService.confirmPayment(confirmPaymentDTO, paymentId), HttpStatus.OK);
     }
 
     @Autowired
-    public PaymentController(PaymentService paymentService,PaymentRequestMapper paymentRequestMapper,MerchantService merchantService) {
+    public PaymentController(PaymentService paymentService, PaymentRequestMapper paymentRequestMapper, MerchantService merchantService) {
         this.paymentService = paymentService;
         this.paymentRequestMapper = paymentRequestMapper;
         this.merchantService = merchantService;

@@ -69,7 +69,7 @@ public class PaymentMethodController {
     private ChangePaymentMethodsTokenService changePaymentMethodsTokenService;
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<List<PaymentMethodResponseDTO>> getPaymentMethodsForMerchant(@PathVariable("orderId") @Positive(message = "Id must be positive.") Long orderId) {
+    public ResponseEntity<List<PaymentMethodResponseDTO>> getPaymentMethodsForMerchant(@PathVariable("orderId") @NotNull @Positive(message = "Id must be positive.") Long orderId) {
         return new ResponseEntity<>(paymentMethodService.findMerchantPaymentMethods(orderId).stream()
                 .map(paymentMethod -> paymentMethodMapper.toDto(paymentMethod)).collect(Collectors.toList()), HttpStatus.OK);
     }
@@ -132,7 +132,7 @@ public class PaymentMethodController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<PaymentMethodDataDTO> changePaymentMethodStatus(@PathVariable @Positive Long id,
+    public ResponseEntity<PaymentMethodDataDTO> changePaymentMethodStatus(@PathVariable @NotNull @Positive Long id,
                                                                           @RequestParam @Pattern(regexp = "(?i)(approve|reject)$", message = "Status is not valid.") String status) {
         return new ResponseEntity<>(paymentMethodDataMapper.toDto(paymentMethodService.changePaymentMethodStatus(id, status)), HttpStatus.OK);
     }

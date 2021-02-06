@@ -20,13 +20,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Validated
 @RestController
 @RequestMapping(value = "/api/merchants", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MerchantController {
@@ -76,7 +80,7 @@ public class MerchantController {
     }
 
     @GetMapping("/payment-data")
-    public ResponseEntity<List<PaymentDataResponseDTO>> getPaymentData(@RequestParam Long companyId, @RequestParam Long merchantId) {
+    public ResponseEntity<List<PaymentDataResponseDTO>> getPaymentData(@RequestParam @NotNull @Positive Long companyId, @RequestParam @NotNull @Positive Long merchantId) {
         Merchant merchant = merchantService.findByIdAndCompany(merchantId, companyId);
         if (merchant == null) {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MER",
@@ -88,7 +92,8 @@ public class MerchantController {
     }
 
     @PostMapping("/payment-data")
-    public ResponseEntity<String> supportPaymentMethods(@Valid @RequestBody List<PaymentDataRequestDTO> listPaymentDataRequestDTO, @RequestParam Long companyId, @RequestParam Long merchantId) throws NoSuchAlgorithmException {
+    public ResponseEntity<String> supportPaymentMethods(@Valid @RequestBody List<PaymentDataRequestDTO> listPaymentDataRequestDTO,
+                                                        @RequestParam @NotNull @Positive Long companyId, @RequestParam @NotNull @Positive Long merchantId) throws NoSuchAlgorithmException {
         Merchant merchant = merchantService.findByIdAndCompany(merchantId, companyId);
         if (merchant == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

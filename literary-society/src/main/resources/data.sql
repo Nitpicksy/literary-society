@@ -21,7 +21,6 @@ values ('tq9jbO5bmiw3Zqcefb2i/KuN7vFt5oFBRzi7zLjXIuh6vI7Yg7NR+6gPWWsBz2mAlhrFeZ/
         'tq9jbO5bmiw3Zqcefb2i/KuN7vFt5oFBRzi7zLjXIuh6vI7Yg7NR+6gPWWsBz2mAlhrFeZ/Swn94lgLOVICNAAgcG6mQZx0oLCJcx89ItbIztg+QJA3+Zsi+ctw2hlAW+jaSiq78R/cRPDb6e1ZFpBRpssD5DmYoJTjDHOQj5XccUlGGQCI7i5QhQY1ACUeH4KfpOBsy1HQyxMxwX/cKi0O2RvMsieGahpbxMtezb3Jc6cr+jQNFN4rG0MQb0LpkgWeXXvW8iTKY7oh/VYSQt/utTNAyXiNk6SdmvPhnes2apMvmbiEcogB/8eDnsQ2s');
 
 
-
 -- LU One Subscription plans
 insert into subscription_plan (cancelurl, frequency_count, frequency_unit, plan_description, plan_name, price,
                                product_category, product_name, product_type, successurl)

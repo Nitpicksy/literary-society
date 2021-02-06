@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Validated
 @RestController
 @RequestMapping(value = "/api/subscriptions", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SubscriptionController {
