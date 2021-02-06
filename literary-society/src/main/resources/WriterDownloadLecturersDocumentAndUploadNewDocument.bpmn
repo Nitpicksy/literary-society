@@ -16,6 +16,11 @@
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0eunpoy" errorRef="Error_0ms3xog" />
     </bpmn:endEvent>
     <bpmn:userTask id="Activity_0rplrx1" name="Slanje PDF verzije rukopisa" camunda:assignee="${writer}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="manuscript" label="Upload manuscript" type="file" />
+        </camunda:formData>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0pdfooa</bpmn:incoming>
       <bpmn:outgoing>Flow_0tdmcr1</bpmn:outgoing>
     </bpmn:userTask>
@@ -32,21 +37,21 @@
   <bpmn:error id="Error_0ehkz46" name="greskaRukopisNePostoji" errorCode="greskaRukopisNePostoji" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="WriterDownloadLecturersDocumentAndUploadNewDocument">
-      <bpmndi:BPMNEdge id="Flow_1ch98h5_di" bpmnElement="Flow_1ch98h5">
-        <di:waypoint x="188" y="120" />
-        <di:waypoint x="290" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0tdmcr1_di" bpmnElement="Flow_0tdmcr1">
-        <di:waypoint x="600" y="120" />
-        <di:waypoint x="722" y="120" />
+      <bpmndi:BPMNEdge id="Flow_1xzdvp9_di" bpmnElement="Flow_1xzdvp9">
+        <di:waypoint x="370" y="178" />
+        <di:waypoint x="370" y="237" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0pdfooa_di" bpmnElement="Flow_0pdfooa">
         <di:waypoint x="390" y="120" />
         <di:waypoint x="500" y="120" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1xzdvp9_di" bpmnElement="Flow_1xzdvp9">
-        <di:waypoint x="370" y="178" />
-        <di:waypoint x="370" y="237" />
+      <bpmndi:BPMNEdge id="Flow_0tdmcr1_di" bpmnElement="Flow_0tdmcr1">
+        <di:waypoint x="600" y="120" />
+        <di:waypoint x="722" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ch98h5_di" bpmnElement="Flow_1ch98h5">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="290" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_01efdtl_di" bpmnElement="Event_01efdtl">
         <dc:Bounds x="152" y="102" width="36" height="36" />

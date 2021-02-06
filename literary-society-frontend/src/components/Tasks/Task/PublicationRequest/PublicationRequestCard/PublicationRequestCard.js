@@ -34,18 +34,6 @@ export default function PublicationRequestCard(props) {
                         </Typography>
                     </Grid>
                 </Grid>
-                {/* <Grid container justify="center" className={classes.grid}>
-                    <Grid item xs={3}>
-                        <Typography className={classes.synopsis} style={{fontWeight: 500}}>
-                            Synopsis:
-                            </Typography>
-                    </Grid>
-                    <Grid item xs={9}>
-                        <Typography className={classes.synopsis}>
-                            {props.book.synopsis}
-                        </Typography>
-                    </Grid>
-                </Grid> */}
             </CardContent>
         </Card>
     );

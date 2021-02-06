@@ -1,9 +1,12 @@
 package nitpicksy.paymentgateway.serviceimpl;
+import nitpicksy.paymentgateway.client.ZuulClient;
 import nitpicksy.paymentgateway.enumeration.PaymentMethodStatus;
 import nitpicksy.paymentgateway.enumeration.TransactionStatus;
 import nitpicksy.paymentgateway.exceptionHandler.InvalidDataException;
+import nitpicksy.paymentgateway.model.Company;
 import nitpicksy.paymentgateway.model.Data;
 import nitpicksy.paymentgateway.model.DataForPayment;
+import nitpicksy.paymentgateway.model.Log;
 import nitpicksy.paymentgateway.model.Merchant;
 import nitpicksy.paymentgateway.model.PaymentMethod;
 import nitpicksy.paymentgateway.model.Transaction;
@@ -12,13 +15,17 @@ import nitpicksy.paymentgateway.repository.PaymentMethodRepository;
 import nitpicksy.paymentgateway.service.DataForPaymentService;
 import nitpicksy.paymentgateway.service.DataService;
 import nitpicksy.paymentgateway.service.EmailNotificationService;
+import nitpicksy.paymentgateway.service.LogService;
 import nitpicksy.paymentgateway.service.OrderService;
 import nitpicksy.paymentgateway.service.PaymentMethodService;
 import nitpicksy.paymentgateway.utils.CertificateUtils;
 import nitpicksy.paymentgateway.utils.TrustStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -29,6 +36,10 @@ import java.util.Set;
 
 @Service
 public class PaymentMethodServiceImpl implements PaymentMethodService {
+
+    private final String CLASS_PATH = this.getClass().getCanonicalName();
+
+    private final String CLASS_NAME = this.getClass().getSimpleName();
 
     private OrderService orderService;
 
@@ -41,6 +52,13 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     private CompanyRepository companyRepository;
 
     private DataForPaymentService dataForPaymentService;
+
+    private ZuulClient zuulClient;
+
+    private LogService logService;
+
+    @Value("${API_GATEWAY_URL}")
+    private String apiGatewayURL;
 
     public List<PaymentMethod> findMerchantPaymentMethods(Long orderId) {
 
@@ -128,214 +146,6 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
         for (PaymentMethod paymentMethod: companyPaymentMethods){
             companyPaymentMethodsIds.add(paymentMethod.getId());
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         List<DataForPayment> dataForPayments = dataForPaymentService.findDataForPaymentByMerchant(merchant.getId());
         Set<Long> supportedPaymentMethods = new HashSet<>();
         for (DataForPayment dataForPayment: dataForPayments){
@@ -351,6 +161,37 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     public PaymentMethod findById(Long id) {
         return paymentMethodRepository.findById(id).get();
     }
+
+    @Override
+    public String changeSupportPaymentMethods(List<PaymentMethod> listPaymentMethods, Company company) {
+        boolean supportPaymentMethods = true;
+        for (PaymentMethod paymentMethod: listPaymentMethods) {
+            PaymentMethod companyPaymentMethod = company.getPaymentMethods().stream()
+                    .filter(current -> current.getId().equals(paymentMethod.getId())).findAny().orElse(null);
+            if(companyPaymentMethod == null){
+                supportPaymentMethods = false;
+                break;
+            }
+        }
+
+        for (PaymentMethod paymentMethod: company.getPaymentMethods()) {
+            PaymentMethod supportedPaymentMethod = listPaymentMethods.stream()
+                    .filter(current -> current.getId().equals(paymentMethod.getId())).findAny().orElse(null);
+            if(supportedPaymentMethod == null){
+                dataForPaymentService.deleteCompanyDataForPayment(paymentMethod.getId(), company.getId());
+            }
+        }
+        company.setPaymentMethods(new HashSet<>(listPaymentMethods));
+        companyRepository.save(company);
+        String redirectURL = null;
+        try {
+            redirectURL = zuulClient.choosePaymentMethods(URI.create(apiGatewayURL + '/' + company.getCommonName()), supportPaymentMethods);
+        }catch (RuntimeException e){
+            logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "PAYM", "Could not notify " + company.getCommonName()));
+        }
+        return redirectURL;
+    }
+
 
     private void composeAndSendRejectionEmail(String recipientEmail) {
         String subject = "Request to register rejected";
@@ -374,12 +215,15 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     @Autowired
     public PaymentMethodServiceImpl(OrderService orderService, PaymentMethodRepository paymentMethodRepository,
                                     DataService dataService, EmailNotificationService emailNotificationService,
-                                    CompanyRepository companyRepository, DataForPaymentService dataForPaymentService) {
+                                    CompanyRepository companyRepository, DataForPaymentService dataForPaymentService,
+                                    ZuulClient zuulClient,LogService logService) {
         this.orderService = orderService;
         this.paymentMethodRepository = paymentMethodRepository;
         this.dataService = dataService;
         this.emailNotificationService = emailNotificationService;
         this.companyRepository = companyRepository;
         this.dataForPaymentService = dataForPaymentService;
+        this.zuulClient = zuulClient;
+        this.logService = logService;
     }
 }

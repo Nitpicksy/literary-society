@@ -14,8 +14,9 @@ insert into genre (name)
 values ('Putopis');
 
 -- LU One Token for Payment Gateway
-insert into jwttoken (token)
-values ('eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJsaXRlcmFyeS1zb2NpZXR5Iiwic3ViIjoibGl0ZXJhcnktc29jaWV0eSIsImF1ZCI6IndlYiIsImlhdCI6MTYwOTU4OTU2MCwiZXhwIjoxNjEwNzk5MTYwLCJyb2xlIjoiUk9MRV9DT01QQU5ZIiwicGVybWlzc2lvbnMiOlt7ImlkIjozLCJuYW1lIjoiQ1JFQVRFX09SREVSIn1dfQ.maf-whUBxv2Sl8LcAIq0mykJcbnclTsZUSQofTiYle1QuGC8lkLHHkSK-S-DKMkaFBC5el-0PrZtUWXmtoXwVg');
+insert into jwttoken (token, refresh_token)
+values ('tq9jbO5bmiw3Zqcefb2i/KuN7vFt5oFBRzi7zLjXIuh6vI7Yg7NR+6gPWWsBz2mAlhrFeZ/Swn94lgLOVICNAAgcG6mQZx0oLCJcx89ItbIztg+QJA3+Zsi+ctw2hlAW+jaSiq78R/cRPDb6e1ZFpM5+IA89PTjvwJGRhB3szGYUWPWPHfDoRf/bP0M45raVzTmcr7PxBrEnuBexcAnjWOhUpvCCN+DGsN76rrP3K9Me7IJdfdpYLS6WnvBBFCvKp6EZpYOTfbIO7V64ZDyA3zCe6bORbopMuU84BMt6Eky3spo66QGeMNiuu+A920yW03MF0y3kgCscvXH1LiNRzMdznhT7uwCWELtuec0kmAKXPGGz/8XXfJvO+P87iaUOJLBwRhVPCRbDSpK7x0me1+2Q7nXYibYxenltWXS1Phc6WRTgiJR6LskMpe6lAzsb',
+        'tq9jbO5bmiw3Zqcefb2i/KuN7vFt5oFBRzi7zLjXIuh6vI7Yg7NR+6gPWWsBz2mAlhrFeZ/Swn94lgLOVICNAAgcG6mQZx0oLCJcx89ItbIztg+QJA3+Zsi+ctw2hlAW+jaSiq78R/cRPDb6e1ZFpM5+IA89PTjvwJGRhB3szGYcUlGGQCI7i5QhQY1ACUeH/Tke4fSaoLEy2m8s8+9EaSMn5woH5ZpXlxbIFk7GutYN+dqEnkhvP6714CmWg0pwkS2Z52DRLK70KjZCXXsa3l7tRF8CH305TcSoqaphQMc5J2Vr5MiFqKe/ogQ+eGxD');
 
 
 -- LU One Subscription plans
@@ -42,7 +43,6 @@ insert into users (type, first_name, last_name, city, country, email, username, 
                    enabled)
 values ('WRITER', 'Branisav', 'Nušić', 'Beograd', 'Srbija', 'nusic@maildrop.cc', 'nusic',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
-
 
 -- Editors
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
@@ -80,7 +80,7 @@ values ('READER', 'John', 'John', 'London', 'Ujedinjeno kraljevstvo', 'johnj@mai
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled, is_beta_reader, penalty)
 values ('READER', 'Olega', 'Aleksandrov', 'Sankt Petersburg', 'Rusija', 'olegaa@maildrop.cc', 'olegaa',
-        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'WAITING_APPROVAL', true, true, 0);
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true, 0);
 
 insert into beta_reader_genre (beta_reader_id, genre_id)
 values (8, 1);
@@ -92,7 +92,6 @@ insert into beta_reader_genre (beta_reader_id, genre_id)
 values (9, 1);
 insert into beta_reader_genre (beta_reader_id, genre_id)
 values (9, 3);
-
 insert into beta_reader_genre (beta_reader_id, genre_id)
 values (10, 1);
 insert into beta_reader_genre (beta_reader_id, genre_id)
@@ -145,6 +144,11 @@ insert into users (type, first_name, last_name, city, country, email, username, 
                    enabled)
 values ('User', 'INSANE MAN', 'PUSKIN', 'Sankt Petersburg', 'Rusija', 'communist3@maildrop.cc', 'bor3',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
+
+
+-- Memberships
+insert into membership (expiration_date, is_subscribed, price, merchant_id, user_id)
+values ('2021-06-01', false, 2000.00, 11, 1);
 
 
 -- Images

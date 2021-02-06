@@ -67,7 +67,7 @@ public class CompanyController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<CompanyResponseDTO> changeStatus(@PathVariable @Positive Long id,
+    public ResponseEntity<CompanyResponseDTO> changeStatus(@PathVariable @NotNull @Positive Long id,
                                                            @RequestParam @Pattern(regexp = "(?i)(approve|reject)$", message = "Status is not valid.") String status) {
         Company company = companyService.changeStatus(id, status);
         if (company == null) {
@@ -76,17 +76,17 @@ public class CompanyController {
         return new ResponseEntity<>(companyResponseMapper.toDto(company), HttpStatus.OK);
     }
 
-    @GetMapping(value= "/token")
+    @GetMapping(value = "/token")
     public ResponseEntity<String> getToken() {
         return new ResponseEntity<>(companyService.getToken(), HttpStatus.OK);
     }
 
     @Autowired
     public CompanyController(CompanyService companyService, CompanyDataMapper companyDataMapper,
-                             CompanyResponseMapper companyResponseMapper,TokenUtils tokenUtils) {
+                             CompanyResponseMapper companyResponseMapper, TokenUtils tokenUtils) {
         this.companyService = companyService;
         this.companyDataMapper = companyDataMapper;
         this.companyResponseMapper = companyResponseMapper;
-        this.tokenUtils=tokenUtils;
+        this.tokenUtils = tokenUtils;
     }
 }

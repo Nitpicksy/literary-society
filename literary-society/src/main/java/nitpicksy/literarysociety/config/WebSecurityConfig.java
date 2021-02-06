@@ -80,6 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.POST, "/api/payments/pay").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/payments/confirm").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/payments/choose-payment-methods").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/readers/start-registration").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/readers/registration-form").permitAll()
@@ -89,6 +90,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/tasks/{taskId}").hasAuthority("MANAGE_TASKS")
                 .antMatchers(HttpMethod.GET, "/api/tasks/{taskId}/complete-and-download").hasAuthority("DOWNLOAD_BOOK_AND_COMPLETE_TASK")
                 .antMatchers(HttpMethod.GET, "/api/tasks/{taskId}/complete-and-upload").hasAuthority("UPLOAD_BOOK_AND_COMPLETE_TASK")
+                .antMatchers(HttpMethod.GET, "/api/tasks/process-variable").hasAuthority("MANAGE_TASKS")
 
                 .antMatchers(HttpMethod.GET, "/api/tasks/{taskId}/submit-form-and-upload-image").hasAuthority("SUBMIT_FORM_AND_UPLOAD_IMAGE")
 
@@ -101,6 +103,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/subscriptions/plan").hasAuthority("SUBSCRIBE")
                 .antMatchers(HttpMethod.POST, "/api/subscriptions/subscribe").hasAuthority("SUBSCRIBE")
                 .antMatchers(HttpMethod.POST, "/api/subscriptions/unsubscribe").hasAuthority("SUBSCRIBE")
+
+                .antMatchers(HttpMethod.GET, "/api/payments/choose-payment-methods").hasAuthority("CHOOSE_PAYMENT_METHODS")
 
                 .anyRequest().authenticated().and()
                 .cors().and()

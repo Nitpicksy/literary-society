@@ -18,4 +18,6 @@ public interface AuthenticationService {
     boolean userIsNeverLoggedIn(String username);
 
     void activateAccount(String hash) throws NoSuchAlgorithmException;
+
+    void deactivateInactiveUsers();
 }

@@ -30,6 +30,12 @@ public class DataForPaymentServiceImpl implements DataForPaymentService {
         return dataForPaymentRepository.saveAll(dataForPayments);
     }
 
+    @Override
+    public void deleteCompanyDataForPayment(Long paymentMethodId, Long companyId) {
+        List<DataForPayment> dataForPayments = dataForPaymentRepository.findByPaymentMethodIdAndMerchantCompanyId(paymentMethodId,companyId);
+        dataForPaymentRepository.deleteAll(dataForPayments);
+    }
+
     @Autowired
     public DataForPaymentServiceImpl(DataForPaymentRepository dataForPaymentRepository) {
         this.dataForPaymentRepository = dataForPaymentRepository;

@@ -20,8 +20,6 @@ public class MerchantServiceImpl implements MerchantService {
 
     private MerchantRepository merchantRepository;
 
-    private HashValueServiceImpl hashValueServiceImpl;
-
     private EmailNotificationService emailNotificationService;
 
     private final String CLASS_PATH = this.getClass().getCanonicalName();
@@ -64,11 +62,11 @@ public class MerchantServiceImpl implements MerchantService {
         String merchantId = generateMerchantId();
 
         System.out.println(merchantId);
-        while(merchantRepository.findByMerchantId(hashValueServiceImpl.getHashValue(merchantId)) != null){
+        while(merchantRepository.findByMerchantId(merchantId) != null){
             merchantId = generateMerchantId();
         }
-        merchant.setMerchantId(hashValueServiceImpl.getHashValue(merchantId));
-        merchant.setMerchantPassword(hashValueServiceImpl.getHashValue(merchant.getMerchantPassword()));
+        merchant.setMerchantId(merchantId);
+        merchant.setMerchantPassword(merchant.getMerchantPassword());
         composeAndSendEmail(merchant.getEmail(),merchantId);
         Merchant savedMerchant = merchantRepository.save(merchant);
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MERCHANTA", String.format("Merchant account %s is created.", savedMerchant.getId())));
@@ -95,10 +93,9 @@ public class MerchantServiceImpl implements MerchantService {
         emailNotificationService.sendEmail(recipientEmail, subject, text);
     }
     @Autowired
-    public MerchantServiceImpl(MerchantRepository merchantRepository, HashValueServiceImpl hashValueServiceImpl,EmailNotificationService emailNotificationService,
+    public MerchantServiceImpl(MerchantRepository merchantRepository, EmailNotificationService emailNotificationService,
                                LogService logService) {
         this.merchantRepository = merchantRepository;
-        this.hashValueServiceImpl = hashValueServiceImpl;
         this.emailNotificationService = emailNotificationService;
         this.logService = logService;
     }

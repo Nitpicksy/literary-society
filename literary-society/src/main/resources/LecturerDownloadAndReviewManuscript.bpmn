@@ -23,6 +23,11 @@
     <bpmn:sequenceFlow id="Flow_0ev0lu6" sourceRef="Event_0m0ilpo" targetRef="Activity_1xugypo" />
     <bpmn:sequenceFlow id="Flow_1h1r25x" sourceRef="Activity_1xugypo" targetRef="Activity_15q8l1f" />
     <bpmn:userTask id="Activity_15q8l1f" name="Slanje rukopisa sa zabelezenim greskama" camunda:assignee="${lecturer}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="manuscript" label="Upload manuscript" type="file" />
+        </camunda:formData>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_1h1r25x</bpmn:incoming>
       <bpmn:outgoing>Flow_1cew0gb</bpmn:outgoing>
     </bpmn:userTask>

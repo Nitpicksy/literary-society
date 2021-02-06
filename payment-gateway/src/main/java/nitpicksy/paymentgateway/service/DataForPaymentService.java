@@ -11,4 +11,6 @@ public interface DataForPaymentService {
     DataForPayment findByAttribute(Long merchantId, String paymentMethodCommonName, String attributeName);
 
     List<DataForPayment> save(List<DataForPayment> dataForPayments);
+
+    void deleteCompanyDataForPayment(Long paymentMethodId, Long companyId);
 }

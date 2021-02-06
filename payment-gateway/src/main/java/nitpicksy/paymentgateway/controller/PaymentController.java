@@ -28,7 +28,6 @@ public class PaymentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
     @Autowired
     public PaymentController(OrderService orderService) {
         this.orderService = orderService;

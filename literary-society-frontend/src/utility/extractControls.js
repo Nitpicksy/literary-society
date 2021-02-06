@@ -12,7 +12,7 @@ const extractControl = (field) => {
     const constaints = extractConstraints(field.validationConstraints);
     let valid = false;
     let touched = false;
-    if(isEmpty(constaints)){
+    if (isEmpty(constaints)) {
         valid = true
         touched = true
     }
@@ -25,13 +25,30 @@ const extractControl = (field) => {
                         label: field.label,
                     },
                     value: '',
-                    validation:constaints,
+                    validation: constaints,
                     valid: false,
                     touched: false,
                     error: false,
                     errorMessage: '',
                     additionalData: {
                         ...field.properties
+                    }
+                }
+            };
+            break;
+        case ('file'):
+            control = {
+                [field.id]: {
+                    elementType: 'file',
+                    elementConfig: {},
+                    value: null,
+                    validation: null,
+                    valid: true,
+                    touched: false,
+                    error: false,
+                    errorMessage: '',
+                    additionalData: {
+                        fileName: ''
                     }
                 }
             };
@@ -114,24 +131,24 @@ const extractControl = (field) => {
             };
             break;
         case ('long'):
-                control = {
-                    [field.id]: {
-                        elementType: 'long',
-                        elementConfig: {
-                            label: field.label,
-                        },
-                        value: '',
-                        validation:constaints,
-                        valid: true,
-                        touched: false,
-                        error: false,
-                        errorMessage: '',
-                        additionalData: {
-                            ...field.properties
-                        }
+            control = {
+                [field.id]: {
+                    elementType: 'long',
+                    elementConfig: {
+                        label: field.label,
+                    },
+                    value: '',
+                    validation: constaints,
+                    valid: true,
+                    touched: false,
+                    error: false,
+                    errorMessage: '',
+                    additionalData: {
+                        ...field.properties
                     }
-                };
-                break;
+                }
+            };
+            break;
         default:
             control = {
                 [field.id]: {
@@ -161,14 +178,14 @@ const extractConstraints = (validationConstraints) => {
     for (let i in validationConstraints) {
         map.set(validationConstraints[i].name, validationConstraints[i].configuration);
     }
-    
+
     return Object.fromEntries(map);
 }
 
 const extractOptions = (options) => {
     let array = [];
     for (let [key, value] of Object.entries(options)) {
-        array.push({value: key, displayValue: value});
+        array.push({ value: key, displayValue: value });
     }
 
     return array;

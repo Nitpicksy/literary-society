@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nitpicksy.bitcoinservice.converter.CryptoStringConverter;
 import nitpicksy.bitcoinservice.enumeration.PaymentStatus;
 
 import javax.persistence.*;
@@ -27,6 +28,7 @@ public class Payment {
     private String merchantOrderId;
 
     @Column(nullable = false)
+    @Convert(converter = CryptoStringConverter.class)
     private String merchantToken;
 
     @Column(nullable = false)

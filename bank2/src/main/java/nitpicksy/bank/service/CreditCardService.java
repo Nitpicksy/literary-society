@@ -6,9 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 public interface CreditCardService {
 
-    CreditCard checkCreditCardDate(String pan, String cardHolderName, String expirationDate, String securityCode) throws NoSuchAlgorithmException;
-
-    CreditCard checkCreditCardDateHashedValues(String pan, String cardHolderName, String expirationDate, String securityCode);
+    CreditCard checkCreditCardDate(String pan, String cardHolderName, String expirationDate, String securityCode) ;
 
     boolean isClientOfThisBank(String pan);
 }

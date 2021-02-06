@@ -10,20 +10,25 @@ import { useHistory } from 'react-router';
 import PublicationRequestCard from '../PublicationRequest/PublicationRequestCard/PublicationRequestCard';
 import * as actions from './OpinionOfEditorExport';
 import { toastr } from 'react-redux-toastr';
+import Form from '../../../../UI/Form/Form';
+import { extractControls } from '../../../../utility/extractControls';
 
 const OpinionOfEditor = (props) => {
 
     const [pdfFile, setPdfFile] = useState(null);
+    let [controls, setControls] = useState(null);
     const history = useHistory();
     responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
     const classes = useStyles();
 
     const { selectedTask } = props;
-    const { fetchForm, fetchOpinion } = props;
+    const { fetchForm, fetchOpinion,formFields } = props;
     const { publicationRequest } = props;
+    const [formIsValid, setFormIsValid] = useState(false);
 
     let publicationRequestCard = null;
     let opinionItem = null;
+    let form = null;
 
     useEffect(() => {
         fetchForm(selectedTask.piId, selectedTask.taskId);
@@ -35,9 +40,12 @@ const OpinionOfEditor = (props) => {
         }
     }, [publicationRequest, fetchOpinion])
 
-    const handleChooseFile = ({ target }) => {
-        setPdfFile(target.files[0]);
-    }
+    useEffect(() => {
+        if (formFields) {
+            let extractedControls = extractControls(formFields)
+            setControls(extractedControls);
+        }
+    }, [formFields]);
 
     const handleUpload = () => {
         if (pdfFile) {
@@ -51,6 +59,10 @@ const OpinionOfEditor = (props) => {
 
     if (publicationRequest) {
         publicationRequestCard = <PublicationRequestCard book={publicationRequest} />
+    }
+
+    if (controls) {
+        form = <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} setPdfFile={setPdfFile} />;
     }
 
     if (props.opinion) {
@@ -82,23 +94,7 @@ const OpinionOfEditor = (props) => {
 
                 <Grid container className={classes.uploadGrid}>
                     <Grid item xs={9} >
-                        <input type="file" accept="application/pdf" hidden id="upload-file"
-                            onChange={handleChooseFile} //samo dodati multiple ako treba vise fajlova na jedno dugme
-                        />
-                        <label htmlFor="upload-file">
-                            <Grid container >
-                                <Grid item xs={4} >
-                                    <Button color="primary" variant="contained" component="span">
-                                        Choose file
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={8} className={classes.fileNameGrid}>
-                                    <Typography variant="body2" component="span" className={classes.fileName}>
-                                        {pdfFile ? pdfFile.name : ''}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </label>
+                        {form}
                     </Grid>
                     <Grid item xs={3} className={classes.uploadBtn}>
                         <Button color="primary" variant="contained" component="span"
@@ -116,6 +112,7 @@ const OpinionOfEditor = (props) => {
 
 const mapStateToProps = state => {
     return {
+        formFields: state.opinionOfEditor.formFields,
         selectedTask: state.tasks.selectedTask,
         refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
         publicationRequest: state.opinionOfEditor.publicationRequest,

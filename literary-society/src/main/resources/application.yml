@@ -61,13 +61,17 @@ eureka:
         enabled: true
     fetchRegistry: true
 
+pwnedpasswords4j:
+  user_agent: Testing   # Required as described in the documentation of haveibeenpwned.com API
+  url: https://api.pwnedpasswords.com/range/
+
 TOKEN_UTILS_APP_NAME: literary-society
 TOKEN_UTILS_SECRET: Nitpicsky
 # 15 min
-#TOKEN_UTILS_EXPIRES_IN: 10800000
-TOKEN_UTILS_EXPIRES_IN: 10800000
+TOKEN_UTILS_EXPIRES_IN: 900000
 # 14 days
 TOKEN_UTILS_REFRESH_TOKEN_EXPIRES_IN: 1209600000
+
 TOKEN_UTILS_AUTH_HEADER: Authorization
 # Localhost
 #LOCALHOST_URL: https://localhost:3000/

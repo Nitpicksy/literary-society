@@ -1,6 +1,7 @@
 import * as actionTypes from './OpinionsOfBetaReadersActionTypes';
 
 const initialState = {
+    formFields: null,
     processInstanceId: null,
     taskId: null,
     publicationRequest: null,
@@ -13,6 +14,7 @@ const reducer = (state = initialState, action) => {
         case actionTypes.FETCH_FORM_SUCCESS:
             return {
                 ...state,
+                formFields: action.formFields,
                 processInstanceId: action.processInstanceId,
                 taskId: action.taskId,
                 publicationRequest: action.publicationRequest,
@@ -31,7 +33,8 @@ const reducer = (state = initialState, action) => {
                 processInstanceId: null,
                 taskId: null,
                 publicationRequest: null,
-                error: null
+                error: null,
+                formFields: null
             };
         default:
             return state;

@@ -95,12 +95,13 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Transaction payClientBank(PayRequestDTO payRequestDTO) {
-        CreditCard creditCard = creditCardService.checkCreditCardDateHashedValues(payRequestDTO.getConfirmPaymentDTO().getPAN(),
-                payRequestDTO.getConfirmPaymentDTO().getCardHolderName(), payRequestDTO.getConfirmPaymentDTO().getExpirationDate(), payRequestDTO.getConfirmPaymentDTO().getSecurityCode());
-
+        CreditCard creditCard;
         TransactionStatus status = TransactionStatus.SUCCESS;
         Transaction transaction;
-        if (creditCard == null) {
+        try{
+            creditCard = creditCardService.checkCreditCardDate(payRequestDTO.getConfirmPaymentDTO().getPAN(),
+                    payRequestDTO.getConfirmPaymentDTO().getCardHolderName(), payRequestDTO.getConfirmPaymentDTO().getExpirationDate(), payRequestDTO.getConfirmPaymentDTO().getSecurityCode());
+        }catch (InvalidDataException e){
             status = TransactionStatus.FAILED;
             transaction = transactionService.create(payRequestDTO.getAmount(), payRequestDTO.getMerchantId(),
                     payRequestDTO.getMerchantOrderId(), payRequestDTO.getMerchantTimestamp(), payRequestDTO.getPaymentId(), payRequestDTO.getConfirmPaymentDTO().getPAN(), status);

@@ -1,4 +1,5 @@
 package nitpicksy.paypalservice.controller;
+
 import nitpicksy.paypalservice.dto.request.PaymentRequestDTO;
 import nitpicksy.paypalservice.dto.response.PaymentResponseDTO;
 import nitpicksy.paypalservice.mapper.PaymentRequestMapper;
@@ -11,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.net.URI;
 
 @Validated
@@ -28,8 +30,8 @@ public class PaymentController {
     }
 
     @GetMapping(value = "/confirm")
-    public ResponseEntity<Void> confirmPayment(@RequestParam("paymentId") String paymentId,
-                                               @RequestParam("PayerID") String payerId) {
+    public ResponseEntity<Void> confirmPayment(@RequestParam("paymentId") @NotBlank String paymentId,
+                                               @RequestParam("PayerID") @NotBlank String payerId) {
         return ResponseEntity.status(HttpStatus.SEE_OTHER)
                 .location(URI.create(paymentService.executePayment(paymentId, payerId)))
                 .build();

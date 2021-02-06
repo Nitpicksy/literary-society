@@ -17,4 +17,6 @@ public interface DataForPaymentRepository extends JpaRepository<DataForPayment, 
     List<DataForPayment> findByMerchantId(Long id);
 
     DataForPayment findByMerchantIdAndPaymentMethodCommonNameAndAttributeName(Long merchantId, String paymentMethodCommonName, String attributeName);
+
+    List<DataForPayment> findByPaymentMethodIdAndMerchantCompanyId(Long paymentMethodId, Long companyId);
 }

@@ -46,6 +46,7 @@ import editorsDownloadPlagiarismDocumentsReducer from './components/Tasks/Task/P
 import committeePlagiarismVoteReducer from './components/Tasks/Task/PlagiarismProcess/CommitteePlagiarismVote/CommitteePlagiarismVoteReducer';
 import merchantBookListReducer from './components/MerchantBooks/MerchantBooksReducer';
 import merchantBookReducer from './components/MerchantBooks/MerchantBookDetails/MerchantBookDetailsReducer';
+import editorCheckIfBookIsPlagiarismReducer from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/EditorCheckIfBookIsPlagiarismReducer';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
@@ -82,7 +83,8 @@ const rootReducer = combineReducers({
     editorsDownloadPlagiarismDocuments: editorsDownloadPlagiarismDocumentsReducer,
     committeePlagiarismVote: committeePlagiarismVoteReducer,
     merchantBookList:merchantBookListReducer,
-    merchantBook:merchantBookReducer
+    merchantBook:merchantBookReducer,
+    editorCheckIfBookIsPlagiarism:editorCheckIfBookIsPlagiarismReducer,
 });
 
 const persistConfig = {
@@ -104,9 +106,7 @@ const pReducer = persistReducer(persistConfig, appReducer);
 
 // const pReducer = persistReducer(persistConfig, rootReducer);
 
-const store = createStore(pReducer, composeEnhancers(
-    applyMiddleware(thunk)
-));
+const store = createStore(pReducer,applyMiddleware(thunk));
 const persistor = persistStore(store);
 
 const app = (

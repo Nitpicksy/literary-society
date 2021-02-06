@@ -77,6 +77,7 @@
           </camunda:formData>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_0joc9ch</bpmn:incoming>
+        <bpmn:incoming>Flow_0qr8ekx</bpmn:incoming>
         <bpmn:outgoing>Flow_056vuur</bpmn:outgoing>
       </bpmn:userTask>
       <bpmn:serviceTask id="Activity_1on8dr4" name="Kreiranje citaoca" camunda:class="nitpicksy.literarysociety.camunda.service.ReaderRegistrationService">
@@ -128,10 +129,6 @@
       <bpmn:endEvent id="Event_1u1zurq" name="Fail">
         <bpmn:incoming>Flow_1si2gh5</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:endEvent id="Event_0d9ytl7" name="Fail">
-        <bpmn:incoming>Flow_15sucry</bpmn:incoming>
-        <bpmn:errorEventDefinition id="ErrorEventDefinition_0288rqo" errorRef="Error_15t6x2f" />
-      </bpmn:endEvent>
       <bpmn:boundaryEvent id="Event_175vsg2" attachedToRef="Activity_1syqr2x">
         <bpmn:outgoing>Flow_1gxyito</bpmn:outgoing>
         <bpmn:timerEventDefinition id="TimerEventDefinition_177dtej">
@@ -158,7 +155,12 @@
       <bpmn:sequenceFlow id="Flow_045jge3" sourceRef="Activity_1s80n63" targetRef="Activity_0sqhdo3" />
       <bpmn:sequenceFlow id="Flow_1gxyito" sourceRef="Event_175vsg2" targetRef="Activity_1u3brmq" />
       <bpmn:sequenceFlow id="Flow_1si2gh5" sourceRef="Activity_1u3brmq" targetRef="Event_1u1zurq" />
-      <bpmn:sequenceFlow id="Flow_15sucry" sourceRef="Event_1m25bwc" targetRef="Event_0d9ytl7" />
+      <bpmn:sequenceFlow id="Flow_15sucry" sourceRef="Event_1m25bwc" targetRef="Activity_185w3c6" />
+      <bpmn:serviceTask id="Activity_185w3c6" name="Obrada exception-a" camunda:class="nitpicksy.literarysociety.camunda.service.ReaderRegistrationExceptionService">
+        <bpmn:incoming>Flow_15sucry</bpmn:incoming>
+        <bpmn:outgoing>Flow_0qr8ekx</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_0qr8ekx" sourceRef="Activity_185w3c6" targetRef="Activity_083jyca" />
     </bpmn:subProcess>
     <bpmn:startEvent id="Event_0srtzph" name="Start">
       <bpmn:outgoing>Flow_1uf3whr</bpmn:outgoing>
@@ -182,6 +184,7 @@
   </bpmn:process>
   <bpmn:error id="Error_15t6x2f" name="greskaKreiranjeCitaoca" errorCode="greskaKreiranjeCitaoca" />
   <bpmn:error id="Error_19gt1bv" name="greskaIstekaoProces" errorCode="greskaIstekaoProces" />
+  <bpmn:error id="Error_0htgqid" name="Error_34h8c80" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Reader_Registration">
       <bpmndi:BPMNEdge id="Flow_1r8up3z_di" bpmnElement="Flow_1r8up3z">
@@ -201,7 +204,7 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_15sucry_di" bpmnElement="Flow_15sucry">
         <di:waypoint x="630" y="238" />
-        <di:waypoint x="630" y="305" />
+        <di:waypoint x="630" y="300" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1si2gh5_di" bpmnElement="Flow_1si2gh5">
         <di:waypoint x="1510" y="363" />
@@ -256,15 +259,14 @@
         <di:waypoint x="1592" y="180" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0joc9ch_di" bpmnElement="Flow_0joc9ch">
-        <di:waypoint x="368" y="180" />
+        <di:waypoint x="358" y="180" />
         <di:waypoint x="410" y="180" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="332" y="162" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="338" y="205" width="25" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0qr8ekx_di" bpmnElement="Flow_0qr8ekx">
+        <di:waypoint x="580" y="340" />
+        <di:waypoint x="450" y="340" />
+        <di:waypoint x="450" y="220" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_0io1pr6_di" bpmnElement="Event_0io1pr6">
         <dc:Bounds x="1592" y="162" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -304,11 +306,14 @@
           <dc:Bounds x="1501" y="448" width="19" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0qj9lfa_di" bpmnElement="Event_0d9ytl7">
-        <dc:Bounds x="612" y="305" width="36" height="36" />
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="322" y="162" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="621" y="348" width="19" height="14" />
+          <dc:Bounds x="329" y="205" width="24" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0n7b723_di" bpmnElement="Activity_185w3c6">
+        <dc:Bounds x="580" y="300" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0q2xlrx_di" bpmnElement="Event_1m25bwc">
         <dc:Bounds x="612" y="202" width="36" height="36" />

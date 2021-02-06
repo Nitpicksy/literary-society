@@ -18,6 +18,8 @@ import Logout from './components/Authentication/SignIn/Logout';
 import AddCompanySuccess from './components/CompanyManagement/AddCompany/AddCompanySuccess';
 import CompanyList from './components/CompanyManagement/CompanyList/CompanyList';
 import MerchantSupportPaymentMethods from './components/PaymentMethodsManagement/MerchantSupportPaymentMethods/MerchantSupportPaymentMethods';
+import ChoosePaymentMethods from './components/PaymentMethodsManagement/ChoosePaymentMethods/ChoosePaymentMethods';
+
 const App = (props) => {
   const { onTryAutoSignUp } = props;
 
@@ -57,6 +59,7 @@ const App = (props) => {
       <Route path="/add-company-success" render={() => <AddCompanySuccess {...props} />} />
 
       <Route path="/payment-data" render={(props) => <MerchantSupportPaymentMethods {...props} />} />
+      <Route path="/choose-payment-methods" render={() => <ChoosePaymentMethods {...props} />} />
 
       <Route path="/" render={() => <h1> Welcome, navigate to payment/:id. </h1>} />
     </Switch>
@@ -67,7 +70,8 @@ const App = (props) => {
       <GuardProvider guards={[requireRole]}>
         <Switch>
           <Route path="/payment/:id" render={(props) => <PaymentHome {...props} />} />
-
+          <Route path="/choose-payment-methods" render={() => <ChoosePaymentMethods {...props} />} />
+          
           <GuardedRoute path="/payment-methods" render={() => <PaymentMethodList {...props} />} meta={{ roles: [roleAdmin] }} />
           <GuardedRoute path="/companies" render={() => <CompanyList {...props} />} meta={{ roles: [roleAdmin] }} />
 

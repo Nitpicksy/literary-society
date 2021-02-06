@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.client;
 
 import nitpicksy.literarysociety.dto.request.CancelSubscriptionDTO;
+import nitpicksy.literarysociety.dto.request.JWTRequestDTO;
 import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
 import nitpicksy.literarysociety.dto.request.SubscriptionDTO;
 import nitpicksy.literarysociety.dto.request.SubscriptionPlanDTO;
@@ -8,13 +9,17 @@ import nitpicksy.literarysociety.config.FeignClientConfiguration;
 import nitpicksy.literarysociety.dto.request.LiterarySocietyOrderRequestDTO;
 import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
 import nitpicksy.literarysociety.dto.response.MerchantPaymentGatewayResponseDTO;
+import org.apache.http.Header;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -53,4 +58,13 @@ public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.GET, path = "payment-gateway/api/transactions")
     List<LiterarySocietyOrderRequestDTO> getAllTransactions(@RequestHeader(value = "Auth") String authHeader);
+
+    @RequestMapping(method = RequestMethod.POST, path = "payment-gateway/api/auth/company-refresh")
+    JWTRequestDTO refreshAuthenticationToken(@RequestHeader(value = "Auth") String authHeader);
+
+    @RequestMapping(method = RequestMethod.PUT, path = "payment-gateway/api/payment-methods")
+    ResponseEntity<String> choosePaymentMethods(@RequestHeader(value = "Auth") String authHeader);
+
+    @RequestMapping(method = RequestMethod.POST, path = "payment-gateway/api/plagiarism/check-book")
+    Integer checkBook(@RequestHeader(value = "Auth") String authHeader,@RequestBody byte[] pdfBytes);
 }

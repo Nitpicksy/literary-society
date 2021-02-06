@@ -16,7 +16,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.net.URI;
 
-@Validated
 @RestController
 @RequestMapping(value = "/api/subscriptions", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SubscriptionController {

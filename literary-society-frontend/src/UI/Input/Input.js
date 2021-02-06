@@ -1,9 +1,5 @@
 import React from 'react';
-import TextField from '@material-ui/core/TextField';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import { makeStyles } from '@material-ui/core';
+import { Checkbox, FormControlLabel, MenuItem, TextField, Button, makeStyles, Typography } from '@material-ui/core';
 
 const input = (props) => {
     let inputElement = null;
@@ -25,10 +21,25 @@ const input = (props) => {
                 error={props.error} helperText={props.error ? props.errorMessage : ''}
                 {...props.elementConfig} onChange={props.changed} />;
             break;
+        case ('file'):
+            inputElement = <React.Fragment>
+                <input type="file" accept="application/pdf" hidden id="upload-file"
+                    onChange={props.changed}
+                />
+                <label htmlFor="upload-file">
+                    <Button color="primary" variant="contained" component="span">
+                        Choose file
+                    </Button>
+                </label>
+                <Typography variant="body2" component="span" style={{marginLeft: '5px', color: '#707070', fontWeight: 500}}>
+                    {props.additionalData.fileName ? props.additionalData.fileName : ''}
+                </Typography>
+            </React.Fragment>;
+            break;
         case ('date'):
-            inputElement = <TextField variant="outlined" margin="normal" fullWidth   type="date"
+            inputElement = <TextField variant="outlined" margin="normal" fullWidth type="date"
                 error={props.error} {...props.elementConfig} onChange={props.changed} className={classes.textField}
-                InputLabelProps={{ shrink: true, }}/>;
+                InputLabelProps={{ shrink: true, }} />;
             break;
         case ('textarea'):
             inputElement = <TextField variant="outlined" margin="normal" fullWidth
