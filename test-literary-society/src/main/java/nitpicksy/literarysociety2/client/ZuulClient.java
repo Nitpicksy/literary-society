@@ -1,19 +1,11 @@
 package nitpicksy.literarysociety2.client;
 
-import nitpicksy.literarysociety2.dto.request.CancelSubscriptionDTO;
-import nitpicksy.literarysociety2.dto.request.PaymentGatewayPayRequestDTO;
-import nitpicksy.literarysociety2.dto.request.SubscriptionDTO;
-import nitpicksy.literarysociety2.dto.request.SubscriptionPlanDTO;
 import nitpicksy.literarysociety2.config.FeignClientConfiguration;
-import nitpicksy.literarysociety2.dto.request.LiterarySocietyOrderRequestDTO;
+import nitpicksy.literarysociety2.dto.request.*;
 import nitpicksy.literarysociety2.dto.response.MerchantPaymentGatewayResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -45,10 +37,13 @@ public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.POST, path = "payment-gateway/api/merchants")
     void addMerchant(@RequestHeader(value = "Auth") String authHeader,
-               @RequestBody String merchantName);
+                     @RequestBody String merchantName);
 
     @RequestMapping(method = RequestMethod.GET, path = "payment-gateway/api/merchants")
     List<MerchantPaymentGatewayResponseDTO> getAllMerchants(@RequestHeader(value = "Auth") String authHeader);
+
+    @RequestMapping(method = RequestMethod.POST, path = "payment-gateway/api/auth/company-refresh")
+    JWTRequestDTO refreshAuthenticationToken(@RequestHeader(value = "Auth") String authHeader);
 
     @RequestMapping(method = RequestMethod.GET, path = "payment-gateway/api/transactions")
     List<LiterarySocietyOrderRequestDTO> getAllTransactions(@RequestHeader(value = "Auth") String authHeader);

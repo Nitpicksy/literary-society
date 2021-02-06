@@ -4,6 +4,7 @@ import { toastr } from 'react-redux-toastr';
 
 const SockJS = () => {
 
+    //eslint-disable-next-line
     let ref = useRef(null)
 
     const handleMessage = (url) => {
@@ -17,6 +18,7 @@ const SockJS = () => {
     return (
         <SockJsClient url='https://localhost:8090/ws' topics={['/socket-publisher']}
         onMessage={(msg) => handleMessage(msg)}
+        //eslint-disable-next-line
         ref={ (client) => { ref = client }} />
     )
 }
