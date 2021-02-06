@@ -54,6 +54,7 @@ import MerchantBookDetails from './components/MerchantBooks/MerchantBookDetails/
 import CreateBook from './components/MerchantBooks/CreateBook/CreateBook';
 import ChoosePaymentMethods from './components/ChoosePaymentMethods/ChoosePaymentMethods';
 import EditorCheckIfBookIsPlagiarism from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/EditorCheckIfBookIsPlagiarism';
+import TransactionList from './components/TransactionList/TransactionList';
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
 // });
@@ -159,6 +160,7 @@ const App = props => {
           <GuardedRoute path="/manage-users" render={(props) => <ManageLecturersAndEditors {...props} />} meta={{ roles: [roleAdmin] }} />
           <GuardedRoute path="/manage-merchants" render={(props) => <ManageMerchants {...props} />} meta={{ roles: [roleAdmin] }} />
           <GuardedRoute path="/choose-payment-methods" render={(props) => <ChoosePaymentMethods {...props} />} meta={{ roles: [roleAdmin] }} />
+          <GuardedRoute path="/transactions" render={(props) => <TransactionList {...props} />} meta={{ roles: [roleAdmin] }} />
 
           <Route path="/tasks" render={(props) => <Tasks {...props} />} meta={{ roles: [roleEditor,roleWriter,roleReader, roleLecturer] }} />
 

@@ -2,6 +2,8 @@ package nitpicksy.literarysociety.controller;
 
 
 import nitpicksy.literarysociety.dto.response.TransactionDTO;
+import nitpicksy.literarysociety.dto.response.TransactionDetailDTO;
+import nitpicksy.literarysociety.mapper.TransactionDetailsDtoMapper;
 import nitpicksy.literarysociety.mapper.TransactionDtoMapper;
 import nitpicksy.literarysociety.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +30,23 @@ public class TransactionController {
 
     private TransactionDtoMapper transactionDtoMapper;
 
+    private TransactionDetailsDtoMapper transactionDetailsDtoMapper;
+
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TransactionDTO> getTransaction(@NotNull @Positive @PathVariable Long id) {
         return new ResponseEntity<>(transactionDtoMapper.toDto(transactionService.findById(id)), HttpStatus.OK);
     }
 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TransactionDetailDTO>> all() {
+        return new ResponseEntity<>(transactionService.all().stream().map(transaction -> transactionDetailsDtoMapper.toDto(transaction)).collect(Collectors.toList()),
+                HttpStatus.OK);
+    }
+
     @Autowired
-    public TransactionController(TransactionService transactionService, TransactionDtoMapper transactionDtoMapper) {
+    public TransactionController(TransactionService transactionService, TransactionDtoMapper transactionDtoMapper, TransactionDetailsDtoMapper transactionDetailsDtoMapper) {
         this.transactionService = transactionService;
         this.transactionDtoMapper = transactionDtoMapper;
+        this.transactionDetailsDtoMapper = transactionDetailsDtoMapper;
     }
 }

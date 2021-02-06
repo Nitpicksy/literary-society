@@ -10,6 +10,7 @@ import nitpicksy.literarysociety2.repository.TransactionRepository;
 import nitpicksy.literarysociety2.service.TransactionService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -19,7 +20,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Transaction create(TransactionStatus status, TransactionType type, User buyer, Double amount, Set<Book> orderedBooks, Merchant merchant) {
-        return transactionRepository.save(new Transaction(status,type,buyer,amount,orderedBooks,merchant));
+        return transactionRepository.save(new Transaction(status, type, buyer, amount, orderedBooks, merchant));
     }
 
     @Override
@@ -32,6 +33,10 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findOneById(id);
     }
 
+    @Override
+    public List<Transaction> all() {
+        return transactionRepository.findAll();
+    }
 
     public TransactionServiceImpl(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;

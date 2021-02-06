@@ -47,9 +47,7 @@ import committeePlagiarismVoteReducer from './components/Tasks/Task/PlagiarismPr
 import merchantBookListReducer from './components/MerchantBooks/MerchantBooksReducer';
 import merchantBookReducer from './components/MerchantBooks/MerchantBookDetails/MerchantBookDetailsReducer';
 import editorCheckIfBookIsPlagiarismReducer from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/EditorCheckIfBookIsPlagiarismReducer';
-
-// const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
-const composeEnhancers = compose;
+import transactionListReducer from './components/TransactionList/TransactionListReducer';
 
 const rootReducer = combineReducers({
     toastr: toastrReducer,
@@ -86,6 +84,7 @@ const rootReducer = combineReducers({
     merchantBookList:merchantBookListReducer,
     merchantBook:merchantBookReducer,
     editorCheckIfBookIsPlagiarism:editorCheckIfBookIsPlagiarismReducer,
+    transactionList: transactionListReducer
 });
 
 const persistConfig = {
