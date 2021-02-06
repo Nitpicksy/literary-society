@@ -20,7 +20,6 @@ import nitpicksy.literarysociety.security.JwtAuthenticationRequest;
 import nitpicksy.literarysociety.service.AuthenticationService;
 import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
-import nitpicksy.literarysociety.serviceimpl.TestServiceImpl;
 import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
