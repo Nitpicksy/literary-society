@@ -19,13 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Validated
 @RestController
 @RequestMapping(value = "/api/transactions", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TransactionController {
 
     private final String CLASS_PATH = this.getClass().getCanonicalName();
-
     private final String CLASS_NAME = this.getClass().getSimpleName();
 
     private UserService userService;
@@ -48,7 +46,7 @@ public class TransactionController {
     }
 
     @Autowired
-    public TransactionController(UserService userService, TransactionService transactionService,LogService logService,
+    public TransactionController(UserService userService, TransactionService transactionService, LogService logService,
                                  LiterarySocietyOrderMapper literarySocietyOrderMapper) {
         this.userService = userService;
         this.transactionService = transactionService;

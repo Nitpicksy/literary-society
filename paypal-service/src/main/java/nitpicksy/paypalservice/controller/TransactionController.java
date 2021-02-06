@@ -40,7 +40,6 @@ public class TransactionController {
                 .map(transactionMapper::toDto).collect(Collectors.toList()), HttpStatus.OK);
     }
 
-
     @Autowired
     public TransactionController(TransactionService transactionService, TransactionMapper transactionMapper) {
         this.transactionService = transactionService;

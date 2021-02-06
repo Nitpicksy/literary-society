@@ -21,7 +21,6 @@ public class CommitteeController {
 
     private CommitteeOpinionService committeeOpinionService;
 
-
     @PostMapping(value = "/vote", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> vote(@Valid @RequestBody CommitteeOpinionDTO opinionDTO) {
         committeeOpinionService.save(opinionDTO);

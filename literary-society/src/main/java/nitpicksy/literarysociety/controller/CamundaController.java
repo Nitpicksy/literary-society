@@ -12,13 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Validated
 @RestController
 @RequestMapping(value = "/api/process", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CamundaController {
@@ -38,7 +41,7 @@ public class CamundaController {
     private IPAddressProvider ipAddressProvider;
 
     @PostMapping(path = "/{taskId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> submitForm(@Valid @RequestBody List<FormSubmissionDTO> formDTOList, @PathVariable String taskId) {
+    public ResponseEntity<Void> submitForm(@Valid @RequestBody List<FormSubmissionDTO> formDTOList, @NotBlank @PathVariable String taskId) {
         // Remove all injected select fields to bypass Camunda validation
         List<FormSubmissionDTO> filteredList = formDTOList.stream()
                 .filter(formField -> !(formField.getFieldId().startsWith("select")))
@@ -53,7 +56,7 @@ public class CamundaController {
         runtimeService.setVariable(processInstanceId, "formData", formDTOList);
         formService.submitTaskForm(taskId, fieldsMap);
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "CAMUNDA",
-                String.format("Task %s is successfully completed from IP address %s",task.getId(), ipAddressProvider.get())));
+                String.format("Task %s is successfully completed from IP address %s", task.getId(), ipAddressProvider.get())));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

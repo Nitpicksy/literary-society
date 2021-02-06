@@ -31,7 +31,6 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Validated
 @RestController
 @RequestMapping(value = "/api/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AccountController {
@@ -44,11 +43,11 @@ public class AccountController {
 
     private AccountRequestMapper accountRequestMapper;
 
-    @PostMapping(value = "/pay",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PayResponseDTO> pay(@Valid @RequestBody PayRequestDTO paymentRequestDTO)  {
+    @PostMapping(value = "/pay", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PayResponseDTO> pay(@Valid @RequestBody PayRequestDTO paymentRequestDTO) {
         Transaction transaction = paymentService.payClientBank(paymentRequestDTO);
-        PayResponseDTO responseDTO = new PayResponseDTO(paymentRequestDTO.getAcquirerOrderId(),paymentRequestDTO.getAcquirerTimestamp(),
-                transaction.getId(), new Timestamp(DateTime.now().getMillis()),transaction.getStatus());
+        PayResponseDTO responseDTO = new PayResponseDTO(paymentRequestDTO.getAcquirerOrderId(), paymentRequestDTO.getAcquirerTimestamp(),
+                transaction.getId(), new Timestamp(DateTime.now().getMillis()), transaction.getStatus());
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }

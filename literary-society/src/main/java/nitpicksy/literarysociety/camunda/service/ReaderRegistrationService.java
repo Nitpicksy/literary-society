@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.camunda.service;
 
+import com.github.nbaars.pwnedpasswords4j.client.PwnedPasswordChecker;
 import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.enumeration.UserStatus;
@@ -47,6 +48,8 @@ public class ReaderRegistrationService implements JavaDelegate {
 
     private LogService logService;
 
+    private PwnedPasswordChecker pwnedChecker;
+
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         List<FormSubmissionDTO> formData = (List<FormSubmissionDTO>) execution.getVariable("formData");
@@ -57,13 +60,19 @@ public class ReaderRegistrationService implements JavaDelegate {
         Reader reader = new Reader(map.get("firstName"), map.get("lastName"), map.get("city"), map.get("country"), map.get("email"),
                 map.get("username"), map.get("password"), isBetaReader);
 
-        List<Long> genresIds = camundaService.extractIds(map.get("selectGenres"));
-        List<Genre> genres = genreService.findWithIds(genresIds);
-        if (genres.isEmpty()) {
-            execution.setVariable("errorMessage", "You have to choose at least one genre.");
-            throw new BpmnError("greskaKreiranjeCitaoca");
+        if (pwnedChecker.check(reader.getPassword())) {
+            throw new InvalidDataException("Chosen password is not secure. Please choose another one.", HttpStatus.BAD_REQUEST);
         }
-        reader.setGenres(new HashSet<>(genres));
+
+        if (isBetaReader) {
+            List<Long> genresIds = camundaService.extractIds(map.get("selectGenres"));
+            List<Genre> genres = genreService.findWithIds(genresIds);
+            if (genres.isEmpty()) {
+                execution.setVariable("errorMessage", "You have to choose at least one genre.");
+            throw new BpmnError("greskaKreiranjeCitaoca");
+            }
+            reader.setGenres(new HashSet<>(genres));
+        }
 
         create(reader, execution);
     }
@@ -89,7 +98,7 @@ public class ReaderRegistrationService implements JavaDelegate {
         execution.setVariable("token", nonHashedToken);
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDR",
-                String.format("Reader %s successfully created",savedReader.getId())));
+                String.format("Reader %s successfully created", savedReader.getId())));
 
         return savedReader;
     }
@@ -97,7 +106,8 @@ public class ReaderRegistrationService implements JavaDelegate {
     @Autowired
     public ReaderRegistrationService(UserService userService, PasswordEncoder passwordEncoder,
                                      ReaderRepository readerRepository, VerificationService verificationService,
-                                     GenreService genreService, CamundaService camundaService,LogService logService) {
+                                     GenreService genreService, CamundaService camundaService, LogService logService,
+                                     PwnedPasswordChecker pwnedChecker) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.readerRepository = readerRepository;
@@ -105,5 +115,6 @@ public class ReaderRegistrationService implements JavaDelegate {
         this.genreService = genreService;
         this.camundaService = camundaService;
         this.logService = logService;
+        this.pwnedChecker = pwnedChecker;
     }
 }

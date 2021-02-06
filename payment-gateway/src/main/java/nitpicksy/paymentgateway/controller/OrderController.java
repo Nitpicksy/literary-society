@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @Validated
@@ -41,7 +42,7 @@ public class OrderController {
      * @return orderDetails based on order id.
      */
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDetailsDTO> getOrder(@PathVariable("orderId") @Positive(message = "Id must be positive.") Long orderId) {
+    public ResponseEntity<OrderDetailsDTO> getOrder(@PathVariable("orderId") @NotNull @Positive(message = "Id must be positive.") Long orderId) {
         return new ResponseEntity<>(transactionMapper.toDto(orderService.findOrder(orderId)), HttpStatus.OK);
     }
 
@@ -54,7 +55,7 @@ public class OrderController {
      * @return
      */
     @PostMapping("/forward")
-    public ResponseEntity<String> forwardPaymentRequest(@RequestBody PaymentRequestDTO paymentRequestDTO) {
+    public ResponseEntity<String> forwardPaymentRequest(@Valid @RequestBody PaymentRequestDTO paymentRequestDTO) {
         return new ResponseEntity<>(orderService.forwardPaymentRequest(paymentRequestDTO), HttpStatus.OK);
     }
 
