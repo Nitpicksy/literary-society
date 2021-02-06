@@ -85,7 +85,7 @@ values ('merchantClientSecret',
 -- For Bitcoin: merchantToken
 -- merchantToken je xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantToken', '_uNDwP1Noy-tn6YpAf95q8QSAYwnih2GBTTwBzzs', 1, 3, 5);
+values ('merchantToken', 'XkS0CGAC7y37MLSz5UvVrOkHaJSrcWEynG9KGIKDVXtqeqBWrPAzd+gccai5NCo+', 1, 3, 5);
 
 -- Vulkan
 -- For Bank: merchantId and merchantPassword
@@ -111,7 +111,7 @@ values ('merchantClientSecret',
 -- For Bitcoin: merchantToken
 -- merchantToken je xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantToken', '_uNDwP1Noy-tn6YpAf95q8QSAYwnih2GBTTwBzzs', 2, 3, 5);
+values ('merchantToken', 'XkS0CGAC7y37MLSz5UvVrOkHaJSrcWEynG9KGIKDVXtqeqBWrPAzd+gccai5NCo+', 2, 3, 5);
 
 
 -- Laguna
@@ -138,7 +138,7 @@ values ('merchantClientSecret',
 -- For Bitcoin: merchantToken
 -- merchantToken je xtQ8ain9XYBGv64fsVf3maGm8NzDe_NJHwyZJXJC
 insert into data_for_payment (attribute_name, attribute_value, merchant_id, payment_method_id, data_id)
-values ('merchantToken', '_uNDwP1Noy-tn6YpAf95q8QSAYwnih2GBTTwBzzs', 3, 3, 5);
+values ('merchantToken', 'XkS0CGAC7y37MLSz5UvVrOkHaJSrcWEynG9KGIKDVXtqeqBWrPAzd+gccai5NCo+', 3, 3, 5);
 
 -- SUBSCRIPTION PLANS
 
