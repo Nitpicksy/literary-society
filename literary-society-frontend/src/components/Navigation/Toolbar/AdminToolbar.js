@@ -13,6 +13,7 @@ const AdminToolbar = (props) => {
         <React.Fragment>
             <Button color="inherit" onClick={() =>redirect('/manage-users') }>Manage Users</Button>
             <Button color="inherit" onClick={() =>redirect('/manage-merchants') }>Manage Merchants</Button>
+            <Button color="inherit" onClick={() =>redirect('/transactions') }>Transactions</Button>
             <Button color="inherit" onClick={() =>redirect('/choose-payment-methods') }>Choose Payment Methods</Button>
         </React.Fragment>
     );

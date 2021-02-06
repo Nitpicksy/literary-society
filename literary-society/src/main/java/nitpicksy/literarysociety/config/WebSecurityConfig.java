@@ -48,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/ws/**").permitAll()
-                
+
                 .antMatchers(HttpMethod.POST, "/api/merchants").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/merchants").hasAnyAuthority("MANAGE_MERCHANTS")
                 .antMatchers(HttpMethod.PUT, "/api/merchants/{id}").hasAnyAuthority("MANAGE_MERCHANTS")
@@ -94,6 +94,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.GET, "/api/tasks/{taskId}/submit-form-and-upload-image").hasAuthority("SUBMIT_FORM_AND_UPLOAD_IMAGE")
 
+                .antMatchers(HttpMethod.GET, "/api/transactions").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/transactions/{id}").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/writers/start-registration").permitAll()
