@@ -50,12 +50,6 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 
-    @Column
-    private Long acquirerOrderId;
-
-    @Column
-    private Timestamp acquirerTimestamp;
-
     public Transaction(Double amount, String merchantId, String merchantOrderId, Timestamp merchantTimestamp, String pan,Long paymentId) {
         this.amount = amount;
         this.merchantId = merchantId;

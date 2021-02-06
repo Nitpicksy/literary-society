@@ -127,15 +127,13 @@ export const authCheckState = () => {
         const accessToken = localStorage.getItem('accessToken');
         const expiresIn = localStorage.getItem('expiresIn');
         const refreshToken = localStorage.getItem('refreshToken');
-        if(!accessToken) {
-            dispatch(signOut());
-        }else {
+        if(accessToken) {
             const userTokenState = {
                 accessToken: accessToken,
                 expiresIn: expiresIn,
                 refreshToken:refreshToken
             };
-            dispatch(signInSuccess(userTokenState));   
+            dispatch(signInSuccess(userTokenState));  
         }
     };
 };

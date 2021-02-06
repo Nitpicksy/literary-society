@@ -19,6 +19,8 @@ public class TestServiceImpl {
     private String apiGatewayURL;
 
     public String healthCheck() {
+        System.out.println("Payment Gateway - Hello from health!");
+
         String bankPath = apiGatewayURL + "/bank";
         String paypalPath = apiGatewayURL + "/paypal";
         String bitcoin = apiGatewayURL + "/bitcoin";
@@ -27,7 +29,7 @@ public class TestServiceImpl {
         String paypalHealthCheck = client.healthCheck(URI.create(paypalPath));
         String bitcoinHealthCheck = client.healthCheck(URI.create(bitcoin));
 
-        StringBuilder sb = new StringBuilder("Payment Gateway ID=");
+        StringBuilder sb = new StringBuilder();
         sb.append(instanceId);
         sb.append(" is up and running!");
         sb.append(System.lineSeparator());
