@@ -17,7 +17,7 @@ public class PaymentMapper implements MapperInterface<Payment, PaymentRequestDTO
     @Override
     public Payment toEntity(PaymentRequestDTO dto) {
         Payment request = new Payment();
-        
+
         request.setAmount(dto.getAmount());
         request.setErrorURL(dto.getErrorURL());
         request.setFailedURL(dto.getFailedURL());

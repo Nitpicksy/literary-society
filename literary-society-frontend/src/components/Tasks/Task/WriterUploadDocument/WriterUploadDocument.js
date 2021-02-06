@@ -17,6 +17,8 @@ const WriterUploadDocument = (props) => {
 
     const [pdfFile, setPdfFile] = useState(null);
     let [controls, setControls] = useState(null);
+    
+    //eslint-disable-next-line
     const [formIsValid, setFormIsValid] = useState(false);
 
     const history = useHistory();
@@ -41,6 +43,7 @@ const WriterUploadDocument = (props) => {
         }
     }, [formFields]);
 
+    //eslint-disable-next-line
     const handleChooseFile = ({ target }) => {
         setPdfFile(target.files[0]);
     }

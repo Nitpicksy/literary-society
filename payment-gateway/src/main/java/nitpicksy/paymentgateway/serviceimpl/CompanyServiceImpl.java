@@ -93,15 +93,14 @@ public class CompanyServiceImpl implements CompanyService {
                         company.getRole().getPermissions());
                 String refreshJwt = tokenUtils.generateRefreshToken(company.getCommonName());
                 Date date = tokenUtils.getExpirationDateFromToken(jwtToken);
-                try{
-                    zuulClient.sendJWTToken(URI.create(apiGatewayURL + '/' + company.getCommonName()), new JWTRequestDTO(jwtToken,refreshJwt,date));
+                try {
+                    zuulClient.sendJWTToken(URI.create(apiGatewayURL + '/' + company.getCommonName()), new JWTRequestDTO(jwtToken, refreshJwt, date));
                     company.setStatus(CompanyStatus.APPROVED);
+                    company.setEnabled(true);
                     composeAndSendApprovalEmail(company.getEmail());
-                }catch (RuntimeException e){
+                } catch (RuntimeException e) {
                     logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "COMP", "Could not notify " + company.getCompanyName()));
                 }
-
-
             } else {
                 company.setStatus(CompanyStatus.REJECTED);
                 composeAndSendRejectionEmail(company.getEmail());
@@ -112,7 +111,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public String getToken(){
+    public String getToken() {
         Company company = companyRepository.findOneById(1L);
         String jwtToken = tokenUtils.generateToken(company.getCommonName(), company.getRole().getName(),
                 company.getRole().getPermissions());
@@ -155,7 +154,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Autowired
     public CompanyServiceImpl(CompanyRepository companyRepository, PaymentMethodRepository paymentMethodRepository,
                               EmailNotificationService emailNotificationService, ZuulClient zuulClient,
-                              TokenUtils tokenUtils, RoleRepository roleRepository,LogService logService) {
+                              TokenUtils tokenUtils, RoleRepository roleRepository, LogService logService) {
         this.companyRepository = companyRepository;
         this.paymentMethodRepository = paymentMethodRepository;
         this.emailNotificationService = emailNotificationService;

@@ -41,7 +41,7 @@ const extractControl = (field) => {
                 [field.id]: {
                     elementType: 'file',
                     elementConfig: {},
-                    value: null,
+                    value: [],
                     validation: null,
                     valid: true,
                     touched: false,

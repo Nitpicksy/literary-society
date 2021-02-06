@@ -1,8 +1,10 @@
 package nitpicksy.literarysociety.camunda.service;
 
 import nitpicksy.literarysociety.model.OpinionOfCommitteeMemberAboutComplaint;
+import nitpicksy.literarysociety.model.OpinionOfEditorAboutComplaint;
 import nitpicksy.literarysociety.model.PlagiarismComplaint;
 import nitpicksy.literarysociety.repository.OpinionOfCommitteeMemberAboutComplaintRepository;
+import nitpicksy.literarysociety.repository.OpinionOfEditorAboutComplaintRepository;
 import nitpicksy.literarysociety.repository.PlagiarismComplaintRepository;
 import nitpicksy.literarysociety.service.OpinionOfCommitteeMemberAboutComplaintService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -16,6 +18,7 @@ import java.util.List;
 public class CommitteePlagiarismFinalVerdictService implements JavaDelegate {
 
     private OpinionOfCommitteeMemberAboutComplaintRepository opinionOfCommitteeMemberAboutComplaintRepository;
+    private OpinionOfEditorAboutComplaintRepository opinionOfEditorAboutComplaintRepository;
     private PlagiarismComplaintRepository plagiarismComplaintRepository;
     private OpinionOfCommitteeMemberAboutComplaintService opinionOfCommitteeMemberAboutComplaintService;
 
@@ -51,11 +54,17 @@ public class CommitteePlagiarismFinalVerdictService implements JavaDelegate {
             execution.setVariable("plagiarism", false);
         }
 
+        List<OpinionOfEditorAboutComplaint> opinions = opinionOfEditorAboutComplaintRepository.findByPlagiarismComplaintId(complaint.getId());
+        for (OpinionOfEditorAboutComplaint opinion : opinions) {
+            opinion.setReviewed(true);
+            opinionOfEditorAboutComplaintRepository.save(opinion);
+        }
     }
 
     @Autowired
-    public CommitteePlagiarismFinalVerdictService(OpinionOfCommitteeMemberAboutComplaintRepository opinionOfCommitteeMemberAboutComplaintRepository, PlagiarismComplaintRepository plagiarismComplaintRepository, OpinionOfCommitteeMemberAboutComplaintService opinionOfCommitteeMemberAboutComplaintService) {
+    public CommitteePlagiarismFinalVerdictService(OpinionOfCommitteeMemberAboutComplaintRepository opinionOfCommitteeMemberAboutComplaintRepository, OpinionOfEditorAboutComplaintRepository opinionOfEditorAboutComplaintRepository, PlagiarismComplaintRepository plagiarismComplaintRepository, OpinionOfCommitteeMemberAboutComplaintService opinionOfCommitteeMemberAboutComplaintService) {
         this.opinionOfCommitteeMemberAboutComplaintRepository = opinionOfCommitteeMemberAboutComplaintRepository;
+        this.opinionOfEditorAboutComplaintRepository = opinionOfEditorAboutComplaintRepository;
         this.plagiarismComplaintRepository = plagiarismComplaintRepository;
         this.opinionOfCommitteeMemberAboutComplaintService = opinionOfCommitteeMemberAboutComplaintService;
     }

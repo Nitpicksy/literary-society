@@ -17,6 +17,7 @@ const SockJS = () => {
     return (
         <SockJsClient url='https://localhost:8090/ws' topics={['/socket-publisher']}
         onMessage={(msg) => handleMessage(msg)}
+        //eslint-disable-next-line
         ref={ (client) => { ref = client }} />
     )
 }

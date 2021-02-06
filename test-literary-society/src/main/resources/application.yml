@@ -1,0 +1,75 @@
+server:
+  port: ${PORT:8092}
+  ssl:
+    enabled: true
+    key-alias: ${KEYSTORE_ALIAS:literary}
+    key-store: ${KEYSTORE:classpath:literary.keystore.p12}
+    key-store-password: ${KEYSTORE_PASSWORD:password}
+    key-store-type: ${KEYSTORE_TYPE:PKCS12}
+    trust-store: ${TRUSTSTORE:classpath:literary.truststore.p12}
+    trust-store-password: ${TRUSTSTORE_PASSWORD:password}
+    trust-store-type: ${TRUSTSTORE_TYPE:PKCS12}
+    client-auth: want
+
+spring:
+  application:
+    name: ${SPRINGBOOT_APP_NAME:literary-society-2}
+  datasource:
+    username: ${DATABASE_USERNAME:nitpicksy_user}
+    password: ${DATABASE_PASSWORD:Nitpicksy-2020}
+    url: jdbc:mysql://${DATABASE_DOMAIN:localhost}:${DATABASE_PORT:3306}/${DATABASE_SCHEMA:literary_society2}?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&nullCatalogMeansCurrent=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # za ucitavanje sql fajla
+    initialization-mode: always
+    platform: mysql
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: create
+    show-sql: false
+  mail:
+    host: smtp.gmail.com
+    username: ${MAIL_USERNAME:no.reply.wroom@gmail.com}
+    password: ${MAIL_PASSWORD:sfwqelhzwkeqhgje}
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  cloud:
+    inetutils:
+      preferred-networks: localhost
+
+eureka:
+  instance:
+    hostname: localhost
+    nonSecurePortEnabled: false
+    securePortEnabled: true
+    securePort: ${server.port}
+    homePageUrl: https://${eureka.instance.hostname}:${server.port}/
+    secureVirtualHostName: ${spring.application.name}
+    prefer-ip-address: false
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+  client:
+    service-url:
+      defaultZone: https://eureka-peer1:8761/eureka, https://eureka-peer2:8762/eureka
+      healthcheck:
+        enabled: true
+    fetchRegistry: true
+
+TOKEN_UTILS_APP_NAME: literary-society
+TOKEN_UTILS_SECRET: Nitpicsky
+# 15 min
+TOKEN_UTILS_EXPIRES_IN: 60000
+# 14 days
+TOKEN_UTILS_REFRESH_TOKEN_EXPIRES_IN: 1209600000
+TOKEN_UTILS_AUTH_HEADER: Authorization
+# Localhost
+#LOCALHOST_URL: https://localhost:3000/
+LOCALHOST_URL: https://www.literary-society.com:3009/
+
+PUBLISHER: Literary Society

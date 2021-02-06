@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1xhwxs1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:process id="CommitteePlagiarismReview" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>Flow_1o7xt86</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0jg8dty" name="End">
+      <bpmn:incoming>Flow_1cenzp8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1o7xt86" sourceRef="StartEvent_1" targetRef="Activity_0p8ng4m" />
+    <bpmn:subProcess id="Activity_0p8ng4m">
+      <bpmn:incoming>Flow_1o7xt86</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cenzp8</bpmn:outgoing>
+      <bpmn:startEvent id="Event_1d9i30x" name="Start">
+        <bpmn:outgoing>Flow_0y0lp6o</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_0y0lp6o" sourceRef="Event_1d9i30x" targetRef="Activity_0um99wb" />
+      <bpmn:endEvent id="Event_0q6su3q" name="End">
+        <bpmn:incoming>Flow_1tmqwyk</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0qs1ixe" sourceRef="Activity_0um99wb" targetRef="Activity_1qoze9d" />
+      <bpmn:userTask id="Activity_0um99wb" name="Plagiarism report-cast your vote" camunda:assignee="${committeeMember}">
+        <bpmn:extensionElements>
+          <camunda:formData>
+            <camunda:formField id="decision" label="Based on the notes submitted, the book is:" type="enum">
+              <camunda:properties>
+                <camunda:property id="multipleSelect" value="false" />
+              </camunda:properties>
+              <camunda:validation>
+                <camunda:constraint name="requiredSelect" config="true" />
+              </camunda:validation>
+              <camunda:value id="PLAGIARISM" name="Plagiarism" />
+              <camunda:value id="NOT_PLAGIARISM" name="Not plagiarism" />
+            </camunda:formField>
+          </camunda:formData>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0y0lp6o</bpmn:incoming>
+        <bpmn:outgoing>Flow_0qs1ixe</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:sequenceFlow id="Flow_1tmqwyk" sourceRef="Activity_1qoze9d" targetRef="Event_0q6su3q" />
+      <bpmn:serviceTask id="Activity_1qoze9d" name="Obrada glasa" camunda:class="nitpicksy.literarysociety.camunda.service.CommitteePlagiarismDecisionService">
+        <bpmn:incoming>Flow_0qs1ixe</bpmn:incoming>
+        <bpmn:outgoing>Flow_1tmqwyk</bpmn:outgoing>
+      </bpmn:serviceTask>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_1cenzp8" sourceRef="Activity_0p8ng4m" targetRef="Event_0jg8dty" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CommitteePlagiarismReview">
+      <bpmndi:BPMNEdge id="Flow_1o7xt86_di" bpmnElement="Flow_1o7xt86">
+        <di:waypoint x="148" y="177" />
+        <di:waypoint x="350" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cenzp8_di" bpmnElement="Flow_1cenzp8">
+        <di:waypoint x="950" y="177" />
+        <di:waypoint x="1062" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0jg8dty_di" bpmnElement="Event_0jg8dty">
+        <dc:Bounds x="1062" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1071" y="202" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="112" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="118" y="202" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0p8ng4m_di" bpmnElement="Activity_0p8ng4m" isExpanded="true">
+        <dc:Bounds x="350" y="77" width="600" height="223" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0y0lp6o_di" bpmnElement="Flow_0y0lp6o">
+        <di:waypoint x="426" y="177" />
+        <di:waypoint x="520" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qs1ixe_di" bpmnElement="Flow_0qs1ixe">
+        <di:waypoint x="620" y="177" />
+        <di:waypoint x="700" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tmqwyk_di" bpmnElement="Flow_1tmqwyk">
+        <di:waypoint x="800" y="177" />
+        <di:waypoint x="862" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1d9i30x_di" bpmnElement="Event_1d9i30x">
+        <dc:Bounds x="390" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="396" y="202" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0q6su3q_di" bpmnElement="Event_0q6su3q">
+        <dc:Bounds x="862" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="870" y="202" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wiwier_di" bpmnElement="Activity_0um99wb">
+        <dc:Bounds x="520" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1j7httn_di" bpmnElement="Activity_1qoze9d">
+        <dc:Bounds x="700" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
