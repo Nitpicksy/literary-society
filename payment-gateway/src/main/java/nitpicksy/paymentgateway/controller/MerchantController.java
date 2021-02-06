@@ -24,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
 
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.net.URI;
@@ -66,7 +67,7 @@ public class MerchantController {
     private MerchantResponseMapper merchantResponseMapper;
 
     @GetMapping("/{name}/payment-data")
-    public ResponseEntity<String> getPaymentData(@PathVariable String name) {
+    public ResponseEntity<String> getPaymentData(@NotBlank @PathVariable String name) {
         Company company = userService.getAuthenticatedCompany();
 
         Merchant merchant = merchantService.findByNameAndCompany(name, company.getId());
