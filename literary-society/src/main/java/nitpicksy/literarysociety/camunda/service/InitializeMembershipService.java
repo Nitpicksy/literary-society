@@ -41,7 +41,7 @@ public class InitializeMembershipService implements JavaDelegate {
 
         Transaction transaction = transactionService.create(TransactionStatus.CREATED, TransactionType.MEMBERSHIP, writer, amount,
                 null, merchant);
-        
+
         try {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             // Send JWT token for authentication in Payment Gateway

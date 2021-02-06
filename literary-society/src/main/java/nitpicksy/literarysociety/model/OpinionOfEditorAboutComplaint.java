@@ -25,6 +25,9 @@ public class OpinionOfEditorAboutComplaint {
     @Column(nullable = false, length = 1000)
     private String review;
 
+    @Column
+    private boolean reviewed;
+
     @PrimaryKeyJoinColumn
     @ManyToOne(fetch = FetchType.EAGER)
     private PlagiarismComplaint plagiarismComplaint;

@@ -10,27 +10,16 @@ import nitpicksy.paymentgateway.mapper.PaymentDataResponseMapper;
 import nitpicksy.paymentgateway.model.Company;
 import nitpicksy.paymentgateway.model.Log;
 import nitpicksy.paymentgateway.model.Merchant;
-import nitpicksy.paymentgateway.service.CompanyService;
-import nitpicksy.paymentgateway.service.DataForPaymentService;
-import nitpicksy.paymentgateway.service.LogService;
-import nitpicksy.paymentgateway.service.MerchantService;
-import nitpicksy.paymentgateway.service.PaymentMethodService;
-import nitpicksy.paymentgateway.service.UserService;
+import nitpicksy.paymentgateway.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.core.env.Environment;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -76,12 +65,12 @@ public class MerchantController {
         Company company = userService.getAuthenticatedCompany();
 
         Merchant merchant = merchantService.findByNameAndCompany(name, company.getId());
-        if(merchant == null){
+        if (merchant == null) {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MER",
-                    String.format("In company %s merchant %s doesn't exist",company.getId(), name)));
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                    String.format("In company %s merchant %s doesn't exist, creating new one.", company.getId(), name)));
+            merchant = merchantService.save(new Merchant(name, company));
         }
-        String url = getLocalhostURL() + "payment-data?company="+company.getId()+"&merchant="+merchant.getId();
+        String url = getLocalhostURL() + "payment-data?company=" + company.getId() + "&merchant=" + merchant.getId();
 
         return new ResponseEntity<>(url, HttpStatus.OK);
     }
@@ -89,9 +78,9 @@ public class MerchantController {
     @GetMapping("/payment-data")
     public ResponseEntity<List<PaymentDataResponseDTO>> getPaymentData(@RequestParam Long companyId, @RequestParam Long merchantId) {
         Merchant merchant = merchantService.findByIdAndCompany(merchantId, companyId);
-        if(merchant == null){
+        if (merchant == null) {
             logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MER",
-                    String.format("In company %s merchant %s doesn't exist",companyId, merchantId)));
+                    String.format("In company %s merchant %s doesn't exist", companyId, merchantId)));
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -101,7 +90,7 @@ public class MerchantController {
     @PostMapping("/payment-data")
     public ResponseEntity<String> supportPaymentMethods(@Valid @RequestBody List<PaymentDataRequestDTO> listPaymentDataRequestDTO, @RequestParam Long companyId, @RequestParam Long merchantId) throws NoSuchAlgorithmException {
         Merchant merchant = merchantService.findByIdAndCompany(merchantId, companyId);
-        if(merchant == null){
+        if (merchant == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         dataForPaymentService.save(paymentDataRequestMapper.convert(listPaymentDataRequestDTO, merchant));
@@ -111,21 +100,21 @@ public class MerchantController {
         String redirectURL = null;
         try {
             redirectURL = zuulClient.supportPaymentMethods(URI.create(apiGatewayURL + '/' + merchant.getCompany().getCommonName()), merchant.getName());
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "MER", "Could not notify " + merchant.getCompany().getCommonName()));
         }
         return new ResponseEntity<>(redirectURL, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody String merchantName)  {
+    public ResponseEntity<Void> create(@RequestBody String merchantName) {
         Company company = userService.getAuthenticatedCompany();
         if (company == null) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDM", "Company not found"));
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        if(merchantService.findByNameAndCompany(merchantName,company.getId()) == null){
-            merchantService.save(new Merchant(merchantName,company));
+        if (merchantService.findByNameAndCompany(merchantName, company.getId()) == null) {
+            merchantService.save(new Merchant(merchantName, company));
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -145,20 +134,20 @@ public class MerchantController {
     @Async
     public void synchronizeMerchants() {
         List<Company> companyList = companyService.findAllApproved();
-        for (Company company:companyList) {
-            try{
+        for (Company company : companyList) {
+            try {
                 List<String> merchants = zuulClient.getAllMerchants(URI.create(apiGatewayURL + '/' + company.getCommonName()));
                 Long companyId = company.getId();
-                for(String merchantName: merchants){
-                    Merchant merchant =  merchantService.findByNameAndCompany(merchantName,companyId);
+                for (String merchantName : merchants) {
+                    Merchant merchant = merchantService.findByNameAndCompany(merchantName, companyId);
                     if (merchant == null) {
-                        merchantService.save(new Merchant(merchantName,company));
+                        merchantService.save(new Merchant(merchantName, company));
                     }
 
                 }
                 logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC",
                         "Merchants are successfully synchronized - " + company.getCompanyName()));
-            }catch (RuntimeException e){
+            } catch (RuntimeException e) {
                 logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "SYNC", "Forwarding request to synchronize merchants has failed "));
             }
         }
@@ -169,9 +158,9 @@ public class MerchantController {
     }
 
     @Autowired
-    public MerchantController(MerchantService merchantService, UserService userService,Environment environment,PaymentMethodService paymentMethodService,
-                              PaymentDataResponseMapper paymentDataResponseMapper,PaymentDataRequestMapper paymentDataRequestMapper,
-                              DataForPaymentService dataForPaymentService,ZuulClient zuulClient,LogService logService,CompanyService companyService,MerchantResponseMapper merchantResponseMapper) {
+    public MerchantController(MerchantService merchantService, UserService userService, Environment environment, PaymentMethodService paymentMethodService,
+                              PaymentDataResponseMapper paymentDataResponseMapper, PaymentDataRequestMapper paymentDataRequestMapper,
+                              DataForPaymentService dataForPaymentService, ZuulClient zuulClient, LogService logService, CompanyService companyService, MerchantResponseMapper merchantResponseMapper) {
         this.merchantService = merchantService;
         this.userService = userService;
         this.environment = environment;

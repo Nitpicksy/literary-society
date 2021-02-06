@@ -11,7 +11,7 @@ instance.interceptors.request.use(
   async (request) => {
     if (!request.url.includes("/auth")) {
       const accessToken = localStorage.getItem("accessToken");
-      if(accessToken){
+      if (accessToken) {
         request.headers = {
           Auth: `Bearer ${accessToken}`,
         };

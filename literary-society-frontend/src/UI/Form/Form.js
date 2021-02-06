@@ -1,14 +1,26 @@
-import { React, useState } from 'react'
+import { React, useEffect, useState } from 'react'
 import Input from '../Input/Input';
 import { checkValidity } from '../../utility/checkValidity';
 
 const Form = (props) => {
 
     const [fileName, setFileName] = useState('');
+    const [filesToValidate, setFilesToValidate] = useState([]);
+
+    useEffect( () => {
+        setFilesToValidate(props.files)
+    }, [props.files])
 
     const inputChangedHandler = (event, controlName) => {
         let errorMessage;
-        let value = event.target.value;
+        let value;
+
+        if(event.target.files) {
+            value = [...filesToValidate];
+        } else {
+            value = event.target.value;
+        }
+
         if (props.controls[controlName].elementType === 'checkbox') {
             value = event.target.checked;
         } else {
@@ -37,12 +49,18 @@ const Form = (props) => {
         }
         props.setControls(updatedControls);
         props.setFormIsValid(formIsValid);
+        handleChooseFile(event);
+
     }
 
     const handleChooseFile = ({ target }) => {       
-        if (target.files[0]) {
+        if (target.files) {
             props.setPdfFile(target.files[0]);
-            setFileName(target.files[0].name);
+            if(props.removeText) {
+                setFileName('');
+            } else {
+                setFileName(target.files[0].name);
+            }
         } 
     }
 
@@ -67,7 +85,7 @@ const Form = (props) => {
                 error={formElement.config.error}
                 errorMessage={formElement.config.errorMessage}
                 additionalData={{ fileName: fileName }}
-                changed={handleChooseFile} />;
+                changed={(event) => inputChangedHandler(event, formElement.id)} />;
         } else {
             return <Input
                 key={formElement.id}
