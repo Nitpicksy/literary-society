@@ -13,11 +13,6 @@ values ('Lektira');
 insert into genre (name)
 values ('Putopis');
 
--- -- LU Two Token for Payment Gateway
--- insert into jwttoken (token)
--- values ('eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJsaXRlcmFyeS1zb2NpZXR5Iiwic3ViIjoibGl0ZXJhcnktc29jaWV0eS0yIiwiYXVkIjoid2ViIiwiaWF0IjoxNjEwNDA0ODMyLCJleHAiOjE2MTE2MTQ0MzIsInJvbGUiOiJST0xFX0NPTVBBTlkiLCJwZXJtaXNzaW9ucyI6W3siaWQiOjMsIm5hbWUiOiJDUkVBVEVfT1JERVIifV19.rNb_VhtYqXQLl_KfEUQacf22DJsW61uCA0jHiwynyIiXQhK_KfDKPqe9-_pS9hoyeek5TfnR6zLJm0rzqB2sfw');
-
-
 -- LU Two Subscription plans
 insert into subscription_plan (cancelurl, frequency_count, frequency_unit, plan_description, plan_name, price,
                                product_category, product_name, product_type, successurl)
@@ -105,7 +100,7 @@ values (10, 4);
 -- Client Secret: EAK4iy7MfWLcw6QE71jlOR4nhm34ylFKlhHuL2CDsC2weGokdaUt54uZSwQO2pVge9ZaQGyOMQ1SktAl
 insert into users (type, name, city, country, email, username, password, status, enabled, supports_payment_methods)
 values ('MERCHANT', 'LU Two Merchant', 'Beograd', 'Srbija', 'lu-2-merchant@maildrop.cc', 'lu-2-merchant',
-        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true);
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, false);
 
 -- Client Id: ARPDqaQtYU6ilCpwG0IXT35OMXGTjsA3K-QFYLItx5oRcJUOqZ527Z7BfNs6sS3yu45kdINghGRLR8vV
 -- Client Secret: ECBW7VI6Tzi23LnYdLEvnvEW5fm7drD6kvgVRMD2hnTOk9f9AJSqJaD-8p0aLrOWMBdoKGM9wIoPby4j
@@ -116,7 +111,7 @@ values ('MERCHANT', 'Laguna', 'Beograd', 'Srbija', 'laguna@maildrop.cc', 'laguna
 -- Client Secret: EF60H0GD454RHXIpemtrBAi1w6VmeGjmc_sY7C8aa0YaEwLp_Xv2sJTSIpLkVuqaSXdSAQ72VAWiu3MY
 insert into users (type, name, city, country, email, username, password, status, enabled, supports_payment_methods)
 values ('MERCHANT', 'Vulkan', 'Novi Sad', 'Srbija', 'vulkan@maildrop.cc', 'vulkan',
-        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true);
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, false);
 
 insert into users (type, name, city, country, email, username, password, status, enabled, supports_payment_methods)
 values ('MERCHANT', 'Amazon', 'Novi Sad', 'Srbija', 'amazon@maildrop.cc', 'amazon',
