@@ -150,7 +150,7 @@ values ('User', 'INSANE MAN', 'PUSKIN', 'Sankt Petersburg', 'Rusija', 'communist
 
 -- Memberships
 insert into membership (expiration_date, is_subscribed, price, merchant_id, user_id)
-values ('2021-06-01', false, 2000.00, 11, 1);
+values ('2021-04-30', false, 2000.00, 11, 1);
 
 
 -- Images
