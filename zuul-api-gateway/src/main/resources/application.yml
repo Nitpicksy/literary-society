@@ -9,7 +9,7 @@ server:
     trust-store: ${TRUSTSTORE:classpath:zuul.truststore.p12}
     trust-store-password: ${TRUSTSTORE_PASSWORD:password}
     trust-store-type: ${TRUSTSTORE_TYPE:PKCS12}
-    client-auth: need
+    client-auth: want
 
 eureka:
   client:
@@ -37,6 +37,9 @@ zuul:
     literary-society:
       path: /literary-society/**
       service-id: literary-society
+    literary-society-new:
+      path: /literary-society-new/**
+      service-id: literary-society-new
     bank:
       path: /bank/**
       service-id: bank
@@ -49,9 +52,18 @@ zuul:
     paypal:
       path: /paypal/**
       service-id: paypal
+    paypal-new:
+      path: /paypal-new/**
+      service-id: paypal-new
     bitcoin:
       path: /bitcoin/**
       service-id: bitcoin
+    qr:
+      path: /qr/**
+      service-id: qr
+    literary-society-2:
+      path: /literary-society-2/**
+      service-id: literary-society-2
   host:
     connect-timeout-millis: 5000000
     socket-timeout-millis: 5000000

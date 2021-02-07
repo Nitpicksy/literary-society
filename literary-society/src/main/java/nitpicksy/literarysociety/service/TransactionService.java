@@ -7,6 +7,7 @@ import nitpicksy.literarysociety.model.Merchant;
 import nitpicksy.literarysociety.model.Transaction;
 import nitpicksy.literarysociety.model.User;
 
+import java.util.List;
 import java.util.Set;
 
 public interface TransactionService {
@@ -16,4 +17,6 @@ public interface TransactionService {
     Transaction save(Transaction transaction);
 
     Transaction findById(Long id);
+
+    List<Transaction> all();
 }

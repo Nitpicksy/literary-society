@@ -79,8 +79,6 @@ public class TransactionServiceImpl implements TransactionService {
             PCCRequestDTO pccRequestDTO = pccRequestMapper.toDTO(transaction, confirmPaymentDTO);
             try{
                 PCCResponseDTO response = pccClient.pay(pccRequestDTO);
-                transaction.setAcquirerOrderId(response.getAcquirerOrderId());
-                transaction.setAcquirerTimestamp(response.getAcquirerTimestamp());
 
                 Transaction createdTransaction = setTransactionStatus(transaction,response.getStatus());
                 if(createdTransaction.getStatus().equals(TransactionStatus.SUCCESS)){
@@ -89,6 +87,7 @@ public class TransactionServiceImpl implements TransactionService {
                 confirmPaymentResponseDTO.setAcquirerOrderId(response.getAcquirerOrderId());
                 confirmPaymentResponseDTO.setAcquirerTimestamp(response.getAcquirerTimestamp());
                 confirmPaymentResponseDTO.setStatus(response.getStatus().toString());
+                transactionRepository.save(transaction);
             }catch (RuntimeException e){
                 logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Could not notify PCC"));
                 setTransactionStatus(transaction,TransactionStatus.ERROR);

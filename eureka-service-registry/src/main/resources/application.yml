@@ -29,7 +29,7 @@ eureka:
     prefer-ip-address: false
   client:
     serviceUrl:
-      defaultZone: https://eureka-peer1:${peers.port1}/eureka
+      defaultZone: https://eureka-peer2:${peers.port2}/eureka
     register-with-eureka: false
     fetch-registry: false
 ---
@@ -49,6 +49,6 @@ eureka:
     prefer-ip-address: false
   client:
     serviceUrl:
-      defaultZone: http://eureka-peer1:${peers.port1}/eureka
+      defaultZone: https://eureka-peer1:${peers.port1}/eureka
     register-with-eureka: false
     fetch-registry: false

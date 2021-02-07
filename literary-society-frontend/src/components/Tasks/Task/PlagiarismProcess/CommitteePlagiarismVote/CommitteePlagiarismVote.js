@@ -10,6 +10,7 @@ import Form from '../../../../../UI/Form/Form';
 import { extractControls } from '../../../../../utility/extractControls';
 import PeopleIcon from '@material-ui/icons/People';
 import EditorComments from '../EditorComments/EditorComments'
+import PlagiarismDetailsCard from '../PlagiarismDetailsCard/PlagiarismDetailsCard';
 
 const CommitteePlagiarismVote = (props) => {
 
@@ -61,7 +62,7 @@ const CommitteePlagiarismVote = (props) => {
     }
 
     if(plagiarismDetails) {
-        // displayPlagiarismDetailsCard = <PlagiarismDetailsCard plagiarismDetails={plagiarismDetails} showDownload={false}/>
+        displayPlagiarismDetailsCard = <PlagiarismDetailsCard plagiarismDetails={plagiarismDetails} showDownload={false}/>
     }
 
     if(editorsComments) {
@@ -81,6 +82,7 @@ const CommitteePlagiarismVote = (props) => {
                 <br/>
                 <Typography component="h5" variant="h5" className={classes.title}></Typography>
                 {displayPlagiarismDetailsCard}
+                <br/>
                 {displayEditorsComments}
 
                 <form className={classes.form} noValidate onSubmit={submitHander}>
@@ -89,7 +91,9 @@ const CommitteePlagiarismVote = (props) => {
                         variant="contained" disabled={!formIsValid} fullWidth>
                         Vote
                     </Button>
+
                 </form>
+                <br/>
             </div>
         </Container>
     )

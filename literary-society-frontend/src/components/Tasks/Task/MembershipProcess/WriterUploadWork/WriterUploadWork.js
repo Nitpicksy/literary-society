@@ -14,9 +14,13 @@ import PreviewPDFModal from '../PreviewPDFModal/PreviewPDFModal';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import DisplayPDFDocuments from '../DisplayPDFDocuments/DisplayPDFDocuments';
 import CommitteeComments from '../CommitteeComments/CommitteeComments';
+import Form from '../../../../../UI/Form/Form';
+import { extractControls } from '../../../../../utility/extractControls';
 
 
 const WriterUploadWork = props => {
+
+    const { formFields, fetchForm } = props;
 
     const { selectedTask } = props;
     const { fetchDrafts, drafts } = props;
@@ -28,19 +32,42 @@ const WriterUploadWork = props => {
     const [files, setFiles] = useState([]);
     const [currentFile, setCurrentFile] = useState(null);
     const [displayModal, setDisplayModal] = useState(false);
+    let [controls, setControls] = useState(null);
+    
+    //eslint-disable-next-line
+    const [formIsValid, setFormIsValid] = useState(false);
 
     responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
 
+
+
+    useEffect(() => {
+        console.log('fetchform')
+        fetchForm(selectedTask.piId, selectedTask.taskId);
+    }, [fetchForm, selectedTask.piId, selectedTask.taskId]);
+
+
+
+    useEffect(() => {
+        if (formFields) {
+            let extractedControls = extractControls(formFields)
+            setControls(extractedControls);
+        }
+    }, [formFields]);
+
+
+    let form = null;
     let displayDocuments = null;
     let modal = null;
 
-    const handleChooseFile = ({ target }) => {
-        const file = files.filter(item => item.name === target.files[0].name) //if you're readding the same file, return
+
+    const handleChooseFile = ( target ) => {
+        const file = files.filter(item => item.name === target.name) //if you're readding the same file, return
         if(file.length !== 0) {
             return;
         }
 
-        setFiles(prevFiles => [...prevFiles, target.files[0]]); //otherwise append it to the array
+        setFiles(prevFiles => [...prevFiles, target]); //otherwise append it to the array
     }
 
     useEffect(() => {
@@ -109,6 +136,12 @@ const WriterUploadWork = props => {
         modal = <PreviewPDFModal file={currentFile} close={exitPreview}/>
     }
 
+    console.log('controls', controls)
+    if (controls) {
+        console.log('fomr', form)
+        form = <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} setPdfFile={handleChooseFile} removeText={true} files={files}/>;
+    }
+   
     return (
         <Container component="main" maxWidth="xs">
             {modal}
@@ -161,28 +194,21 @@ const WriterUploadWork = props => {
                 justify="center" 
                 spacing={2}
             >
-                <Grid item>
-                <input type="file" accept="application/pdf" hidden id="writer-upload-files"
-                            onChange={handleChooseFile} onClick={e => (e.target.value = null)}
-                        />
-
-                <label htmlFor="writer-upload-files">
                 <Grid item  >
-                    <Button color="primary" variant="contained" component="span">
-                        Add file
-                    </Button>
+                    {form}
                 </Grid>
-                </label>
-                </Grid>
+
 
                 <Grid item>
                 <Button m={1} color="primary" variant="contained" component="span"
                         startIcon={<PublishIcon />} 
                         onClick={handleUpload} 
                          disabled={disableUploadButton()}
+                        // disabled={!formIsValid}
                         >
                         Upload
                     </Button>
+
                 </Grid>
             </Grid>
             <br/>
@@ -197,6 +223,7 @@ const mapStateToProps = state => {
     return {
         selectedTask: state.tasks.selectedTask,
         refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
+        formFields: state.writerUploadWork.formFields,
         committeeComments: state.writerUploadWork.committeeComments,
         drafts: state.writerUploadWork.drafts,
         comments: state.writerUploadWork.comments
@@ -208,7 +235,8 @@ const mapDispatchToProps = dispatch => {
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
         onUpload: (piId, taskId, files, history) => dispatch(actions.upload(piId, taskId, files, history)),
         fetchDrafts: () => dispatch(actions.fetchDrafts()),
-        fetchComments: () => dispatch(actions.fetchComments())
+        fetchComments: () => dispatch(actions.fetchComments()),
+        fetchForm: (piId, taskId) => dispatch(actions.fetchForm(piId, taskId)),
     }
 };
 

@@ -23,10 +23,10 @@ const rootReducer = combineReducers({
     clientList: clientListReducer
 });
 
-const store = createStore(rootReducer, composeEnhancers(
-    applyMiddleware(thunk)
-));
-
+const store = createStore(
+  rootReducer,
+  composeEnhancers(applyMiddleware(thunk))
+);
 
 const app = (
     <Provider store={store}>
@@ -49,5 +49,6 @@ const app = (
 
 );
 
-ReactDOM.render(app, document.getElementById('root'));
+ReactDOM.render(app, document.getElementById("root"));
 reportWebVitals();
+

@@ -3,7 +3,10 @@ import * as actionTypes from './WriterUploadWorkActionTypes';
 const initialState = {
     success: false,
     comments: null,
-    drafts: null
+    drafts: null,
+    formFields: null,
+    processInstanceId: null,
+    taskId: null,
 }
 
 const reducer = (state = initialState, action) => {
@@ -22,6 +25,13 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 comments: action.comments
+            };
+        case actionTypes.FETCH_FORM_SUCCESS:
+            return {
+                ...state,
+                formFields: action.formFields,
+                processInstanceId: action.processInstanceId,
+                taskId: action.taskId
             };
         default:
             return state;

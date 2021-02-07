@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.controller;
 
 
+import nitpicksy.literarysociety.serviceimpl.TestServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -23,16 +24,17 @@ import java.security.Key;
 import java.util.Base64;
 
 @RestController
-@RequestMapping(value = "/pg-test", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/ls-test", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TestController {
 
+    private TestServiceImpl testService;
 
     @GetMapping("/encrypted")
     public ResponseEntity<String> getEncryptedValue(@RequestParam String value) {
         byte[] secret = loadSecret().getBytes();
         Key key = new SecretKeySpec(secret, "AES");
         try {
-            Cipher cipher= Cipher.getInstance("AES/ECB/PKCS5Padding");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, key);
             return new ResponseEntity<>(Base64.getEncoder().encodeToString(cipher.doFinal(value.getBytes())), HttpStatus.OK);
         } catch (Exception e) {
@@ -41,7 +43,7 @@ public class TestController {
         return new ResponseEntity<>("BAD", HttpStatus.BAD_REQUEST);
     }
 
-    private String loadSecret(){
+    private String loadSecret() {
         try {
             Path fileStorageLocation = Paths.get("");
             Path filePath = fileStorageLocation.resolve("literary_key.np").normalize();
@@ -53,4 +55,15 @@ public class TestController {
         }
         return "";
     }
+
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        return new ResponseEntity<>(testService.healthCheck(), HttpStatus.OK);
+    }
+
+    @Autowired
+    public TestController(TestServiceImpl testService) {
+        this.testService = testService;
+    }
+
 }

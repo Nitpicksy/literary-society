@@ -6,7 +6,10 @@ import org.springframework.stereotype.Service;
 public class TestServiceImpl {
 
     public String healthCheck() {
-        return "PayPal Service is up an running!";
+        StringBuilder sb = new StringBuilder("PayPal is up and running!");
+        sb.append(System.lineSeparator());
+
+        return sb.toString();
     }
 
 }

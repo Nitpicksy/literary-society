@@ -1,0 +1,1 @@
+export const booksUrl = '/literary-society/books';

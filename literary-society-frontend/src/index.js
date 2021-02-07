@@ -8,7 +8,7 @@ import { reducer as toastrReducer } from 'react-redux-toastr';
 import ReduxToastr from 'react-redux-toastr';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import reportWebVitals from './reportWebVitals';
 import signInReducer from './components/Authentication/SignIn/SignInReducer';
@@ -47,8 +47,7 @@ import committeePlagiarismVoteReducer from './components/Tasks/Task/PlagiarismPr
 import merchantBookListReducer from './components/MerchantBooks/MerchantBooksReducer';
 import merchantBookReducer from './components/MerchantBooks/MerchantBookDetails/MerchantBookDetailsReducer';
 import editorCheckIfBookIsPlagiarismReducer from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/EditorCheckIfBookIsPlagiarismReducer';
-
-const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
+import transactionListReducer from './components/TransactionList/TransactionListReducer';
 
 const rootReducer = combineReducers({
     toastr: toastrReducer,
@@ -85,6 +84,7 @@ const rootReducer = combineReducers({
     merchantBookList:merchantBookListReducer,
     merchantBook:merchantBookReducer,
     editorCheckIfBookIsPlagiarism:editorCheckIfBookIsPlagiarismReducer,
+    transactionList: transactionListReducer
 });
 
 const persistConfig = {

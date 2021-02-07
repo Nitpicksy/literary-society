@@ -77,6 +77,8 @@ const Tasks = (props) => {
             history.push('/plagiarism-vote')
         }else if(properties.row.name === "Proverite da li je delo originalno"){
             history.push('/check-if-book-is-plagiarism')
+        } else if(properties.row.name === 'Unesi podatke o knjizi i autoru') {
+            history.push('/plagiarism-complaint')
         }
         
     }

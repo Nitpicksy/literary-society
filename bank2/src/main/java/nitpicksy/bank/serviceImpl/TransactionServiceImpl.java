@@ -78,8 +78,6 @@ public class TransactionServiceImpl implements TransactionService {
             PCCRequestDTO pccRequestDTO = pccRequestMapper.toDTO(transaction, confirmPaymentDTO);
             try{
                 PCCResponseDTO response = pccClient.pay(pccRequestDTO);
-                transaction.setAcquirerOrderId(response.getAcquirerOrderId());
-                transaction.setAcquirerTimestamp(response.getAcquirerTimestamp());
 
                 Transaction createdTransaction = setTransactionStatus(transaction,response.getStatus());
                 if(createdTransaction.getStatus().equals(TransactionStatus.SUCCESS)){
