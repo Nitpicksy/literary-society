@@ -52,6 +52,9 @@ zuul:
     paypal:
       path: /paypal/**
       service-id: paypal
+    paypal-new:
+      path: /paypal-new/**
+      service-id: paypal-new
     bitcoin:
       path: /bitcoin/**
       service-id: bitcoin
