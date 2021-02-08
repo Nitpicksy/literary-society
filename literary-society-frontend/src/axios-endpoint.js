@@ -1,7 +1,8 @@
 import axios from "axios";
 
 export const instance = axios.create({
-  baseURL: "https://localhost:8090/api",
+  // baseURL: "https://localhost:8090/api",
+  baseURL: "https://192.168.1.6:8090/api",
   signIn: "/auth/sign-in",
 });
 
