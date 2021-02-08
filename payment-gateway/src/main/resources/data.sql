@@ -1,6 +1,6 @@
 insert into company (uri, common_name, company_name, email, error_url, failed_url, success_url, certificate_name,
                      status, enabled)
-values ('http://localhost:8090', 'literary-society', 'Nitpicksy LU 1', 'literary@maildrop.cc',
+values ('https://192.168.1.6:8090', 'literary-society', 'Nitpicksy LU 1', 'literary@maildrop.cc',
         'https://www.literary-society.com:3000/payment/error', 'https://www.literary-society.com:3000/payment/failed',
         'https://www.literary-society.com:3000/payment/success', 'literary.crt', 'APPROVED', true);
 

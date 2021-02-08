@@ -45,7 +45,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class PaymentServiceImpl implements PaymentService {
 
     private static final String MODE = "sandbox";
-    private static final String CONFIRMATION_URL = "https://localhost:8200/api/payments/confirm";
+    private static final String CONFIRMATION_URL = "https://192.168.1.3:8200/api/payments/confirm";
 
     //API Source: https://exchangerate.host/
     private static final String CURRENCY_CONVERSION_API = "https://api.exchangerate.host/convert";
@@ -158,9 +158,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Async
     public void sendResponseToPaymentGateway(String merchantOrderId, ConfirmPaymentResponseDTO confirmPaymentResponseDTO) {
-        try{
+        try {
             zuulClient.confirmPayment(merchantOrderId, confirmPaymentResponseDTO);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             logService.write(new Log(Log.ERROR, Log.getServiceName(CLASS_PATH), CLASS_NAME, "TRA", "Could not notify Payment Gateway"));
         }
 
