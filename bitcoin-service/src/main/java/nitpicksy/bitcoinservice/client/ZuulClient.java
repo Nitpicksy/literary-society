@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name = "zuul", configuration = FeignClientConfiguration.class, url = "https://192.168.1.3:8080/")
+@FeignClient(name = "zuul", configuration = FeignClientConfiguration.class, url = "https://192.168.43.3:8080/")
 public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.PUT, path = "/payment-gateway/api/payments/confirm/{merchantOrderId}")
