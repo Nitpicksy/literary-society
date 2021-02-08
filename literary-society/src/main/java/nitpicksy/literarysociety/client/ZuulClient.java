@@ -25,7 +25,7 @@ import java.util.List;
 
 
 //@FeignClient(name = "zuul", configuration = FeignClientConfiguration.class, url = "https://localhost:8080/")
-@FeignClient(name = "zuul", configuration = FeignClientConfiguration.class, url = "https://192.168.1.3:8080/")
+@FeignClient(name = "zuul", configuration = FeignClientConfiguration.class, url = "https://192.168.43.3:8080/")
 public interface ZuulClient {
 
     @RequestMapping(method = RequestMethod.GET, path = "payment-gateway/pg-test/health")
