@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>11</java.version>
-                <spring-cloud.version>2020.0.0-M5</spring-cloud.version>
+        <spring-cloud.version>2020.0.0-M5</spring-cloud.version>
     </properties>
 
     <dependencies>
@@ -38,6 +38,11 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-elasticsearch</artifactId>
             <version>3.1.0.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.byteowls</groupId>
+            <artifactId>jopencage</artifactId>
+            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.nbaars</groupId>
@@ -222,6 +227,14 @@
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
             <url>https://repo.spring.io/milestone</url>
+        </repository>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>bintray</name>
+            <url>https://jcenter.bintray.com</url>
         </repository>
     </repositories>
 </project>

@@ -1,11 +1,13 @@
 package nitpicksy.literarysociety;
 
 import nitpicksy.literarysociety.common.RandomPasswordGenerator;
+import nitpicksy.literarysociety.elastic.service.BetaReaderIndexService;
 import nitpicksy.literarysociety.elastic.service.GenreIndexService;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.repository.*;
 import nitpicksy.literarysociety.service.EmailNotificationService;
+import nitpicksy.literarysociety.service.ReaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -28,9 +30,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private PermissionRepository permissionRepository;
     private UserRepository userRepository;
     private WriterRepository writerRepository;
+    private ReaderRepository readerRepository;
     private PriceListRepository priceListRepository;
     private GenreRepository genreRepository;
     private GenreIndexService genreIndexService;
+    private BetaReaderIndexService betaReaderIndexService;
     private PasswordEncoder passwordEncoder;
     private EmailNotificationService emailNotificationService;
     private Environment environment;
@@ -59,7 +63,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         Permission purchaseBooks = createPermissionIfNotFound("PURCHASE_BOOKS");
 
-        Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers,manageMerchants,choosePaymentMethods));
+        Set<Permission> adminPermissions = new HashSet<>(Arrays.asList(manageEditors, manageLecturers, manageMerchants, choosePaymentMethods));
         createRoleIfNotFound("ROLE_ADMIN", adminPermissions);
 
         Set<Permission> readerPermissions = new HashSet<>(Arrays.asList(manageTasks, downloadBookAndCompleteTask, purchaseBooks, subscribe));
@@ -112,6 +116,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         // Add existing genres to Genre index
         List<Genre> allGenres = genreRepository.findAll();
         allGenres.forEach(genre -> genreIndexService.addGenre(genre));
+
+        // Add existing beta-readers to BetaReader index
+        List<Reader> allBetaReaders = readerRepository.findByIsBetaReaderAndStatus(true, UserStatus.ACTIVE);
+        allBetaReaders.forEach(betaReader -> betaReaderIndexService.addBetaReader(betaReader));
 
         alreadySetup = true;
     }
@@ -237,16 +245,18 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Autowired
     public SetupDataLoader(RoleRepository roleRepository, PermissionRepository permissionRepository, UserRepository userRepository,
-                           WriterRepository writerRepository, PriceListRepository priceListRepository, GenreRepository genreRepository,
-                           GenreIndexService genreIndexService, PasswordEncoder passwordEncoder,
-                           EmailNotificationService emailNotificationService, Environment environment) {
+                           WriterRepository writerRepository, ReaderRepository readerRepository, PriceListRepository priceListRepository,
+                           GenreRepository genreRepository, GenreIndexService genreIndexService, BetaReaderIndexService betaReaderIndexService,
+                           PasswordEncoder passwordEncoder, EmailNotificationService emailNotificationService, Environment environment) {
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
         this.userRepository = userRepository;
         this.writerRepository = writerRepository;
+        this.readerRepository = readerRepository;
         this.priceListRepository = priceListRepository;
         this.genreRepository = genreRepository;
         this.genreIndexService = genreIndexService;
+        this.betaReaderIndexService = betaReaderIndexService;
         this.passwordEncoder = passwordEncoder;
         this.emailNotificationService = emailNotificationService;
         this.environment = environment;

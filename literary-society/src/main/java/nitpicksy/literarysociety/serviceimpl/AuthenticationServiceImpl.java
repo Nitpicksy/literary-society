@@ -3,6 +3,7 @@ package nitpicksy.literarysociety.serviceimpl;
 import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.request.ChangePasswordDTO;
 import nitpicksy.literarysociety.dto.request.ResetPasswordDTO;
+import nitpicksy.literarysociety.elastic.service.BetaReaderIndexService;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.BlockedUserException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
@@ -64,6 +65,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private ChangePasswordAttemptService changePasswordAttemptService;
 
     private final LogService logService;
+
+    private BetaReaderIndexService betaReaderIndexService;
 
     @Override
     public UserTokenState login(JwtAuthenticationRequest authenticationRequest) {
@@ -143,6 +146,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = token.getUser();
         user.setEnabled(true);
 
+        if (user.getRole().getName().equals(RoleConstants.ROLE_READER) && ((Reader) user).isBetaReader()) {
+            betaReaderIndexService.addBetaReader((Reader) user);
+        }
+
         if (user.getRole().getName().equals(RoleConstants.ROLE_EDITOR)) {
             user.setStatus(UserStatus.WAITING_APPROVAL);
         } else if (user.getRole().getName().equals(RoleConstants.ROLE_LECTURER)) {
@@ -200,7 +207,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationServiceImpl(TokenUtils tokenUtils, AuthenticationManager authenticationManager,
                                      UserRepository userRepository, PasswordEncoder passwordEncoder, RestTemplateBuilder restTemplateBuilder,
                                      HttpServletRequest request, ChangePasswordAttemptService changePasswordAttemptService,
-                                     ResetTokenRepository resetTokenRepository, LogService logService, VerificationService verificationService) {
+                                     ResetTokenRepository resetTokenRepository, LogService logService, VerificationService verificationService,
+                                     BetaReaderIndexService betaReaderIndexService) {
         this.tokenUtils = tokenUtils;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
@@ -211,5 +219,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.resetTokenRepository = resetTokenRepository;
         this.logService = logService;
         this.verificationService = verificationService;
+        this.betaReaderIndexService = betaReaderIndexService;
     }
 }

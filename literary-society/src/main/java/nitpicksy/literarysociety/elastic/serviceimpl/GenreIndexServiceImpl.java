@@ -32,6 +32,11 @@ public class GenreIndexServiceImpl implements GenreIndexService {
         return genreIndexRepository.save(new GenreIndexingUnit(genre.getId(), genre.getName()));
     }
 
+    @Override
+    public GenreIndexingUnit findById(Long id) {
+        return genreIndexRepository.findOneById(id);
+    }
+
     @Autowired
     public GenreIndexServiceImpl(ElasticsearchTemplate elasticsearchTemplate, GenreIndexRepository genreIndexRepository) {
         this.elasticsearchTemplate = elasticsearchTemplate;

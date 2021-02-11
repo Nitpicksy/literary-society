@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.camunda.service;
 
+import com.byteowls.jopencage.model.JOpenCageLatLng;
 import com.github.nbaars.pwnedpasswords4j.client.PwnedPasswordChecker;
 import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
@@ -13,6 +14,7 @@ import nitpicksy.literarysociety.service.GenreService;
 import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
 import nitpicksy.literarysociety.service.VerificationService;
+import nitpicksy.literarysociety.utils.LocationProvider;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -65,11 +67,17 @@ public class ReaderRegistrationService implements JavaDelegate {
         }
 
         if (isBetaReader) {
+            JOpenCageLatLng coordinates = LocationProvider.getCoordinates(reader.getCity() + ", " + reader.getCountry());
+            if (coordinates == null) {
+                execution.setVariable("errorMessage", "Please, enter valid city and country names.");
+                throw new BpmnError("greskaKreiranjeCitaoca");
+            }
+
             List<Long> genresIds = camundaService.extractIds(map.get("selectGenres"));
             List<Genre> genres = genreService.findWithIds(genresIds);
             if (genres.isEmpty()) {
                 execution.setVariable("errorMessage", "You have to choose at least one genre.");
-            throw new BpmnError("greskaKreiranjeCitaoca");
+                throw new BpmnError("greskaKreiranjeCitaoca");
             }
             reader.setGenres(new HashSet<>(genres));
         }

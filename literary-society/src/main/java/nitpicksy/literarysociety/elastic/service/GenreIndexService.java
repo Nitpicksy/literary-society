@@ -10,4 +10,6 @@ public interface GenreIndexService {
 
     GenreIndexingUnit addGenre(Genre genre);
 
+    GenreIndexingUnit findById(Long id);
+
 }
