@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.2</version>
+        <version>2.1.0.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nitpicksy</groupId>
@@ -99,11 +99,16 @@
             <artifactId>commons-text</artifactId>
             <version>1.9</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.owasp</groupId>-->
+<!--            <artifactId>dependency-check-maven</artifactId>-->
+<!--            <version>6.1.0</version>-->
+<!--            <type>maven-plugin</type>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.owasp</groupId>
-            <artifactId>dependency-check-maven</artifactId>
-            <version>6.1.0</version>
-            <type>maven-plugin</type>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-elasticsearch</artifactId>
+            <version>3.1.0.RELEASE</version>
         </dependency>
     </dependencies>
 
