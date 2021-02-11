@@ -4,8 +4,6 @@ import nitpicksy.literarysociety.repository.RefreshMethodRepositoryImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -17,12 +15,12 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextListener;
 
 @SpringBootApplication
-@EnableEurekaClient
+//@EnableEurekaClient
 @EnableFeignClients
 @EnableTransactionManagement
 @EnableJpaRepositories(repositoryBaseClass = RefreshMethodRepositoryImpl.class)
 @EnableAsync
-@EnableDiscoveryClient
+//@EnableDiscoveryClient
 @EnableScheduling
 public class LiterarySocietyApplication {
 

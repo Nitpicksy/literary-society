@@ -37,7 +37,7 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
 
     private final String CLASS_NAME = this.getClass().getSimpleName();
 
-    private final String BOOKS_PATH = "literary-society/src/main/resources/books/";
+    private final String BOOKS_PATH = "src/main/resources/books/";
     private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
     private PDFDocumentRepository pdfDocumentRepository;
@@ -93,7 +93,7 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
     @Override
     public List<PDFDocument> findByBooks(Set<Book> books) {
         List<PDFDocument> pdfDocumentList = new ArrayList<>();
-        for (Book book:books) {
+        for (Book book : books) {
             pdfDocumentList.add(findByBookId(book.getId()));
         }
         return pdfDocumentList;

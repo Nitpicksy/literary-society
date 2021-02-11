@@ -42,7 +42,7 @@ public class TaskController {
     private final String CLASS_PATH = this.getClass().getCanonicalName();
     private final String CLASS_NAME = this.getClass().getSimpleName();
 
-    private static String IMAGES_PATH = "literary-society/src/main/resources/images/";
+    private static String IMAGES_PATH = "src/main/resources/images/";
 
     private UserService userService;
 

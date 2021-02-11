@@ -28,7 +28,7 @@ import java.util.Set;
 @Service
 public class BookServiceImpl implements BookService {
 
-    private static String IMAGES_PATH = "literary-society/src/main/resources/images/";
+    private static String IMAGES_PATH = "src/main/resources/images/";
 
     private BookRepository bookRepository;
 
@@ -88,12 +88,12 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public Book createBook(CreateBookRequestDTO dto, Merchant merchant, MultipartFile image) {
-        Book book = new Book(dto.getWritersNames(), dto.getTitle(),dto.getSynopsis(),genreService.findById(dto.getGenre()));
+        Book book = new Book(dto.getWritersNames(), dto.getTitle(), dto.getSynopsis(), genreService.findById(dto.getGenre()));
         Book savedBook = bookRepository.saveAndFlush(book);
 
         PublishingInfo publishingInfo = new PublishingInfo(dto.getISBN(), dto.getNumberOfPages(), dto.getPublisherCity(), getLocalDate(dto.getPublicationDate()), dto.getPublisher(), dto.getPrice(),
                 dto.getDiscount(), savedBook, merchant);
-        PublishingInfo saved =  publishingInfoRepository.saveAndFlush(publishingInfo);
+        PublishingInfo saved = publishingInfoRepository.saveAndFlush(publishingInfo);
         savedBook.setPublishingInfo(saved);
 
         Image savedImage = imageService.saveImage(image, IMAGES_PATH, savedBook);
@@ -102,13 +102,13 @@ public class BookServiceImpl implements BookService {
         return savedBook;
     }
 
-    private LocalDate getLocalDate(String date)  {
+    private LocalDate getLocalDate(String date) {
         return LocalDate.parse(date);
     }
 
     @Autowired
     public BookServiceImpl(BookRepository bookRepository, UserService userService, GenreService genreService,
-                           PublishingInfoRepository publishingInfoRepository,ImageService imageService) {
+                           PublishingInfoRepository publishingInfoRepository, ImageService imageService) {
         this.bookRepository = bookRepository;
         this.userService = userService;
         this.genreService = genreService;
