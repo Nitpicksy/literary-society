@@ -3,12 +3,17 @@ package nitpicksy.literarysociety;
 import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.common.RandomPasswordGenerator;
 import nitpicksy.literarysociety.dto.request.SubscriptionPlanDTO;
+import nitpicksy.literarysociety.elasticsearch.model.GenreInfo;
+import nitpicksy.literarysociety.elasticsearch.service.GenreInfoService;
+import nitpicksy.literarysociety.elasticsearch.service.ReaderInfoService;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.repository.*;
 import nitpicksy.literarysociety.service.EmailNotificationService;
+import nitpicksy.literarysociety.service.GenreService;
 import nitpicksy.literarysociety.service.JWTTokenService;
 import nitpicksy.literarysociety.service.MerchantService;
+import nitpicksy.literarysociety.service.ReaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -42,6 +47,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private EmailNotificationService emailNotificationService;
 
     private Environment environment;
+
+    private GenreInfoService genreInfoService;
+
+    private GenreService genreService;
+
+    private ReaderInfoService readerInfoService;
 
     @Override
     @Transactional
@@ -117,6 +128,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 LocalDate.of(2021, 6, 1));
         priceListRepository.save(nextPriceList);
 
+        createGenres();
+
         alreadySetup = true;
     }
 
@@ -144,18 +157,25 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         User reader1 = userRepository.findOneById(6L);
         reader1.setRole(roleReader);
         userRepository.save(reader1);
+
+
         User reader2 = userRepository.findOneById(7L);
         reader2.setRole(roleReader);
         userRepository.save(reader2);
         User reader3 = userRepository.findOneById(8L);
         reader3.setRole(roleReader);
         userRepository.save(reader3);
+        readerInfoService.save((Reader) reader3);
+
         User reader4 = userRepository.findOneById(9L);
         reader4.setRole(roleReader);
         userRepository.save(reader4);
+        readerInfoService.save((Reader) reader4);
+
         User reader5 = userRepository.findOneById(10L);
         reader5.setRole(roleReader);
         userRepository.save(reader5);
+        readerInfoService.save((Reader) reader5);
 
         Role roleMerchant = roleRepository.findByName("ROLE_MERCHANT");
         User merchant1 = userRepository.findOneById(11L);
@@ -213,6 +233,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         emailNotificationService.sendEmail(recipientEmail, subject, text);
     }
 
+    private void createGenres(){
+        for (Genre genre : genreService.findAll()) {
+            genreInfoService.save(genre);
+        }
+    }
+
     private String getLocalhostURL() {
         return environment.getProperty("LOCALHOST_URL");
     }
@@ -243,7 +269,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     public SetupDataLoader(RoleRepository roleRepository, PermissionRepository permissionRepository, UserRepository userRepository,
                            WriterRepository writerRepository, PriceListRepository priceListRepository,
                            PasswordEncoder passwordEncoder, EmailNotificationService emailNotificationService,
-                           Environment environment) {
+                           Environment environment,GenreInfoService genreInfoService,GenreService genreService,ReaderInfoService readerInfoService) {
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
         this.userRepository = userRepository;
@@ -252,5 +278,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         this.passwordEncoder = passwordEncoder;
         this.emailNotificationService = emailNotificationService;
         this.environment = environment;
+        this.genreInfoService = genreInfoService;
+        this.genreService = genreService;
+        this.readerInfoService = readerInfoService;
     }
 }

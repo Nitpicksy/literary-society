@@ -3,9 +3,11 @@ package nitpicksy.literarysociety.camunda.service;
 import com.github.nbaars.pwnedpasswords4j.client.PwnedPasswordChecker;
 import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
+import nitpicksy.literarysociety.elasticsearch.service.GeoPointService;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Genre;
+import nitpicksy.literarysociety.model.Location;
 import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.Writer;
 import nitpicksy.literarysociety.repository.WriterRepository;
@@ -17,6 +19,7 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,6 +53,8 @@ public class WriterRegistrationService implements JavaDelegate {
 
     private PwnedPasswordChecker pwnedChecker;
 
+    private GeoPointService geoPointService;
+
     @Override
     public void execute(DelegateExecution execution) throws Exception {
 
@@ -77,17 +82,27 @@ public class WriterRegistrationService implements JavaDelegate {
     public Writer create(Writer writer, DelegateExecution execution) throws NoSuchAlgorithmException {
 
         if (userService.findByUsername(writer.getUsername()) != null) {
+            execution.setVariable("errorMessage", "User with same username or email already exists.");
             throw new BpmnError("greskaKreiranjePisca");
         }
 
         if (userService.findByEmail(writer.getEmail()) != null) {
+            execution.setVariable("errorMessage", "User with same username or email already exists.");
             throw new BpmnError("greskaKreiranjePisca");
         }
+        GeoPoint geoPoint = geoPointService.getGeoPoint(writer.getCountry() + " " + writer.getCity());
+        if(geoPoint == null){
+            execution.setVariable("errorMessage", "Please, enter valid city and country.");
+            throw new BpmnError("greskaKreiranjePisca");
+        }
+
+        writer.setLocation(new Location(geoPoint.getLat(), geoPoint.getLon()));
 
         writer.setStatus(UserStatus.NON_VERIFIED);
         writer.setRole(userService.findRoleByName(RoleConstants.ROLE_WRITER));
         String password = writer.getPassword();
         writer.setPassword(passwordEncoder.encode(password));
+
         Writer savedWriter = writerRepository.save(writer);
         String nonHashedToken = verificationService.generateToken(savedWriter);
 
@@ -101,7 +116,7 @@ public class WriterRegistrationService implements JavaDelegate {
     @Autowired
     public WriterRegistrationService(UserService userService, GenreService genreService, CamundaService camundaService,
                                      PasswordEncoder passwordEncoder, WriterRepository writerRepository, VerificationService verificationService,
-                                     LogService logService, PwnedPasswordChecker pwnedChecker) {
+                                     LogService logService, PwnedPasswordChecker pwnedChecker,GeoPointService geoPointService) {
         this.userService = userService;
         this.genreService = genreService;
         this.camundaService = camundaService;
@@ -110,6 +125,7 @@ public class WriterRegistrationService implements JavaDelegate {
         this.verificationService = verificationService;
         this.logService = logService;
         this.pwnedChecker = pwnedChecker;
+        this.geoPointService = geoPointService;
     }
 
 }

@@ -3,6 +3,8 @@ package nitpicksy.literarysociety.camunda.service;
 import com.github.nbaars.pwnedpasswords4j.client.PwnedPasswordChecker;
 import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
+import nitpicksy.literarysociety.elasticsearch.service.GeoPointService;
+import nitpicksy.literarysociety.elasticsearch.service.ReaderInfoService;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Genre;
@@ -50,6 +52,8 @@ public class ReaderRegistrationService implements JavaDelegate {
 
     private PwnedPasswordChecker pwnedChecker;
 
+    private GeoPointService geoPointService;
+
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         List<FormSubmissionDTO> formData = (List<FormSubmissionDTO>) execution.getVariable("formData");
@@ -69,8 +73,14 @@ public class ReaderRegistrationService implements JavaDelegate {
             List<Genre> genres = genreService.findWithIds(genresIds);
             if (genres.isEmpty()) {
                 execution.setVariable("errorMessage", "You have to choose at least one genre.");
-            throw new BpmnError("greskaKreiranjeCitaoca");
+                throw new BpmnError("greskaKreiranjeCitaoca");
             }
+
+            if(geoPointService.getGeoPoint(reader.getCountry() + " " + reader.getCity()) == null){
+                execution.setVariable("errorMessage", "Please, enter valid city and country.");
+                throw new BpmnError("greskaKreiranjeCitaoca");
+            }
+
             reader.setGenres(new HashSet<>(genres));
         }
 
@@ -107,7 +117,7 @@ public class ReaderRegistrationService implements JavaDelegate {
     public ReaderRegistrationService(UserService userService, PasswordEncoder passwordEncoder,
                                      ReaderRepository readerRepository, VerificationService verificationService,
                                      GenreService genreService, CamundaService camundaService, LogService logService,
-                                     PwnedPasswordChecker pwnedChecker) {
+                                     PwnedPasswordChecker pwnedChecker, GeoPointService geoPointService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.readerRepository = readerRepository;
@@ -116,5 +126,6 @@ public class ReaderRegistrationService implements JavaDelegate {
         this.camundaService = camundaService;
         this.logService = logService;
         this.pwnedChecker = pwnedChecker;
+        this.geoPointService = geoPointService;
     }
 }

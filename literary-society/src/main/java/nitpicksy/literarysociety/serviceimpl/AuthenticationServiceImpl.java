@@ -3,6 +3,7 @@ package nitpicksy.literarysociety.serviceimpl;
 import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.request.ChangePasswordDTO;
 import nitpicksy.literarysociety.dto.request.ResetPasswordDTO;
+import nitpicksy.literarysociety.elasticsearch.service.ReaderInfoService;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.BlockedUserException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
@@ -64,6 +65,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private ChangePasswordAttemptService changePasswordAttemptService;
 
     private final LogService logService;
+
+    private ReaderInfoService readerInfoService;
 
     @Override
     public UserTokenState login(JwtAuthenticationRequest authenticationRequest) {
@@ -143,14 +146,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = token.getUser();
         user.setEnabled(true);
 
-        if (user.getRole().getName().equals(RoleConstants.ROLE_EDITOR)) {
-            user.setStatus(UserStatus.WAITING_APPROVAL);
-        } else if (user.getRole().getName().equals(RoleConstants.ROLE_LECTURER)) {
-            user.setStatus(UserStatus.WAITING_APPROVAL);
-        } else if (user.getRole().getName().equals(RoleConstants.ROLE_MERCHANT)) {
-            user.setStatus(UserStatus.WAITING_APPROVAL);
-        } else {
-            user.setStatus(UserStatus.ACTIVE);
+        switch (user.getRole().getName()) {
+            case RoleConstants.ROLE_EDITOR:
+            case RoleConstants.ROLE_LECTURER:
+            case RoleConstants.ROLE_MERCHANT:
+                user.setStatus(UserStatus.WAITING_APPROVAL);
+                break;
+            default:
+                user.setStatus(UserStatus.ACTIVE);
+                break;
+        }
+
+        if(user.getRole().getName().equals(RoleConstants.ROLE_READER)){
+            Reader reader = (Reader)user;
+            if(reader.isBetaReader()){
+                readerInfoService.save(reader);
+            }
         }
 
         verificationService.invalidateToken(token.getId());
@@ -200,7 +211,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationServiceImpl(TokenUtils tokenUtils, AuthenticationManager authenticationManager,
                                      UserRepository userRepository, PasswordEncoder passwordEncoder, RestTemplateBuilder restTemplateBuilder,
                                      HttpServletRequest request, ChangePasswordAttemptService changePasswordAttemptService,
-                                     ResetTokenRepository resetTokenRepository, LogService logService, VerificationService verificationService) {
+                                     ResetTokenRepository resetTokenRepository, LogService logService,
+                                     VerificationService verificationService, ReaderInfoService readerInfoService) {
         this.tokenUtils = tokenUtils;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
@@ -211,5 +223,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.resetTokenRepository = resetTokenRepository;
         this.logService = logService;
         this.verificationService = verificationService;
+        this.readerInfoService = readerInfoService;
     }
 }

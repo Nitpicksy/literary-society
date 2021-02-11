@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.elasticsearch.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ReaderInfo {
 
     @Id
@@ -36,5 +38,12 @@ public class ReaderInfo {
 
     @GeoPointField
     private GeoPoint geoPoint;
+
+    public ReaderInfo(Long id, String name, String city, String country) {
+        this.id = id;
+        this.name = name;
+        this.city = city;
+        this.country = country;
+    }
 }
 

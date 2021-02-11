@@ -12,4 +12,5 @@ public interface GenreService {
 
     List<Genre> findWithIds(List<Long> ids);
 
+    Genre save(Genre genre);
 }

@@ -1,5 +1,7 @@
 package nitpicksy.literarysociety.serviceimpl;
 
+import nitpicksy.literarysociety.elasticsearch.repository.GenreInfoRepository;
+import nitpicksy.literarysociety.elasticsearch.service.GenreInfoService;
 import nitpicksy.literarysociety.model.Genre;
 import nitpicksy.literarysociety.repository.GenreRepository;
 import nitpicksy.literarysociety.service.GenreService;
@@ -10,6 +12,8 @@ import java.util.List;
 
 @Service
 public class GenreServiceImpl implements GenreService {
+
+    private GenreInfoService genreInfoService;
 
     private GenreRepository genreRepository;
 
@@ -28,9 +32,17 @@ public class GenreServiceImpl implements GenreService {
         return genreRepository.findByIdIn(ids);
     }
 
-    @Autowired
-    public GenreServiceImpl(GenreRepository genreRepository) {
-        this.genreRepository = genreRepository;
+    @Override
+    public Genre save(Genre genre) {
+        Genre savedGenre = genreRepository.saveAndFlush(genre);
+        System.out.println(savedGenre.getId());
+        genreInfoService.save(savedGenre);
+        return savedGenre;
     }
 
+    @Autowired
+    public GenreServiceImpl(GenreInfoService genreInfoService, GenreRepository genreRepository) {
+        this.genreInfoService = genreInfoService;
+        this.genreRepository = genreRepository;
+    }
 }

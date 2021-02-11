@@ -73,7 +73,7 @@ values ('READER', 'Pera', 'Peric', 'London', 'Ujedinjeno kraljevstvo', 'perap@ma
 -- Beta-readers
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled, is_beta_reader, penalty)
-values ('READER', 'Teodora', 'Todorovic', 'Kragujevac', 'Srbija', 'teodorat@maildrop.cc', 'teodorat',
+values ('READER', 'Teodora', 'Todorovic', 'Novi Sad', 'Srbija', 'teodorat@maildrop.cc', 'teodorat',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true, 0);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled, is_beta_reader, penalty)
