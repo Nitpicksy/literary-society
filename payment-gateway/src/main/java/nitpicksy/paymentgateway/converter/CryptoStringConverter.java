@@ -22,7 +22,7 @@ import java.util.Base64;
 
 @Converter
 public class CryptoStringConverter implements AttributeConverter<String, String> {
-
+    //CBC
     private static final String ALGORITHM = "AES/ECB/PKCS5Padding";
     private final Key key;
     private final Cipher cipher;
