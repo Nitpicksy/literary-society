@@ -1,14 +1,11 @@
 package nitpicksy.literarysociety;
 
-import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.common.RandomPasswordGenerator;
-import nitpicksy.literarysociety.dto.request.SubscriptionPlanDTO;
+import nitpicksy.literarysociety.elastic.service.GenreIndexService;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.repository.*;
 import nitpicksy.literarysociety.service.EmailNotificationService;
-import nitpicksy.literarysociety.service.JWTTokenService;
-import nitpicksy.literarysociety.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -20,27 +17,22 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
     boolean alreadySetup = false;
-
     private RoleRepository roleRepository;
-
     private PermissionRepository permissionRepository;
-
     private UserRepository userRepository;
-
     private WriterRepository writerRepository;
-
     private PriceListRepository priceListRepository;
-
+    private GenreRepository genreRepository;
+    private GenreIndexService genreIndexService;
     private PasswordEncoder passwordEncoder;
-
     private EmailNotificationService emailNotificationService;
-
     private Environment environment;
 
     @Override
@@ -116,6 +108,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         PriceList nextPriceList = new PriceList(null, 2300.00, 1500.00,
                 LocalDate.of(2021, 6, 1));
         priceListRepository.save(nextPriceList);
+
+        // Add existing genres to Genre index
+        List<Genre> allGenres = genreRepository.findAll();
+        allGenres.forEach(genre -> genreIndexService.addGenre(genre));
 
         alreadySetup = true;
     }
@@ -241,14 +237,16 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Autowired
     public SetupDataLoader(RoleRepository roleRepository, PermissionRepository permissionRepository, UserRepository userRepository,
-                           WriterRepository writerRepository, PriceListRepository priceListRepository,
-                           PasswordEncoder passwordEncoder, EmailNotificationService emailNotificationService,
-                           Environment environment) {
+                           WriterRepository writerRepository, PriceListRepository priceListRepository, GenreRepository genreRepository,
+                           GenreIndexService genreIndexService, PasswordEncoder passwordEncoder,
+                           EmailNotificationService emailNotificationService, Environment environment) {
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
         this.userRepository = userRepository;
         this.writerRepository = writerRepository;
         this.priceListRepository = priceListRepository;
+        this.genreRepository = genreRepository;
+        this.genreIndexService = genreIndexService;
         this.passwordEncoder = passwordEncoder;
         this.emailNotificationService = emailNotificationService;
         this.environment = environment;
