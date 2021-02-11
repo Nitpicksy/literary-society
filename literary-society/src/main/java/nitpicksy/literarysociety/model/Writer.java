@@ -28,6 +28,9 @@ public class Writer extends User {
     @JoinColumn(name = "writer_id")
     private Set<PDFDocument> drafts;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "location_id")
+    private Location location;
 
     public Writer(String firstName, String lastName, String city, String country, String email, String username,
                   String password) {

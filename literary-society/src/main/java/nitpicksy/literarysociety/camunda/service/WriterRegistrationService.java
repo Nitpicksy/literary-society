@@ -1,11 +1,13 @@
 package nitpicksy.literarysociety.camunda.service;
 
+import com.byteowls.jopencage.model.JOpenCageLatLng;
 import com.github.nbaars.pwnedpasswords4j.client.PwnedPasswordChecker;
 import nitpicksy.literarysociety.constants.RoleConstants;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Genre;
+import nitpicksy.literarysociety.model.Location;
 import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.Writer;
 import nitpicksy.literarysociety.repository.WriterRepository;
@@ -13,6 +15,7 @@ import nitpicksy.literarysociety.service.GenreService;
 import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.UserService;
 import nitpicksy.literarysociety.service.VerificationService;
+import nitpicksy.literarysociety.utils.LocationProvider;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -77,13 +80,22 @@ public class WriterRegistrationService implements JavaDelegate {
     public Writer create(Writer writer, DelegateExecution execution) throws NoSuchAlgorithmException {
 
         if (userService.findByUsername(writer.getUsername()) != null) {
+            execution.setVariable("errorMessage", "User with same username or email already exists.");
             throw new BpmnError("greskaKreiranjePisca");
         }
 
         if (userService.findByEmail(writer.getEmail()) != null) {
+            execution.setVariable("errorMessage", "User with same username or email already exists.");
             throw new BpmnError("greskaKreiranjePisca");
         }
 
+        JOpenCageLatLng coordinates = LocationProvider.getCoordinates(writer.getCity() + ", " + writer.getCountry());
+        if (coordinates == null) {
+            execution.setVariable("errorMessage", "Please, enter valid city and country names.");
+            throw new BpmnError("greskaKreiranjePisca");
+        }
+
+        writer.setLocation(new Location(null, coordinates.getLat(), coordinates.getLng()));
         writer.setStatus(UserStatus.NON_VERIFIED);
         writer.setRole(userService.findRoleByName(RoleConstants.ROLE_WRITER));
         String password = writer.getPassword();
