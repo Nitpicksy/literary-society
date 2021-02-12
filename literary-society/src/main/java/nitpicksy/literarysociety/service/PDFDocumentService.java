@@ -26,4 +26,7 @@ public interface PDFDocumentService {
     List<WriterDocumentDTO> getDraftsByWriter(String writer);
 
     File download(PDFDocument pdfDocument) throws IOException;
+
+    String extractText(PDFDocument pdfDocument) throws IOException;
+
 }

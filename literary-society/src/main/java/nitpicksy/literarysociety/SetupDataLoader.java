@@ -113,11 +113,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 LocalDate.of(2021, 6, 1));
         priceListRepository.save(nextPriceList);
 
-        // Add existing genres to Genre index
+        // Index existing genres
         List<Genre> allGenres = genreRepository.findAll();
         allGenres.forEach(genre -> genreIndexService.addGenre(genre));
 
-        // Add existing beta-readers to BetaReader index
+        // Index existing beta-readers
         List<Reader> allBetaReaders = readerRepository.findByIsBetaReaderAndStatus(true, UserStatus.ACTIVE);
         allBetaReaders.forEach(betaReader -> betaReaderIndexService.addBetaReader(betaReader));
 

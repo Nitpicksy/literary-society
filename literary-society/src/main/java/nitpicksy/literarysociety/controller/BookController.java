@@ -5,6 +5,7 @@ import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.request.CreateBookRequestDTO;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.dto.response.*;
+import nitpicksy.literarysociety.elastic.service.BookIndexService;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.mapper.*;
@@ -68,6 +69,8 @@ public class BookController {
     private BuyerTokenService buyerTokenService;
 
     private PDFDocumentService pdfDocumentService;
+
+    private BookIndexService bookIndexService;
 
     private MembershipService membershipService;
 
@@ -236,6 +239,9 @@ public class BookController {
         Book book = bookService.createBook(createBookDTO, merchant, image);
         pdfDocumentService.upload(pdfFile, book);
 
+        // Indexing new book
+        bookIndexService.addBook(book);
+
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDB",
                 String.format("Book %s successfully created", book.getId())));
         return new ResponseEntity<>(book, HttpStatus.OK);
@@ -246,8 +252,8 @@ public class BookController {
                           OpinionOfEditorService opinionOfEditorService, CamundaService camundaService, BookDtoMapper bookDtoMapper,
                           BookDetailsDtoMapper bookDetailsDtoMapper, OpinionOfBetaReaderDtoMapper opinionOfBetaReaderDtoMapper,
                           OpinionOfEditorDtoMapper opinionOfEditorDtoMapper, PublicationRequestResponseDtoMapper publReqResponseDtoMapper,
-                          BuyerTokenService buyerTokenService, PDFDocumentService pdfDocumentService, UserService userService, LogService logService,
-                          IPAddressProvider ipAddressProvider, MembershipService membershipService) {
+                          BuyerTokenService buyerTokenService, PDFDocumentService pdfDocumentService, BookIndexService bookIndexService,
+                          UserService userService, LogService logService, IPAddressProvider ipAddressProvider, MembershipService membershipService) {
         this.bookService = bookService;
         this.opinionOfBetaReaderService = opinionOfBetaReaderService;
         this.opinionOfEditorService = opinionOfEditorService;
@@ -259,6 +265,7 @@ public class BookController {
         this.publReqResponseDtoMapper = publReqResponseDtoMapper;
         this.buyerTokenService = buyerTokenService;
         this.pdfDocumentService = pdfDocumentService;
+        this.bookIndexService = bookIndexService;
         this.membershipService = membershipService;
         this.userService = userService;
         this.logService = logService;

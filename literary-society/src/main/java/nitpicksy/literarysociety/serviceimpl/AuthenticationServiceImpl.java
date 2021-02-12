@@ -146,6 +146,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = token.getUser();
         user.setEnabled(true);
 
+        // Index new activated beta-readers
         if (user.getRole().getName().equals(RoleConstants.ROLE_READER) && ((Reader) user).isBetaReader()) {
             betaReaderIndexService.addBetaReader((Reader) user);
         }

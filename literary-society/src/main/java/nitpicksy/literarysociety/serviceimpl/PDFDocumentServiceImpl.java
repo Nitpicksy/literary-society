@@ -11,6 +11,8 @@ import nitpicksy.literarysociety.repository.WriterRepository;
 import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.PDFDocumentService;
 import nitpicksy.literarysociety.utils.IPAddressProvider;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -83,6 +85,17 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
         File file = resource.getFile();
 
         return file;
+    }
+
+    @Override
+    public String extractText(PDFDocument pdfDocument) throws IOException {
+        File pdfFile = download(pdfDocument);
+        PDDocument pdDoc = PDDocument.load(pdfFile);
+        PDFTextStripper pdfStripper = new PDFTextStripper();
+        String text = pdfStripper.getText(pdDoc);
+        pdDoc.close();
+
+        return text;
     }
 
     @Override

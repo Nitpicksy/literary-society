@@ -7,19 +7,23 @@ const Form = (props) => {
     const [fileName, setFileName] = useState('');
     const [filesToValidate, setFilesToValidate] = useState([]);
 
-    useEffect( () => {
+    useEffect(() => {
         setFilesToValidate(props.files)
     }, [props.files])
 
     const inputChangedHandler = (event, controlName) => {
         let errorMessage;
         let value;
-
-        if(event.target.files) {
+        if (event.target.files && filesToValidate) {
             value = [...filesToValidate];
+            handleChooseFile(event);
+        } else if (event.target.files) {
+            console.log("djdjdj")
+            handleChooseFile(event);
+            return;
         } else {
             value = event.target.value;
-        }
+        }        
 
         if (props.controls[controlName].elementType === 'checkbox') {
             value = event.target.checked;
@@ -49,19 +53,17 @@ const Form = (props) => {
         }
         props.setControls(updatedControls);
         props.setFormIsValid(formIsValid);
-        handleChooseFile(event);
-
     }
 
-    const handleChooseFile = ({ target }) => {       
+    const handleChooseFile = ({ target }) => {
         if (target.files) {
             props.setPdfFile(target.files[0]);
-            if(props.removeText) {
+            if (props.removeText) {
                 setFileName('');
             } else {
                 setFileName(target.files[0].name);
             }
-        } 
+        }
     }
 
     const formElementsArray = [];
