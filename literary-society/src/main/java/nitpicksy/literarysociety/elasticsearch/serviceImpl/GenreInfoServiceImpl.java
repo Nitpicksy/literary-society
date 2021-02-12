@@ -24,6 +24,11 @@ public class GenreInfoServiceImpl implements GenreInfoService {
         return genreInfoRepository.findByIdIn(ids);
     }
 
+    @Override
+    public GenreInfo findById(Long id) {
+        return genreInfoRepository.findOneById(id);
+    }
+
     @Autowired
     public GenreInfoServiceImpl(GenreInfoRepository genreInfoRepository) {
         this.genreInfoRepository = genreInfoRepository;

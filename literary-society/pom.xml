@@ -121,6 +121,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-parsers</artifactId>
+            <version>1.17</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>

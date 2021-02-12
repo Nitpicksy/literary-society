@@ -3,6 +3,7 @@ package nitpicksy.literarysociety.serviceimpl;
 import nitpicksy.literarysociety.camunda.service.PublishingInfoService;
 import nitpicksy.literarysociety.dto.camunda.PublicationRequestDTO;
 import nitpicksy.literarysociety.dto.request.CreateBookRequestDTO;
+import nitpicksy.literarysociety.elasticsearch.service.BookInfoService;
 import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.Image;
@@ -99,6 +100,7 @@ public class BookServiceImpl implements BookService {
         Image savedImage = imageService.saveImage(image, IMAGES_PATH, savedBook);
         savedBook.setImage(savedImage);
         savedBook = bookRepository.saveAndFlush(savedBook);
+
         return savedBook;
     }
 

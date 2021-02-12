@@ -34,5 +34,13 @@ public class BookInfo {
 
     @Field(type = FieldType.Boolean)
     private boolean openAccess;
+
+    public BookInfo(Long id, String title, String writers, boolean openAccess,GenreInfo genreInfo) {
+        this.id = id;
+        this.title = title;
+        this.writers = writers;
+        this.openAccess = openAccess;
+        this.genreInfo = genreInfo;
+    }
 }
 

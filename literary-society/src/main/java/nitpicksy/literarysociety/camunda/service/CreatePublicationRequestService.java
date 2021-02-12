@@ -49,6 +49,7 @@ public class CreatePublicationRequestService implements JavaDelegate {
         Genre genre = genreService.findById(id);
 
         Book bookRequest = new Book(writer, map.get("title"), map.get("synopsis"), genre, BookStatus.REQUEST_CREATED);
+        bookRequest.setWritersNames(writer.getFirstName() + " " + writer.getLastName());
 
         List<User> editors = userService.findAllWithRoleAndStatus("ROLE_EDITOR", UserStatus.ACTIVE);
         User mainEditor = editors.get(new Random().nextInt(editors.size()));

@@ -14,13 +14,18 @@ const Form = (props) => {
     const inputChangedHandler = (event, controlName) => {
         let errorMessage;
         let value;
-
-        if(event.target.files) {
+        if(event.target.files && filesToValidate) {
             value = [...filesToValidate];
-        } else {
+            handleChooseFile(event);
+        } else if(event.target.files) {
+            console.log("djdjdj")
+            handleChooseFile(event);
+            return;
+        }else {
             value = event.target.value;
         }
 
+        
         if (props.controls[controlName].elementType === 'checkbox') {
             value = event.target.checked;
         } else {
@@ -49,7 +54,7 @@ const Form = (props) => {
         }
         props.setControls(updatedControls);
         props.setFormIsValid(formIsValid);
-        handleChooseFile(event);
+        
 
     }
 

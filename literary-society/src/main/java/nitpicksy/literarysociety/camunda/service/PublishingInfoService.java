@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.camunda.service;
 
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
+import nitpicksy.literarysociety.elasticsearch.service.BookInfoService;
 import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.Merchant;
@@ -12,6 +13,7 @@ import nitpicksy.literarysociety.repository.PublishingInfoRepository;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.core.env.Environment;
 
@@ -32,6 +34,8 @@ public class PublishingInfoService implements JavaDelegate {
 
     private Environment environment;
 
+    private BookInfoService bookInfoService;
+
     @Override
     public void execute(DelegateExecution execution) {
         List<FormSubmissionDTO> formData = (List<FormSubmissionDTO>) execution.getVariable("formData");
@@ -46,7 +50,9 @@ public class PublishingInfoService implements JavaDelegate {
         Double price = Double.valueOf(map.get("price"));
         Integer discount = Integer.valueOf(map.get("discount"));
         PublishingInfo publishingInfo = new PublishingInfo(numberOfPages, map.get("publisherCity"), getPublisher(), price, discount, savedBook, merchantRepository.findFirstByOrderByIdAsc());
-        publishingInfoRepository.save(publishingInfo);
+        PublishingInfo savedPublishingInfo = publishingInfoRepository.saveAndFlush(publishingInfo);
+        book.setPublishingInfo(savedPublishingInfo);
+        bookInfoService.index(book);
 
         System.out.println("*** Kraj procesa izdavanja knjige ***");
     }
@@ -56,11 +62,14 @@ public class PublishingInfoService implements JavaDelegate {
     }
 
     @Autowired
-    public PublishingInfoService(BookRepository bookRepository, ImageRepository imageRepository, PublishingInfoRepository publishingInfoRepository, MerchantRepository merchantRepository, Environment environment) {
+    public PublishingInfoService(BookRepository bookRepository, ImageRepository imageRepository,
+                                 PublishingInfoRepository publishingInfoRepository, MerchantRepository merchantRepository,
+                                 Environment environment,  BookInfoService bookInfoService) {
         this.bookRepository = bookRepository;
         this.imageRepository = imageRepository;
         this.publishingInfoRepository = publishingInfoRepository;
         this.merchantRepository = merchantRepository;
         this.environment = environment;
+        this.bookInfoService = bookInfoService;
     }
 }

@@ -5,6 +5,7 @@ import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.request.CreateBookRequestDTO;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.dto.response.*;
+import nitpicksy.literarysociety.elasticsearch.service.BookInfoService;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.mapper.*;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,6 +78,8 @@ public class BookController {
     private LogService logService;
 
     private IPAddressProvider ipAddressProvider;
+
+    private BookInfoService bookInfoService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookDTO>> getAllForSale() {
@@ -236,6 +240,8 @@ public class BookController {
         Book book = bookService.createBook(createBookDTO, merchant, image);
         pdfDocumentService.upload(pdfFile, book);
 
+        bookInfoService.index(book);
+
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDB",
                 String.format("Book %s successfully created", book.getId())));
         return new ResponseEntity<>(book, HttpStatus.OK);
@@ -247,7 +253,7 @@ public class BookController {
                           BookDetailsDtoMapper bookDetailsDtoMapper, OpinionOfBetaReaderDtoMapper opinionOfBetaReaderDtoMapper,
                           OpinionOfEditorDtoMapper opinionOfEditorDtoMapper, PublicationRequestResponseDtoMapper publReqResponseDtoMapper,
                           BuyerTokenService buyerTokenService, PDFDocumentService pdfDocumentService, UserService userService, LogService logService,
-                          IPAddressProvider ipAddressProvider, MembershipService membershipService) {
+                          IPAddressProvider ipAddressProvider, MembershipService membershipService, BookInfoService bookInfoService) {
         this.bookService = bookService;
         this.opinionOfBetaReaderService = opinionOfBetaReaderService;
         this.opinionOfEditorService = opinionOfEditorService;
@@ -263,5 +269,6 @@ public class BookController {
         this.userService = userService;
         this.logService = logService;
         this.ipAddressProvider = ipAddressProvider;
+        this.bookInfoService = bookInfoService;
     }
 }

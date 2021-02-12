@@ -48,11 +48,9 @@ public class CreateBookRequestDTO {
     @NotBlank(message = "Publisher is empty")
     private String publisher;
 
-    @Positive
     @NotNull
     private Double price;
 
-    @NotNull
     @Max(100)
     @Min(0)
     private Integer discount;
