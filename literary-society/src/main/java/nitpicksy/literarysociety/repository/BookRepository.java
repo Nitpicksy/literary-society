@@ -12,6 +12,8 @@ import java.util.Set;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
+    List<Book> findByStatus(BookStatus status);
+
     List<Book> findByStatusAndPublishingInfoMerchantSupportsPaymentMethods(BookStatus status, boolean supportsPaymentMethods);
 
     List<Book> findByStatusAndPublishingInfoMerchantSupportsPaymentMethodsAndPublishingInfoMerchantId(BookStatus status, boolean supportsPaymentMethods, Long merchantId);
@@ -21,7 +23,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Book findOneById(Long id);
 
     List<Book> findByWriterId(Long writerId);
-    
+
     Book findFirstByTitleContainingAndWritersNamesContaining(String title, String writer);
 
 }

@@ -92,6 +92,7 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
         File pdfFile = download(pdfDocument);
         PDDocument pdDoc = PDDocument.load(pdfFile);
         PDFTextStripper pdfStripper = new PDFTextStripper();
+        pdfStripper.setLineSeparator(" ");
         String text = pdfStripper.getText(pdDoc);
         pdDoc.close();
 

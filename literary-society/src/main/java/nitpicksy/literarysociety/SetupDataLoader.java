@@ -2,12 +2,13 @@ package nitpicksy.literarysociety;
 
 import nitpicksy.literarysociety.common.RandomPasswordGenerator;
 import nitpicksy.literarysociety.elastic.service.BetaReaderIndexService;
+import nitpicksy.literarysociety.elastic.service.BookIndexService;
 import nitpicksy.literarysociety.elastic.service.GenreIndexService;
+import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.repository.*;
 import nitpicksy.literarysociety.service.EmailNotificationService;
-import nitpicksy.literarysociety.service.ReaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -35,6 +36,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private GenreRepository genreRepository;
     private GenreIndexService genreIndexService;
     private BetaReaderIndexService betaReaderIndexService;
+    private BookRepository bookRepository;
+    private BookIndexService bookIndexService;
     private PasswordEncoder passwordEncoder;
     private EmailNotificationService emailNotificationService;
     private Environment environment;
@@ -120,6 +123,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         // Index existing beta-readers
         List<Reader> allBetaReaders = readerRepository.findByIsBetaReaderAndStatus(true, UserStatus.ACTIVE);
         allBetaReaders.forEach(betaReader -> betaReaderIndexService.addBetaReader(betaReader));
+
+        // Index existing books in stores
+        List<Book> allBooks = bookRepository.findByStatus(BookStatus.IN_STORES);
+        allBooks.forEach(book -> bookIndexService.addBook(book));
 
         alreadySetup = true;
     }
@@ -247,7 +254,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     public SetupDataLoader(RoleRepository roleRepository, PermissionRepository permissionRepository, UserRepository userRepository,
                            WriterRepository writerRepository, ReaderRepository readerRepository, PriceListRepository priceListRepository,
                            GenreRepository genreRepository, GenreIndexService genreIndexService, BetaReaderIndexService betaReaderIndexService,
-                           PasswordEncoder passwordEncoder, EmailNotificationService emailNotificationService, Environment environment) {
+                           BookRepository bookRepository, BookIndexService bookIndexService, PasswordEncoder passwordEncoder,
+                           EmailNotificationService emailNotificationService, Environment environment) {
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
         this.userRepository = userRepository;
@@ -257,6 +265,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         this.genreRepository = genreRepository;
         this.genreIndexService = genreIndexService;
         this.betaReaderIndexService = betaReaderIndexService;
+        this.bookRepository = bookRepository;
+        this.bookIndexService = bookIndexService;
         this.passwordEncoder = passwordEncoder;
         this.emailNotificationService = emailNotificationService;
         this.environment = environment;

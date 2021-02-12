@@ -8,13 +8,11 @@ import nitpicksy.literarysociety.elastic.service.GenreIndexService;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.PDFDocument;
 import nitpicksy.literarysociety.service.PDFDocumentService;
-import nitpicksy.literarysociety.serviceimpl.PDFDocumentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 
 @Service
