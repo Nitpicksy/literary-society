@@ -3,9 +3,11 @@ package nitpicksy.literarysociety.controller;
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.request.CreateBookRequestDTO;
-import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.dto.response.*;
+import nitpicksy.literarysociety.elasticsearch.dto.SearchParamDTO;
+import nitpicksy.literarysociety.elasticsearch.model.BookInfo;
 import nitpicksy.literarysociety.elasticsearch.service.BookInfoService;
+import nitpicksy.literarysociety.elasticsearch.service.SearchService;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.mapper.*;
@@ -13,29 +15,28 @@ import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.service.*;
 import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.apache.commons.io.IOUtils;
-import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -80,6 +81,8 @@ public class BookController {
     private IPAddressProvider ipAddressProvider;
 
     private BookInfoService bookInfoService;
+
+    private SearchService searchService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookDTO>> getAllForSale() {
@@ -247,13 +250,26 @@ public class BookController {
         return new ResponseEntity<>(book, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<BookInfo>> search(@RequestParam @PositiveOrZero int page, @RequestParam @Positive int size,
+                                                 @RequestParam(required = false) String searchValue,
+                                                 @RequestBody List<SearchParamDTO> searchParams){
+
+        if(!searchValue.isEmpty()) {
+            return new ResponseEntity<>(searchService.search(searchValue,page,size), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(searchService.combineSearchParams(searchParams,page,size), HttpStatus.OK);
+    }
+
     @Autowired
     public BookController(BookService bookService, OpinionOfBetaReaderService opinionOfBetaReaderService,
                           OpinionOfEditorService opinionOfEditorService, CamundaService camundaService, BookDtoMapper bookDtoMapper,
                           BookDetailsDtoMapper bookDetailsDtoMapper, OpinionOfBetaReaderDtoMapper opinionOfBetaReaderDtoMapper,
                           OpinionOfEditorDtoMapper opinionOfEditorDtoMapper, PublicationRequestResponseDtoMapper publReqResponseDtoMapper,
                           BuyerTokenService buyerTokenService, PDFDocumentService pdfDocumentService, UserService userService, LogService logService,
-                          IPAddressProvider ipAddressProvider, MembershipService membershipService, BookInfoService bookInfoService) {
+                          IPAddressProvider ipAddressProvider, MembershipService membershipService, BookInfoService bookInfoService,
+                          SearchService searchService) {
         this.bookService = bookService;
         this.opinionOfBetaReaderService = opinionOfBetaReaderService;
         this.opinionOfEditorService = opinionOfEditorService;
@@ -270,5 +286,6 @@ public class BookController {
         this.logService = logService;
         this.ipAddressProvider = ipAddressProvider;
         this.bookInfoService = bookInfoService;
+        this.searchService = searchService;
     }
 }

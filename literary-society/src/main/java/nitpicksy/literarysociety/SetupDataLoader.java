@@ -1,19 +1,16 @@
 package nitpicksy.literarysociety;
 
-import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.common.RandomPasswordGenerator;
-import nitpicksy.literarysociety.dto.request.SubscriptionPlanDTO;
-import nitpicksy.literarysociety.elasticsearch.model.GenreInfo;
+import nitpicksy.literarysociety.elasticsearch.service.BookInfoService;
 import nitpicksy.literarysociety.elasticsearch.service.GenreInfoService;
 import nitpicksy.literarysociety.elasticsearch.service.ReaderInfoService;
+import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.model.*;
 import nitpicksy.literarysociety.repository.*;
+import nitpicksy.literarysociety.service.BookService;
 import nitpicksy.literarysociety.service.EmailNotificationService;
 import nitpicksy.literarysociety.service.GenreService;
-import nitpicksy.literarysociety.service.JWTTokenService;
-import nitpicksy.literarysociety.service.MerchantService;
-import nitpicksy.literarysociety.service.ReaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -53,6 +50,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private GenreService genreService;
 
     private ReaderInfoService readerInfoService;
+
+    private BookInfoService bookInfoService;
+
+    private BookService bookService;
 
     @Override
     @Transactional
@@ -129,6 +130,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         priceListRepository.save(nextPriceList);
 
         createGenres();
+        createBookInfos();
 
         alreadySetup = true;
     }
@@ -239,6 +241,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         }
     }
 
+    private void createBookInfos(){
+        for(Book book: bookService.findByStatus(BookStatus.IN_STORES)){
+            bookInfoService.index(book);
+        }
+    }
     private String getLocalhostURL() {
         return environment.getProperty("LOCALHOST_URL");
     }
@@ -269,7 +276,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     public SetupDataLoader(RoleRepository roleRepository, PermissionRepository permissionRepository, UserRepository userRepository,
                            WriterRepository writerRepository, PriceListRepository priceListRepository,
                            PasswordEncoder passwordEncoder, EmailNotificationService emailNotificationService,
-                           Environment environment,GenreInfoService genreInfoService,GenreService genreService,ReaderInfoService readerInfoService) {
+                           Environment environment,GenreInfoService genreInfoService,GenreService genreService,
+                           ReaderInfoService readerInfoService, BookInfoService bookInfoService,  BookService bookService) {
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
         this.userRepository = userRepository;
@@ -281,5 +289,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         this.genreInfoService = genreInfoService;
         this.genreService = genreService;
         this.readerInfoService = readerInfoService;
+        this.bookInfoService = bookInfoService;
+        this.bookService = bookService;
     }
 }

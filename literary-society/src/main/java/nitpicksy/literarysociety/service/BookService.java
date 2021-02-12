@@ -2,6 +2,7 @@ package nitpicksy.literarysociety.service;
 
 import nitpicksy.literarysociety.dto.camunda.PublicationRequestDTO;
 import nitpicksy.literarysociety.dto.request.CreateBookRequestDTO;
+import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.Merchant;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,6 +13,8 @@ import java.util.Set;
 public interface BookService {
 
     Book save(Book book);
+
+    List<Book> findByStatus(BookStatus status);
 
     List<Book> findAllForSale();
 

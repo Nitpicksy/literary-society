@@ -24,4 +24,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     
     Book findFirstByTitleContainingAndWritersNamesContaining(String title, String writer);
 
+    List<Book> findByStatus(BookStatus status);
+
 }

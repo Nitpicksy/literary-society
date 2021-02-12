@@ -1,9 +1,7 @@
 package nitpicksy.literarysociety.serviceimpl;
 
-import nitpicksy.literarysociety.camunda.service.PublishingInfoService;
 import nitpicksy.literarysociety.dto.camunda.PublicationRequestDTO;
 import nitpicksy.literarysociety.dto.request.CreateBookRequestDTO;
-import nitpicksy.literarysociety.elasticsearch.service.BookInfoService;
 import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.Image;
@@ -20,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.text.DateFormatter;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
@@ -44,6 +41,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book save(Book book) {
         return bookRepository.save(book);
+    }
+
+    @Override
+    public List<Book> findByStatus(BookStatus status) {
+        return bookRepository.findByStatus(status);
     }
 
     @Override
