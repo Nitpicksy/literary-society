@@ -30,6 +30,6 @@ public class ApacheTikaHandler {
         } catch (IOException | SAXException | TikaException e) {
             return null;
         }
-        return handler.toString().replace("\n", " ");
+        return handler.toString().replaceAll("\n", " ");
     }
 }
