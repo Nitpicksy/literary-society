@@ -63,7 +63,8 @@ const WriterUploadDocument = (props) => {
     }
 
     if (controls) {
-        form = <Form controls={controls} setControls={setControls} setFormIsValid={setFormIsValid} setPdfFile={setPdfFile} />;
+        form = <Form controls={controls} setControls={setControls} 
+        setFormIsValid={setFormIsValid} setPdfFile={setPdfFile} />;
     }
 
     return (
