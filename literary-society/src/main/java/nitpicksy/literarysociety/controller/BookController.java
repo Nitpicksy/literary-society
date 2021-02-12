@@ -255,7 +255,7 @@ public class BookController {
                                                  @RequestParam(required = false) String searchValue,
                                                  @RequestBody List<SearchParamDTO> searchParams){
 
-        if(!searchValue.isEmpty()) {
+        if(searchValue != null && !searchValue.isEmpty()) {
             return new ResponseEntity<>(searchService.search(searchValue,page,size), HttpStatus.OK);
         }
 

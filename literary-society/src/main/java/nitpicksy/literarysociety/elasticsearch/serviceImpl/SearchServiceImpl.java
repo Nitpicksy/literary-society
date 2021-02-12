@@ -4,6 +4,7 @@ import nitpicksy.literarysociety.elasticsearch.dto.SearchParamDTO;
 import nitpicksy.literarysociety.elasticsearch.mapper.BookInfoMapper;
 import nitpicksy.literarysociety.elasticsearch.model.BookInfo;
 import nitpicksy.literarysociety.elasticsearch.service.SearchService;
+import nitpicksy.literarysociety.enumeration.SearchType;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.NestedQueryBuilder;
@@ -26,7 +27,17 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public Page<BookInfo> combineSearchParams(List<SearchParamDTO> searchParams, int page, int size) {
-        return null;
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
+        BoolQueryBuilder queryParams = QueryBuilders.boolQuery();
+
+        for (SearchParamDTO searchParam: searchParams) {
+            if(searchParam.getAttributeName().equals("genreInfo")){
+                buildNestedParam(queryParams,searchParam.getPhraseQuery(), searchParam.getSearchValue(), searchParam.getType());
+            }else {
+                buildQueryParam(queryParams,searchParam.getPhraseQuery(), searchParam.getAttributeName(), searchParam.getSearchValue(), searchParam.getType());
+            }
+        }
+        return elasticsearchTemplate.queryForPage(createSearchQuery(nativeSearchQueryBuilder, queryParams, page, size), BookInfo.class, new BookInfoMapper());
     }
 
     @Override
@@ -48,6 +59,46 @@ public class SearchServiceImpl implements SearchService {
         return elasticsearchTemplate.queryForPage(createSearchQuery(nativeSearchQueryBuilder, queryParams, page, size), BookInfo.class, new BookInfoMapper());
     }
 
+
+    private void buildQueryParam(BoolQueryBuilder queryParams, Boolean isPhraseQuery, String attributeName, String searchValue, SearchType type) {
+        if(isPhraseQuery){
+            if(type.equals(SearchType.AND)){
+                queryParams.must(QueryBuilders.matchPhraseQuery(attributeName, searchValue));
+            }else if(type.equals(SearchType.OR)){
+                queryParams.should(QueryBuilders.matchPhraseQuery(attributeName, searchValue));
+            }
+        }else {
+            if(type.equals(SearchType.AND)){
+                queryParams.must(QueryBuilders.commonTermsQuery(attributeName, searchValue));
+            }else if(type.equals(SearchType.OR)){
+                queryParams.should(QueryBuilders.commonTermsQuery(attributeName, searchValue));
+            }
+        }
+
+    }
+
+    private void buildNestedParam(BoolQueryBuilder queryParams, Boolean isPhraseQuery, String searchValue, SearchType type) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        NestedQueryBuilder nestedQuery;
+
+        if(isPhraseQuery){
+            if(type.equals(SearchType.AND)){
+                nestedQuery = QueryBuilders.nestedQuery("genreInfo", boolQuery.must(QueryBuilders.matchPhraseQuery("genreInfo.name", searchValue)), ScoreMode.None);
+                queryParams.must(nestedQuery);
+            }else if(type.equals(SearchType.OR)){
+                nestedQuery = QueryBuilders.nestedQuery("genreInfo", boolQuery.should(QueryBuilders.matchPhraseQuery("genreInfo.name", searchValue)), ScoreMode.None);
+                queryParams.should(nestedQuery);
+            }
+        }else{
+            if(type.equals(SearchType.AND)){
+                nestedQuery = QueryBuilders.nestedQuery("genreInfo", boolQuery.must(QueryBuilders.commonTermsQuery("genreInfo.name", searchValue)), ScoreMode.None);
+                queryParams.must(nestedQuery);
+            }else if(type.equals(SearchType.OR)){
+                nestedQuery = QueryBuilders.nestedQuery("genreInfo", boolQuery.should(QueryBuilders.commonTermsQuery("genreInfo.name", searchValue)), ScoreMode.None);
+                queryParams.should(nestedQuery);
+            }
+        }
+    }
     private SearchQuery createSearchQuery(NativeSearchQueryBuilder searchQueryBuilder, BoolQueryBuilder queryParams, int page, int size){
         return searchQueryBuilder.withQuery(queryParams).withHighlightFields(
                 new HighlightBuilder.Field("content")
