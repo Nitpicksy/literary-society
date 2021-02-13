@@ -20,7 +20,7 @@ public class GenreInfo {
     @Field(type = FieldType.Long)
     private Long id;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text,analyzer = "serbian-analyzer", searchAnalyzer = "serbian-analyzer")
     private String name;
 
 }

@@ -55,6 +55,7 @@ import CreateBook from './components/MerchantBooks/CreateBook/CreateBook';
 import ChoosePaymentMethods from './components/ChoosePaymentMethods/ChoosePaymentMethods';
 import EditorCheckIfBookIsPlagiarism from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/EditorCheckIfBookIsPlagiarism';
 import TransactionList from './components/TransactionList/TransactionList';
+import SearchBooks from './components/SearchBooks/SearchBooks';
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
 // });
@@ -116,6 +117,7 @@ const App = props => {
       
       <Route path="/shopping-cart" render={(props) => <ShoppingCart {...props} />} />
       <Route path="/book/:id" exact render={(props) => <BookDetails {...props} />} />
+      <Route path="/search" exact render={(props) => <SearchBooks {...props} />} />
       <Route path="/" exact render={(props) => <HomePage {...props} />} />
 
     </Switch>
@@ -173,7 +175,8 @@ const App = props => {
 
           <Route path="/shopping-cart" render={(props) => <ShoppingCart {...props} />} />
           <Route path="/book/:id" exact render={(props) => <BookDetails {...props} />} />
-
+          <Route path="/search" exact render={(props) => <SearchBooks {...props} />} />
+          
           <Route path="/error/non-authorized" render={(props) => <NonAuthorized {...props} />} />
           <Route path="/" exact render={(props) => <HomePage {...props} />} />
 

@@ -91,6 +91,7 @@ const CustomToolbar = (props) => {
                 <Typography variant="h6" className={classes.title} onClick={() => redirect('/')} style={{ cursor: 'pointer' }}>
                     Literary Society
                 </Typography>
+                <Button className={classes.button} color="inherit" onClick={() => redirect('/search')}>Search books</Button>
                 <Button className={classes.button} color="inherit" onClick={() => redirect('/shopping-cart')}>Shopping Cart</Button>
                 {toolbarItems}
 
