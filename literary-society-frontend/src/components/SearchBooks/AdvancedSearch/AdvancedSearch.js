@@ -7,11 +7,12 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import SearchIcon from '@material-ui/icons/Search';
+import { toastr } from 'react-redux-toastr';
 
 const AdvancedSearch = (props) => {
 
     const classes = useStyles();
-    const { advanceSearchValues, setAdvanceSearchValues } = props;
+    const { advanceSearchValues, setAdvanceSearchValues,search } = props;
     let gridItems = null;
 
     const inputChangedHandler = (event, advanceSearchValueId, advanceSearchValueType) => {
@@ -108,8 +109,21 @@ const AdvancedSearch = (props) => {
                
             }
             setAdvanceSearchValues(updatedAdvanceSearchValues);
+        }else {
+            toastr.error('Search', "You cannot remove last item.");
         }
        
+    }
+
+    const checkSearchValues = () => {
+        
+        for (let i in advanceSearchValues) {
+            if (advanceSearchValues[i].searchValue === "") {
+                toastr.error('Search', "You have to enter a content value for all items.");
+                return;
+            }
+        }
+        search();
     }
 
     return (
@@ -159,7 +173,7 @@ const AdvancedSearch = (props) => {
 
                     <div className={classes.button}>
                         <Button type="submit" color="primary" variant="contained"
-                         startIcon = {<SearchIcon/>} className={classes.submit}>Search</Button>
+                         startIcon = {<SearchIcon/>} className={classes.submit} onClick = {checkSearchValues}>Search</Button>
                     </div>
                 </Paper>
 

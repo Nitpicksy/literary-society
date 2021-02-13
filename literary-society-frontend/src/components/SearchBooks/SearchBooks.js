@@ -29,7 +29,7 @@ const SearchBooks = (props) => {
         }
     ]);
 
-    const { fetchBooks } = props;
+    const { books } = props;
     let bookCards = null;
 
     // if (props.books && Array.isArray(props.books) && props.books.length) {
@@ -45,8 +45,13 @@ const SearchBooks = (props) => {
     //         </Card>;
     // }
 
-    const searchAllValue = () => {
-        console.log(searchValue)
+    const search = (type) => {
+        setPage(0);
+        if(type === "searchAllValue"){
+            props.searchAll(page,searchValue);
+        }else {
+            props.combineSearchParams(page,advanceSearchValues);
+        }
     }
 
     return (
@@ -64,7 +69,7 @@ const SearchBooks = (props) => {
                     <SearchBar
                         value={searchValue}
                         onChange={(newValue) => setSearchValue(newValue)}
-                        onRequestSearch={searchAllValue} />
+                        onRequestSearch={() => search("searchAllValue")} />
                 </Grid>
                 <Grid item md={3}>
                     <Button type="submit" className={classes.button} variant="outlined" startIcon={<ExpandMoreIcon />}
@@ -74,7 +79,7 @@ const SearchBooks = (props) => {
                 <Grid item md={1}></Grid>
             </Grid>
             {enableAdvancedSearch ? <AdvancedSearch  advanceSearchValues = {advanceSearchValues} 
-            setAdvanceSearchValues = {setAdvanceSearchValues} /> : null}
+            setAdvanceSearchValues = {setAdvanceSearchValues}  search = {() => search("combineSearch")}/> : null}
 
             {/* <Grid container spacing={3} align="center" justify="center">
                 {bookCards}
@@ -84,18 +89,17 @@ const SearchBooks = (props) => {
 };
 
 
-// const mapStateToProps = state => {
-//     return {
-//         books: state.homePage.books
-//     }
-// };
+const mapStateToProps = state => {
+    return {
+        books: state.searchBooks.books
+    }
+};
 
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         fetchBooks: () => dispatch(actions.fetchBooks()),
-//     }
-// };
+const mapDispatchToProps = dispatch => {
+    return {
+        searchAll: (page,searchValue) => dispatch(actions.searchAll(page,searchValue)),
+        combineSearchParams: (page,searchParams) => dispatch(actions.combineSearchParams(page,searchParams)),
+    }
+};
 
-// export default connect(mapStateToProps, mapDispatchToProps)(SearchBooks);
-
-export default SearchBooks;
+export default connect(mapStateToProps, mapDispatchToProps)(SearchBooks);
