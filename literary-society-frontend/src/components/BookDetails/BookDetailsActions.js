@@ -10,17 +10,28 @@ export const fetchBookSuccess = (book) => {
     };
 };
 
+export const fetchBookStart = () => {
+    return {
+        type: actionTypes.FETCH_BOOK_START,
+    };
+};
+
 export const fetchBookFail = () => {
     return {
         type: actionTypes.FETCH_BOOK_FAIL
     };
 };
 
-export const fetchBook = (id, history) => {
+export const fetchBook = (id, history,needToAddToCart) => {
     return dispatch => {
+        dispatch(fetchBookStart());
         axios.get(`/books/${id}`)
             .then(response => {
                 dispatch(fetchBookSuccess(response.data));
+                console.log(needToAddToCart)
+                if(needToAddToCart){
+                    addToCart(response.data.bookDTO);
+                }
             })
             .catch(err => {
                 if (err.response) {
@@ -33,6 +44,29 @@ export const fetchBook = (id, history) => {
             });
     };
 };
+
+export const addToCart = (book) => {
+    let shoppingCart = new Map(JSON.parse(localStorage.getItem('shoppingCart')));
+
+    if (!shoppingCart) {
+        shoppingCart = new Map();
+    }
+
+    let merchantBooks = shoppingCart.get(book.merchantName);
+    if (!merchantBooks) {
+        merchantBooks = [];
+    }
+
+    const found = merchantBooks.find(element => element.id === book.id);
+    if (!found) {
+        merchantBooks.push(book);
+        shoppingCart.set(book.merchantName, merchantBooks);
+        toastr.success('Shopping cart', 'Successfully added book in shopping cart');
+        localStorage.setItem('shoppingCart', JSON.stringify(Array.from(shoppingCart.entries())));
+    } else {
+        toastr.error('Shopping cart', 'This book is already added');
+    }
+}
 
 export const download = (id,title) => {
     return dispatch => {

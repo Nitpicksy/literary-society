@@ -6,6 +6,11 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
+        case actionTypes.FETCH_BOOK_START:
+            return {
+                ...state,
+                book: null,
+            };
         case actionTypes.FETCH_BOOK_SUCCESS:
             return {
                 ...state,

@@ -6,6 +6,11 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
+        case actionTypes.SEARCH_BOOKS_CLEAR_STATE:
+            return {
+                ...state,
+                books: null,
+            };
         case actionTypes.SEARCH_BOOKS_SUCCESS:
             return {
                 ...state,

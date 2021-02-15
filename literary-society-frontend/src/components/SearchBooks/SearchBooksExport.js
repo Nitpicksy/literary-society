@@ -1,4 +1,5 @@
 export {
     searchAll,
-    combineSearchParams
+    combineSearchParams,
+    clearState
 } from './SearchBooksActions';

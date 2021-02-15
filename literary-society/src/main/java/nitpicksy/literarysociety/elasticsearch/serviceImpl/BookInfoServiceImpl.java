@@ -30,7 +30,7 @@ public class BookInfoServiceImpl implements BookInfoService {
     @Override
     public BookInfo index(Book book) {
         BookInfo bookInfo = new BookInfo(book.getId(), book.getTitle(), book.getWritersNames(),
-                book.getPublishingInfo().getPrice() != null && book.getPublishingInfo().getPrice() < 0,
+                book.getPublishingInfo().getPrice() != null && book.getPublishingInfo().getPrice() <= 0,
                 genreInfoService.findById(book.getGenre().getId()));
 
         try {

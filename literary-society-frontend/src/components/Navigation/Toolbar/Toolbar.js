@@ -7,6 +7,8 @@ import WriterToolbar from './WriterToolbar';
 import MerchantToolbar from './MerchantToolbar';
 import AdminToolbar from './AdminToolbar';
 import ReaderToolbar from './ReaderToolbar';
+import * as actions from '../../SearchBooks/SearchBooksActions';
+import { connect } from 'react-redux';
 
 const CustomToolbar = (props) => {
     const classes = useStyles();
@@ -19,7 +21,7 @@ const CustomToolbar = (props) => {
     const roleLecturer = "ROLE_LECTURER";
     const roleMerchant = "ROLE_MERCHANT";
     const roleCommitteeMember = "ROLE_COMMITTEE_MEMBER";
-
+    const { clearState } = props;
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleClick = (event) => {
@@ -57,6 +59,13 @@ const CustomToolbar = (props) => {
         </React.Fragment>
     );
 
+    const redirectToSearch = () => {
+        localStorage.removeItem("searchValue")
+        localStorage.removeItem("advanceSearchValues")
+        clearState();
+        redirect('/search');
+    }
+
     if (props.isAuthenticated) {
 
         toolbarItems = (
@@ -91,7 +100,7 @@ const CustomToolbar = (props) => {
                 <Typography variant="h6" className={classes.title} onClick={() => redirect('/')} style={{ cursor: 'pointer' }}>
                     Literary Society
                 </Typography>
-                <Button className={classes.button} color="inherit" onClick={() => redirect('/search')}>Search books</Button>
+                <Button className={classes.button} color="inherit" onClick={() => redirectToSearch()}>Search books</Button>
                 <Button className={classes.button} color="inherit" onClick={() => redirect('/shopping-cart')}>Shopping Cart</Button>
                 {toolbarItems}
 
@@ -100,4 +109,10 @@ const CustomToolbar = (props) => {
     );
 }
 
-export default CustomToolbar;
+const mapDispatchToProps = dispatch => {
+    return {
+        clearState:  () => dispatch(actions.clearState()),
+    }
+};
+
+export default connect(null, mapDispatchToProps)(CustomToolbar);

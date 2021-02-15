@@ -27,7 +27,7 @@ const BookDetails = (props) => {
     useEffect(() => {
         const { id } = props.match.params;
         if (id) {
-            fetchBook(id, history);
+            fetchBook(id, history, false);
             setLoading(false);
         }
 
@@ -145,7 +145,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchBook: (id, history) => dispatch(actions.fetchBook(id, history)),
+        fetchBook: (id, history, addToCart) => dispatch(actions.fetchBook(id, history,addToCart)),
         download: (id,title) => dispatch(actions.download(id,title))
     }
 };

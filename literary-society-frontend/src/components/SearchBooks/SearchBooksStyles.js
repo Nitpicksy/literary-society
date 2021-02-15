@@ -34,4 +34,8 @@ export const useStyles = makeStyles((theme) => ({
         flexDirection: 'column',
         alignItems: 'center',
     },
+    pageNum: {
+        color: 'rgba(0, 0, 0, 0.70)',
+        margin: theme.spacing(1)
+    }
 }));

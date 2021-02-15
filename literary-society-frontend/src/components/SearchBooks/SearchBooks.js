@@ -1,30 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import * as actions from './SearchBooksActions';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
 import { useStyles } from './SearchBooksStyles';
 import { connect } from 'react-redux';
 import SearchBar from "material-ui-search-bar";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import SearchIcon from '@material-ui/icons/Search';
-import { CssBaseline, Button, Typography, Container, Avatar, Grid, Paper } from '@material-ui/core';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import { CssBaseline, Button, Typography, Container, Avatar, Grid, Paper, IconButton, Box } from '@material-ui/core';
 import AdvancedSearch from './AdvancedSearch/AdvancedSearch';
+import SearchResult from './SearchResult/SearchResult';
 
 const SearchBooks = (props) => {
 
     const classes = useStyles();
     const [page, setPage] = useState(0);
-    const [isLastPage, setIsLastPage] = useState(0);
+    const [searchAllValue, setSearchAllValue] = useState(false);
+
     const [searchValue, setSearchValue] = useState("");
     const [enableAdvancedSearch, setEnableAdvancedSearch] = useState(false);
     const [advanceSearchValues, setAdvanceSearchValues] = useState([
         {
             "id": 0,
-            "attributeName":"title",
-            "searchValue":"",
-            "phraseQuery":false,
+            "attributeName": "title",
+            "searchValue": "",
+            "phraseQuery": false,
             "type": "AND"
         }
     ]);
@@ -32,26 +32,71 @@ const SearchBooks = (props) => {
     const { books } = props;
     let bookCards = null;
 
-    // if (props.books && Array.isArray(props.books) && props.books.length) {
-    //     bookCards = props.books.map(book => {
-    //         return <BookCard key={book.id} book={book} forShoppingCart={false} />
-    //     });
-    // } else {
-    //     bookCards =
-    //         <Card className={classes.card}>
-    //             <CardContent className={classes.cardContent}>
-    //                 <Typography component="h3" variant="h5">No available books for sale at the moment.</Typography>
-    //             </CardContent>
-    //         </Card>;
-    // }
+    useEffect(() => {
+        const search = JSON.parse(localStorage.getItem("searchValue"))
+        const advancedSearch = JSON.parse(localStorage.getItem("advanceSearchValues"))
+
+        if (search) {
+            setSearchValue(search);
+        }
+        if (advancedSearch && advancedSearch.length > 0) {
+            setAdvanceSearchValues(advancedSearch);
+        }
+        localStorage.removeItem("searchValue")
+        localStorage.removeItem("advanceSearchValues")
+    }, []);
+
+    if (books && Array.isArray(books) && books.length) {
+        bookCards = books.map(book => {
+            return <SearchResult key={book.id} book={book} forShoppingCart={false} searchValue={searchValue} advanceSearchValues={advanceSearchValues} />
+        });
+    }
 
     const search = (type) => {
         setPage(0);
-        if(type === "searchAllValue"){
-            props.searchAll(page,searchValue);
-        }else {
-            props.combineSearchParams(page,advanceSearchValues);
+        if (type === "searchAllValue") {
+            setSearchAllValue(true);
+            props.searchAll(page, searchValue);
+        } else {
+            props.combineSearchParams(page, advanceSearchValues);
+            setSearchAllValue(false);
+            setSearchValue("");
+            setEnableAdvancedSearch(false);
         }
+    }
+
+    const next = () => {
+        setPage(page + 1);
+        if (searchAllValue) {
+            props.searchAll(page + 1, searchValue);
+        } else {
+            props.combineSearchParams(page + 1, advanceSearchValues);
+        }
+    }
+
+    const previous = () => {
+        setPage(page - 1);
+        if (searchAllValue) {
+            props.searchAll(page - 1, searchValue);
+        } else {
+            props.combineSearchParams(page - 1, advanceSearchValues);
+        }
+    }
+    let pagination = null;
+    if (books && books.length > 0) {
+        pagination = <Box display="flex" justifyContent="center" alignItems="center" style={{ marginTop: 10 }}>
+            {page === 0 ? null : <IconButton aria-label="prevoius" component="span"
+             onClick={() => previous()}>
+                <ChevronLeftIcon />
+            </IconButton>}
+
+            <Typography variant="subtitle1" className={classes.pageNum}>{page + 1}</Typography>
+            {books && books.length < 4 ? null : <IconButton aria-label="next" component="span"
+             onClick={() => next()}>
+                <ChevronRightIcon />
+            </IconButton>}
+
+        </Box>;
     }
 
     return (
@@ -78,12 +123,13 @@ const SearchBooks = (props) => {
                 </Grid>
                 <Grid item md={1}></Grid>
             </Grid>
-            {enableAdvancedSearch ? <AdvancedSearch  advanceSearchValues = {advanceSearchValues} 
-            setAdvanceSearchValues = {setAdvanceSearchValues}  search = {() => search("combineSearch")}/> : null}
+            {enableAdvancedSearch ? <AdvancedSearch advanceSearchValues={advanceSearchValues}
+                setAdvanceSearchValues={setAdvanceSearchValues} search={() => search("combineSearch")} /> : null}
 
-            {/* <Grid container spacing={3} align="center" justify="center">
+            <Grid container spacing={3} align="center" justify="center" style={{ marginTop: 10 }} >
                 {bookCards}
-            </Grid> */}
+            </Grid>
+            {pagination}
         </Container>
     );
 };
@@ -97,8 +143,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        searchAll: (page,searchValue) => dispatch(actions.searchAll(page,searchValue)),
-        combineSearchParams: (page,searchParams) => dispatch(actions.combineSearchParams(page,searchParams)),
+        searchAll: (page, searchValue) => dispatch(actions.searchAll(page, searchValue)),
+        combineSearchParams: (page, searchParams) => dispatch(actions.combineSearchParams(page, searchParams)),
     }
 };
 
