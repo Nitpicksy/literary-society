@@ -55,6 +55,7 @@ import CreateBook from './components/MerchantBooks/CreateBook/CreateBook';
 import ChoosePaymentMethods from './components/ChoosePaymentMethods/ChoosePaymentMethods';
 import EditorCheckIfBookIsPlagiarism from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/EditorCheckIfBookIsPlagiarism';
 import TransactionList from './components/TransactionList/TransactionList';
+import SearchResults from './components/Search/SearchResults/SearchResults';
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
 // });
@@ -65,11 +66,11 @@ const App = props => {
 
   const roleWriter = "ROLE_WRITER";
   const roleReader = "ROLE_READER";
-  const roleEditor ="ROLE_EDITOR";
-  const roleCommitteeMember ="ROLE_COMMITTEE_MEMBER";
-  const roleAdmin ="ROLE_ADMIN";
-  const roleLecturer="ROLE_LECTURER";
-  const roleMerchant ="ROLE_MERCHANT";
+  const roleEditor = "ROLE_EDITOR";
+  const roleCommitteeMember = "ROLE_COMMITTEE_MEMBER";
+  const roleAdmin = "ROLE_ADMIN";
+  const roleLecturer = "ROLE_LECTURER";
+  const roleMerchant = "ROLE_MERCHANT";
 
   useEffect(() => {
     onTryAutoSignUp();
@@ -113,7 +114,8 @@ const App = props => {
       <Route path="/payment/success/:id" render={(props) => <PaymentSuccess {...props} />} />
       <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
       <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
-      
+
+      <Route path="/search-results" render={(props) => <SearchResults {...props} />} />
       <Route path="/shopping-cart" render={(props) => <ShoppingCart {...props} />} />
       <Route path="/book/:id" exact render={(props) => <BookDetails {...props} />} />
       <Route path="/" exact render={(props) => <HomePage {...props} />} />
@@ -126,31 +128,31 @@ const App = props => {
       <GuardProvider guards={[requireRole]}>
         <Switch>
           <GuardedRoute path="/publication-requests" render={(props) => <PublicationRequests {...props} />} meta={{ roles: [roleWriter] }} />
-          <GuardedRoute path="/create-publication-request" render={(props) => <CreatePublicationRequest {...props} />} meta={{ roles:  [roleWriter] }} />
+          <GuardedRoute path="/create-publication-request" render={(props) => <CreatePublicationRequest {...props} />} meta={{ roles: [roleWriter] }} />
           <Route path="/writer-upload-document" render={(props) => <WriterUploadDocument {...props} />} meta={{ roles: [roleWriter] }} />
           <Route path="/opinions-of-beta-readers" render={(props) => <OpinionsOfBetaReaders {...props} />} meta={{ roles: [roleWriter] }} />
           <Route path="/opinion-of-editor" render={(props) => <OpinionOfEditor {...props} />} meta={{ roles: [roleWriter] }} />
-          
+
           <Route path="/check-if-book-is-plagiarism" render={(props) => <EditorCheckIfBookIsPlagiarism {...props} />} meta={{ roles: [roleEditor] }} />
           <Route path="/publication-request" render={(props) => <PublicationRequest {...props} />} meta={{ roles: [roleEditor] }} />
           <Route path="/download-document" render={(props) => <EditorDownloadDocument {...props} />} meta={{ roles: [roleEditor, roleReader] }} />
           <Route path="/editor-choose-beta-readers" render={(props) => <EditorChooseBetaReaders {...props} />} meta={{ roles: [roleEditor] }} />
           <Route path="/publishing-info" render={(props) => <PublishingInfo {...props} />} meta={{ roles: [roleEditor] }} />
 
-          <Route path="/writer-membership-upload" render={(props) => <WriterUploadWork {...props} />} meta={{ roles:  [roleWriter] }}/>
-          <Route path="/voting" render={(props) => <CommitteeVoting {...props} />} meta={{ roles:  [roleWriter, roleCommitteeMember] }}/>
-          
-          <Route path="/membership" render={(props) => <Membership {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
-          <Route path="/subscription/cancel/success" render={(props) => <CancelSubscriptionSuccess {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
-          <Route path="/subscription/success" render={(props) => <SubscriptionSuccess {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
-          <Route path="/subscription" render={(props) => <Subscription {...props} />} meta={{ roles:  [roleWriter, roleReader] }}/>
-          
+          <Route path="/writer-membership-upload" render={(props) => <WriterUploadWork {...props} />} meta={{ roles: [roleWriter] }} />
+          <Route path="/voting" render={(props) => <CommitteeVoting {...props} />} meta={{ roles: [roleWriter, roleCommitteeMember] }} />
+
+          <Route path="/membership" render={(props) => <Membership {...props} />} meta={{ roles: [roleWriter, roleReader] }} />
+          <Route path="/subscription/cancel/success" render={(props) => <CancelSubscriptionSuccess {...props} />} meta={{ roles: [roleWriter, roleReader] }} />
+          <Route path="/subscription/success" render={(props) => <SubscriptionSuccess {...props} />} meta={{ roles: [roleWriter, roleReader] }} />
+          <Route path="/subscription" render={(props) => <Subscription {...props} />} meta={{ roles: [roleWriter, roleReader] }} />
+
           <Route path="/purchased-books" render={(props) => <PurchasedBooks {...props} />} meta={{ roles: [roleReader] }} />
-          
-          <Route path="/plagiarism-complaint" render={(props) => <PlagiarismComplaint {...props} />} meta={{ roles:  [roleWriter] }}/>
-          <Route path="/plagiarism" render={(props) => <AssignReviewBoard {...props} />} meta={{ roles:  [roleEditor] }}/>
-          <Route path="/plagiarism-review-download" render={(props) => <EditorDownloadPlagiarismDocuments {...props} /> } meta={{roles: [roleEditor]}} />
-          <Route path="/plagiarism-vote" render={(props) => <CommitteePlagiarismVote {...props} /> } meta={{roles: [roleCommitteeMember]}} />
+
+          <Route path="/plagiarism-complaint" render={(props) => <PlagiarismComplaint {...props} />} meta={{ roles: [roleWriter] }} />
+          <Route path="/plagiarism" render={(props) => <AssignReviewBoard {...props} />} meta={{ roles: [roleEditor] }} />
+          <Route path="/plagiarism-review-download" render={(props) => <EditorDownloadPlagiarismDocuments {...props} />} meta={{ roles: [roleEditor] }} />
+          <Route path="/plagiarism-vote" render={(props) => <CommitteePlagiarismVote {...props} />} meta={{ roles: [roleCommitteeMember] }} />
 
           <GuardedRoute path="/payment-data" render={(props) => <MerchantPaymentData {...props} />} meta={{ roles: [roleMerchant] }} />
           <GuardedRoute path="/merchant-books" render={(props) => <MerchantBooks {...props} />} meta={{ roles: [roleMerchant] }} />
@@ -162,7 +164,7 @@ const App = props => {
           <GuardedRoute path="/choose-payment-methods" render={(props) => <ChoosePaymentMethods {...props} />} meta={{ roles: [roleAdmin] }} />
           <GuardedRoute path="/transactions" render={(props) => <TransactionList {...props} />} meta={{ roles: [roleAdmin] }} />
 
-          <Route path="/tasks" render={(props) => <Tasks {...props} />} meta={{ roles: [roleEditor,roleWriter,roleReader, roleLecturer] }} />
+          <Route path="/tasks" render={(props) => <Tasks {...props} />} meta={{ roles: [roleEditor, roleWriter, roleReader, roleLecturer] }} />
 
           <Route path="/sign-out" render={(props) => <Logout {...props} />} />
           <Route path="/change-password" render={(props) => <ChangePassword {...props} />} />
@@ -185,7 +187,7 @@ const App = props => {
 
   return (
     <div>
-      <CustomToolbar role={props.role} isAuthenticated = {props.isAuthenticated}/>
+      <CustomToolbar role={props.role} isAuthenticated={props.isAuthenticated} />
       <Suspense fallback={<p>Loading...</p>}>{routes}</Suspense>
       <main>
         {props.children}

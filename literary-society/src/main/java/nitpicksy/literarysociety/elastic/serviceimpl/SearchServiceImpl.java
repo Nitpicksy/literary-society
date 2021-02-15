@@ -44,7 +44,6 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public Page<BookIndexingUnit> combinedSearch(QueryDTO query) {
-
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
         for (QueryParamDTO queryParam : query.getQueryParams()) {
@@ -52,9 +51,9 @@ public class SearchServiceImpl implements SearchService {
             String value = queryParam.getValue();
 
             if (name.equals("genre")) {
-                buildNestedParam(boolQuery, queryParam.getIsPhrase(), value, queryParam.getBoolQueryType());
+                includeNestedParam(boolQuery, queryParam.getIsPhrase(), value, queryParam.getBoolQueryType());
             } else {
-                buildQueryParam(boolQuery, queryParam.getIsPhrase(), name, value, queryParam.getBoolQueryType());
+                includeQueryParam(boolQuery, queryParam.getIsPhrase(), name, value, queryParam.getBoolQueryType());
             }
         }
 
@@ -73,10 +72,11 @@ public class SearchServiceImpl implements SearchService {
         return searchQuery
                 .withQuery(paramsQuery)
                 .withHighlightFields(highlight)
-                .withPageable(PageRequest.of(pageNum - 1, pageSize)).build();
+                .withPageable(PageRequest.of(pageNum - 1, pageSize))
+                .build();
     }
 
-    private void buildQueryParam(BoolQueryBuilder searchQuery, boolean isPhrase, String name, String value, BoolQueryType boolQueryType) {
+    private void includeQueryParam(BoolQueryBuilder searchQuery, boolean isPhrase, String name, String value, BoolQueryType boolQueryType) {
         if (boolQueryType == BoolQueryType.AND && isPhrase) {
             searchQuery.must(QueryBuilders.matchPhraseQuery(name, value));
         } else if (boolQueryType == BoolQueryType.AND) {
@@ -88,7 +88,7 @@ public class SearchServiceImpl implements SearchService {
         }
     }
 
-    private void buildNestedParam(BoolQueryBuilder searchQuery, boolean isPhrase, String value, BoolQueryType boolQueryType) {
+    private void includeNestedParam(BoolQueryBuilder searchQuery, boolean isPhrase, String value, BoolQueryType boolQueryType) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         NestedQueryBuilder nestedQuery;
 

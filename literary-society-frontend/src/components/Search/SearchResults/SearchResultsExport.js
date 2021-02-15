@@ -1,0 +1,3 @@
+export {
+    searchSuccess,
+} from './SearchResultsAction';

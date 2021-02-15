@@ -8,7 +8,7 @@ import { reducer as toastrReducer } from 'react-redux-toastr';
 import ReduxToastr from 'react-redux-toastr';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import thunk from 'redux-thunk';
 import reportWebVitals from './reportWebVitals';
 import signInReducer from './components/Authentication/SignIn/SignInReducer';
@@ -48,6 +48,7 @@ import merchantBookListReducer from './components/MerchantBooks/MerchantBooksRed
 import merchantBookReducer from './components/MerchantBooks/MerchantBookDetails/MerchantBookDetailsReducer';
 import editorCheckIfBookIsPlagiarismReducer from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/EditorCheckIfBookIsPlagiarismReducer';
 import transactionListReducer from './components/TransactionList/TransactionListReducer';
+import searchResultsReducer from './components/Search/SearchResults/SearchResultsReducer';
 
 const rootReducer = combineReducers({
     toastr: toastrReducer,
@@ -75,17 +76,20 @@ const rootReducer = combineReducers({
     opinionOfEditor: opinionOfEditorReducer,
     publishingInfo: publishingInfoReducer,
     subscription: subscriptionReducer,
-    merchantList: merchantListReducer, 
+    merchantList: merchantListReducer,
     purchasedBooks: purchasedBooksReducer,
     plagiarismComplaint: plagiarismComplaintReducer,
     assignReviewBoard: assignReviewBoardReducer,
     editorsDownloadPlagiarismDocuments: editorsDownloadPlagiarismDocumentsReducer,
     committeePlagiarismVote: committeePlagiarismVoteReducer,
-    merchantBookList:merchantBookListReducer,
-    merchantBook:merchantBookReducer,
-    editorCheckIfBookIsPlagiarism:editorCheckIfBookIsPlagiarismReducer,
-    transactionList: transactionListReducer
+    merchantBookList: merchantBookListReducer,
+    merchantBook: merchantBookReducer,
+    editorCheckIfBookIsPlagiarism: editorCheckIfBookIsPlagiarismReducer,
+    transactionList: transactionListReducer,
+    searchResults: searchResultsReducer,
 });
+
+const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
 const persistConfig = {
     key: 'root',
@@ -97,8 +101,8 @@ const persistConfig = {
 const appReducer = (state, action) => {
     if (action.type === 'SIGN_OUT') {
         state = undefined
-      }
-    
+    }
+
     return rootReducer(state, action)
 }
 const pReducer = persistReducer(persistConfig, appReducer);
@@ -106,7 +110,7 @@ const pReducer = persistReducer(persistConfig, appReducer);
 
 // const pReducer = persistReducer(persistConfig, rootReducer);
 
-const store = createStore(pReducer,applyMiddleware(thunk));
+const store = createStore(pReducer, composeEnhancers(applyMiddleware(thunk)));
 const persistor = persistStore(store);
 
 const app = (

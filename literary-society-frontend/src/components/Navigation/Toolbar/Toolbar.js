@@ -7,6 +7,7 @@ import WriterToolbar from './WriterToolbar';
 import MerchantToolbar from './MerchantToolbar';
 import AdminToolbar from './AdminToolbar';
 import ReaderToolbar from './ReaderToolbar';
+import BaseSearch from '../../Search/BaseSearch/BaseSearch';
 
 const CustomToolbar = (props) => {
     const classes = useStyles();
@@ -28,7 +29,7 @@ const CustomToolbar = (props) => {
 
     const handleClose = () => {
         setAnchorEl(null);
-    };  
+    };
 
     const routeChange = (path) => {
         history.push(path);
@@ -46,8 +47,8 @@ const CustomToolbar = (props) => {
         history.push(path);
     }
     let tasks = null;
-    if(props.isAuthenticated && (checkRole(roleWriter) || checkRole(roleEditor) || checkRole(roleReader) || checkRole(roleLecturer) || checkRole(roleCommitteeMember))){
-        tasks = <Button className={classes.button} color="inherit" onClick={() => redirect('/tasks')}>Tasks</Button>;
+    if (props.isAuthenticated && (checkRole(roleWriter) || checkRole(roleEditor) || checkRole(roleReader) || checkRole(roleLecturer) || checkRole(roleCommitteeMember))) {
+        tasks = <Button color="inherit" onClick={() => redirect('/tasks')}>Tasks</Button>;
     }
 
     let toolbarItems = (
@@ -88,12 +89,13 @@ const CustomToolbar = (props) => {
     return (
         <AppBar position="static">
             <Toolbar>
-                <Typography variant="h6" className={classes.title} onClick={() => redirect('/')} style={{ cursor: 'pointer' }}>
+                <Typography variant="h6" onClick={() => redirect('/')} style={{ cursor: 'pointer' }}>
                     Literary Society
                 </Typography>
-                <Button className={classes.button} color="inherit" onClick={() => redirect('/shopping-cart')}>Shopping Cart</Button>
+                <BaseSearch />
+                <div className={classes.grow} />
+                <Button color="inherit" onClick={() => redirect('/shopping-cart')}>Shopping Cart</Button>
                 {toolbarItems}
-
             </Toolbar>
         </AppBar>
     );

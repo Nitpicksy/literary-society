@@ -4,7 +4,7 @@ export const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
     },
-    title: {
+    grow: {
         flexGrow: 1,
     },
     titleLink: {

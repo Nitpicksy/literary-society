@@ -3,7 +3,6 @@ import * as actions from './BookDetailsActions';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -57,7 +56,7 @@ const BookDetails = (props) => {
     }
 
     const download = () => {
-        props.download(props.bookDetails.bookDTO.id,props.bookDetails.bookDTO.title);
+        props.download(props.bookDetails.bookDTO.id, props.bookDetails.bookDTO.title);
     }
 
     if (!loading && props.bookDetails) {
@@ -113,14 +112,13 @@ const BookDetails = (props) => {
                 </Grid>
             </Paper>;
     } else {
-        <LinearProgress />
-        bookData = 
-        <div>
-            <Avatar className={classes.avatar}>
-                <MenuBookIcon />
-            </Avatar>
-            <Typography component="h1" variant="h4">Available book</Typography>
-        </div>;
+        bookData =
+            <div>
+                <Avatar className={classes.avatar}>
+                    <MenuBookIcon />
+                </Avatar>
+                <Typography component="h1" variant="h4">Loading...</Typography>
+            </div>;
     }
 
 
@@ -146,7 +144,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchBook: (id, history) => dispatch(actions.fetchBook(id, history)),
-        download: (id,title) => dispatch(actions.download(id,title))
+        download: (id, title) => dispatch(actions.download(id, title))
     }
 };
 
