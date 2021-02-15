@@ -19,7 +19,6 @@ const SearchResult = (props) => {
     const history = useHistory();
     const { fetchBook } = props;
 
-    
     const addToCart = () => {
         fetchBook(props.book.id, history, true)
     }
@@ -31,6 +30,7 @@ const SearchResult = (props) => {
     const redirectToDetailsPage = () => {
         localStorage.setItem('searchValue', JSON.stringify(props.searchValue));
         localStorage.setItem('advanceSearchValues', JSON.stringify(Array.from(props.advanceSearchValues)));
+        localStorage.setItem('page', JSON.stringify(props.page));
         history.push(`/book/${props.book.id}`);
     } 
     

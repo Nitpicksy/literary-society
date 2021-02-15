@@ -35,20 +35,26 @@ const SearchBooks = (props) => {
     useEffect(() => {
         const search = JSON.parse(localStorage.getItem("searchValue"))
         const advancedSearch = JSON.parse(localStorage.getItem("advanceSearchValues"))
-
+        const pageNum = JSON.parse(localStorage.getItem("page"))
         if (search) {
             setSearchValue(search);
         }
         if (advancedSearch && advancedSearch.length > 0) {
             setAdvanceSearchValues(advancedSearch);
         }
+
+        if(pageNum){
+            setPage(pageNum);
+        }
         localStorage.removeItem("searchValue")
         localStorage.removeItem("advanceSearchValues")
+        localStorage.removeItem("page")
     }, []);
 
     if (books && Array.isArray(books) && books.length) {
         bookCards = books.map(book => {
-            return <SearchResult key={book.id} book={book} forShoppingCart={false} searchValue={searchValue} advanceSearchValues={advanceSearchValues} />
+            return <SearchResult key={book.id} book={book} forShoppingCart={false} 
+            searchValue={searchValue} advanceSearchValues={advanceSearchValues} page = {page} />
         });
     }
 
@@ -75,7 +81,6 @@ const SearchBooks = (props) => {
     }
 
     const previous = () => {
-        setPage(page - 1);
         if (searchAllValue) {
             props.searchAll(page - 1, searchValue);
         } else {
