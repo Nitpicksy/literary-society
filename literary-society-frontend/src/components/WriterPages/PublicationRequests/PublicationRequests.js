@@ -92,7 +92,7 @@ const PublicationRequests = (props) => {
                 <Button variant="contained" color="primary"
                     startIcon={<AddIcon />} onClick={showForm}>
                     Create
-            </Button>
+                </Button>
             </div>
             {data}
         </Container>

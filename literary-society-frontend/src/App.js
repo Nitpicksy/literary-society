@@ -56,6 +56,7 @@ import ChoosePaymentMethods from './components/ChoosePaymentMethods/ChoosePaymen
 import EditorCheckIfBookIsPlagiarism from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/EditorCheckIfBookIsPlagiarism';
 import TransactionList from './components/TransactionList/TransactionList';
 import SearchResults from './components/Search/SearchResults/SearchResults';
+import AdvancedSearch from './components/Search/AdvancedSearch/AdvancedSearch';
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
 // });
@@ -115,7 +116,8 @@ const App = props => {
       <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
       <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
 
-      <Route path="/search-results" render={(props) => <SearchResults {...props} />} />
+      <Route path="/search" render={(props) => <AdvancedSearch {...props} />} />
+      <Route path="/search-results" render={(props) => <SearchResults {...props} isAdvancedSearch={false} />} />
       <Route path="/shopping-cart" render={(props) => <ShoppingCart {...props} />} />
       <Route path="/book/:id" exact render={(props) => <BookDetails {...props} />} />
       <Route path="/" exact render={(props) => <HomePage {...props} />} />

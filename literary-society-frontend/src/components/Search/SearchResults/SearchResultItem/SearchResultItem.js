@@ -25,6 +25,9 @@ const SearchResultItem = (props) => {
 
     const showDetails = () => {
         history.push(`/book/${props.resultItem.id}`);
+        if (props.queryParams) {
+            localStorage.setItem('queryParams', JSON.stringify(props.queryParams));
+        }
     }
 
     return (

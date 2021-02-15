@@ -1,4 +1,4 @@
-import { AppBar, Button, IconButton, Toolbar, Typography, Menu, MenuItem, Tooltip } from '@material-ui/core';
+import { AppBar, Button, IconButton, Toolbar, Typography, Menu, MenuItem, Tooltip, Icon } from '@material-ui/core';
 import React from 'react';
 import { useStyles } from './ToolbarStyles';
 import { useHistory } from 'react-router-dom';
@@ -8,6 +8,7 @@ import MerchantToolbar from './MerchantToolbar';
 import AdminToolbar from './AdminToolbar';
 import ReaderToolbar from './ReaderToolbar';
 import BaseSearch from '../../Search/BaseSearch/BaseSearch';
+import AdvSearchIcon from '../../../icons/advanced-search.svg';
 
 const CustomToolbar = (props) => {
     const classes = useStyles();
@@ -86,6 +87,7 @@ const CustomToolbar = (props) => {
             </React.Fragment>
         );
     }
+
     return (
         <AppBar position="static">
             <Toolbar>
@@ -93,6 +95,11 @@ const CustomToolbar = (props) => {
                     Literary Society
                 </Typography>
                 <BaseSearch />
+                <IconButton onClick={() => redirect('/search')}>
+                    <Icon>
+                        <img src={AdvSearchIcon} height={24} width={24} alt="Advanced Search" />
+                    </Icon>
+                </IconButton>
                 <div className={classes.grow} />
                 <Button color="inherit" onClick={() => redirect('/shopping-cart')}>Shopping Cart</Button>
                 {toolbarItems}

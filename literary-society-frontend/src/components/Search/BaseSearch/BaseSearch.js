@@ -35,16 +35,10 @@ const BaseSearch = (props) => {
     );
 };
 
-const mapStateToProps = state => {
-    return {
-        results: state.searchResults.results,
-    }
-};
-
 const mapDispatchToProps = dispatch => {
     return {
         baseSearch: (history, searchText, pageNum = 1, pageSize = 4) => dispatch(actions.baseSearch(history, searchText, pageNum, pageSize)),
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(BaseSearch);
+export default connect(null, mapDispatchToProps)(BaseSearch);

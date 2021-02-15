@@ -6,41 +6,60 @@ import { useStyles } from './SearchResultsStyles';
 import { connect } from 'react-redux';
 import { Avatar, Card, CardContent, CssBaseline, Grid, Container, Typography, Box, IconButton } from '@material-ui/core';
 import SearchResultItem from './SearchResultItem/SearchResultItem';
-import * as actions from '../BaseSearch/BaseSearchAction';
+import * as baseActions from '../BaseSearch/BaseSearchAction';
+import * as advancedActions from '../AdvancedSearch/AdvancedSearchAction';
 import { useHistory } from 'react-router';
 
 const SearchResults = (props) => {
     const classes = useStyles();
     const history = useHistory();
+
     let [pageNumber, setPageNumber] = useState(1);
     let [searchText, setSearchText] = useState('');
+
     const pageSize = 4;
     let isLastPage = false;
     let resultItems = null;
+    let header = null;
 
-    useEffect(() => {
+    const getSearchText = () => {
         const params = new URLSearchParams(props.location.search);
         setSearchText(params.get('q'));
+    };
+
+    useEffect(() => {
+        if (!props.isAdvancedSearch) {
+            getSearchText();
+        }
         setPageNumber(parseInt(localStorage.getItem('pageNumber')));
-    }, [props.location.search]);
+    }, [props.isAdvancedSearch, getSearchText]);
 
     const nextPage = () => {
         let nextPageNum = parseInt(localStorage.getItem('pageNumber')) + 1;
         localStorage.setItem('pageNumber', nextPageNum);
-        props.baseSearch(history, searchText, nextPageNum, pageSize);
+        if (props.isAdvancedSearch) {
+            props.advancedSearch(props.queryParams, nextPageNum, pageSize);
+        } else {
+            props.baseSearch(history, searchText, nextPageNum, pageSize);
+        }
         setPageNumber(nextPageNum);
     };
 
     const previousPage = () => {
         let prevPageNumber = parseInt(localStorage.getItem('pageNumber')) - 1;
         localStorage.setItem('pageNumber', prevPageNumber);
-        props.baseSearch(history, searchText, prevPageNumber, pageSize);
+        if (props.isAdvancedSearch) {
+            props.advancedSearch(props.queryParams, prevPageNumber, pageSize);
+        } else {
+            props.baseSearch(history, searchText, prevPageNumber, pageSize);
+        }
         setPageNumber(prevPageNumber);
     };
 
     if (props.results && Array.isArray(props.results) && props.results.length) {
         resultItems = props.results.map(item => {
-            return <SearchResultItem key={item.id} resultItem={item} />
+            return <SearchResultItem key={item.id} resultItem={item}
+                queryParams={props.isAdvancedSearch ? props.queryParams : null} />
         });
         props.results.length < pageSize ? isLastPage = true : isLastPage = false;
     } else {
@@ -53,17 +72,25 @@ const SearchResults = (props) => {
         isLastPage = true;
     }
 
+    if (props.isAdvancedSearch) {
+        header = <div className={classes.paper}>
+            <Typography component="h1" variant="h4" className={classes.title}>Search results</Typography>
+        </div>
+    } else {
+        header = <div className={classes.paper}>
+            <Avatar className={classes.avatar}>
+                <MenuBookIcon />
+            </Avatar>
+            <Typography component="h1" variant="h4" className={classes.title}>
+                Search results for: <span className={classes.searchText}>{searchText}</span>
+            </Typography>
+        </div>
+    }
+
     return (
         <Container component="main" maxWidth="lg">
             <CssBaseline />
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                    <MenuBookIcon />
-                </Avatar>
-                <Typography component="h1" variant="h4" className={classes.title}>
-                    Search results for: <span className={classes.searchText}>{searchText}</span>
-                </Typography>
-            </div>
+            {header}
             <Grid container justify="center">
                 {resultItems}
             </Grid>
@@ -89,7 +116,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        baseSearch: (history, searchText, pageNum = 1, pageSize = 5) => dispatch(actions.baseSearch(history, searchText, pageNum, pageSize)),
+        baseSearch: (history, searchText, pageNum = 1, pageSize = 4) => dispatch(baseActions.baseSearch(history, searchText, pageNum, pageSize)),
+        advancedSearch: (queryParams, pageNum = 1, pageSize = 4) => dispatch(advancedActions.advancedSearch(queryParams, pageNum, pageSize)),
     }
 };
 
