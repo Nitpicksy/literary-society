@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GenreIndexServiceImpl implements GenreIndexService {
 
@@ -23,6 +25,11 @@ public class GenreIndexServiceImpl implements GenreIndexService {
     @Override
     public GenreIndexingUnit findById(Long id) {
         return genreIndexRepository.findOneById(id);
+    }
+
+    @Override
+    public List<GenreIndexingUnit> findByIds(List<Long> ids) {
+        return genreIndexRepository.findByIdIn(ids);
     }
 
     @Autowired

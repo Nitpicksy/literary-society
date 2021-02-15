@@ -43,7 +43,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        baseSearch: (history, searchText, pageNum = 1, pageSize = 5) => dispatch(actions.baseSearch(history, searchText, pageNum, pageSize)),
+        baseSearch: (history, searchText, pageNum = 1, pageSize = 4) => dispatch(actions.baseSearch(history, searchText, pageNum, pageSize)),
     }
 };
 

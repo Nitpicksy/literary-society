@@ -13,8 +13,8 @@ export const baseSearch = (history, searchText, pageNum, pageSize) => {
         axios.post('/search', query)
             .then(response => {
                 dispatch(searchSuccess(response.data.content));
-                if (!history.location.pathname.startsWith('/search-results')) {
-                    history.push(`/search-results?q=${searchText}&psize=${pageSize}`);
+                if (history.location.pathname !== `/search-results?q=${searchText}`) {
+                    history.push(`/search-results?q=${searchText}`);
                 }
             })
             .catch(err => {

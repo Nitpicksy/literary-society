@@ -14,14 +14,13 @@ const SearchResults = (props) => {
     const history = useHistory();
     let [pageNumber, setPageNumber] = useState(1);
     let [searchText, setSearchText] = useState('');
-    let [pageSize, setPageSize] = useState(5);
+    const pageSize = 4;
     let isLastPage = false;
     let resultItems = null;
 
     useEffect(() => {
         const params = new URLSearchParams(props.location.search);
         setSearchText(params.get('q'));
-        setPageSize(params.get('psize'));
         setPageNumber(parseInt(localStorage.getItem('pageNumber')));
     }, [props.location.search]);
 
@@ -51,6 +50,7 @@ const SearchResults = (props) => {
                     <Typography component="h3" variant="h5">No results for specified search query.</Typography>
                 </CardContent>
             </Card>;
+        isLastPage = true;
     }
 
     return (

@@ -143,7 +143,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchBook: (id, history) => dispatch(actions.fetchBook(id, history)),
+        fetchBook: (id, history, shouldAddToCart = false) => dispatch(actions.fetchBook(id, history, shouldAddToCart)),
         download: (id, title) => dispatch(actions.download(id, title))
     }
 };

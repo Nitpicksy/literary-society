@@ -1,7 +1,6 @@
 import React from 'react';
 import { useStyles } from './SearchResultItemStyles';
 import { Button, Typography, Grid, Card, CardContent, Link, CardActions } from '@material-ui/core';
-import { toastr } from 'react-redux-toastr';
 import { useHistory } from 'react-router';
 import { connect } from 'react-redux';
 import Parser from 'html-react-parser';
@@ -11,32 +10,8 @@ const SearchResultItem = (props) => {
     const classes = useStyles();
     const history = useHistory();
 
-    const fetchBook = () => {
-        props.fetchBook(props.resultItem.id, history);
-    }
-
     const addToCart = () => {
-        fetchBook();
-        let shoppingCart = new Map(JSON.parse(localStorage.getItem('shoppingCart')));
-
-        if (!shoppingCart) {
-            shoppingCart = new Map();
-        }
-
-        let merchantBooks = shoppingCart.get(props.book.merchantName);
-        if (!merchantBooks) {
-            merchantBooks = [];
-        }
-
-        const found = merchantBooks.find(element => element.id === props.book.id);
-        if (!found) {
-            merchantBooks.push(props.book);
-            shoppingCart.set(props.book.merchantName, merchantBooks);
-            toastr.success('Shopping cart', 'Successfully added book in shopping cart');
-            localStorage.setItem('shoppingCart', JSON.stringify(Array.from(shoppingCart.entries())));
-        } else {
-            toastr.error('Shopping cart', 'This book is already added');
-        }
+        props.fetchBook(props.resultItem.id, history, true);
     }
 
     const download = () => {
@@ -77,7 +52,7 @@ const SearchResultItem = (props) => {
 const mapDispatchToProps = dispatch => {
     return {
         download: (id, title) => dispatch(actions.download(id, title)),
-        fetchBook: (id, history) => dispatch(actions.fetchBook(id, history)),
+        fetchBook: (id, history, shouldAddToCart) => dispatch(actions.fetchBook(id, history, shouldAddToCart)),
     }
 };
 

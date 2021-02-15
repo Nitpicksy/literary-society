@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BetaReaderIndexServiceImpl implements BetaReaderIndexService {
@@ -45,13 +46,9 @@ public class BetaReaderIndexServiceImpl implements BetaReaderIndexService {
 
         JOpenCageLatLng coordinates = LocationProvider.getCoordinates(cityAndCountry);
         betaReaderIdxUnit.setGeoPoint(new GeoPoint(coordinates.getLat(), coordinates.getLng()));
-
-        List<GenreIndexingUnit> betaReaderGenres = new ArrayList<>();
-        for (Genre genre : betaReader.getBetaReaderGenres()) {
-            GenreIndexingUnit genreIdxUnit = genreIndexService.findById(genre.getId());
-            betaReaderGenres.add(genreIdxUnit);
-        }
-        betaReaderIdxUnit.setGenres(betaReaderGenres);
+        
+        List<Long> genreIds = betaReader.getBetaReaderGenres().stream().map(Genre::getId).collect(Collectors.toList());
+        betaReaderIdxUnit.setGenres(genreIndexService.findByIds(genreIds));
 
         return betaReaderIndexRepository.save(betaReaderIdxUnit);
     }
