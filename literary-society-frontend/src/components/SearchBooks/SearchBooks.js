@@ -43,7 +43,7 @@ const SearchBooks = (props) => {
             setAdvanceSearchValues(advancedSearch);
         }
 
-        if(pageNum){
+        if (pageNum) {
             setPage(pageNum);
         }
         localStorage.removeItem("searchValue")
@@ -53,8 +53,8 @@ const SearchBooks = (props) => {
 
     if (books && Array.isArray(books) && books.length) {
         bookCards = books.map(book => {
-            return <SearchResult key={book.id} book={book} forShoppingCart={false} 
-            searchValue={searchValue} advanceSearchValues={advanceSearchValues} page = {page} />
+            return <SearchResult key={book.id} book={book} forShoppingCart={false}
+                searchValue={searchValue} advanceSearchValues={advanceSearchValues} page={page} />
         });
     }
 
@@ -81,25 +81,27 @@ const SearchBooks = (props) => {
     }
 
     const previous = () => {
+        setPage(page - 1);
         if (searchAllValue) {
             props.searchAll(page - 1, searchValue);
         } else {
             props.combineSearchParams(page - 1, advanceSearchValues);
         }
     }
+
     let pagination = null;
-    if (books && books.length > 0) {
+    if ((books && books.length > 0 ) || page !== 0) {
         pagination = <Box display="flex" justifyContent="center" alignItems="center" style={{ marginTop: 10 }}>
-            {page === 0 ? null : <IconButton aria-label="prevoius" component="span"
-             onClick={() => previous()}>
+            <IconButton aria-label="prevoius" component="span" disabled={page === 0}
+                onClick={() => previous()}>
                 <ChevronLeftIcon />
-            </IconButton>}
+            </IconButton>
 
             <Typography variant="subtitle1" className={classes.pageNum}>{page + 1}</Typography>
-            {books && books.length < 4 ? null : <IconButton aria-label="next" component="span"
-             onClick={() => next()}>
+            <IconButton aria-label="next" component="span"
+                onClick={() => next()} disabled={(books && books.length < 4) || (!books) }>
                 <ChevronRightIcon />
-            </IconButton>}
+            </IconButton>
 
         </Box>;
     }

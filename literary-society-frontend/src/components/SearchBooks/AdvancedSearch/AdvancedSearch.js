@@ -8,11 +8,13 @@ import Checkbox from '@material-ui/core/Checkbox';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import SearchIcon from '@material-ui/icons/Search';
 import { toastr } from 'react-redux-toastr';
+import ClearIcon from '@material-ui/icons/Clear';
+import * as actions from '../SearchBooksActions';
 
 const AdvancedSearch = (props) => {
 
     const classes = useStyles();
-    const { advanceSearchValues, setAdvanceSearchValues,search } = props;
+    const { advanceSearchValues, setAdvanceSearchValues, search } = props;
     let gridItems = null;
 
     const inputChangedHandler = (event, advanceSearchValueId, advanceSearchValueType) => {
@@ -72,14 +74,14 @@ const AdvancedSearch = (props) => {
                                     transform: "scale(1.2)",
 
                                 }} value={advanceSearchValue.phraseQuery} onChange={(event) => inputChangedHandler(event, advanceSearchValue.id, "phraseQuery")}
-                                checked = {advanceSearchValue.phraseQuery} />
+                                    checked={advanceSearchValue.phraseQuery} />
                             } />
                     </Grid>
                     <Grid item md={1} style={{ paddingTop: 3 }}>
                         <RemoveCircleIcon style={{
                             transform: "scale(1.2)",
                             color: "red"
-                        }}  onClick = { () => removeSearchItem(advanceSearchValue.id)}/>
+                        }} onClick={() => removeSearchItem(advanceSearchValue.id)} />
                     </Grid>
                 </Grid>
             </div>
@@ -90,33 +92,33 @@ const AdvancedSearch = (props) => {
         const updatedAdvanceSearchValues = [...advanceSearchValues,
         {
             "id": advanceSearchValues.length,
-            "attributeName":"title",
-            "searchValue":"",
-            "phraseQuery":false,
+            "attributeName": "title",
+            "searchValue": "",
+            "phraseQuery": false,
             "type": "AND"
         }];
         setAdvanceSearchValues(updatedAdvanceSearchValues);
     }
 
     const removeSearchItem = (index) => {
-        if(advanceSearchValues.length !== 1){
+        if (advanceSearchValues.length !== 1) {
             let updatedAdvanceSearchValues = [...advanceSearchValues]
             updatedAdvanceSearchValues = updatedAdvanceSearchValues.filter(item => item.id !== index)
             for (let i in updatedAdvanceSearchValues) {
-                if(i >= index){
-                    updatedAdvanceSearchValues[i].id = updatedAdvanceSearchValues[i].id-1; 
+                if (i >= index) {
+                    updatedAdvanceSearchValues[i].id = updatedAdvanceSearchValues[i].id - 1;
                 }
-               
+
             }
             setAdvanceSearchValues(updatedAdvanceSearchValues);
-        }else {
+        } else {
             toastr.error('Search', "You cannot remove last item.");
         }
-       
+
     }
 
     const checkSearchValues = () => {
-        
+
         for (let i in advanceSearchValues) {
             if (advanceSearchValues[i].searchValue === "") {
                 toastr.error('Search', "You have to enter a content value for all items.");
@@ -126,6 +128,19 @@ const AdvancedSearch = (props) => {
         search();
     }
 
+    const clearSearch = () => {
+        const updatedAdvanceSearchValues = [
+            {
+                "id": 0,
+                "attributeName": "title",
+                "searchValue": "",
+                "phraseQuery": false,
+                "type": "AND"
+            }
+        ];
+        setAdvanceSearchValues(updatedAdvanceSearchValues);
+        props.clearState();
+    }
     return (
         <Grid container align="center" className={classes.grid}>
             <Grid item md={1}></Grid>
@@ -138,13 +153,19 @@ const AdvancedSearch = (props) => {
                         <Grid item md={3}>
                             <Typography variant="h5">Advanced search</Typography>
                         </Grid>
-                        <Grid item md={1} style={{ paddingTop: 2 }}>
+                        <Grid item md={2} style={{ paddingTop: 2 }}>
                             <AddCircleIcon style={{
                                 transform: "scale(1.3)",
                                 cursor: 'pointer'
-                            }} color="primary" onClick = {addSearchItem} />
+                            }} color="primary" onClick={addSearchItem} />
+                             <ClearIcon style={{
+                                transform: "scale(1.4)",
+                                cursor: 'pointer',
+                                marginLeft: 15,
+                                color: 'red'
+                            }}  onClick={clearSearch} />
                         </Grid>
-                        <Grid item md={4}>
+                        <Grid item md={3}>
 
                         </Grid>
                     </Grid>
@@ -173,7 +194,7 @@ const AdvancedSearch = (props) => {
 
                     <div className={classes.button}>
                         <Button type="submit" color="primary" variant="contained"
-                         startIcon = {<SearchIcon/>} className={classes.submit} onClick = {checkSearchValues}>Search</Button>
+                            startIcon={<SearchIcon />} className={classes.submit} onClick={checkSearchValues}>Search</Button>
                     </div>
                 </Paper>
 
@@ -184,18 +205,10 @@ const AdvancedSearch = (props) => {
 };
 
 
-// const mapStateToProps = state => {
-//     return {
-//         books: state.homePage.books
-//     }
-// };
+const mapDispatchToProps = dispatch => {
+    return {
+        clearState: () => dispatch(actions.clearState()),
+    }
+};
 
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         fetchBooks: () => dispatch(actions.fetchBooks()),
-//     }
-// };
-
-// export default connect(mapStateToProps, mapDispatchToProps)(SearchBooks);
-
-export default AdvancedSearch;
+export default connect(null, mapDispatchToProps)(AdvancedSearch)
