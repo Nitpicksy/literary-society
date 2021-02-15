@@ -1,4 +1,5 @@
 export {
     fetchForm,
-    confirm
+    confirm,
+    filterBetaReaders
 } from './EditorChooseBetaReadersActions';

@@ -14,18 +14,21 @@ import Form from '../../../../UI/Form/Form';
 import { extractControls } from '../../../../utility/extractControls';
 import Button from '@material-ui/core/Button';
 import PublicationRequestCard from '../PublicationRequest/PublicationRequestCard/PublicationRequestCard';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 const EditorChooseBetaReaders = (props) => {
     const history = useHistory();
     responseInterceptor.setupInterceptor(history, props.refreshTokenRequestSent, props.onRefreshToken);
     const classes = useStyles();
 
-    const { selectedTask } = props;
+    const { selectedTask, betaReaders } = props;
     const { formFields, fetchForm } = props;
     const { publicationRequest } = props;
 
     let [controls, setControls] = useState(null);
     const [formIsValid, setFormIsValid] = useState(false);
+    const [filterBetaReaders, setFilterBetaReaders] = useState(false);
 
     let form = null;
     let publicationRequestCard = null;
@@ -63,6 +66,20 @@ const EditorChooseBetaReaders = (props) => {
         publicationRequestCard = <PublicationRequestCard book={publicationRequest} />
     }
 
+    const inputChangedHandler = (event) => {
+        let value = event.target.checked;
+        props.filterBetaReaders(selectedTask.piId, value, formFields);
+
+        setFilterBetaReaders(value);
+    }
+
+    useEffect(() => {
+        if (betaReaders) {
+            let extractedControls = extractControls(formFields)
+            setControls(extractedControls);
+        }
+    }, [betaReaders]);
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -74,7 +91,14 @@ const EditorChooseBetaReaders = (props) => {
                 <div className={classes.card} justify="center">
                     {publicationRequestCard}
                 </div>
+
                 <form className={classes.form} noValidate onSubmit={submitHander}>
+                    <FormControlLabel label="Show only beta-readers farther than 100km from the writer"
+                        control={
+                            <Checkbox style={{
+                                transform: "scale(1.1)"
+                            }} value={filterBetaReaders} onChange={(event) => inputChangedHandler(event)} />
+                        } />
                     {form}
                     <Button type="submit" color="primary" className={classes.submit}
                         variant="contained" disabled={!formIsValid} fullWidth>
@@ -93,12 +117,14 @@ const mapStateToProps = state => {
         refreshTokenRequestSent: state.signIn.refreshTokenRequestSent,
         formFields: state.editorChooseBetaReaders.formFields,
         publicationRequest: state.editorChooseBetaReaders.publicationRequest,
+        betaReaders: state.editorChooseBetaReaders.betaReaders,
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         fetchForm: (piId, taskId) => dispatch(actions.fetchForm(piId, taskId)),
+        filterBetaReaders: (piId, filter, formFields) => dispatch(actions.filterBetaReaders(piId, filter,formFields)),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
         onConfirm: (data, taskId, history) => dispatch(actions.confirm(data, taskId, history)),
     }

@@ -3,11 +3,14 @@ package nitpicksy.literarysociety.elasticsearch.serviceImpl;
 import nitpicksy.literarysociety.elasticsearch.dto.SearchParamDTO;
 import nitpicksy.literarysociety.elasticsearch.mapper.BookInfoMapper;
 import nitpicksy.literarysociety.elasticsearch.model.BookInfo;
+import nitpicksy.literarysociety.elasticsearch.model.ReaderInfo;
 import nitpicksy.literarysociety.elasticsearch.service.SearchService;
 import nitpicksy.literarysociety.enumeration.SearchType;
 import org.apache.lucene.search.join.ScoreMode;
+import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.NestedQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +60,39 @@ public class SearchServiceImpl implements SearchService {
         queryParams.should(nestedQuery);
 
         return elasticsearchTemplate.queryForPage(createSearchQuery(nativeSearchQueryBuilder, queryParams, page, size), BookInfo.class, new BookInfoMapper());
+    }
+
+    @Override
+    public List<ReaderInfo> filterBetaReaders(Double lat, Double lon, String genreName) {
+        QueryBuilder filter = QueryBuilders.geoDistanceQuery("geoPoint")
+                .point(lat, lon)
+                .distance(100, DistanceUnit.KILOMETERS);
+
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        boolQuery.mustNot(filter);
+
+        BoolQueryBuilder boolQuery1 = QueryBuilders.boolQuery();
+        NestedQueryBuilder nestedQuery = QueryBuilders.nestedQuery("genre", boolQuery1.must(
+                QueryBuilders.matchPhraseQuery("genre.name",genreName)), ScoreMode.None);
+
+        boolQuery.must(nestedQuery);
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(boolQuery).build();
+
+        return elasticsearchTemplate.queryForList(searchQuery, ReaderInfo.class);
+    }
+
+    @Override
+    public List<ReaderInfo> findBetaReaders(String genreName) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+
+        BoolQueryBuilder boolQuery1 = QueryBuilders.boolQuery();
+        NestedQueryBuilder nestedQuery = QueryBuilders.nestedQuery("genre", boolQuery1.must(
+                QueryBuilders.matchPhraseQuery("genre.name",genreName)), ScoreMode.None);
+
+        boolQuery.must(nestedQuery);
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(boolQuery).build();
+
+        return elasticsearchTemplate.queryForList(searchQuery, ReaderInfo.class);
     }
 
 

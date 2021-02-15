@@ -111,8 +111,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         if (userRepository.findByUsername(admin.getUsername()) != null) {
             return;
         }
+        createGenres();
 
-        // TODO: Obrisati funkciju kad se user-i ne budu dodavali skriptom
         assignRoles();
 
         userRepository.save(admin);
@@ -129,7 +129,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 LocalDate.of(2021, 6, 1));
         priceListRepository.save(nextPriceList);
 
-        createGenres();
+
         createBookInfos();
 
         alreadySetup = true;

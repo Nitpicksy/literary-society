@@ -5,7 +5,8 @@ const initialState = {
     processInstanceId: null,
     taskId: null,
     publicationRequest: null,
-    error: ''
+    error: '',
+    betaReaders: null
 }
 
 const reducer = (state = initialState, action) => {
@@ -28,9 +29,33 @@ const reducer = (state = initialState, action) => {
                 publicationRequest: null,
                 error: null
             };
+        case actionTypes.FILTER_BETA_READERS_SUCCESS:
+            return {
+                ...state,
+                betaReaders: action.betaReaders, 
+                formFields: updateFormFields(action.betaReaders, action.formFields)
+            };
         default:
             return state;
     }
 };
+
+
+const updateFormFields = (betaReaders, formFields) => {
+    let updatedFormFields = formFields;
+    if (updatedFormFields) {
+        updatedFormFields[0].type.values = extractEnum(betaReaders);
+    }
+    return updatedFormFields;
+}
+
+const extractEnum = (betaReaders) => {
+    let map = new Map();
+    for (let i in betaReaders) {
+        map.set(betaReaders[i].key, betaReaders[i].value);
+    }
+
+    return Object.fromEntries(map);
+}
 
 export default reducer;

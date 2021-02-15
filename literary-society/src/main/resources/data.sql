@@ -35,16 +35,19 @@ values ('https://www.literary-society.com:3000', 1, 'MONTH',
         'BOOKS_MANUSCRIPTS', 'Book Purchasing Discount', 'DIGITAL',
         'https://www.literary-society.com:3000/subscription/success');
 
+--Location
+insert into location (lat, lon) values (44.815071, 20.460480);
+insert into location (lat, lon) values (51.753738, -1.263460);
 
 -- Writers
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
-                   enabled)
-values ('WRITER', 'Ivo', 'Andrić', 'Travnik', 'Bosna i Hercegovina', 'andric@maildrop.cc', 'andric',
-        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
+                   enabled, location_id)
+values ('WRITER', 'Ivo', 'Andrić', 'Beograd', 'Srbija', 'andric@maildrop.cc', 'andric',
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, 1);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
-                   enabled)
-values ('WRITER', 'Branisav', 'Nušić', 'Beograd', 'Srbija', 'nusic@maildrop.cc', 'nusic',
-        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
+                   enabled,location_id)
+values ('WRITER', 'Branisav', 'Nušić', 'Oxford', 'Ujedinjeno Kraljevstvo', 'nusic@maildrop.cc', 'nusic',
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, 2);
 
 -- Editors
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
@@ -96,6 +99,10 @@ insert into beta_reader_genre (beta_reader_id, genre_id)
 values (9, 3);
 insert into beta_reader_genre (beta_reader_id, genre_id)
 values (10, 1);
+insert into beta_reader_genre (beta_reader_id, genre_id)
+values (10, 2);
+insert into beta_reader_genre (beta_reader_id, genre_id)
+values (10, 3);
 insert into beta_reader_genre (beta_reader_id, genre_id)
 values (10, 4);
 
@@ -151,7 +158,8 @@ values ('User', 'INSANE MAN', 'PUSKIN', 'Sankt Petersburg', 'Rusija', 'communist
 -- Memberships
 insert into membership (expiration_date, is_subscribed, price, merchant_id, user_id)
 values ('2021-04-30', false, 2000.00, 11, 1);
-
+insert into membership (expiration_date, is_subscribed, price, merchant_id, user_id)
+values ('2021-04-30', false, 2000.00, 11, 2);
 
 -- Images
 insert into image (data)

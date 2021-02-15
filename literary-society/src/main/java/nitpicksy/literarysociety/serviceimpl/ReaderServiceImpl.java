@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.serviceimpl;
 
+import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.model.Reader;
 import nitpicksy.literarysociety.repository.ReaderRepository;
 import nitpicksy.literarysociety.service.ReaderService;
@@ -21,6 +22,11 @@ public class ReaderServiceImpl implements ReaderService {
     @Override
     public Reader save(Reader reader) {
         return readerRepository.save(reader);
+    }
+
+    @Override
+    public List<Reader> findBetaReaders(Long genreId) {
+        return readerRepository.findByIsBetaReaderAndBetaReaderGenresIdAndStatus(true, genreId, UserStatus.ACTIVE);
     }
 
     @Autowired

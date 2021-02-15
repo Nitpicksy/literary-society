@@ -75,7 +75,8 @@ public class TaskController {
     }
 
     @GetMapping(value = "/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TaskDataDTO> getTaskData(@NotBlank @RequestParam String piId, @NotBlank @PathVariable String taskId) {
+    public ResponseEntity<TaskDataDTO> getTaskData(@NotBlank @RequestParam String piId,
+                                                   @NotBlank @PathVariable String taskId) {
 
         TaskDataDTO taskDataDTO = new TaskDataDTO(camundaService.setEnumValues(camundaService.getFormFields(piId, taskId)),
                 bookService.getPublicationRequest(Long.valueOf(camundaService.getProcessVariable(piId, "bookId"))));

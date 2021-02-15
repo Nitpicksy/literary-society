@@ -1,6 +1,8 @@
 package nitpicksy.literarysociety.camunda.service;
 
 import nitpicksy.literarysociety.dto.camunda.EnumKeyValueDTO;
+import nitpicksy.literarysociety.elasticsearch.model.ReaderInfo;
+import nitpicksy.literarysociety.elasticsearch.service.SearchService;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.Reader;
@@ -21,25 +23,33 @@ public class FindBetaReadersForPublicationRequestProcessService  implements Java
 
     private BookRepository bookRepository;
 
+    private SearchService searchService;
+
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         Long bookId = Long.valueOf((String) execution.getVariable("bookId"));
         Book book = bookRepository.findOneById(bookId);
 
-        List<Reader> betaReaders = readerRepository.findByIsBetaReaderAndBetaReaderGenresIdAndStatus(true, book.getGenre().getId(), UserStatus.ACTIVE);
+        List<ReaderInfo>  readerInfos = searchService.findBetaReaders(book.getGenre().getName());
 
+        execution.setVariable("selectBetaReaderList", convert(readerInfos));
+    }
+
+    private List<EnumKeyValueDTO> convert(List<ReaderInfo> readerInfos){
         List<EnumKeyValueDTO> enumList = new ArrayList<>();
-        for (Reader reader : betaReaders) {
-            String key = "id_" + reader.getUserId();
-            String readerInfo = reader.getFirstName() + " "+ reader.getLastName() + "  from " + reader.getCity();
+        for (ReaderInfo reader : readerInfos) {
+            String key = "id_" + reader.getId();
+            String readerInfo = reader.getName()  + "  from " + reader.getCity() + " (" + reader.getCountry() + ")";
             enumList.add(new EnumKeyValueDTO(key,readerInfo));
         }
-        execution.setVariable("selectBetaReaderList", enumList);
+        return enumList;
     }
 
     @Autowired
-    public FindBetaReadersForPublicationRequestProcessService(ReaderRepository readerRepository, BookRepository bookRepository) {
+    public FindBetaReadersForPublicationRequestProcessService(ReaderRepository readerRepository, BookRepository bookRepository,
+                                                              SearchService searchService) {
         this.readerRepository = readerRepository;
         this.bookRepository = bookRepository;
+        this.searchService = searchService;
     }
 }
