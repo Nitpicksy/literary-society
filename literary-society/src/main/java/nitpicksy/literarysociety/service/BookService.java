@@ -2,6 +2,7 @@ package nitpicksy.literarysociety.service;
 
 import nitpicksy.literarysociety.dto.camunda.PublicationRequestDTO;
 import nitpicksy.literarysociety.dto.request.CreateBookRequestDTO;
+import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.Merchant;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,8 @@ public interface BookService {
 
     List<Book> findAllForSale();
 
+    List<Book> findByStatus(BookStatus status);
+
     Set<Book> findByIds(List<Long> ids);
 
     PublicationRequestDTO getPublicationRequest(Long id);
@@ -22,7 +25,7 @@ public interface BookService {
     Book findById(Long id);
 
     List<Book> findPublicationRequestsForWriter();
-    
+
     Boolean validatePlagiarismRequest(String bookTitle, String writerName);
 
     List<Book> getMerchantBooks(Long merchantId);

@@ -1,7 +1,10 @@
 package nitpicksy.literarysociety.camunda.service;
 
+import com.google.gson.Gson;
+import nitpicksy.literarysociety.client.PlagiatorClient;
 import nitpicksy.literarysociety.client.ZuulClient;
 import nitpicksy.literarysociety.dto.request.PaymentGatewayPayRequestDTO;
+import nitpicksy.literarysociety.elastic.dto.PaperResultDTO;
 import nitpicksy.literarysociety.enumeration.TransactionStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidUserDataException;
@@ -16,38 +19,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 public class CheckIfBookIsPlagiarism implements JavaDelegate {
 
     private PDFDocumentService pdfDocumentService;
 
-    private ZuulClient zuulClient;
-
-    private JWTTokenService jwtTokenService;
+    private PlagiatorClient plagiatorClient;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         Long bookId = Long.valueOf((String) execution.getVariable("bookId"));
 
-        PDFDocument pdfDocument = pdfDocumentService.findByBookId(bookId);
-        try{
-            byte[] pdfBytes = pdfDocumentService.download(pdfDocument.getName());
+        MultipartFile multipartFile = pdfDocumentService.convertToMultipartFile(bookId);
+        PaperResultDTO paperResultDTO = plagiatorClient.uploadNewBook(multipartFile);
 
-            Integer percentage = zuulClient.checkBook("Bearer " + jwtTokenService.getToken(), pdfBytes);
-
-            execution.setVariable("percentage", Integer.toString(percentage));
-        } catch (RuntimeException exception) {
-            throw new BpmnError("Something went wrong. Please try again.");
-        }
-
+        String jsonSimilarPapers = new Gson().toJson(paperResultDTO.getSimilarPapers());
+        execution.setVariable("similarPapers", jsonSimilarPapers);
+        execution.setVariable("paperResultId", paperResultDTO.getId().toString());
     }
 
     @Autowired
-    public CheckIfBookIsPlagiarism(PDFDocumentService pdfDocumentService, ZuulClient zuulClient, JWTTokenService jwtTokenService) {
+    public CheckIfBookIsPlagiarism(PDFDocumentService pdfDocumentService, PlagiatorClient plagiatorClient) {
         this.pdfDocumentService = pdfDocumentService;
-        this.zuulClient = zuulClient;
-        this.jwtTokenService = jwtTokenService;
+        this.plagiatorClient = plagiatorClient;
     }
 }

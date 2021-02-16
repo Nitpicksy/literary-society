@@ -52,6 +52,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<Book> findByStatus(BookStatus status) {
+        return bookRepository.findByStatus(status);
+    }
+
+    @Override
     public Set<Book> findByIds(List<Long> ids) {
         return bookRepository.findByIdIn(ids);
     }

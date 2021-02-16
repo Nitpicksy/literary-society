@@ -29,4 +29,6 @@ public interface PDFDocumentService {
 
     String extractText(PDFDocument pdfDocument) throws IOException;
 
+    MultipartFile convertToMultipartFile(Long bookId);
+
 }

@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
+import { Typography, Container, Avatar, CssBaseline, Button, Paper, IconButton } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import ListIcon from '@material-ui/icons/List';
-import Avatar from '@material-ui/core/Avatar';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import { toastr } from 'react-redux-toastr';
 import { connect } from 'react-redux';
 import { useStyles } from './EditorCheckIfBookIsPlagiarismStyles';
-import * as actions from './EditorCheckIfBookIsPlagiarismExport';
-import * as signInActions from '../../../Authentication/SignIn/SignInExport';
 import { responseInterceptor } from '../../../../responseInterceptor';
 import { useHistory } from 'react-router';
-import Form from '../../../../UI/Form/Form';
 import { extractControls } from '../../../../utility/extractControls';
-import Button from '@material-ui/core/Button';
+import * as actions from './EditorCheckIfBookIsPlagiarismExport';
+import * as signInActions from '../../../Authentication/SignIn/SignInExport';
+import Form from '../../../../UI/Form/Form';
 import PublicationRequestCard from '../PublicationRequest/PublicationRequestCard/PublicationRequestCard';
-import { toastr } from 'react-redux-toastr';
-import { Paper } from '@material-ui/core';
 
 const EditorCheckIfBookIsPlagiarism = (props) => {
     const history = useHistory();
@@ -90,7 +87,37 @@ const EditorCheckIfBookIsPlagiarism = (props) => {
 
     if (plagiarismInfo) {
         plagiarismInformation = <Paper justify="center" className={classes.paperPercentage}>
-            <Typography component="h1" variant="h6" className={classes.title}>This manuscript matches with an existing book by {plagiarismInfo}%.</Typography>
+            <Typography component="h1" variant="h5" className={classes.similarBooks}>Similar books</Typography>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell className={classes.cellFont}>Title</TableCell>
+                        <TableCell className={classes.cellFont} align="right">Similarity</TableCell>
+                        <TableCell className={classes.cellFont}>&nbsp;</TableCell>
+                        <TableCell className={classes.cellFont}>&nbsp;</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {plagiarismInfo.map(paper => {
+                        let similarity = <span>{(paper.similarProcent * 100).toFixed(2)}%</span>;
+                        if (paper.similarProcent > 0.25) {
+                            similarity = <span className={classes.red}>{(paper.similarProcent * 100).toFixed(2)}%</span>;
+                        }
+                        return <TableRow key={paper.id}>
+                            <TableCell className={classes.cell}>{paper.title.slice(20, -4)}</TableCell>
+                            <TableCell className={classes.cell} align="right">{similarity}</TableCell>
+                            <TableCell className={classes.cellBtn} align="right">
+                                <Button color="primary" size="large">Details</Button>
+                            </TableCell>
+                            <TableCell className={classes.cellIcon}>
+                                <IconButton>
+                                    <GetAppIcon />
+                                </IconButton>
+                            </TableCell>
+                        </TableRow>
+                    })}
+                </TableBody>
+            </Table>
         </Paper>
     }
 
@@ -106,7 +133,6 @@ const EditorCheckIfBookIsPlagiarism = (props) => {
                     {publicationRequestCard}
                 </div>
                 {plagiarismInformation}
-
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
                     <Button type="submit" color="primary" className={classes.submit}

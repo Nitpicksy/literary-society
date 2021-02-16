@@ -28,8 +28,35 @@ export const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
     },
     paperPercentage: {
-        margin: theme.spacing(2, 0),
+        marginTop: theme.spacing(2),
         padding: theme.spacing(2, 2),
         minWidth: 555,
+    },
+    similarBooks: {
+        textAlign: 'center',
+        fontSize: 28,
+        marginBottom: theme.spacing(1)
+    },
+    cellFont: {
+        fontSize: '1.05rem',
+        paddingTop: theme.spacing(1),
+        paddingBottom: theme.spacing(1),     
+    },
+    cell: {
+        fontSize: '1.05rem',  
+        paddingTop: theme.spacing(0),
+        paddingBottom: theme.spacing(0),  
+    },
+    cellPadding: {
+        paddingTop: theme.spacing(0),
+        paddingBottom: theme.spacing(0),
+    },
+    cellBtn: {        
+        paddingTop: theme.spacing(0),
+        paddingBottom: theme.spacing(0),
+        paddingRight: theme.spacing(0),
+    },
+    cellIcon: {
+        padding: theme.spacing(0),
     }
 }));

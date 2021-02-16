@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.serviceimpl;
 
+import nitpicksy.literarysociety.client.PlagiatorClient;
 import nitpicksy.literarysociety.dto.camunda.WriterDocumentDTO;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Book;
@@ -10,7 +11,6 @@ import nitpicksy.literarysociety.repository.PDFDocumentRepository;
 import nitpicksy.literarysociety.repository.WriterRepository;
 import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.PDFDocumentService;
-import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +19,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,11 +44,10 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
     private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
     private PDFDocumentRepository pdfDocumentRepository;
+
     private WriterRepository writerRepository;
 
     private LogService logService;
-
-    private IPAddressProvider ipAddressProvider;
 
     @Override
     public PDFDocument upload(MultipartFile pdfFile, Book book) throws IOException {
@@ -65,7 +65,6 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
         }
         return null;
     }
-
 
     @Override
     public byte[] download(String name) throws IOException {
@@ -98,6 +97,19 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
 
         return text;
     }
+
+    @Override
+    public MultipartFile convertToMultipartFile(Long bookId) {
+        try {
+            PDFDocument pdfDocument = findByBookId(bookId);
+            return new MockMultipartFile(pdfDocument.getBook().getTitle(), pdfDocument.getName(),
+                    "text/plain", download(pdfDocument.getName()));
+        } catch (IOException e) {
+            System.out.println("Upload to Plagiator failed - Document not found on disk");
+        }
+        return null;
+    }
+
 
     @Override
     public PDFDocument findByBookId(Long id) {
@@ -147,10 +159,9 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
 
     @Autowired
     public PDFDocumentServiceImpl(PDFDocumentRepository pdfDocumentRepository, WriterRepository writerRepository,
-                                  LogService logService, IPAddressProvider ipAddressProvider) {
+                                  LogService logService) {
         this.pdfDocumentRepository = pdfDocumentRepository;
         this.writerRepository = writerRepository;
         this.logService = logService;
-        this.ipAddressProvider = ipAddressProvider;
     }
 }

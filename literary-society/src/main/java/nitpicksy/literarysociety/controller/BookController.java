@@ -1,11 +1,13 @@
 package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.camunda.service.CamundaService;
+import nitpicksy.literarysociety.client.PlagiatorClient;
 import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.request.CreateBookRequestDTO;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.dto.response.*;
 import nitpicksy.literarysociety.elastic.service.BookIndexService;
+import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.mapper.*;
@@ -79,6 +81,8 @@ public class BookController {
     private LogService logService;
 
     private IPAddressProvider ipAddressProvider;
+
+    private PlagiatorClient plagiatorClient;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookDTO>> getAllForSale() {
@@ -241,10 +245,22 @@ public class BookController {
 
         // Indexing new book
         bookIndexService.addBook(book);
+        MultipartFile multipartFile = pdfDocumentService.convertToMultipartFile(book.getId());
+        plagiatorClient.uploadExistingBook(multipartFile);
 
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDB",
                 String.format("Book %s successfully created", book.getId())));
         return new ResponseEntity<>(book, HttpStatus.OK);
+    }
+
+    @GetMapping("/upload-existing")
+    public ResponseEntity<Void> uploadExistingBooks() {
+        List<Book> booksInStores = bookService.findByStatus(BookStatus.IN_STORES);
+        booksInStores.forEach(book -> {
+            MultipartFile multipartFile = pdfDocumentService.convertToMultipartFile(book.getId());
+            plagiatorClient.uploadExistingBook(multipartFile);
+        });
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Autowired
@@ -253,7 +269,8 @@ public class BookController {
                           BookDetailsDtoMapper bookDetailsDtoMapper, OpinionOfBetaReaderDtoMapper opinionOfBetaReaderDtoMapper,
                           OpinionOfEditorDtoMapper opinionOfEditorDtoMapper, PublicationRequestResponseDtoMapper publReqResponseDtoMapper,
                           BuyerTokenService buyerTokenService, PDFDocumentService pdfDocumentService, BookIndexService bookIndexService,
-                          UserService userService, LogService logService, IPAddressProvider ipAddressProvider, MembershipService membershipService) {
+                          UserService userService, LogService logService, IPAddressProvider ipAddressProvider,
+                          MembershipService membershipService, PlagiatorClient plagiatorClient) {
         this.bookService = bookService;
         this.opinionOfBetaReaderService = opinionOfBetaReaderService;
         this.opinionOfEditorService = opinionOfEditorService;
@@ -270,5 +287,6 @@ public class BookController {
         this.userService = userService;
         this.logService = logService;
         this.ipAddressProvider = ipAddressProvider;
+        this.plagiatorClient = plagiatorClient;
     }
 }
