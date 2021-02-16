@@ -2,7 +2,7 @@ package nitpicksy.literarysociety.elastic.controller;
 
 import nitpicksy.literarysociety.elastic.dto.QueryDTO;
 import nitpicksy.literarysociety.elastic.model.BookIndexingUnit;
-import nitpicksy.literarysociety.elastic.service.SearchService;
+import nitpicksy.literarysociety.elastic.service.BookIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -21,21 +21,21 @@ import javax.validation.constraints.NotNull;
 @RequestMapping(value = "/api/search", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SearchController {
 
-    private SearchService searchService;
+    private BookIndexService bookIndexService;
 
     @PostMapping
     public ResponseEntity<Page<BookIndexingUnit>> search(@RequestBody @NotNull QueryDTO query) {
         if (query.getSearchAllParam() != null && !query.getSearchAllParam().trim().isEmpty()) {
-            return new ResponseEntity<>(searchService.allFieldsSearch(query), HttpStatus.OK);
+            return new ResponseEntity<>(bookIndexService.allFieldsSearch(query), HttpStatus.OK);
         } else if (query.getQueryParams() != null && !query.getQueryParams().isEmpty()) {
-            return new ResponseEntity<>(searchService.combinedSearch(query), HttpStatus.OK);
+            return new ResponseEntity<>(bookIndexService.combinedSearch(query), HttpStatus.OK);
         }
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @Autowired
-    public SearchController(SearchService searchService) {
-        this.searchService = searchService;
+    public SearchController(BookIndexService bookIndexService) {
+        this.bookIndexService = bookIndexService;
     }
 }

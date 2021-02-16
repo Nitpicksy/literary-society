@@ -14,6 +14,7 @@ import Form from '../../../../UI/Form/Form';
 import { extractControls } from '../../../../utility/extractControls';
 import Button from '@material-ui/core/Button';
 import PublicationRequestCard from '../PublicationRequest/PublicationRequestCard/PublicationRequestCard';
+import { Checkbox, FormControlLabel } from '@material-ui/core';
 
 const EditorChooseBetaReaders = (props) => {
     const history = useHistory();
@@ -26,6 +27,7 @@ const EditorChooseBetaReaders = (props) => {
 
     let [controls, setControls] = useState(null);
     const [formIsValid, setFormIsValid] = useState(false);
+    const [shouldFilter, setShouldFilter] = useState(false);
 
     let form = null;
     let publicationRequestCard = null;
@@ -40,6 +42,11 @@ const EditorChooseBetaReaders = (props) => {
             setControls(extractedControls);
         }
     }, [formFields]);
+
+    const shouldFilterHandler = ({ target }) => {
+        props.filterBetaReaders(selectedTask.piId, target.checked)
+        setShouldFilter(target.checked);
+    }
 
     const submitHander = (event) => {
         event.preventDefault();
@@ -76,6 +83,11 @@ const EditorChooseBetaReaders = (props) => {
                 </div>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
+                    <FormControlLabel label="Filter out beta-readers within 100km from writer"
+                        control={
+                            <Checkbox checked={shouldFilter} onChange={shouldFilterHandler} color="primary" />
+                        }
+                    />
                     <Button type="submit" color="primary" className={classes.submit}
                         variant="contained" disabled={!formIsValid} fullWidth>
                         Confirm
@@ -101,6 +113,7 @@ const mapDispatchToProps = dispatch => {
         fetchForm: (piId, taskId) => dispatch(actions.fetchForm(piId, taskId)),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
         onConfirm: (data, taskId, history) => dispatch(actions.confirm(data, taskId, history)),
+        filterBetaReaders: (piId, shouldFilter) => dispatch(actions.filterBetaReaders(piId, shouldFilter)),
     }
 };
 

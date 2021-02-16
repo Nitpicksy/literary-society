@@ -108,15 +108,6 @@ public class CamundaService {
         return id;
     }
 
-    public String extractValue(String selectedValueString) {
-        String value = null;
-        if (selectedValueString.contains("_")) {
-            value = selectedValueString.split("_")[1];
-        }
-
-        return value;
-    }
-
     public List<TaskDto> getTasksByAssignee(String userId) {
         List<Task> tasks = taskService.createTaskQuery()
                 .taskAssignee(userId)

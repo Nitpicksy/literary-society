@@ -1,6 +1,8 @@
 package nitpicksy.literarysociety.camunda.service;
 
 import nitpicksy.literarysociety.dto.camunda.EnumKeyValueDTO;
+import nitpicksy.literarysociety.elastic.model.BetaReaderIndexingUnit;
+import nitpicksy.literarysociety.elastic.service.BetaReaderIndexService;
 import nitpicksy.literarysociety.enumeration.UserStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.Reader;
@@ -15,31 +17,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class FindBetaReadersForPublicationRequestProcessService  implements JavaDelegate {
-
-    private ReaderRepository readerRepository;
+public class FindBetaReadersForPublicationRequestProcessService implements JavaDelegate {
 
     private BookRepository bookRepository;
+
+    private BetaReaderIndexService betaReaderIndexService;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         Long bookId = Long.valueOf((String) execution.getVariable("bookId"));
         Book book = bookRepository.findOneById(bookId);
 
-        List<Reader> betaReaders = readerRepository.findByIsBetaReaderAndBetaReaderGenresIdAndStatus(true, book.getGenre().getId(), UserStatus.ACTIVE);
+        List<BetaReaderIndexingUnit> betaReaderIdxUnits = betaReaderIndexService.filterByGenre(book.getGenre().getName());
 
-        List<EnumKeyValueDTO> enumList = new ArrayList<>();
-        for (Reader reader : betaReaders) {
-            String key = "id_" + reader.getUserId();
-            String readerInfo = reader.getFirstName() + " "+ reader.getLastName() + "  from " + reader.getCity();
-            enumList.add(new EnumKeyValueDTO(key,readerInfo));
-        }
-        execution.setVariable("selectBetaReaderList", enumList);
+        List<EnumKeyValueDTO> enumDTOList = new ArrayList<>();
+        betaReaderIdxUnits.forEach(betaReaderIdxUnit -> {
+            String key = "id_" + betaReaderIdxUnit.getId();
+            String value = betaReaderIdxUnit.getName() + " (" + betaReaderIdxUnit.getCityAndCountry() + ")";
+            enumDTOList.add(new EnumKeyValueDTO(key, value));
+        });
+        execution.setVariable("selectBetaReaderList", enumDTOList);
     }
 
     @Autowired
-    public FindBetaReadersForPublicationRequestProcessService(ReaderRepository readerRepository, BookRepository bookRepository) {
-        this.readerRepository = readerRepository;
+    public FindBetaReadersForPublicationRequestProcessService(BookRepository bookRepository, BetaReaderIndexService betaReaderIndexService) {
         this.bookRepository = bookRepository;
+        this.betaReaderIndexService = betaReaderIndexService;
     }
 }

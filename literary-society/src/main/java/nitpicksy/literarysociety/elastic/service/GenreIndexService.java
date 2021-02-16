@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface GenreIndexService {
 
-    GenreIndexingUnit addGenre(Genre genre);
+    void addGenre(Genre genre);
 
     GenreIndexingUnit findById(Long id);
 

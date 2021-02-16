@@ -18,8 +18,8 @@ public class GenreIndexServiceImpl implements GenreIndexService {
     private GenreIndexRepository genreIndexRepository;
 
     @Override
-    public GenreIndexingUnit addGenre(Genre genre) {
-        return genreIndexRepository.save(new GenreIndexingUnit(genre.getId(), genre.getName()));
+    public void addGenre(Genre genre) {
+        genreIndexRepository.save(new GenreIndexingUnit(genre.getId(), genre.getName()));
     }
 
     @Override

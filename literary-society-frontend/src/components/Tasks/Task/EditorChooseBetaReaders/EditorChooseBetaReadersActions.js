@@ -44,3 +44,22 @@ export const confirm = (data, taskId, history) => {
             });
     };
 };
+
+export const filterBetaReadersSuccess = (betaReaders) => {    
+    return {
+        type: actionTypes.FILTER_BETA_READERS_SUCCESS,
+        betaReaders: betaReaders
+    };
+};
+
+export const filterBetaReaders = (piId, shouldFilter) => {
+    return dispatch => {
+        axios.get(`/readers/beta/filter?piId=${piId}&shouldFilter=${shouldFilter}`)
+            .then(response => {
+                dispatch(filterBetaReadersSuccess(response.data));
+            })
+            .catch(err => {
+                toastr.error('Filter Beta-readers', 'Something went wrong. Please try again.');
+            });
+    }
+};

@@ -7,10 +7,10 @@ import java.util.List;
 
 public interface BetaReaderIndexService {
 
-    BetaReaderIndexingUnit addBetaReader(Reader reader);
+    void addBetaReader(Reader reader);
 
-    List<BetaReaderIndexingUnit> filterByGeoLocation(Double lat, Double lon);
+    List<BetaReaderIndexingUnit> filterByGenre(String genreName);
 
-    List<BetaReaderIndexingUnit> filterByGenreAndGeoLocation(String genreName, Double lat, Double lon);
+    List<BetaReaderIndexingUnit> filterByGenreAndGeolocation(String genreName, Double lat, Double lon);
 
 }

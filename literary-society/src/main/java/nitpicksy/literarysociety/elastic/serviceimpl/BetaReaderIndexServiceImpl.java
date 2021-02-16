@@ -36,7 +36,7 @@ public class BetaReaderIndexServiceImpl implements BetaReaderIndexService {
     private GenreIndexService genreIndexService;
 
     @Override
-    public BetaReaderIndexingUnit addBetaReader(Reader betaReader) {
+    public void addBetaReader(Reader betaReader) {
         BetaReaderIndexingUnit betaReaderIdxUnit = new BetaReaderIndexingUnit();
         betaReaderIdxUnit.setId(betaReader.getUserId());
         betaReaderIdxUnit.setName(betaReader.getFirstName() + " " + betaReader.getLastName());
@@ -46,33 +46,31 @@ public class BetaReaderIndexServiceImpl implements BetaReaderIndexService {
 
         JOpenCageLatLng coordinates = LocationProvider.getCoordinates(cityAndCountry);
         betaReaderIdxUnit.setGeoPoint(new GeoPoint(coordinates.getLat(), coordinates.getLng()));
-        
+
         List<Long> genreIds = betaReader.getBetaReaderGenres().stream().map(Genre::getId).collect(Collectors.toList());
         betaReaderIdxUnit.setGenres(genreIndexService.findByIds(genreIds));
 
-        return betaReaderIndexRepository.save(betaReaderIdxUnit);
+        betaReaderIndexRepository.save(betaReaderIdxUnit);
     }
 
     @Override
-    public List<BetaReaderIndexingUnit> filterByGeoLocation(Double lat, Double lon) {
-//        QueryBuilder filter = QueryBuilders.geoDistanceQuery("geoPoint")
-//                .point(lat, lon)
-//                .distance(100, DistanceUnit.KILOMETERS);
-//
-//        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-//        boolQuery.mustNot(filter);
-//
-//        SearchQuery theQuery = new NativeSearchQueryBuilder().withQuery(boolQuery).build();
-//        return elasticsearchTemplate.queryForList(theQuery, BetaReaderIndexingUnit.class);
-        return null;
-    }
-
-    @Override
-    public List<BetaReaderIndexingUnit> filterByGenreAndGeoLocation(String genreName, Double lat, Double lon) {
-
+    public List<BetaReaderIndexingUnit> filterByGenre(String genreName) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
-        QueryBuilder genreFilter = QueryBuilders.termQuery("genres.name", genreName);
+        QueryBuilder genreFilter = QueryBuilders.matchPhraseQuery("genres.name", genreName);
+        NestedQueryBuilder nestedQuery = QueryBuilders.nestedQuery("genres",
+                QueryBuilders.boolQuery().must(genreFilter), ScoreMode.None);
+        boolQuery.must(nestedQuery);
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(boolQuery).build();
+        return elasticsearchTemplate.queryForList(searchQuery, BetaReaderIndexingUnit.class);
+    }
+
+    @Override
+    public List<BetaReaderIndexingUnit> filterByGenreAndGeolocation(String genreName, Double lat, Double lon) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+
+        QueryBuilder genreFilter = QueryBuilders.matchPhraseQuery("genres.name", genreName);
         NestedQueryBuilder nestedQuery = QueryBuilders.nestedQuery("genres",
                 QueryBuilders.boolQuery().must(genreFilter), ScoreMode.None);
         boolQuery.must(nestedQuery);

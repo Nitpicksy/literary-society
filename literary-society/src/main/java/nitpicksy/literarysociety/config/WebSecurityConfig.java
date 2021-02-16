@@ -87,6 +87,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/readers/start-registration").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/readers/registration-form").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/readers/beta/choose-genres").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/readers/beta/filter").hasAuthority("MANAGE_TASKS")
 
                 .antMatchers(HttpMethod.GET, "/api/tasks").hasAuthority("MANAGE_TASKS")
                 .antMatchers(HttpMethod.GET, "/api/tasks/{taskId}").hasAuthority("MANAGE_TASKS")

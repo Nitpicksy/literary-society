@@ -2,9 +2,15 @@ package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.constants.CamundaConstants;
+import nitpicksy.literarysociety.dto.camunda.EnumKeyValueDTO;
 import nitpicksy.literarysociety.dto.response.FormFieldsDTO;
 import nitpicksy.literarysociety.dto.response.ProcessDataDTO;
+import nitpicksy.literarysociety.elastic.model.BetaReaderIndexingUnit;
+import nitpicksy.literarysociety.elastic.service.BetaReaderIndexService;
+import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.Log;
+import nitpicksy.literarysociety.model.Writer;
+import nitpicksy.literarysociety.service.BookService;
 import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.camunda.bpm.engine.TaskService;
@@ -18,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Validated
 @RestController
@@ -31,6 +39,10 @@ public class ReaderController {
     private CamundaService camundaService;
 
     private TaskService taskService;
+
+    private BookService bookService;
+
+    private BetaReaderIndexService betaReaderIndexService;
 
     private LogService logService;
 
@@ -59,11 +71,39 @@ public class ReaderController {
         return new ResponseEntity<>(camundaService.setEnumValues(formFieldsDTO), HttpStatus.OK);
     }
 
+    @GetMapping("/beta/filter")
+    public ResponseEntity<List<EnumKeyValueDTO>> filterBetaReaders(@NotBlank @RequestParam String piId,
+                                                                   @NotNull @RequestParam Boolean shouldFilter) {
+        Long bookId = Long.valueOf(camundaService.getProcessVariable(piId, "bookId"));
+        Book book = bookService.findById(bookId);
+
+        List<BetaReaderIndexingUnit> betaReaderIdxUnits;
+        if (shouldFilter) {
+            Writer writer = book.getWriter();
+            betaReaderIdxUnits = betaReaderIndexService.filterByGenreAndGeolocation(book.getGenre().getName(),
+                    writer.getLocation().getLatitude(), writer.getLocation().getLongitude());
+        } else {
+            betaReaderIdxUnits = betaReaderIndexService.filterByGenre(book.getGenre().getName());
+        }
+
+        List<EnumKeyValueDTO> enumDTOList = new ArrayList<>();
+        betaReaderIdxUnits.forEach(betaReaderIdxUnit -> {
+            String key = "id_" + betaReaderIdxUnit.getId();
+            String value = betaReaderIdxUnit.getName() + " (" + betaReaderIdxUnit.getCityAndCountry() + ")";
+            enumDTOList.add(new EnumKeyValueDTO(key, value));
+        });
+
+        return new ResponseEntity<>(enumDTOList, HttpStatus.OK);
+    }
+
     @Autowired
-    public ReaderController(CamundaService camundaService, TaskService taskService, LogService logService,
+    public ReaderController(CamundaService camundaService, TaskService taskService, BookService bookService,
+                            BetaReaderIndexService betaReaderIndexService, LogService logService,
                             IPAddressProvider ipAddressProvider) {
         this.camundaService = camundaService;
         this.taskService = taskService;
+        this.bookService = bookService;
+        this.betaReaderIndexService = betaReaderIndexService;
         this.logService = logService;
         this.ipAddressProvider = ipAddressProvider;
     }

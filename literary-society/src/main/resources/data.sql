@@ -36,15 +36,22 @@ values ('https://www.literary-society.com:3000', 1, 'MONTH',
         'https://www.literary-society.com:3000/subscription/success');
 
 
+-- Locations
+insert into location (latitude, longitude)
+values (44.2259454, 17.6661738);
+insert into location (latitude, longitude)
+values (44.8178131, 20.4568974);
+
+
 -- Writers
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
-                   enabled)
+                   enabled, location_id)
 values ('WRITER', 'Ivo', 'Andrić', 'Travnik', 'Bosna i Hercegovina', 'andric@maildrop.cc', 'andric',
-        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, 1);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
-                   enabled)
+                   enabled, location_id)
 values ('WRITER', 'Branisav', 'Nušić', 'Beograd', 'Srbija', 'nusic@maildrop.cc', 'nusic',
-        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true);
+        '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, 2);
 
 -- Editors
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
@@ -73,7 +80,7 @@ values ('READER', 'Pera', 'Peric', 'London', 'Ujedinjeno kraljevstvo', 'perap@ma
 -- Beta-readers
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled, is_beta_reader, penalty)
-values ('READER', 'Teodora', 'Todorovic', 'Kragujevac', 'Srbija', 'teodorat@maildrop.cc', 'teodorat',
+values ('READER', 'Teodora', 'Todorovic', 'Zenica', 'Bosna i Hercegovina', 'teodorat@maildrop.cc', 'teodorat',
         '$2a$12$ZsxtTnQCQxQJLq0tvgRPzO8CMnbcxu8VMGD5QIj9C7zTxoin6Dykm', 'ACTIVE', true, true, 0);
 insert into users (type, first_name, last_name, city, country, email, username, password, status,
                    enabled, is_beta_reader, penalty)
