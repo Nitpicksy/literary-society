@@ -22,7 +22,7 @@ const Result = (props) => {
                 <CardActionArea onClick={() => redirectToDetailsPage()}>
                     <CardContent className={classes.cardcontent}>
                         <Typography className={classes.title}>
-                            {props.result.title.split("_")[2].slice(0, -4)}
+                            {props.result.title.slice(20, -4)}
                         </Typography>
                         {
                             props.result.similarProcent >= 0.25 ?
