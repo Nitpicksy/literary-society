@@ -13,7 +13,7 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 import java.util.List;
 
-@Document(indexName = "reader", type = "reader")
+@Document(indexName = "reader1", type = "reader1")
 @Getter
 @Setter
 @NoArgsConstructor

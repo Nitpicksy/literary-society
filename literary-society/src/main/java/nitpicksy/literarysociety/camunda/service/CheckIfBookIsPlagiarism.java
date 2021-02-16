@@ -45,7 +45,7 @@ public class CheckIfBookIsPlagiarism implements JavaDelegate {
         try{
 
             FileInputStream input = new FileInputStream(pdfDocumentService.download(pdfDocument));
-            MultipartFile multipartFile = new MockMultipartFile(pdfDocument.getName(),pdfDocument.getName(),
+            MultipartFile multipartFile = new MockMultipartFile(pdfDocument.getBook().getTitle(),pdfDocument.getName(),
                     "text/plain", IOUtils.toByteArray(input));
 
             PaperResultDTO resultDTO =  plagiaristClient.uploadNew(multipartFile);
@@ -53,6 +53,7 @@ public class CheckIfBookIsPlagiarism implements JavaDelegate {
             String serialized = new Gson().toJson(resultDTO.getSimilarPapers());
 
             execution.setVariable("similarPapers", serialized);
+            execution.setVariable("resultId", String.valueOf(resultDTO.getId()));
         } catch (RuntimeException | IOException exception) {
             System.out.println("Error");
         }

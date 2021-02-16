@@ -9,7 +9,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-@Document(indexName = "book", type = "book")
+@Document(indexName = "book1", type = "book1")
 @Getter
 @Setter
 @NoArgsConstructor

@@ -49,6 +49,7 @@ import merchantBookReducer from './components/MerchantBooks/MerchantBookDetails/
 import editorCheckIfBookIsPlagiarismReducer from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/EditorCheckIfBookIsPlagiarismReducer';
 import transactionListReducer from './components/TransactionList/TransactionListReducer';
 import searchBooksReducer from './components/SearchBooks/SearchBooksReducer';
+import resultDetailsReducer from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/ResultDetails/ResultDetailsReducer';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
@@ -89,6 +90,7 @@ const rootReducer = combineReducers({
     editorCheckIfBookIsPlagiarism:editorCheckIfBookIsPlagiarismReducer,
     transactionList: transactionListReducer,
     searchBooks:searchBooksReducer,
+    resultDetails: resultDetailsReducer
 });
 
 

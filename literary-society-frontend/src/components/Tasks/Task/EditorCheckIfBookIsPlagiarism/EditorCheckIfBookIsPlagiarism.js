@@ -15,7 +15,8 @@ import { extractControls } from '../../../../utility/extractControls';
 import Button from '@material-ui/core/Button';
 import PublicationRequestCard from '../PublicationRequest/PublicationRequestCard/PublicationRequestCard';
 import { toastr } from 'react-redux-toastr';
-import { Paper } from '@material-ui/core';
+import { Paper, Grid } from '@material-ui/core';
+import Result from './ShowResults/Result';
 
 const EditorCheckIfBookIsPlagiarism = (props) => {
     const history = useHistory();
@@ -32,6 +33,7 @@ const EditorCheckIfBookIsPlagiarism = (props) => {
     let form = null;
     let publicationRequestCard = null;
     let plagiarismInformation = null;
+    let results;
 
     useEffect(() => {
         fetchForm(selectedTask.piId, selectedTask.taskId);
@@ -90,13 +92,13 @@ const EditorCheckIfBookIsPlagiarism = (props) => {
 
     if (plagiarismInfo) {
         console.log(plagiarismInfo)
-        plagiarismInformation = <Paper justify="center" className={classes.paperPercentage}>
-            <Typography component="h1" variant="h6" className={classes.title}>This manuscript matches with an existing book by %.</Typography>
-        </Paper>
+        results = plagiarismInfo.map(plagiarism => {
+            return <Result key={plagiarism.id} result={plagiarism} piId = {selectedTask.piId} />
+        });
     }
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container component="main" maxWidth="md">
             <CssBaseline />
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
@@ -107,7 +109,14 @@ const EditorCheckIfBookIsPlagiarism = (props) => {
                     {publicationRequestCard}
                 </div>
                 {plagiarismInformation}
-
+            </div>
+            <Paper justify="center" className={classes.paperPercentage}>
+                <Typography  variant="h4" className={classes.title}>Similar books</Typography>
+                <Grid container spacing={2} align="center" justify="center" style={{ marginTop: 10 }} >
+                    {results}
+                </Grid>
+            </Paper>
+            <div className={classes.paper}>
                 <form className={classes.form} noValidate onSubmit={submitHander}>
                     {form}
                     <Button type="submit" color="primary" className={classes.submit}

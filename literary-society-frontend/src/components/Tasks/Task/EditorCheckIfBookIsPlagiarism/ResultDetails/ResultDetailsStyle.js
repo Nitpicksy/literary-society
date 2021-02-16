@@ -14,22 +14,25 @@ export const useStyles = makeStyles((theme) => ({
     title: {
         textAlign: 'center',
     },
-    form: {
-        width: '50%',
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(3),
+    subTitle: {
+        fontSize: '1.20rem',
+        fontWeight: 450,
+        lineHeight: 'normal',
+        marginBottom: theme.spacing(0.4),
+        textAlign: 'left',
+        color: 'crimson',
     },
-    submit: {
-        marginTop: theme.spacing(2),
+    content: {
+        fontSize: '1.30rem',
+        color: 'black',
     },
     card: {
         marginTop: theme.spacing(1),
         display: 'flex',
         alignItems: 'center',
     },
-    paperPercentage: {
-        margin: theme.spacing(2, 0),
-        padding: theme.spacing(2, 2),
-        minWidth: 555,
-    }
+    similarProcentRed: {
+        fontSize: '1.30rem',
+        color: 'red',
+    },
 }));

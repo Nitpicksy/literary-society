@@ -1,6 +1,7 @@
 package nitpicksy.literarysociety.controller;
 
 import nitpicksy.literarysociety.camunda.service.CamundaService;
+import nitpicksy.literarysociety.client.PlagiaristClient;
 import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.request.CreateBookRequestDTO;
 import nitpicksy.literarysociety.dto.response.*;
@@ -13,6 +14,7 @@ import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.mapper.*;
 import nitpicksy.literarysociety.model.*;
+import nitpicksy.literarysociety.plagiarist.dto.PaperResultDTO;
 import nitpicksy.literarysociety.service.*;
 import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.apache.commons.io.IOUtils;
@@ -84,7 +86,7 @@ public class BookController {
 
     private SearchService searchService;
 
-//    private UploadFile uploadFile;
+    private PlagiaristClient plagiaristClient;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookDTO>> getAllForSale() {
@@ -273,6 +275,12 @@ public class BookController {
         return new ResponseEntity<>(searchService.combineSearchParams(searchParams,page,size), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/plagiarism-result", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PaperResultDTO> getPlagiarismResult(@NotBlank @RequestParam String piId) {
+
+        Long resultId = Long.valueOf(camundaService.getProcessVariable(piId, "resultId"));
+        return new ResponseEntity<>(plagiaristClient.getResult(resultId), HttpStatus.OK);
+    }
 
     @Autowired
     public BookController(BookService bookService, OpinionOfBetaReaderService opinionOfBetaReaderService,
@@ -281,7 +289,7 @@ public class BookController {
                           OpinionOfEditorDtoMapper opinionOfEditorDtoMapper, PublicationRequestResponseDtoMapper publReqResponseDtoMapper,
                           BuyerTokenService buyerTokenService, PDFDocumentService pdfDocumentService, UserService userService, LogService logService,
                           IPAddressProvider ipAddressProvider, MembershipService membershipService, BookInfoService bookInfoService,
-                          SearchService searchService) {
+                          SearchService searchService,PlagiaristClient plagiaristClient) {
         this.bookService = bookService;
         this.opinionOfBetaReaderService = opinionOfBetaReaderService;
         this.opinionOfEditorService = opinionOfEditorService;
@@ -299,5 +307,6 @@ public class BookController {
         this.ipAddressProvider = ipAddressProvider;
         this.bookInfoService = bookInfoService;
         this.searchService = searchService;
+        this.plagiaristClient = plagiaristClient;
     }
 }

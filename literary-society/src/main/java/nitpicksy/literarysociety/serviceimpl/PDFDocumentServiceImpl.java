@@ -96,7 +96,7 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
     public void uploadBook(PDFDocument pdfDocument){
         try{
             FileInputStream input = new FileInputStream(download(pdfDocument));
-            MultipartFile multipartFile = new MockMultipartFile(pdfDocument.getName(),pdfDocument.getName(),
+            MultipartFile multipartFile = new MockMultipartFile(pdfDocument.getBook().getTitle(),pdfDocument.getName(),
                     "text/plain", IOUtils.toByteArray(input));
             PaperResultDTO resultDTO =  plagiaristClient.upload( multipartFile);
         } catch (RuntimeException | IOException exception) {

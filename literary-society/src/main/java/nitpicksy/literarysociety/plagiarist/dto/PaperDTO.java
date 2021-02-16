@@ -4,7 +4,6 @@ package nitpicksy.literarysociety.plagiarist.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Comparator;
 
@@ -17,6 +16,8 @@ public class PaperDTO implements Comparator<PaperDTO> {
     private String title;
 
     private double similarProcent;
+
+    private double searchHits;
 
     @Override
     public int hashCode() {
