@@ -1,24 +1,29 @@
 package nitpicksy.literarysociety.serviceimpl;
 
+import nitpicksy.literarysociety.client.PlagiaristClient;
 import nitpicksy.literarysociety.dto.camunda.WriterDocumentDTO;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.Log;
 import nitpicksy.literarysociety.model.PDFDocument;
 import nitpicksy.literarysociety.model.Writer;
+import nitpicksy.literarysociety.plagiarist.dto.PaperResultDTO;
 import nitpicksy.literarysociety.repository.PDFDocumentRepository;
 import nitpicksy.literarysociety.repository.WriterRepository;
 import nitpicksy.literarysociety.service.LogService;
 import nitpicksy.literarysociety.service.PDFDocumentService;
 import nitpicksy.literarysociety.utils.IPAddressProvider;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,6 +51,8 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
     private LogService logService;
 
     private IPAddressProvider ipAddressProvider;
+
+    private PlagiaristClient plagiaristClient;
 
     @Override
     public PDFDocument upload(MultipartFile pdfFile, Book book) throws IOException {
@@ -83,6 +90,18 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
         File file = resource.getFile();
 
         return file;
+    }
+
+    @Override
+    public void uploadBook(PDFDocument pdfDocument){
+        try{
+            FileInputStream input = new FileInputStream(download(pdfDocument));
+            MultipartFile multipartFile = new MockMultipartFile(pdfDocument.getName(),pdfDocument.getName(),
+                    "text/plain", IOUtils.toByteArray(input));
+            PaperResultDTO resultDTO =  plagiaristClient.upload( multipartFile);
+        } catch (RuntimeException | IOException exception) {
+            System.out.println("Error");
+        }
     }
 
     @Override
@@ -133,10 +152,11 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
 
     @Autowired
     public PDFDocumentServiceImpl(PDFDocumentRepository pdfDocumentRepository, WriterRepository writerRepository,
-                                  LogService logService, IPAddressProvider ipAddressProvider) {
+                                  LogService logService, IPAddressProvider ipAddressProvider,PlagiaristClient plagiaristClient) {
         this.pdfDocumentRepository = pdfDocumentRepository;
         this.writerRepository = writerRepository;
         this.logService = logService;
         this.ipAddressProvider = ipAddressProvider;
+        this.plagiaristClient = plagiaristClient;
     }
 }

@@ -11,6 +11,7 @@ import nitpicksy.literarysociety.repository.*;
 import nitpicksy.literarysociety.service.BookService;
 import nitpicksy.literarysociety.service.EmailNotificationService;
 import nitpicksy.literarysociety.service.GenreService;
+import nitpicksy.literarysociety.service.PDFDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -54,6 +55,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private BookInfoService bookInfoService;
 
     private BookService bookService;
+
 
     @Override
     @Transactional
@@ -246,6 +248,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             bookInfoService.index(book);
         }
     }
+
+
     private String getLocalhostURL() {
         return environment.getProperty("LOCALHOST_URL");
     }
@@ -276,8 +280,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     public SetupDataLoader(RoleRepository roleRepository, PermissionRepository permissionRepository, UserRepository userRepository,
                            WriterRepository writerRepository, PriceListRepository priceListRepository,
                            PasswordEncoder passwordEncoder, EmailNotificationService emailNotificationService,
-                           Environment environment,GenreInfoService genreInfoService,GenreService genreService,
-                           ReaderInfoService readerInfoService, BookInfoService bookInfoService,  BookService bookService) {
+                           Environment environment, GenreInfoService genreInfoService, GenreService genreService,
+                           ReaderInfoService readerInfoService, BookInfoService bookInfoService,
+                           BookService bookService) {
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
         this.userRepository = userRepository;

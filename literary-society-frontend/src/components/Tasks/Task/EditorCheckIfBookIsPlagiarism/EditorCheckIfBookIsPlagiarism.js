@@ -89,8 +89,9 @@ const EditorCheckIfBookIsPlagiarism = (props) => {
     }
 
     if (plagiarismInfo) {
+        console.log(plagiarismInfo)
         plagiarismInformation = <Paper justify="center" className={classes.paperPercentage}>
-            <Typography component="h1" variant="h6" className={classes.title}>This manuscript matches with an existing book by {plagiarismInfo}%.</Typography>
+            <Typography component="h1" variant="h6" className={classes.title}>This manuscript matches with an existing book by %.</Typography>
         </Paper>
     }
 

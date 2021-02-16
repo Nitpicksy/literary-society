@@ -34,7 +34,7 @@ export const fetchPlagiarismInfoSuccess = (plagiarismInfo) => {
 
 export const fetchPlagiarismInfo = (piId) => {
     return dispatch => {
-        axios.get(`/tasks/process-variable?piId=${piId}&name=percentage`)
+        axios.get(`/tasks/process-variable?piId=${piId}&name=similarPapers`)
             .then(response => {
                 dispatch(fetchPlagiarismInfoSuccess(response.data));
             })

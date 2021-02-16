@@ -7,6 +7,7 @@ import nitpicksy.literarysociety.elasticsearch.service.GenreInfoService;
 import nitpicksy.literarysociety.elasticsearch.utils.ApacheTikaHandler;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.PDFDocument;
+import nitpicksy.literarysociety.plagiarist.utils.UploadFile;
 import nitpicksy.literarysociety.service.PDFDocumentService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class BookInfoServiceImpl implements BookInfoService {
 
     private BookInfoRepository bookInfoRepository;
 
-    private PDFDocumentService pdfDocumentService;
+    private UploadFile uploadFile;
 
     private GenreInfoService genreInfoService;
 
@@ -42,14 +43,15 @@ public class BookInfoServiceImpl implements BookInfoService {
     }
 
     private String getContent(Long bookId) throws IOException {
-        PDFDocument pdfDocument = pdfDocumentService.findByBookId(bookId);
-        File book = pdfDocumentService.download(pdfDocument);
+        PDFDocument pdfDocument = uploadFile.findByBookId(bookId);
+        File book = uploadFile.download(pdfDocument);
         return apacheTikaHandler.extractContentUsingParser(new FileInputStream(book));
     }
-    public BookInfoServiceImpl(BookInfoRepository bookInfoRepository, PDFDocumentService pdfDocumentService,
+
+    public BookInfoServiceImpl(BookInfoRepository bookInfoRepository,UploadFile uploadFile,
                                GenreInfoService genreInfoService, ApacheTikaHandler apacheTikaHandler) {
         this.bookInfoRepository = bookInfoRepository;
-        this.pdfDocumentService = pdfDocumentService;
+        this.uploadFile = uploadFile;
         this.genreInfoService = genreInfoService;
         this.apacheTikaHandler = apacheTikaHandler;
 

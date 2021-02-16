@@ -8,6 +8,7 @@ import nitpicksy.literarysociety.elasticsearch.dto.SearchParamDTO;
 import nitpicksy.literarysociety.elasticsearch.model.BookInfo;
 import nitpicksy.literarysociety.elasticsearch.service.BookInfoService;
 import nitpicksy.literarysociety.elasticsearch.service.SearchService;
+import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.exceptionHandler.InvalidTokenException;
 import nitpicksy.literarysociety.mapper.*;
@@ -28,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -83,6 +83,8 @@ public class BookController {
     private BookInfoService bookInfoService;
 
     private SearchService searchService;
+
+//    private UploadFile uploadFile;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookDTO>> getAllForSale() {
@@ -241,13 +243,22 @@ public class BookController {
         }
 
         Book book = bookService.createBook(createBookDTO, merchant, image);
-        pdfDocumentService.upload(pdfFile, book);
+        PDFDocument pdfDocument = pdfDocumentService.upload(pdfFile, book);
 
         bookInfoService.index(book);
 
+        pdfDocumentService.uploadBook(pdfDocument);
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDB",
                 String.format("Book %s successfully created", book.getId())));
         return new ResponseEntity<>(book, HttpStatus.OK);
+    }
+
+    @GetMapping("/upload-old")
+    public ResponseEntity<Book> uploadOldBooks()  {
+        for(Book book: bookService.findByStatus(BookStatus.IN_STORES)){
+            pdfDocumentService.uploadBook(pdfDocumentService.findByBookId(book.getId()));
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -261,6 +272,7 @@ public class BookController {
 
         return new ResponseEntity<>(searchService.combineSearchParams(searchParams,page,size), HttpStatus.OK);
     }
+
 
     @Autowired
     public BookController(BookService bookService, OpinionOfBetaReaderService opinionOfBetaReaderService,

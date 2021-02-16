@@ -6,14 +6,17 @@ import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.Image;
 import nitpicksy.literarysociety.model.Merchant;
+import nitpicksy.literarysociety.model.PDFDocument;
 import nitpicksy.literarysociety.model.PublishingInfo;
 import nitpicksy.literarysociety.model.Writer;
+import nitpicksy.literarysociety.plagiarist.dto.PaperResultDTO;
 import nitpicksy.literarysociety.repository.BookRepository;
 import nitpicksy.literarysociety.repository.PublishingInfoRepository;
 import nitpicksy.literarysociety.service.BookService;
 import nitpicksy.literarysociety.service.GenreService;
 import nitpicksy.literarysociety.service.ImageService;
 import nitpicksy.literarysociety.service.UserService;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -105,6 +108,7 @@ public class BookServiceImpl implements BookService {
 
         return savedBook;
     }
+
 
     private LocalDate getLocalDate(String date)  {
         return LocalDate.parse(date);

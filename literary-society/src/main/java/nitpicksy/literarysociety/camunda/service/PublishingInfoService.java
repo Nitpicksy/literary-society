@@ -5,11 +5,13 @@ import nitpicksy.literarysociety.elasticsearch.service.BookInfoService;
 import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.Merchant;
+import nitpicksy.literarysociety.model.PDFDocument;
 import nitpicksy.literarysociety.model.PublishingInfo;
 import nitpicksy.literarysociety.repository.BookRepository;
 import nitpicksy.literarysociety.repository.ImageRepository;
 import nitpicksy.literarysociety.repository.MerchantRepository;
 import nitpicksy.literarysociety.repository.PublishingInfoRepository;
+import nitpicksy.literarysociety.service.PDFDocumentService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.core.env.Environment;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,6 +40,8 @@ public class PublishingInfoService implements JavaDelegate {
 
     private BookInfoService bookInfoService;
 
+    private PDFDocumentService pdfDocumentService;
+
     @Override
     public void execute(DelegateExecution execution) {
         List<FormSubmissionDTO> formData = (List<FormSubmissionDTO>) execution.getVariable("formData");
@@ -52,6 +58,7 @@ public class PublishingInfoService implements JavaDelegate {
         PublishingInfo publishingInfo = new PublishingInfo(numberOfPages, map.get("publisherCity"), getPublisher(), price, discount, savedBook, merchantRepository.findFirstByOrderByIdAsc());
         PublishingInfo savedPublishingInfo = publishingInfoRepository.saveAndFlush(publishingInfo);
         book.setPublishingInfo(savedPublishingInfo);
+
         bookInfoService.index(book);
 
         System.out.println("*** Kraj procesa izdavanja knjige ***");
@@ -64,12 +71,13 @@ public class PublishingInfoService implements JavaDelegate {
     @Autowired
     public PublishingInfoService(BookRepository bookRepository, ImageRepository imageRepository,
                                  PublishingInfoRepository publishingInfoRepository, MerchantRepository merchantRepository,
-                                 Environment environment,  BookInfoService bookInfoService) {
+                                 Environment environment,  BookInfoService bookInfoService,PDFDocumentService pdfDocumentService) {
         this.bookRepository = bookRepository;
         this.imageRepository = imageRepository;
         this.publishingInfoRepository = publishingInfoRepository;
         this.merchantRepository = merchantRepository;
         this.environment = environment;
         this.bookInfoService = bookInfoService;
+        this.pdfDocumentService = pdfDocumentService;
     }
 }

@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.controller;
 
+import com.google.gson.Gson;
 import nitpicksy.literarysociety.camunda.service.CamundaService;
 import nitpicksy.literarysociety.dto.camunda.EditorsCommentsDTO;
 import nitpicksy.literarysociety.dto.camunda.PlagiarismDetailsDTO;
@@ -8,6 +9,7 @@ import nitpicksy.literarysociety.dto.camunda.TaskDataDTO;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
 import nitpicksy.literarysociety.model.*;
+import nitpicksy.literarysociety.plagiarist.dto.PaperDTO;
 import nitpicksy.literarysociety.service.*;
 import nitpicksy.literarysociety.utils.IPAddressProvider;
 import org.camunda.bpm.engine.FormService;
@@ -85,8 +87,10 @@ public class TaskController {
     }
 
     @GetMapping(value = "/process-variable", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getProcessVariable(@NotNull @RequestParam String piId, @NotBlank @RequestParam String name) {
-        return new ResponseEntity<>(camundaService.getProcessVariable(piId, name), HttpStatus.OK);
+    public ResponseEntity<PaperDTO[]> getProcessVariable(@NotNull @RequestParam String piId, @NotBlank @RequestParam String name) {
+        String variableValue = camundaService.getProcessVariable(piId,name);
+        PaperDTO[] similarPapers =new Gson().fromJson(variableValue, PaperDTO[].class);
+        return new ResponseEntity<>(similarPapers, HttpStatus.OK);
     }
 
     @PutMapping(value = "/{taskId}/complete-and-download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)

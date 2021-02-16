@@ -56,7 +56,7 @@ export const filterBetaReadersSuccess = (betaReaders, formFields) => {
 
 export const filterBetaReaders = (piId, filter, formFields) => {
     return dispatch => {
-        axios.get(`/readers/beta/filter?piId=${piId}&&filter=${filter}`)
+        axios.get(`/readers/beta/filter?piId=${piId}&filter=${filter}`)
             .then(response => {
                 dispatch(filterBetaReadersSuccess(response.data, formFields));
             })

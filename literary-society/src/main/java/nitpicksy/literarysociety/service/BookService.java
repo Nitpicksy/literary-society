@@ -5,6 +5,7 @@ import nitpicksy.literarysociety.dto.request.CreateBookRequestDTO;
 import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.Merchant;
+import nitpicksy.literarysociety.model.PDFDocument;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -31,4 +32,5 @@ public interface BookService {
     List<Book> getMerchantBooks(Long merchantId);
 
     Book createBook(CreateBookRequestDTO createBookDTO, Merchant merchant, MultipartFile image);
+
 }
