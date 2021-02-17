@@ -3,6 +3,7 @@ package nitpicksy.literarysociety.service;
 import nitpicksy.literarysociety.dto.camunda.WriterDocumentDTO;
 import nitpicksy.literarysociety.model.Book;
 import nitpicksy.literarysociety.model.PDFDocument;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -25,5 +26,7 @@ public interface PDFDocumentService {
 
     File download(PDFDocument pdfDocument) throws IOException;
 
-    void uploadBook(PDFDocument pdfDocument);
+    void uploadOldBook(PDFDocument pdfDocument);
+
+    void deletePaper(@PathVariable Long uploadedPaperId);
 }

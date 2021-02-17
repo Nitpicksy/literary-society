@@ -93,15 +93,20 @@ public class PDFDocumentServiceImpl implements PDFDocumentService {
     }
 
     @Override
-    public void uploadBook(PDFDocument pdfDocument){
+    public void uploadOldBook(PDFDocument pdfDocument){
         try{
             FileInputStream input = new FileInputStream(download(pdfDocument));
             MultipartFile multipartFile = new MockMultipartFile(pdfDocument.getBook().getTitle(),pdfDocument.getName(),
                     "text/plain", IOUtils.toByteArray(input));
-            PaperResultDTO resultDTO =  plagiaristClient.upload( multipartFile);
+            PaperResultDTO resultDTO =  plagiaristClient.uploadOld( multipartFile);
         } catch (RuntimeException | IOException exception) {
             System.out.println("Error");
         }
+    }
+
+    @Override
+    public void deletePaper(Long uploadedPaperId) {
+        plagiaristClient.deletePaper(uploadedPaperId);
     }
 
     @Override

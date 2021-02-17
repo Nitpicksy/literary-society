@@ -1,3 +1,3 @@
 export {
-    fetchPlagiarismInfo
+    fetchPlagiarismInfo,
 } from './ResultDetailsActions';

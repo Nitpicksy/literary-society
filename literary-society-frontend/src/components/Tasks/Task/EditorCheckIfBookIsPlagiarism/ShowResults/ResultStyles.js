@@ -5,7 +5,7 @@ export const useStyles = makeStyles((theme) => ({
         backgroundColor: '#F5F5F5',
     },
     cardcontent: {
-        height: 110,
+        height: 90,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',

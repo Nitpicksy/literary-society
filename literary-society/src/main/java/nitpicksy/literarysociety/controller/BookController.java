@@ -249,7 +249,7 @@ public class BookController {
 
         bookInfoService.index(book);
 
-        pdfDocumentService.uploadBook(pdfDocument);
+        pdfDocumentService.uploadOldBook(pdfDocument);
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDB",
                 String.format("Book %s successfully created", book.getId())));
         return new ResponseEntity<>(book, HttpStatus.OK);
@@ -258,7 +258,7 @@ public class BookController {
     @GetMapping("/upload-old")
     public ResponseEntity<Book> uploadOldBooks()  {
         for(Book book: bookService.findByStatus(BookStatus.IN_STORES)){
-            pdfDocumentService.uploadBook(pdfDocumentService.findByBookId(book.getId()));
+            pdfDocumentService.uploadOldBook(pdfDocumentService.findByBookId(book.getId()));
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -280,6 +280,17 @@ public class BookController {
 
         Long resultId = Long.valueOf(camundaService.getProcessVariable(piId, "resultId"));
         return new ResponseEntity<>(plagiaristClient.getResult(resultId), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/download-paper/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> downloadPlagiarismPaper(@Positive @PathVariable Long id) {
+        try {
+            ResponseEntity<byte[]> result =  plagiaristClient.downloadPaper(id);
+
+            return new ResponseEntity<>(result.getBody(), result.getHeaders(), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Autowired

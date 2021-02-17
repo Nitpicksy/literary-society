@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.camunda.service;
 
+import nitpicksy.literarysociety.client.PlagiaristClient;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.elasticsearch.service.BookInfoService;
 import nitpicksy.literarysociety.enumeration.BookStatus;
@@ -60,6 +61,12 @@ public class PublishingInfoService implements JavaDelegate {
         book.setPublishingInfo(savedPublishingInfo);
 
         bookInfoService.index(book);
+
+        Long uploadedPaperId = Long.valueOf((String) execution.getVariable("uploadedPaperId"));
+        System.out.println(uploadedPaperId);
+
+        pdfDocumentService.deletePaper(uploadedPaperId);
+        pdfDocumentService.uploadOldBook(pdfDocumentService.findByBookId(savedBook.getId()));
 
         System.out.println("*** Kraj procesa izdavanja knjige ***");
     }

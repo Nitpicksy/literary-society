@@ -4,6 +4,8 @@ import nitpicksy.literarysociety.config.FeignClientConfiguration;
 import nitpicksy.literarysociety.plagiarist.dto.PaperResultDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,11 +17,17 @@ import org.springframework.web.multipart.MultipartFile;
 public interface PlagiaristClient {
 
     @RequestMapping(method = RequestMethod.POST, path = "api/file/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    PaperResultDTO upload(@RequestPart MultipartFile file);
+    PaperResultDTO uploadOld(@RequestPart MultipartFile file);
 
     @RequestMapping(method = RequestMethod.POST, path = "api/file/upload/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     PaperResultDTO uploadNew(@RequestPart MultipartFile file);
 
     @RequestMapping(method = RequestMethod.GET, path = "api/file/upload/new/results/{id}")
     PaperResultDTO getResult(@PathVariable Long id);
+
+    @RequestMapping(method = RequestMethod.GET, path = "api/file/download/{id}")
+    ResponseEntity<byte[]> downloadPaper(@PathVariable Long id);
+
+    @DeleteMapping(path = "api/papers/{id}")
+    void deletePaper(@PathVariable Long id);
 }

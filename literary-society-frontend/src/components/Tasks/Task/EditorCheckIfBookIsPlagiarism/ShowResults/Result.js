@@ -6,6 +6,10 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import { useHistory } from 'react-router';
+import * as actions from '../EditorCheckIfBookIsPlagiarismActions';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import { CardActions, IconButton } from '@material-ui/core';
+import { connect } from 'react-redux';
 
 const Result = (props) => {
     const classes = useStyles();
@@ -14,6 +18,10 @@ const Result = (props) => {
 
     const redirectToDetailsPage = () => {
         history.push(`/plagiarism-details?piId=${props.piId}&id=${props.result.id}`);
+    }
+
+    const download = (id, title) => {
+        props.onDownload(id, title);
     }
 
     return (
@@ -42,19 +50,25 @@ const Result = (props) => {
 
                     </CardContent>
                 </CardActionArea>
+                <CardActions>
+                    <IconButton onClick={() => download(props.result.id, props.result.title)} >
+                        <GetAppIcon style={{
+                            transform: "scale(1.3)",
+                            padding: 0
+                        }} color="primary" />
+                    </IconButton>
+
+                </CardActions>
             </Card>
         </Grid>
     );
 }
 
 
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         fetchBook: (id, history,addToCart) => dispatch(actions.fetchBook(id, history,addToCart)),
-//         download: (id,title) => dispatch(actions.download(id,title))
-//     }
-// };
+const mapDispatchToProps = dispatch => {
+    return {
+        onDownload: (id, title) => dispatch(actions.download(id, title)),
+    }
+};
 
-// export default connect(null, mapDispatchToProps)(ShowResults);
-
-export default Result;
+export default connect(null, mapDispatchToProps)(Result);

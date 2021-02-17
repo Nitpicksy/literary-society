@@ -10,9 +10,7 @@ import * as actions from './ResultDetailsExport';
 import * as signInActions from '../../../../Authentication/SignIn/SignInExport';
 import { responseInterceptor } from '../../../../../responseInterceptor';
 import { useHistory } from 'react-router';
-import Button from '@material-ui/core/Button';
-import { toastr } from 'react-redux-toastr';
-import { Paper, Grid } from '@material-ui/core';
+import {  Grid } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
@@ -23,7 +21,6 @@ const ResultDetails = (props) => {
     const classes = useStyles();
 
     const { fetchPlagiarismInfo, resultDetails } = props;
-    const [paper, setPaper] = useState(null);
     const [paperId, setPaperId] = useState(null);
     let results = null;
     const wordsPerPart = 950;
@@ -33,18 +30,6 @@ const ResultDetails = (props) => {
         fetchPlagiarismInfo(params.get('piId'));
         setPaperId(params.get('id'));
     }, [fetchPlagiarismInfo, props.location.search]);
-
-    useEffect(() => {
-        if (resultDetails) {
-            for (let i in resultDetails.similarPapers) {
-                if (resultDetails.similarPapers[i].id == paperId) {
-                    setPaper(resultDetails.similarPapers[i]);
-                    console.log(resultDetails.similarPapers[i]);
-                    break;
-                }
-            }
-        }
-    }, [resultDetails]);
 
     const getSimilarityValue = (papers) => {
         let similarity = null;
@@ -72,10 +57,10 @@ const ResultDetails = (props) => {
         );
     }
 
-    if (resultDetails && paper) {
+    if (resultDetails && paperId) {
         results = resultDetails.items.map(result => {
-            return <Grid item md={12} key={result.id}>
-                <Card className={classes.root}>
+            return <Grid item md={12}>
+                <Card className={classes.root} key={result.id}>
                     <CardActionArea>
                         <CardContent className={classes.cardcontent}>
                             <Typography className={classes.subTitle}>
@@ -99,8 +84,6 @@ const ResultDetails = (props) => {
             </Grid>
         });
     }
-
-
 
     return (
         <Container component="main" maxWidth="sm">
@@ -128,7 +111,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchPlagiarismInfo: (piId) => dispatch(actions.fetchPlagiarismInfo(piId)),
-        onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
+        onRefreshToken: (history) => dispatch(signInActions.refreshToken(history))
     }
 };
 

@@ -1,5 +1,6 @@
 export {
     fetchForm,
     confirm,
-    fetchPlagiarismInfo
+    fetchPlagiarismInfo,
+    download
 } from './EditorCheckIfBookIsPlagiarismActions';

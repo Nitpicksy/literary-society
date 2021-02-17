@@ -1,6 +1,7 @@
 import axios from '../../../../axios-endpoint';
 import { toastr } from 'react-redux-toastr';
 import * as actionTypes from './EditorCheckIfBookIsPlagiarismActionTypes';
+import { saveAs } from 'file-saver';
 
 export const fetchFormSuccess = (formFields, processInstanceId, taskId,publicationRequest) => {
     return {
@@ -61,5 +62,19 @@ export const confirm = (data, taskId, history) => {
                 toastr.error('Publication Request', err.response.data.message);
                 history.push('/tasks');
             });
+    };
+};
+
+export const download = (id, title) => {
+    return dispatch => {
+        axios(`/books/download-paper/${id}`, {
+            method: 'GET',
+            responseType: 'blob'
+        }).then((response) => {
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            saveAs(blob, title);
+        }).catch(err => {
+            toastr.error('Download Paper', 'Something went wrong.Please try again.');
+        });
     };
 };

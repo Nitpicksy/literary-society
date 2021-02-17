@@ -54,6 +54,8 @@ public class CheckIfBookIsPlagiarism implements JavaDelegate {
 
             execution.setVariable("similarPapers", serialized);
             execution.setVariable("resultId", String.valueOf(resultDTO.getId()));
+            execution.setVariable("uploadedPaperId", String.valueOf(resultDTO.getUploadedPaper().getId()));
+
         } catch (RuntimeException | IOException exception) {
             System.out.println("Error");
         }
