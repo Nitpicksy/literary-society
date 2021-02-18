@@ -6,6 +6,7 @@ import nitpicksy.literarysociety.constants.CamundaConstants;
 import nitpicksy.literarysociety.dto.request.CreateBookRequestDTO;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.dto.response.*;
+import nitpicksy.literarysociety.elastic.dto.PaperResultDTO;
 import nitpicksy.literarysociety.elastic.service.BookIndexService;
 import nitpicksy.literarysociety.enumeration.BookStatus;
 import nitpicksy.literarysociety.exceptionHandler.InvalidDataException;
@@ -251,6 +252,21 @@ public class BookController {
         logService.write(new Log(Log.INFO, Log.getServiceName(CLASS_PATH), CLASS_NAME, "ADDB",
                 String.format("Book %s successfully created", book.getId())));
         return new ResponseEntity<>(book, HttpStatus.OK);
+    }
+
+    @GetMapping("/paper-result")
+    public ResponseEntity<PaperResultDTO> getPaperResult(@RequestParam @NotBlank String piId) {
+        Long resultId = Long.valueOf(camundaService.getProcessVariable(piId, "paperResultId"));
+        return new ResponseEntity<>(plagiatorClient.getPaperResult(resultId), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/download-paper/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> downloadPaper(@PathVariable @NotNull @Positive Long id) {
+        try {
+            return plagiatorClient.downloadPaper(id);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/upload-existing")

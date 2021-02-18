@@ -42,6 +42,14 @@ const EditorCheckIfBookIsPlagiarism = (props) => {
         }
     }, [formFields]);
 
+    const showResultDetails = (paperId) => {
+        history.push(`/paper-result-details?piId=${selectedTask.piId}&paperId=${paperId}`);
+    };
+
+    const downloadPaper = (paperId, title) => {
+        props.downloadPaper(paperId, title);
+    };
+
     const submitHander = (event) => {
         event.preventDefault();
         let array = [];
@@ -107,10 +115,10 @@ const EditorCheckIfBookIsPlagiarism = (props) => {
                             <TableCell className={classes.cell}>{paper.title.slice(20, -4)}</TableCell>
                             <TableCell className={classes.cell} align="right">{similarity}</TableCell>
                             <TableCell className={classes.cellBtn} align="right">
-                                <Button color="primary" size="large">Details</Button>
+                                <Button color="primary" size="large" onClick={() => showResultDetails(paper.id)}>Details</Button>
                             </TableCell>
                             <TableCell className={classes.cellIcon}>
-                                <IconButton>
+                                <IconButton aria-label="download" onClick={() => downloadPaper(paper.id, paper.title)}>
                                     <GetAppIcon />
                                 </IconButton>
                             </TableCell>
@@ -162,6 +170,7 @@ const mapDispatchToProps = dispatch => {
         fetchPlagiarismInfo: (piId) => dispatch(actions.fetchPlagiarismInfo(piId)),
         onRefreshToken: (history) => dispatch(signInActions.refreshToken(history)),
         onConfirm: (data, taskId, history) => dispatch(actions.confirm(data, taskId, history)),
+        downloadPaper: (paperId, title) => dispatch(actions.downloadPaper(paperId, title)),
     }
 };
 

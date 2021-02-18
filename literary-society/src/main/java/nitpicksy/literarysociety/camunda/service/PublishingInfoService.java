@@ -1,5 +1,6 @@
 package nitpicksy.literarysociety.camunda.service;
 
+import nitpicksy.literarysociety.client.PlagiatorClient;
 import nitpicksy.literarysociety.dto.request.FormSubmissionDTO;
 import nitpicksy.literarysociety.elastic.service.BookIndexService;
 import nitpicksy.literarysociety.enumeration.BookStatus;
@@ -10,11 +11,13 @@ import nitpicksy.literarysociety.repository.BookRepository;
 import nitpicksy.literarysociety.repository.ImageRepository;
 import nitpicksy.literarysociety.repository.MerchantRepository;
 import nitpicksy.literarysociety.repository.PublishingInfoRepository;
+import nitpicksy.literarysociety.service.PDFDocumentService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.core.env.Environment;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -25,13 +28,15 @@ public class PublishingInfoService implements JavaDelegate {
 
     private BookRepository bookRepository;
 
-    private ImageRepository imageRepository;
-
     private PublishingInfoRepository publishingInfoRepository;
 
     private MerchantRepository merchantRepository;
 
     private BookIndexService bookIndexService;
+
+    private PDFDocumentService pdfDocumentService;
+
+    private PlagiatorClient plagiatorClient;
 
     private Environment environment;
 
@@ -54,6 +59,11 @@ public class PublishingInfoService implements JavaDelegate {
 
         // Indexing new book
         bookIndexService.addBook(book);
+        // Deleting old and uploading new version in Plagiator
+        Long uploadedPaperId = Long.valueOf((String) execution.getVariable(("uploadedPaperId")));
+        plagiatorClient.deletePaper(uploadedPaperId);
+        MultipartFile multipartFile = pdfDocumentService.convertToMultipartFile(book.getId());
+        plagiatorClient.uploadExistingBook(multipartFile);
 
         System.out.println("*** Kraj procesa izdavanja knjige ***");
     }
@@ -63,13 +73,15 @@ public class PublishingInfoService implements JavaDelegate {
     }
 
     @Autowired
-    public PublishingInfoService(BookRepository bookRepository, ImageRepository imageRepository, PublishingInfoRepository publishingInfoRepository,
-                                 MerchantRepository merchantRepository, BookIndexService bookIndexService, Environment environment) {
+    public PublishingInfoService(BookRepository bookRepository, PublishingInfoRepository publishingInfoRepository,
+                                 MerchantRepository merchantRepository, BookIndexService bookIndexService,
+                                 PlagiatorClient plagiatorClient, PDFDocumentService pdfDocumentService, Environment environment) {
         this.bookRepository = bookRepository;
-        this.imageRepository = imageRepository;
         this.publishingInfoRepository = publishingInfoRepository;
         this.merchantRepository = merchantRepository;
         this.bookIndexService = bookIndexService;
+        this.pdfDocumentService = pdfDocumentService;
+        this.plagiatorClient = plagiatorClient;
         this.environment = environment;
     }
 }

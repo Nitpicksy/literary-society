@@ -57,6 +57,7 @@ import EditorCheckIfBookIsPlagiarism from './components/Tasks/Task/EditorCheckIf
 import TransactionList from './components/TransactionList/TransactionList';
 import SearchResults from './components/Search/SearchResults/SearchResults';
 import AdvancedSearch from './components/Search/AdvancedSearch/AdvancedSearch';
+import PaperResultDetails from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/PaperResultDetails/PaperResultDetails';
 // const Auth = React.lazy(() => {
 //   return import('./containers/Auth/Auth');
 // });
@@ -140,6 +141,7 @@ const App = props => {
           <Route path="/download-document" render={(props) => <EditorDownloadDocument {...props} />} meta={{ roles: [roleEditor, roleReader] }} />
           <Route path="/editor-choose-beta-readers" render={(props) => <EditorChooseBetaReaders {...props} />} meta={{ roles: [roleEditor] }} />
           <Route path="/publishing-info" render={(props) => <PublishingInfo {...props} />} meta={{ roles: [roleEditor] }} />
+          <Route path="/paper-result-details" render={(props) => <PaperResultDetails {...props} />} meta={{ roles: [roleEditor] }} />
 
           <Route path="/writer-membership-upload" render={(props) => <WriterUploadWork {...props} />} meta={{ roles: [roleWriter] }} />
           <Route path="/voting" render={(props) => <CommitteeVoting {...props} />} meta={{ roles: [roleWriter, roleCommitteeMember] }} />

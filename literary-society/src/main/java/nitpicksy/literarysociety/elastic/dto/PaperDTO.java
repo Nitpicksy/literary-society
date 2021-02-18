@@ -15,6 +15,7 @@ public class PaperDTO implements Comparator<PaperDTO> {
     private Long id;
     private String title;
     private double similarProcent;
+    private double searchHits;
 
     @Override
     public int hashCode() {

@@ -49,6 +49,7 @@ import merchantBookReducer from './components/MerchantBooks/MerchantBookDetails/
 import editorCheckIfBookIsPlagiarismReducer from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/EditorCheckIfBookIsPlagiarismReducer';
 import transactionListReducer from './components/TransactionList/TransactionListReducer';
 import searchResultsReducer from './components/Search/SearchResults/SearchResultsReducer';
+import paperResultDetailsReducer from './components/Tasks/Task/EditorCheckIfBookIsPlagiarism/PaperResultDetails/PaperResultDetailsReducer';
 
 const rootReducer = combineReducers({
     toastr: toastrReducer,
@@ -87,6 +88,7 @@ const rootReducer = combineReducers({
     editorCheckIfBookIsPlagiarism: editorCheckIfBookIsPlagiarismReducer,
     transactionList: transactionListReducer,
     searchResults: searchResultsReducer,
+    paperResultDetails: paperResultDetailsReducer,
 });
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;

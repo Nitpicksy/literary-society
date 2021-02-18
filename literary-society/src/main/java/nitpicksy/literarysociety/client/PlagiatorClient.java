@@ -13,13 +13,22 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 
-@FeignClient(name = "plagiator", configuration = FeignClientConfiguration.class, url = "http://localhost:8900/")
+@FeignClient(name = "plagiator", configuration = FeignClientConfiguration.class, url = "http://localhost:8900/api/")
 public interface PlagiatorClient {
 
-    @RequestMapping(method = RequestMethod.POST, path = "api/file/upload/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "file/upload/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     PaperResultDTO uploadNewBook(@RequestPart MultipartFile file);
 
-    @RequestMapping(method = RequestMethod.POST, path = "api/file/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "file/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     PaperResultDTO uploadExistingBook(@RequestPart MultipartFile file);
+
+    @GetMapping(path = "file/upload/new/results/{id}")
+    PaperResultDTO getPaperResult(@PathVariable Long id);
+
+    @GetMapping(path = "file/download/{id}")
+    ResponseEntity<byte[]> downloadPaper(@PathVariable Long id);
+
+    @DeleteMapping(path = "papers/{id}")
+    void deletePaper(@PathVariable Long id);
 
 }

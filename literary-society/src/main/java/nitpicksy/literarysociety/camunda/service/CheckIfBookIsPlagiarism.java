@@ -42,6 +42,7 @@ public class CheckIfBookIsPlagiarism implements JavaDelegate {
         String jsonSimilarPapers = new Gson().toJson(paperResultDTO.getSimilarPapers());
         execution.setVariable("similarPapers", jsonSimilarPapers);
         execution.setVariable("paperResultId", paperResultDTO.getId().toString());
+        execution.setVariable("uploadedPaperId", paperResultDTO.getUploadedPaper().getId().toString());
     }
 
     @Autowired
