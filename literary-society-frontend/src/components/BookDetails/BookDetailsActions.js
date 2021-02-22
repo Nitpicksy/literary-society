@@ -28,7 +28,6 @@ export const fetchBook = (id, history,needToAddToCart) => {
         axios.get(`/books/${id}`)
             .then(response => {
                 dispatch(fetchBookSuccess(response.data));
-                console.log(needToAddToCart)
                 if(needToAddToCart){
                     addToCart(response.data.bookDTO);
                 }

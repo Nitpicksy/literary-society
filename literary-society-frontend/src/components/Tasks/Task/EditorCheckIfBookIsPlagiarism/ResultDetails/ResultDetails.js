@@ -32,14 +32,14 @@ const ResultDetails = (props) => {
     }, [fetchPlagiarismInfo, props.location.search]);
 
     const getSimilarityValue = (papers) => {
-        let similarity = null;
-
+        let similarity = 0;
         for (let i in papers) {
             if (papers[i].id == paperId) {
                 similarity = (papers[i].searchHits / papers[0].searchHits) * 100;
                 break;
             }
         }
+
         return (
             similarity >= 50 ?
                 <Typography className={classes.subTitle}>
@@ -60,7 +60,7 @@ const ResultDetails = (props) => {
     if (resultDetails && paperId) {
         results = resultDetails.items.map(result => {
             return <Grid item md={12}>
-                <Card className={classes.root} key={result.id}>
+                <Card className={classes.root} key={result.partOfPage}>
                     <CardActionArea>
                         <CardContent className={classes.cardcontent}>
                             <Typography className={classes.subTitle}>

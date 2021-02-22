@@ -59,7 +59,6 @@ const EditorCheckIfBookIsPlagiarism = (props) => {
         }
 
         if (array[0].fieldValue === 'REQUEST_REJECTED') {
-            console.log('REQUEST_REJECTED');
             if (!array[1].fieldValue) {
                 toastr.error('Reject Publication Request', 'You have to write a reason for rejecting.');
                 return;
@@ -91,7 +90,6 @@ const EditorCheckIfBookIsPlagiarism = (props) => {
     }
 
     if (plagiarismInfo) {
-        console.log(plagiarismInfo)
         results = plagiarismInfo.map(plagiarism => {
             return <Result key={plagiarism.id} result={plagiarism} piId = {selectedTask.piId} />
         });

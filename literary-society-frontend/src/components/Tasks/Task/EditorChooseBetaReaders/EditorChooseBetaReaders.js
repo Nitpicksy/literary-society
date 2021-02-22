@@ -75,6 +75,7 @@ const EditorChooseBetaReaders = (props) => {
 
     useEffect(() => {
         if (betaReaders) {
+            console.log(formFields)
             let extractedControls = extractControls(formFields)
             setControls(extractedControls);
         }

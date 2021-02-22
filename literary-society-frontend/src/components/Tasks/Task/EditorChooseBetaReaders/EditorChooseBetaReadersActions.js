@@ -39,7 +39,7 @@ export const confirm = (data, taskId, history) => {
                 dispatch(clearState());
                 history.push('/tasks');
             }).catch(err => {
-                toastr.error('Publication Request', err.response.data.message);
+                // toastr.error('Publication Request', err.response.data.message);
                 history.push('/tasks');
             });
     };

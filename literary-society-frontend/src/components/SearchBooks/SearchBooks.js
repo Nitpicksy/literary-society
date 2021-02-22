@@ -7,7 +7,7 @@ import SearchBar from "material-ui-search-bar";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import { CssBaseline, Button, Typography, Container, Avatar, Grid, Paper, IconButton, Box } from '@material-ui/core';
+import { CssBaseline, Button, Typography, Container, Avatar, Grid, IconButton, Box } from '@material-ui/core';
 import AdvancedSearch from './AdvancedSearch/AdvancedSearch';
 import SearchResult from './SearchResult/SearchResult';
 
@@ -35,17 +35,26 @@ const SearchBooks = (props) => {
     useEffect(() => {
         const search = JSON.parse(localStorage.getItem("searchValue"))
         const advancedSearch = JSON.parse(localStorage.getItem("advanceSearchValues"))
-        const pageNum = JSON.parse(localStorage.getItem("page"))
+        const pageNum = JSON.parse(localStorage.getItem("page"));
+        const searchAllValueStorage = localStorage.getItem("searchAllValue");
+
+        if (searchAllValueStorage !== null) {
+            setSearchAllValue(searchAllValueStorage);
+        }
+
         if (search) {
             setSearchValue(search);
         }
-        if (advancedSearch && advancedSearch.length > 0) {
+
+        if (advancedSearch) {
             setAdvanceSearchValues(advancedSearch);
         }
 
         if (pageNum) {
             setPage(pageNum);
         }
+
+        localStorage.removeItem("searchAllValue")
         localStorage.removeItem("searchValue")
         localStorage.removeItem("advanceSearchValues")
         localStorage.removeItem("page")
@@ -54,7 +63,8 @@ const SearchBooks = (props) => {
     if (books && Array.isArray(books) && books.length) {
         bookCards = books.map(book => {
             return <SearchResult key={book.id} book={book} forShoppingCart={false}
-                searchValue={searchValue} advanceSearchValues={advanceSearchValues} page={page} />
+                searchValue={searchValue} advanceSearchValues={advanceSearchValues} page={page}
+                 searchAllValue = {searchAllValue} />
         });
     }
 
@@ -62,6 +72,7 @@ const SearchBooks = (props) => {
         setPage(0);
         if (type === "searchAllValue") {
             setSearchAllValue(true);
+            setEnableAdvancedSearch(false);
             props.searchAll(page, searchValue);
         } else {
             props.combineSearchParams(page, advanceSearchValues);
@@ -73,7 +84,7 @@ const SearchBooks = (props) => {
 
     const next = () => {
         setPage(page + 1);
-        if (searchAllValue) {
+        if (searchAllValue === true) {
             props.searchAll(page + 1, searchValue);
         } else {
             props.combineSearchParams(page + 1, advanceSearchValues);
@@ -82,7 +93,7 @@ const SearchBooks = (props) => {
 
     const previous = () => {
         setPage(page - 1);
-        if (searchAllValue) {
+        if (searchAllValue === true) {
             props.searchAll(page - 1, searchValue);
         } else {
             props.combineSearchParams(page - 1, advanceSearchValues);

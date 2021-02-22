@@ -7,8 +7,6 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import { toastr } from 'react-redux-toastr';
-import Chip from '@material-ui/core/Chip';
 import { useHistory } from 'react-router';
 import { connect } from 'react-redux';
 import * as actions from '../../BookDetails/BookDetailsActions';
@@ -28,6 +26,7 @@ const SearchResult = (props) => {
     }
 
     const redirectToDetailsPage = () => {
+        localStorage.setItem('searchAllValue', props.searchAllValue);
         localStorage.setItem('searchValue', JSON.stringify(props.searchValue));
         localStorage.setItem('advanceSearchValues', JSON.stringify(Array.from(props.advanceSearchValues)));
         localStorage.setItem('page', JSON.stringify(props.page));

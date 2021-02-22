@@ -24,7 +24,7 @@ export const searchBooksStart = () => {
 export const searchAll = (page,searchValue) => {
     return dispatch => {
         dispatch(searchBooksStart());
-        axios.post(`/books/search?page=${page}&&size=4&&searchValue=${searchValue}`,[] )
+        axios.post(`/books/search?page=${page}&size=4&searchValue=${searchValue}`,[] )
             .then(response => {
                 dispatch(searchBooksSuccess(response.data.content));
             })
@@ -40,7 +40,7 @@ export const searchAll = (page,searchValue) => {
 export const combineSearchParams = (page,searchParams) => {
     return dispatch => {
         dispatch(searchBooksStart());
-        axios.post(`/books/search?page=${page}&&size=4`,searchParams )
+        axios.post(`/books/search?page=${page}&size=4`,searchParams )
             .then(response => {
                 dispatch(searchBooksSuccess(response.data.content));
             })

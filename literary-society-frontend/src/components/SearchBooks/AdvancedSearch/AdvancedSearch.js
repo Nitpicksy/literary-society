@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useStyles } from './AdvancedSearchStyles';
 import { connect } from 'react-redux';
-import { CssBaseline, Button, Typography, Container, Avatar, Grid, Paper, MenuItem, TextField } from '@material-ui/core';
+import {  Button, Typography,Grid, Paper, MenuItem, TextField } from '@material-ui/core';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';

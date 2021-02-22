@@ -26,7 +26,6 @@ export const useStyles = makeStyles((theme) => ({
     content: {
         paddingTop: theme.spacing(0.5),
         fontSize: '0.85rem',
-        fontWeight: 500,
         lineHeight: 'normal',
         color: '#596270'
     },
