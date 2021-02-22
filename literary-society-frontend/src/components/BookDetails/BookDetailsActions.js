@@ -3,6 +3,12 @@ import { toastr } from 'react-redux-toastr';
 import * as actionTypes from './BookDetailsActionTypes';
 import { saveAs } from 'file-saver';
 
+export const fetchBookStart = () => {
+    return {
+        type: actionTypes.FETCH_BOOK_START,
+    };
+};
+
 export const fetchBookSuccess = (book) => {
     return {
         type: actionTypes.FETCH_BOOK_SUCCESS,
@@ -18,6 +24,7 @@ export const fetchBookFail = () => {
 
 export const fetchBook = (id, history, shouldAddToCart) => {
     return dispatch => {
+        dispatch(fetchBookStart());
         axios.get(`/books/${id}`)
             .then(response => {
                 dispatch(fetchBookSuccess(response.data));

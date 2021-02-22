@@ -17,7 +17,7 @@ const SearchResults = (props) => {
     let [pageNumber, setPageNumber] = useState(1);
     let [searchText, setSearchText] = useState('');
 
-    const pageSize = 4;
+    const pageSize = 5;
     let isLastPage = false;
     let resultItems = null;
     let header = null;
@@ -28,7 +28,7 @@ const SearchResults = (props) => {
     };
 
     useEffect(() => {
-        if (!props.isAdvancedSearch) {
+        if (!props.isAdvancedSearch || props.isAdvancedSearch === false) {
             getSearchText();
         }
         setPageNumber(parseInt(localStorage.getItem('pageNumber')));
@@ -37,7 +37,7 @@ const SearchResults = (props) => {
     const nextPage = () => {
         let nextPageNum = parseInt(localStorage.getItem('pageNumber')) + 1;
         localStorage.setItem('pageNumber', nextPageNum);
-        if (props.isAdvancedSearch) {
+        if (props.isAdvancedSearch === true) {
             props.advancedSearch(props.queryParams, nextPageNum, pageSize);
         } else {
             props.baseSearch(history, searchText, nextPageNum, pageSize);
@@ -48,7 +48,7 @@ const SearchResults = (props) => {
     const previousPage = () => {
         let prevPageNumber = parseInt(localStorage.getItem('pageNumber')) - 1;
         localStorage.setItem('pageNumber', prevPageNumber);
-        if (props.isAdvancedSearch) {
+        if (props.isAdvancedSearch === true) {
             props.advancedSearch(props.queryParams, prevPageNumber, pageSize);
         } else {
             props.baseSearch(history, searchText, prevPageNumber, pageSize);

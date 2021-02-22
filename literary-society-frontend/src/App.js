@@ -177,6 +177,9 @@ const App = props => {
           <Route path="/payment/error" render={(props) => <PaymentError {...props} />} />
           <Route path="/payment/failed" render={(props) => <PaymentFailed {...props} />} />
 
+
+          <Route path="/search" render={(props) => <AdvancedSearch {...props} />} />
+          <Route path="/search-results" render={(props) => <SearchResults {...props} isAdvancedSearch={false} />} />
           <Route path="/shopping-cart" render={(props) => <ShoppingCart {...props} />} />
           <Route path="/book/:id" exact render={(props) => <BookDetails {...props} />} />
 

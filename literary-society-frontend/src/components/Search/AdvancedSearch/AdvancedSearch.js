@@ -130,7 +130,7 @@ const AdvancedSearch = (props) => {
         });
     }
 
-    if (showResults) {
+    if (showResults === true) {
         results = <SearchResults isAdvancedSearch={true} queryParams={queryParams} />;
     }
 
@@ -177,7 +177,7 @@ const AdvancedSearch = (props) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        advancedSearch: (queryParams, pageNum = 1, pageSize = 4) => dispatch(actions.advancedSearch(queryParams, pageNum, pageSize)),
+        advancedSearch: (queryParams, pageNum = 1, pageSize = 5) => dispatch(actions.advancedSearch(queryParams, pageNum, pageSize)),
     }
 };
 

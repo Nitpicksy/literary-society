@@ -20,8 +20,11 @@ const PaperResultDetails = (props) => {
     }, [fetchPaperResultDetails, props.location.search]);
 
     const calculateSimilarity = (papers) => {
+        let similarity = 0;
         let chosenPaper = papers.find(paper => paper.id === paperId);
-        let similarity = (chosenPaper.searchHits / papers[0].searchHits) * 100;
+        if (chosenPaper) {
+            similarity = (chosenPaper.searchHits / papers[0].searchHits) * 100;
+        }
         if (similarity >= 50) {
             return <span className={classes.red}>{similarity.toFixed(2)}%</span>;
         } else {
