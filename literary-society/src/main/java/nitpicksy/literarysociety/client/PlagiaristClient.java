@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 
-@FeignClient(name = "plagiarist", configuration = FeignClientConfiguration.class, url = "http://localhost:8080/")
+@FeignClient(name = "plagiarist", configuration = FeignClientConfiguration.class, url = "http://localhost:8900/")
 public interface PlagiaristClient {
 
     @RequestMapping(method = RequestMethod.POST, path = "api/file/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

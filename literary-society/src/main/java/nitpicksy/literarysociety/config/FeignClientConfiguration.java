@@ -15,9 +15,9 @@ import java.security.cert.X509Certificate;
 @Configuration
 public class FeignClientConfiguration {
 
-    private static String KEY_STORE_PATH = "src/main/resources/literary.keystore.p12";
+    private static String KEY_STORE_PATH = "literary-society/src/main/resources/literary.keystore.p12";
 
-    private static String TRUST_STORE_PATH = "src/main/resources/literary.truststore.p12";
+    private static String TRUST_STORE_PATH = "literary-society/src/main/resources/literary.truststore.p12";
 
     private static String password = "password";
 

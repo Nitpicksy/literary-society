@@ -36,7 +36,7 @@ const SearchBooks = (props) => {
         const search = JSON.parse(localStorage.getItem("searchValue"))
         const advancedSearch = JSON.parse(localStorage.getItem("advanceSearchValues"))
         const pageNum = JSON.parse(localStorage.getItem("page"));
-        const searchAllValueStorage = localStorage.getItem("searchAllValue");
+        const searchAllValueStorage = JSON.parse(localStorage.getItem("searchAllValue"));
 
         if (searchAllValueStorage !== null) {
             setSearchAllValue(searchAllValueStorage);
@@ -83,8 +83,10 @@ const SearchBooks = (props) => {
     }
 
     const next = () => {
+        console.log(searchAllValue)
         setPage(page + 1);
         if (searchAllValue === true) {
+            console.log("haj")
             props.searchAll(page + 1, searchValue);
         } else {
             props.combineSearchParams(page + 1, advanceSearchValues);

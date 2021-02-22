@@ -1,5 +1,7 @@
 package nitpicksy.paymentgateway.controller;
 
+import nitpicksy.paymentgateway.repository.RoleRepository;
+import nitpicksy.paymentgateway.security.TokenUtils;
 import nitpicksy.paymentgateway.serviceimpl.TestServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,12 @@ public class TestController {
 
     private TestServiceImpl testService;
 
+    @Autowired
+    private TokenUtils tokenUtils;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
     @GetMapping("/health")
     public ResponseEntity<String> health() {
         System.out.println("Greetings from payment");
@@ -46,6 +54,16 @@ public class TestController {
             e.printStackTrace();
         }
         return new ResponseEntity<>("BAD", HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/generate-token")
+    public ResponseEntity<String> generateToken() {
+
+        String jwtToken = tokenUtils.generateTokenForCompany("literary-society", "ROLE_COMPANY",
+                roleRepository.findByName("ROLE_COMPANY").getPermissions());
+        String refreshJwt = tokenUtils.generateRefreshToken("literary-society");
+        System.out.println(refreshJwt);
+        return new ResponseEntity<>(jwtToken, HttpStatus.OK);
     }
 
     private String loadSecret(){

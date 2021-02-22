@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 @Service
 public class UploadFile {
 
-    private final String BOOKS_PATH = "src/main/resources/books/";
+    private final String BOOKS_PATH = "literary-society/src/main/resources/books/";
 
     private PDFDocumentRepository pdfDocumentRepository;
 
