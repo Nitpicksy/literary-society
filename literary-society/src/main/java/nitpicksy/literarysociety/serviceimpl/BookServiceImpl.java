@@ -28,7 +28,7 @@ import java.util.Set;
 @Service
 public class BookServiceImpl implements BookService {
 
-    private static String IMAGES_PATH = "src/main/resources/images/";
+    private static String IMAGES_PATH = "literary-society/src/main/resources/images/";
 
     private BookRepository bookRepository;
 

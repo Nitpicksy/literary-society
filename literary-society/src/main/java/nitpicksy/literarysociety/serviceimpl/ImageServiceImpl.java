@@ -31,7 +31,7 @@ import java.util.Objects;
 @Service
 public class ImageServiceImpl implements ImageService {
 
-    private static String IMAGES_PATH = "src/main/resources/images/";
+    private static String IMAGES_PATH = "literary-society/src/main/resources/images/";
     private static String DEFAULT_IMG = "default-img.jpg";
 
     private final String CLASS_PATH = this.getClass().getCanonicalName();
